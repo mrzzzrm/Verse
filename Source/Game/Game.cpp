@@ -4,8 +4,9 @@
 #include <Deliberation/Platform/Application.h>
 
 #include <Deliberation/Scene/Camera3D.h>
-#include <Deliberation/Scene/DebugCameraNavigator3D.h>
-#include <Deliberation/Scene/DebugGroundPlaneRenderer.h>
+#include <Deliberation/Scene/CameraDolly3D.h>
+#include <Deliberation/Scene/Debug/DebugCameraNavigator3D.h>
+#include <Deliberation/Scene/Debug/DebugGroundPlaneRenderer.h>
 
 #include <Deliberation/Voxel/VoxelClusterMarchingCubesTriangulation.h>
 #include <Deliberation/Voxel/VoxelClusterMarchingCubes.h>
@@ -37,12 +38,14 @@ public:
                                                  deliberation::dataPath("Data/Shaders/VoxelExample.frag")});
             m_draw = context().createDraw(m_program);
 
-            m_cluster = clusters[0];
+            m_cluster.reset(clusters[0]);
 
             m_draw.addVertices(marchingCubes.takeVertices());
+
+            m_transform.setCenter(glm::vec3(m_cluster->size()) / 2.0f);
         }
 
-        m_camera.setPosition({0.0f, 1.0f, 3.0f});
+        m_camera.setPosition({0.0f, 1000.0f, 3.0f});
         m_camera.setOrientation(glm::quat({-0.2f, 0.0f, 0.0f}));
         m_camera.setAspectRatio((float)context().backbuffer().width() / context().backbuffer().height());
 
@@ -56,10 +59,11 @@ public:
     void onFrame(float seconds) override
     {
         glm::vec3 offset;
-        offset.z = m_cluster.size().z / 2 + 5;
+        offset.z = - (m_cluster->size().z / 2 + 5);
         offset.y = 5;
 
-        m_dolly->update(offset, m_transform.orientation(), seconds);
+        m_dolly->update(m_transform.position() + m_transform.orientation() * offset,
+                        m_transform.orientation(), seconds);
 
         m_navigator->update(seconds);
 
@@ -81,14 +85,16 @@ private:
     Optional<CameraDolly3D>
                 m_dolly;
 
-    VoxelCluster<glm::vec3> m_cluster;
+    Optional<VoxelCluster<glm::vec3>>
+                m_cluster;
 
-    Program m_program;
-    Draw m_draw;
+    Program     m_program;
+    Draw        m_draw;
 
     Transform3D m_transform;
 
-    VoxelClusterMarchingCubesTriangulation m_marchingCubesTriangulation;
+    VoxelClusterMarchingCubesTriangulation
+                m_marchingCubesTriangulation;
 };
 
 int main(int argc, char *argv[])
