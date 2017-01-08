@@ -7,21 +7,30 @@
 #include <Deliberation/Core/Chrono.h>
 
 #include "GameLib.h"
+#include "HailstormDefines.h"
 
-using HailstormBulletID = u32;
+struct HailstormBulletID
+{
+    HailstormBulletID(HailstormMeshID meshID,
+                      u32 renderBatchIndex,
+                      size_t physicsWorldIndex);
 
-constexpr HailstormBulletID INVALID_HAILSTORM_BULLET_ID = std::numeric_limits<HailstormBulletID>::max();
+    HailstormMeshID meshID;
+    u32             renderBatchIndex;
+    size_t          physicsWorldIndex;
+};
 
 struct HailstormBullet
 {
-    HailstormBullet(const glm::vec3 & origin, const glm::vec3 & velocity, float energy, DurationMillis lifetime);
+    HailstormBullet(const glm::vec3 & origin, const glm::vec3 & velocity, float energy, TimestampMillis birth,
+                    DurationMillis lifetime, HailstormMeshID meshID);
 
+    HailstormBulletID   id;
     glm::vec3           origin;
     glm::vec3           velocity;
     float               energy = 0.0f;
     DurationMillis      lifetime = 0;
-    TimestampMicros     timestamp = 0;
-    HailstormBulletID   id = INVALID_HAILSTORM_BULLET_ID;
+    TimestampMillis     birth = 0;
 };
 
 #include "HailstormBullet.inl"

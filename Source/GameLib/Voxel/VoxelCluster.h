@@ -13,14 +13,16 @@ public:
     static const T EMPTY_VOXEL;
 
 public:
+    VoxelCluster() = default;
     VoxelCluster(const glm::uvec3 & size);
 
     const glm::vec3 & size() const;
+    const std::vector<T> & voxels() const;
 
     void set(const glm::uvec3 & voxel, const T & value);
 
-    T & get(const glm::uvec3 & voxel);
-    const T & get(const glm::uvec3 & voxel) const;
+    T get(const glm::uvec3 & voxel);
+    const T get(const glm::uvec3 & voxel) const;
 
     bool test(const glm::uvec3 & voxel) const;
 

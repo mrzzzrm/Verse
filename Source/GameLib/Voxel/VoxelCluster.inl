@@ -16,6 +16,12 @@ const glm::vec3 & VoxelCluster<T>::size() const
 }
 
 template<typename T>
+const std::vector<T> & VoxelCluster<T>::voxels() const
+{
+    return m_voxels;
+}
+
+template<typename T>
 void VoxelCluster<T>::set(const glm::uvec3 & voxel, const T & value)
 {
     auto index = voxelToIndex(voxel);
@@ -23,14 +29,14 @@ void VoxelCluster<T>::set(const glm::uvec3 & voxel, const T & value)
 }
 
 template<typename T>
-T & VoxelCluster<T>::get(const glm::uvec3 & voxel)
+T VoxelCluster<T>::get(const glm::uvec3 & voxel)
 {
     auto index = voxelToIndex(voxel);
     return m_voxels[index];
 }
 
 template<typename T>
-const T & VoxelCluster<T>::get(const glm::uvec3 & voxel) const
+const T VoxelCluster<T>::get(const glm::uvec3 & voxel) const
 {
     auto index = voxelToIndex(voxel);
     return m_voxels[index];

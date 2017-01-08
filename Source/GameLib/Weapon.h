@@ -8,8 +8,8 @@
 
 struct WeaponConfig
 {
-    float                       frequency;
-    HailstormRenderer::MeshID   meshID;
+    float             cooldown = 0.0f;
+    HailstormMeshID   meshID = 0;
 };
 
 class Weapon final

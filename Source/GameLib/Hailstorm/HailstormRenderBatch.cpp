@@ -12,14 +12,14 @@ HailstormRenderBatch::HailstormRenderBatch(HailstormRenderer & renderer, const M
     auto instanceDataLayout = DataLayout({
                                              {"Origin", Type_Vec3},
                                              {"Velocity", Type_Vec3},
-                                             {"Timestamp", Type_U32},
+                                             {"Birth", Type_U32},
                                              {"Lifetime", Type_U32}
                                          });
-    m_instances = LayoutedBlob(instanceDataLayout);
+    m_instances = LayoutedBlob(instanceDataLayout, 0);
 
     m_origins = m_instances.field<glm::vec3>("Origin");
     m_velocities = m_instances.field<glm::vec3>("Velocity");
-    m_timestamps = m_instances.field<u32>("Timestamp");
+    m_births = m_instances.field<u32>("Birth");
     m_lifetimes = m_instances.field<u32>("Lifetime");
 
     m_instanceBuffer = m_renderer.context().createBuffer(instanceDataLayout);
@@ -29,15 +29,16 @@ HailstormRenderBatch::HailstormRenderBatch(HailstormRenderer & renderer, const M
     m_draw.setIndices(mesh.indices());
     m_draw.addInstanceBuffer(m_instanceBuffer, mesh.indices().count());
     m_draw.setUniformBuffer("Globals", m_renderer.globalsBuffer());
+    m_draw.uniform("Color").set(glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
-void HailstormRenderBatch::addInstance(const HailstormBullet & bullet)
+void HailstormRenderBatch::addInstance(HailstormBullet & bullet)
 {
     if (m_freeInstanceSlots.empty())
     {
         const auto NUM_NEW_INSTANCES = 50;
 
-        auto oldNumInstances = m_instances.count()
+        auto oldNumInstances = m_instances.count();
 
         m_instances.resize(oldNumInstances + NUM_NEW_INSTANCES);
 
@@ -46,7 +47,7 @@ void HailstormRenderBatch::addInstance(const HailstormBullet & bullet)
             m_freeInstanceSlots.push(i);
 
             m_lifetimes[i] = 0;
-            m_timestamps[i] = 0;
+            m_births[i] = 0;
         }
     }
 
@@ -56,16 +57,33 @@ void HailstormRenderBatch::addInstance(const HailstormBullet & bullet)
     addInstanceInSlot(bullet, index);
 }
 
+void HailstormRenderBatch::removeInstance(const HailstormBulletID & bulletID)
+{
+    Assert(bulletID.renderBatchIndex < m_instances.count(), "");
+
+    m_lifetimes[bulletID.renderBatchIndex] = 0;
+    m_births[bulletID.renderBatchIndex] = 0;
+
+    m_freeInstanceSlots.push(bulletID.renderBatchIndex);
+}
+
 void HailstormRenderBatch::update()
 {
+    if (m_instances.empty())
+    {
+        return;
+    }
+
     m_draw.schedule();
 }
 
-void HailstormRenderBatch::addInstanceInSlot(const HailstormBullet & bullet, size_t index)
+void HailstormRenderBatch::addInstanceInSlot(HailstormBullet & bullet, size_t index)
 {
+    bullet.id.renderBatchIndex = index;
+
     m_origins[index] = bullet.origin;
     m_velocities[index] = bullet.velocity;
-    m_timestamps[index] = bullet.timestamp;
+    m_births[index] = bullet.birth;
     m_lifetimes[index] = bullet.lifetime;
 
     m_instanceBuffer.scheduleUpload(m_instances);

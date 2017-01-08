@@ -15,17 +15,20 @@
 #include <Deliberation/Scene/Debug/DebugGeometryManager.h>
 #include <Deliberation/Scene/Debug/DebugGeometryRenderer.h>
 #include <Deliberation/Scene/UVSphere.h>
+#include <Voxel/VoxelRigidBodyPayload.h>
+#include <Voxel/VoxelClusterPrimitiveTest.h>
 
-#include "Hailstorm/HailstormRenderer.h"
-
-#include "Voxel/VoxelClusterMarchingCubesTriangulation.h"
-#include "Voxel/VoxelClusterMarchingCubes.h"
-#include "Voxel/VoxelClusterShape.h"
-#include "Voxel/VoxelClusterContact.h"
-#include "Voxel/VoxReader.h"
-
+#include "HailstormRenderer.h"
+#include "VoxelClusterMarchingCubesTriangulation.h"
+#include "VoxelClusterMarchingCubes.h"
+#include "VoxelClusterShape.h"
+#include "VoxelClusterContact.h"
+#include "VoxelObject.h"
+#include "VoxelWorld.h"
+#include "VoxReader.h"
 #include "PlayerInput.h"
 #include "FlightControl.h"
+#include "Weapon.h"
 
 using namespace deliberation;
 
@@ -58,14 +61,14 @@ public:
             m_draw.addVertices(marchingCubes.takeVertices());
 
             m_transform.setCenter(glm::vec3(m_cluster->size()) / 2.0f);
-            m_transform.setPosition({16.0f, 20.0f, 0.0f});
+            m_transform.setPosition({16.0f, 20.0f, 30.0f});
         }
 
         {
             auto stationClusters = voxReader.read(deliberation::dataPath("Data/VoxelCluster/station.vox"));
             if (!stationClusters.empty())
             {
-                auto marchingCubes = VoxelClusterMarchingCubes(m_marchingCubesTriangulation, stationClusters[0], 12.0f);
+                auto marchingCubes = VoxelClusterMarchingCubes(m_marchingCubesTriangulation, stationClusters[0], 1.0f);
                 marchingCubes.run();
 
                 m_stationDraw = context().createDraw(m_program);
@@ -74,8 +77,8 @@ public:
 
                 m_stationDraw.addVertices(marchingCubes.takeVertices());
 
-                m_stationTransform.setCenter((glm::vec3(m_stationCluster->size()) / 2.0f) * 12.0f);
-                m_stationTransform.setPosition({-16.0f, 40.0f, -100.0f});
+                m_stationTransform.setCenter((glm::vec3(m_stationCluster->size()) / 2.0f) * 1.0f);
+                m_stationTransform.setPosition({-16.0f, 40.0f, -200.0f});
                 m_stationTransform.setOrientation(glm::quat({glm::pi<float>() * 0.1f, glm::pi<float>() * 0.1f, 0.0f}));
             }
 
@@ -105,10 +108,30 @@ public:
         m_shipShape = std::make_shared<VoxelClusterShape>(*m_cluster);
         m_shipBody = std::make_shared<RigidBody>(m_shipShape, m_transform);
 
+        m_stationShape = std::make_shared<VoxelClusterShape>(*m_cluster);
+        m_stationBody = std::make_shared<RigidBody>(m_stationShape, m_stationTransform);
+        m_stationBody->setAngularVelocity({0.0f, 0.0f, 0.05f});
+
+        auto stationObject = std::make_unique<VoxelObject>();
+        stationObject->setBody(m_shipBody);
+
+        auto shipObject = std::make_unique<VoxelObject>();
+        shipObject->setBody(m_stationBody);
+
+        m_voxelWorld.reset();
+        auto shipID = m_voxelWorld->addVoxelObject(std::move(shipObject));
+        auto stationID = m_voxelWorld->addVoxelObject(std::move(stationObject));
+
+        m_stationBody->setPayload(std::make_unique<VoxelRigidBodyPayload>(stationID));
+        m_shipBody->setPayload(std::make_unique<VoxelRigidBodyPayload>(shipID));
+
         m_physicsWorld.narrowphase().contactDispatcher().
             registerContactType<VoxelClusterContact>((int)::CollisionShapeType::VoxelCluster);
 
+        m_physicsWorld.narrowphase().registerPrimitiveTest((int)::CollisionShapeType::VoxelCluster, std::make_unique<VoxelClusterPrimitiveTest>());
+
         m_physicsWorld.addRigidBody(m_shipBody);
+        m_physicsWorld.addRigidBody(m_stationBody);
 
         FlightControlConfig playerShipConfig;
         playerShipConfig.forward.acceleration = 30.0f;
@@ -127,10 +150,16 @@ public:
         m_playerInput.reset(input(), m_camera, *m_flightControl);
 
 
-        m_hailstormRenderer.reset(context(), m_camera);
+        m_hailstormManager.reset(context(), m_camera, m_physicsWorld, *m_voxelWorld);
 
         auto bulletMesh = UVSphere(5, 5).generateMesh2();
-        m_bulletMeshID = m_hailstormRenderer->addMesh(bulletMesh);
+        m_bulletMeshID = m_hailstormManager->renderer().addMesh(bulletMesh);
+
+        WeaponConfig weaponConfig;
+        weaponConfig.cooldown = 1.0f / 2.0f;
+        weaponConfig.meshID = m_bulletMeshID;
+
+        m_weapon.reset(weaponConfig, *m_hailstormManager);
     }
 
     void onFrame(float seconds) override
@@ -139,6 +168,10 @@ public:
         m_flightControl->update(seconds);
 
         m_physicsWorld.update(seconds);
+        m_hailstormManager->update(seconds);
+
+        m_transform = m_shipBody->transform();
+        m_stationTransform = m_stationBody->transform();
 
         glm::vec3 offset;
         offset.z = m_cluster->size().z * 1.4f;
@@ -146,6 +179,28 @@ public:
 
         m_dolly->update(m_transform.position() + m_transform.orientation() * offset,
                         m_transform.orientation(), seconds);
+
+        {
+            auto fireOrigin = m_transform.position();
+
+            auto mouseNearPlane = (input().mousePosition() + 1.0f) / 2.0f;
+            auto nearPlane = m_camera.nearPlane();
+
+            auto mouseWorld = nearPlane.origin() + mouseNearPlane.x * nearPlane.right() + mouseNearPlane.y * nearPlane.up();
+            auto fireDirection = mouseWorld - m_camera.position();
+
+            if (input().mouseButtonDown(InputBase::MouseButton_Right))
+            {
+                m_weapon->setFireRequest(true,
+                                         fireOrigin,
+                                         fireDirection);
+            }
+            else
+            {
+                m_weapon->setFireRequest(false);
+            }
+            m_weapon->update(seconds);
+        }
 
 //        m_navigator->update(seconds);
 
@@ -158,18 +213,15 @@ public:
 
         m_debugGeometryRenderer->schedule(m_camera);
 
-        m_transform = m_shipBody->transform();
-
         m_draw.uniform("ViewProjection").set(m_camera.viewProjection());
         m_draw.uniform("Transform").set(m_transform.matrix());
         m_draw.schedule();
 
-        m_stationTransform.localRotate(glm::quat({0.0f, 0.0f, seconds * 0.05f}));
         m_stationDraw.uniform("ViewProjection").set(m_camera.viewProjection());
         m_stationDraw.uniform("Transform").set(m_stationTransform.matrix());
         m_stationDraw.schedule();
 
-        m_hailstormRenderer->update(seconds);
+        m_hailstormManager->update(seconds);
 
         //m_debugGroundPlaneRenderer->schedule();
     }
@@ -217,6 +269,10 @@ private:
                 m_shipShape;
     std::shared_ptr<RigidBody>
                 m_shipBody;
+    std::shared_ptr<VoxelClusterShape>
+                m_stationShape;
+    std::shared_ptr<RigidBody>
+                m_stationBody;
 
     Optional<FlightControl>
                 m_flightControl;
@@ -224,12 +280,21 @@ private:
     Optional<PlayerInput>
                 m_playerInput;
 
+    Optional<VoxelWorld>
+                m_voxelWorld;
+    std::shared_ptr<VoxelObject>
+                shipObject;
+    std::shared_ptr<VoxelObject>
+                stationObject;
 
-    Optional<HailstormRenderer>
-                m_hailstormRenderer;
+    Optional<HailstormManager>
+                m_hailstormManager;
 
-    HailstormRenderer::MeshID
+    HailstormMeshID
                 m_bulletMeshID;
+
+    Optional<Weapon>
+                m_weapon;
 };
 
 int main(int argc, char *argv[])

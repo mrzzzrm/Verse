@@ -5,6 +5,7 @@ add_library(${target}
 
     Hailstorm/HailstormBullet.h
     Hailstorm/HailstormBullet.inl
+    Hailstorm/HailstormDefines.h
     Hailstorm/HailstormManager.cpp
     Hailstorm/HailstormManager.h
     Hailstorm/HailstormPhysicsWorld.cpp
@@ -23,9 +24,18 @@ add_library(${target}
     Voxel/VoxelClusterMarchingCubes.h
     Voxel/VoxelClusterMarchingCubesTriangulation.cpp
     Voxel/VoxelClusterMarchingCubesTriangulation.h
+    Voxel/VoxelClusterPrimitiveTest.cpp
+    Voxel/VoxelClusterPrimitiveTest.h
     Voxel/VoxelClusterShape.cpp
     Voxel/VoxelClusterShape.h
     Voxel/VoxelClusterShape.inl
+    Voxel/VoxelModel.h
+    Voxel/VoxelObject.cpp
+    Voxel/VoxelObject.h
+    Voxel/VoxelRigidBodyPayload.cpp
+    Voxel/VoxelRigidBodyPayload.h
+    Voxel/VoxelWorld.cpp
+    Voxel/VoxelWorld.h
     Voxel/VoxReader.cpp
     Voxel/VoxReader.h
 
@@ -45,6 +55,8 @@ target_include_directories(${target}
     PUBLIC
 
     ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/Hailstorm
+    ${CMAKE_CURRENT_SOURCE_DIR}/Voxel
 
     ${DELIBERATION_INCLUDE_DIRS}
     )

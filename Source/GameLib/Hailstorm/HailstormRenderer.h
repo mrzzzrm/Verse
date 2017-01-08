@@ -24,26 +24,33 @@ class Context;
 class HailstormRenderer final
 {
 public:
-    using MeshID = u32;
-
-public:
-    HailstormRenderer(Context & context, Camera3D & camera);
+    HailstormRenderer(Context & context, const Camera3D & camera);
 
     Context & context() const;
 
-    MeshID addMesh(const Mesh2 & mesh);
+    const Program & program();
+    const Buffer & globalsBuffer() const;
 
-    void addBullet(const HailstormBullet & bullet, MeshID meshID);
-    void removeBullet(HailstormBulletID bulletID);
+    HailstormMeshID addMesh(const Mesh2 & mesh);
+
+    void addBullet(HailstormBullet & bullet);
+    void removeBullet(const HailstormBulletID & bullet);
 
     void update(float seconds);
 
 private:
-    Context &   m_context;
-    Camera3D &  m_camera;
+    Context &           m_context;
+    const Camera3D &    m_camera;
 
     std::vector<std::unique_ptr<HailstormRenderBatch>>
-                m_batches;
+                        m_batches;
 
-    LinearMap
+    LayoutedBlob        m_globals;
+    TypedBlobValueAccessor<glm::mat4>
+                        m_viewProjectionGlobal;
+    TypedBlobValueAccessor<uint32_t>
+                        m_timeGlobal;
+
+    Program             m_program;
+    Buffer              m_globalsBuffer;
 };

@@ -3,6 +3,7 @@
 #include <stack>
 
 #include <Deliberation/Core/LayoutedBlob.h>
+#include <Deliberation/Core/LinearMap.h>
 
 #include <Deliberation/Draw/Buffer.h>
 #include <Deliberation/Draw/Draw.h>
@@ -20,12 +21,13 @@ class HailstormRenderBatch
 public:
     HailstormRenderBatch(HailstormRenderer & renderer, const Mesh2 & mesh);
 
-    void addInstance(const HailstormBullet & bullet);
+    void addInstance(HailstormBullet & bullet);
+    void removeInstance(const HailstormBulletID & bullet);
 
     void update();
 
 private:
-    void addInstanceInSlot(const HailstormBullet & bullet, size_t index);
+    void addInstanceInSlot(HailstormBullet & bullet, size_t index);
 
 private:
     HailstormRenderer & m_renderer;
@@ -43,7 +45,9 @@ private:
     TypedBlobValueAccessor<u32>
                         m_lifetimes;
     TypedBlobValueAccessor<u32>
-                        m_timestamps;
+                        m_births;
 
     std::stack<size_t>  m_freeInstanceSlots;
+
+    LinearMap<size_t>   m_instanceIndexByBulletID;
 };
