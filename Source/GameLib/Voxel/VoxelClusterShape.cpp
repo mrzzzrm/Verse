@@ -13,7 +13,10 @@ VoxelClusterShape::VoxelClusterShape():
 
 AABB VoxelClusterShape::bounds(const Transform3D & transform) const
 {
-    return AABB();
+    const auto halfSize = glm::vec3(m_size) / 2.0f;
+    const auto center = transform.pointLocalToWorld(halfSize);
+    const auto radius = glm::length(halfSize);
+    return AABB(center - glm::vec3(radius), center + glm::vec3(radius));
 }
 
 glm::mat3 VoxelClusterShape::localInertia() const

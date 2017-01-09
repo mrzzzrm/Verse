@@ -39,13 +39,12 @@ void HailstormPhysicsWorld::update(float seconds)
 
         m_physicsWorld.rayCast(Ray3D::fromTo(a, b), [&](const RayCastIntersection & intersection) -> bool
         {
-            std::cout << "Intersection!" << std::endl;
-
             if (intersection.body.shape()->type() == (int)::CollisionShapeType::VoxelCluster)
             {
                 auto & voxelClusterIntersection =
                     static_cast<const RayCastVoxelClusterIntersection&>(intersection);
 
+                std::cout << "Intersection! "<< voxelClusterIntersection.voxel << std::endl;
                 m_voxelWorld.removeVoxel(voxelClusterIntersection.voxelObjectID, voxelClusterIntersection.voxel);
             }
 

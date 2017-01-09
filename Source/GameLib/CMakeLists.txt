@@ -29,9 +29,12 @@ add_library(${target}
     Voxel/VoxelClusterShape.cpp
     Voxel/VoxelClusterShape.h
     Voxel/VoxelClusterShape.inl
+    Voxel/VoxelModel.cpp
     Voxel/VoxelModel.h
     Voxel/VoxelObject.cpp
     Voxel/VoxelObject.h
+    Voxel/VoxelObjectPrototype.cpp
+    Voxel/VoxelObjectPrototype.h
     Voxel/VoxelRigidBodyPayload.cpp
     Voxel/VoxelRigidBodyPayload.h
     Voxel/VoxelWorld.cpp

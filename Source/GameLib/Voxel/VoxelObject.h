@@ -9,32 +9,47 @@
 #include "VoxelClusterShape.h"
 #include "VoxelModel.h"
 
+namespace deliberation
+{
+
+class Camera3D;
+
+}
+
+class VoxelObjectPrototype;
+class VoxelRigidBodyPayload;
+
 struct VoxelObjectID
 {
     size_t worldIndex = 0;
 };
 
-class  VoxelObject
+class VoxelObject final
 {
 public:
+    VoxelObject(const std::shared_ptr<VoxelObjectPrototype> & prototype);
+
     VoxelObjectID & id();
     const VoxelObjectID & id() const;
 
-    Pose3D & pose();
     const Pose3D & pose() const;
 
-    std::shared_ptr<const RigidBody> body() const;
-    std::shared_ptr<const VoxelModel> model() const;
+    std::shared_ptr<RigidBody> & body();
+    const std::shared_ptr<VoxelObjectPrototype> & prototype() const;
+
+    void setId(VoxelObjectID id);
 
     void setPose(const Pose3D & pose);
-    void setBody(const std::shared_ptr<RigidBody> & body);
-    void setModel(const std::shared_ptr<VoxelModel> & model);
+
+    void schedule(const Camera3D & camera);
 
 private:
+    std::shared_ptr<VoxelObjectPrototype>
+                    m_prototype;
+    std::shared_ptr<VoxelRigidBodyPayload>
+                    m_rigidBodyPayload;
     VoxelObjectID   m_id;
     Pose3D          m_pose;
     std::shared_ptr<RigidBody>
                     m_body;
-    std::shared_ptr<VoxelModel>
-                    m_model;
 };
