@@ -15,12 +15,14 @@ inline HailstormBullet::HailstormBullet(const glm::vec3 & origin,
                                         float energy,
                                         TimestampMillis birth,
                                         DurationMillis lifetime,
-                                        HailstormMeshID meshID):
+                                        HailstormMeshID meshID,
+                                        VoxelObjectWorldUID creator):
     id(meshID, 0, 0),
     origin(origin),
     velocity(velocity),
     energy(energy),
     birth(birth),
-    lifetime(lifetime)
+    lifetime(lifetime),
+    creator(creator)
 {
 }

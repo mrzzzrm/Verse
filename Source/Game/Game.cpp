@@ -67,7 +67,7 @@ public:
             }
         }
         {
-            VoxelCluster<glm::vec3> blockCluster(glm::uvec3(5, 4, 3));
+            VoxelCluster<glm::vec3> blockCluster(glm::uvec3(15, 14, 13));
             for (size_t z = 0; z < blockCluster.size().z; z++)
             {
                 for (size_t y = 0; y < blockCluster.size().y; y++)
@@ -85,20 +85,20 @@ public:
          * Create VoxelObjects
          */
         m_shipObject = std::make_shared<VoxelObject>(m_shipPrototype);
-        m_shipObject->body()->transform().setPosition({0.0f, 0.0f, 15.0f});
+        m_shipObject->body()->transform().setPosition({0.0f, 0.0f, 35.0f});
 
         m_stationObject = std::make_shared<VoxelObject>(m_stationPrototype);
         m_stationObject->body()->transform().setPosition({-16.0f, 40.0f, -200.0f});
         m_stationObject->body()->setAngularVelocity({0.0f, 0.0f, 0.05f});
 
         m_blockObject = std::make_shared<VoxelObject>(m_blockPrototype);
-        m_blockObject->body()->transform().setPosition({30.0f, 20.0f, -100.0f});
+        m_blockObject->body()->transform().setPosition({0.0f, 0.0f, 0.0f});
 
         /**
          * Add VoxelObjects to world
          */
         m_voxelWorld->addVoxelObject(m_shipObject);
-        m_voxelWorld->addVoxelObject(m_stationObject);
+        //m_voxelWorld->addVoxelObject(m_stationObject);
         m_voxelWorld->addVoxelObject(m_blockObject);
 
         /**
@@ -145,7 +145,7 @@ public:
         weaponConfig.cooldown = 1.0f / 2.0f;
         weaponConfig.meshID = m_bulletMeshID;
 
-        m_weapon.reset(weaponConfig, *m_hailstormManager);
+        m_weapon.reset(weaponConfig, *m_hailstormManager, m_shipObject->id().worldUID);
     }
 
     void onFrame(float seconds) override
@@ -183,6 +183,37 @@ public:
                 m_weapon->setFireRequest(false);
             }
             m_weapon->update(seconds);
+
+            if (input().keyPressed(InputBase::Key_SPACE))
+            {
+                auto origin = m_camera.position();
+                auto direction = fireDirection;
+
+                m_physicsWorld.rayCast(Ray3D(m_camera.position(), fireDirection), [&](const RayCastIntersection & intersection) -> bool
+                {
+                    if (intersection.body.shape()->type() == (int)::CollisionShapeType::VoxelCluster)
+                    {
+                        auto & voxelClusterIntersection =
+                            static_cast<const RayCastVoxelClusterIntersection&>(intersection);
+
+                        if (voxelClusterIntersection.voxelObjectID.worldUID == m_shipObject->id().worldUID)
+                        {
+                            std::cout << "Skipped because of UID" << std::endl;
+                            return true;
+                        }
+
+                        std::cout << "Hit voxel: " << voxelClusterIntersection.voxel << " of " << voxelClusterIntersection.voxelObjectID.worldUID << std::endl;
+
+                        m_voxelWorld->removeVoxel(voxelClusterIntersection.voxelObjectID, voxelClusterIntersection.voxel);
+                    }
+                    else
+                    {
+                        std::cout << "Skipped because not a voxelCluster" << std::endl;
+                    }
+                    
+                    return false;
+                });
+            }
         }
 
         m_clear.schedule();

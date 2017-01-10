@@ -4,6 +4,8 @@
 
 #include <Deliberation/Physics/PhysicsWorld.h>
 
+#include "VoxelObjectPrototype.h"
+
 VoxelWorld::VoxelWorld(Context & context, PhysicsWorld & physicsWorld, const Camera3D & camera):
     m_context(context),
     m_physicsWorld(physicsWorld),
@@ -30,13 +32,39 @@ const Program & VoxelWorld::program() const
 
 void VoxelWorld::addVoxelObject(std::shared_ptr<VoxelObject> voxelObject)
 {
+    VoxelObjectID id;
+    id.worldUID = m_uidIncrementor;
+
+    voxelObject->setId(id);
+    m_uidIncrementor++;
+
     m_objects.emplace_back(voxelObject);
+
+    m_objectsByUID[id.worldUID] = voxelObject;
+
     m_physicsWorld.addRigidBody(voxelObject->body());
 }
 
 void VoxelWorld::removeVoxel(const VoxelObjectID & voxelObjectID, const glm::uvec3 & voxel)
 {
+    auto it = m_objectsByUID.find(voxelObjectID.worldUID);
+    Assert (it != m_objectsByUID.end(), "No such object");
 
+    auto & object = it->second;
+
+    std::cout << "Prototype ref count: " << object->prototype().use_count() << std::endl;
+
+    Assert(object->prototype()->refCount() > 0, "");
+
+    if (object->prototype()->refCount() == 1)
+    {
+        object->prototype()->removeVoxel(voxel);
+        object->body()->setShape(object->prototype()->shape());
+    }
+    else
+    {
+
+    }
 }
 
 void VoxelWorld::update(float seconds)

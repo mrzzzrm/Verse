@@ -1,5 +1,7 @@
 #include "VoxelObjectPrototype.h"
 
+#include "VoxelCluster.h"
+
 VoxelObjectPrototype::VoxelObjectPrototype(VoxelWorld & world, const VoxelCluster<glm::vec3> & cluster):
     m_world(world),
     m_cluster(cluster)
@@ -21,4 +23,28 @@ const std::shared_ptr<VoxelClusterShape> & VoxelObjectPrototype::shape() const
 VoxelModel & VoxelObjectPrototype::model()
 {
     return *m_model;
+}
+
+uint VoxelObjectPrototype::refCount() const
+{
+    return m_refCount;
+}
+
+void VoxelObjectPrototype::incRefCount()
+{
+    m_refCount++;
+}
+
+void VoxelObjectPrototype::decRefCount()
+{
+    Assert(m_refCount > 0, "Can't dec zero ref count");
+    m_refCount--;
+}
+
+void VoxelObjectPrototype::removeVoxel(const glm::uvec3 & voxel)
+{
+    m_cluster.set(voxel, decltype(m_cluster)::EMPTY_VOXEL);
+
+    m_shape = std::make_shared<VoxelClusterShape>(m_cluster);
+    m_model.reset(m_world, m_cluster);
 }

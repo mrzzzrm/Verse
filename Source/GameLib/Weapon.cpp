@@ -1,8 +1,9 @@
 #include "Weapon.h"
 
-Weapon::Weapon(const WeaponConfig & config, HailstormManager & hailstormManager):
+Weapon::Weapon(const WeaponConfig & config, HailstormManager & hailstormManager, VoxelObjectWorldUID creatorUID):
     m_config(config),
-    m_hailstormManager(hailstormManager)
+    m_hailstormManager(hailstormManager),
+    m_creatorUID(creatorUID)
 {
 
 }
@@ -28,8 +29,8 @@ void Weapon::update(float seconds)
                                   100,
                                   CurrentMillis(),
                                   2000,
-                                  m_config.meshID);
-
+                                  m_config.meshID,
+                                  m_creatorUID);
 
     m_hailstormManager.addBullet(bullet);
 

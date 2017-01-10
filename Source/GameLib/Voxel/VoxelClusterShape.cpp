@@ -4,6 +4,7 @@
 #include <Deliberation/Core/Math/Sphere.h>
 #include <Deliberation/Core/Math/PrimitiveIntersection.h>
 #include <Deliberation/Core/Math/Transform3D.h>
+#include <Deliberation/Core/StreamUtils.h>
 
 VoxelClusterShape::VoxelClusterShape():
     CollisionShape((int)::CollisionShapeType::VoxelCluster)
@@ -32,6 +33,8 @@ bool VoxelClusterShape::rayCast(const Transform3D & transform, const Ray3D & ray
     auto localDirection = transform.directionWorldToLocal(ray.direction());
 
     auto normalizedRay = Ray3D(localOrigin, localDirection).normalized();
+
+    std::cout << "    Ray: " << ray << "->"<< normalizedRay << std::endl;
 
     rayCastTree(0, normalizedRay, voxels);
 

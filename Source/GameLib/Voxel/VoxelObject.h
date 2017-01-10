@@ -7,6 +7,7 @@
 
 #include "GameLib.h"
 #include "VoxelClusterShape.h"
+#include "VoxelDefines.h"
 #include "VoxelModel.h"
 
 namespace deliberation
@@ -21,15 +22,15 @@ class VoxelRigidBodyPayload;
 
 struct VoxelObjectID
 {
-    size_t worldIndex = 0;
+    VoxelObjectWorldUID worldUID = INVALID_VOXEL_OBJECT_WORLD_UID;
 };
 
 class VoxelObject final
 {
 public:
     VoxelObject(const std::shared_ptr<VoxelObjectPrototype> & prototype);
+    ~VoxelObject();
 
-    VoxelObjectID & id();
     const VoxelObjectID & id() const;
 
     const Pose3D & pose() const;

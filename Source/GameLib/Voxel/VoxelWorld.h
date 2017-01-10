@@ -1,13 +1,15 @@
 #pragma once
 
 #include <memory>
+#include <unordered_map>
 
 #include <glm/glm.hpp>
 
 #include <Deliberation/Draw/Program.h>
 
-#include "VoxelObject.h"
 #include "VoxelClusterMarchingCubesTriangulation.h"
+#include "VoxelDefines.h"
+#include "VoxelObject.h"
 
 namespace deliberation
 {
@@ -46,4 +48,9 @@ private:
 
     std::vector<std::shared_ptr<VoxelObject>>
                         m_objects;
+
+    std::unordered_map<VoxelObjectWorldUID, std::shared_ptr<VoxelObject>>
+                        m_objectsByUID;
+
+    u64                 m_uidIncrementor = 0;
 };

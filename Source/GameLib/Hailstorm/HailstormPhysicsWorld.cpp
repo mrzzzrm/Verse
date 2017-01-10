@@ -21,6 +21,7 @@ void HailstormPhysicsWorld::addBullet(const HailstormBullet & bullet)
 {
     auto index = m_bullets.insert(bullet);
     m_bullets[index].id.physicsWorldIndex = index;
+    std::cout << "Adding bullet! "<< m_bullets[index].id.physicsWorldIndex << std::endl;
 }
 
 void HailstormPhysicsWorld::update(float seconds)
@@ -37,6 +38,8 @@ void HailstormPhysicsWorld::update(float seconds)
         auto a = bullet.origin + bullet.velocity * t0;
         auto b = bullet.origin + bullet.velocity * t1;
 
+        auto markedForDestruction = false;
+
         m_physicsWorld.rayCast(Ray3D::fromTo(a, b), [&](const RayCastIntersection & intersection) -> bool
         {
             if (intersection.body.shape()->type() == (int)::CollisionShapeType::VoxelCluster)
@@ -44,11 +47,19 @@ void HailstormPhysicsWorld::update(float seconds)
                 auto & voxelClusterIntersection =
                     static_cast<const RayCastVoxelClusterIntersection&>(intersection);
 
-                std::cout << "Intersection! "<< voxelClusterIntersection.voxel << std::endl;
+                if (voxelClusterIntersection.voxelObjectID.worldUID == bullet.creator)
+                {
+                    return true;
+                }
+
                 m_voxelWorld.removeVoxel(voxelClusterIntersection.voxelObjectID, voxelClusterIntersection.voxel);
             }
 
-            m_destroyedBullets.emplace_back(bullet.id);
+            if (!markedForDestruction)
+            {
+                m_destroyedBullets.emplace_back(bullet.id);
+                markedForDestruction = true;
+            }
             return false;
         });
     }

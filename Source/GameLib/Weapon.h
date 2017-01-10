@@ -2,9 +2,9 @@
 
 #include <glm/glm.hpp>
 
-#include "Hailstorm/HailstormManager.h"
-
 #include "GameLib.h"
+#include "HailstormManager.h"
+#include "VoxelDefines.h"
 
 struct WeaponConfig
 {
@@ -15,7 +15,7 @@ struct WeaponConfig
 class Weapon final
 {
 public:
-    Weapon(const WeaponConfig & config, HailstormManager & hailstormManager);
+    Weapon(const WeaponConfig & config, HailstormManager & hailstormManager, VoxelObjectWorldUID creatorUID);
 
     void setFireRequest(bool active,
                         const glm::vec3 & origin = {},
@@ -26,6 +26,7 @@ public:
 private:
     WeaponConfig        m_config;
     HailstormManager &  m_hailstormManager;
+    VoxelObjectWorldUID m_creatorUID;
 
     bool                m_fireRequestActive = false;
     glm::vec3           m_fireRequestOrigin;

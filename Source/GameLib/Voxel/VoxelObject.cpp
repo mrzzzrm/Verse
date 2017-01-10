@@ -6,15 +6,17 @@
 VoxelObject::VoxelObject(const std::shared_ptr<VoxelObjectPrototype> & prototype):
     m_prototype(prototype)
 {
+    m_prototype->incRefCount();
+
     m_rigidBodyPayload = std::make_shared<VoxelRigidBodyPayload>(m_id);
     m_body = std::make_shared<RigidBody>(m_prototype->shape());
     m_body->setPayload(m_rigidBodyPayload);
     m_body->transform().setCenter(glm::vec3(prototype->cluster().size()) / 2.0f);
 }
 
-VoxelObjectID & VoxelObject::id()
+VoxelObject::~VoxelObject()
 {
-    return m_id;
+    m_prototype->decRefCount();
 }
 
 const VoxelObjectID & VoxelObject::id() const
