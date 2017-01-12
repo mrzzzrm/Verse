@@ -67,7 +67,7 @@ public:
             }
         }
         {
-            VoxelCluster<glm::vec3> blockCluster(glm::uvec3(15, 14, 13));
+            VoxelCluster<glm::vec3> blockCluster(glm::uvec3(45, 34, 13));
             for (size_t z = 0; z < blockCluster.size().z; z++)
             {
                 for (size_t y = 0; y < blockCluster.size().y; y++)
@@ -87,7 +87,7 @@ public:
         m_shipObject = std::make_shared<VoxelObject>(m_shipPrototype);
         m_shipObject->body()->transform().setPosition({0.0f, 0.0f, 35.0f});
 
-        m_stationObject = std::make_shared<VoxelObject>(m_stationPrototype);
+        m_stationObject = std::make_shared<VoxelObject>(m_blockPrototype);
         m_stationObject->body()->transform().setPosition({-16.0f, 40.0f, -200.0f});
         m_stationObject->body()->setAngularVelocity({0.0f, 0.0f, 0.05f});
 
@@ -189,30 +189,31 @@ public:
                 auto origin = m_camera.position();
                 auto direction = fireDirection;
 
-                m_physicsWorld.rayCast(Ray3D(m_camera.position(), fireDirection), [&](const RayCastIntersection & intersection) -> bool
-                {
-                    if (intersection.body.shape()->type() == (int)::CollisionShapeType::VoxelCluster)
-                    {
-                        auto & voxelClusterIntersection =
-                            static_cast<const RayCastVoxelClusterIntersection&>(intersection);
+                m_physicsWorld.lineCast(Ray3D(m_camera.position(), fireDirection),
+                                        [&](const RayCastIntersection &intersection) -> bool {
+                                            if (intersection.body.shape()->type() ==
+                                                (int) ::CollisionShapeType::VoxelCluster) {
+                                                auto &voxelClusterIntersection =
+                                                    static_cast<const RayCastVoxelClusterIntersection &>(intersection);
 
-                        if (voxelClusterIntersection.voxelObjectID.worldUID == m_shipObject->id().worldUID)
-                        {
-                            std::cout << "Skipped because of UID" << std::endl;
-                            return true;
-                        }
+                                                if (voxelClusterIntersection.voxelObjectID.worldUID ==
+                                                    m_shipObject->id().worldUID) {
+                                                    std::cout << "Skipped because of UID" << std::endl;
+                                                    return true;
+                                                }
 
-                        std::cout << "Hit voxel: " << voxelClusterIntersection.voxel << " of " << voxelClusterIntersection.voxelObjectID.worldUID << std::endl;
+                                                std::cout << "Hit voxel: " << voxelClusterIntersection.voxel << " of "
+                                                          << voxelClusterIntersection.voxelObjectID.worldUID
+                                                          << std::endl;
 
-                        m_voxelWorld->removeVoxel(voxelClusterIntersection.voxelObjectID, voxelClusterIntersection.voxel);
-                    }
-                    else
-                    {
-                        std::cout << "Skipped because not a voxelCluster" << std::endl;
-                    }
-                    
-                    return false;
-                });
+                                                m_voxelWorld->removeVoxel(voxelClusterIntersection.voxelObjectID,
+                                                                          voxelClusterIntersection.voxel);
+                                            } else {
+                                                std::cout << "Skipped because not a voxelCluster" << std::endl;
+                                            }
+
+                                            return false;
+                                        });
             }
         }
 

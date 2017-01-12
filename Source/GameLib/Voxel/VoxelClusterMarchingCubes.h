@@ -37,7 +37,7 @@ private:
 
     LayoutedBlob                                    m_vertices;
 
-    Optional<LayoutedBlob::Field<glm::vec3>>        m_positions;
-    Optional<LayoutedBlob::Field<glm::vec3>>        m_normals;
-    Optional<LayoutedBlob::Field<glm::vec3>>        m_colors;
+    LayoutedBlob::Iterator<glm::vec3>               m_positions;
+    LayoutedBlob::Iterator<glm::vec3>               m_normals;
+    LayoutedBlob::Iterator<glm::vec3>               m_colors;
 };

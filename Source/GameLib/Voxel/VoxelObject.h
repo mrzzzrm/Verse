@@ -41,6 +41,7 @@ public:
     void setId(VoxelObjectID id);
 
     void setPose(const Pose3D & pose);
+    void setPrototype(const std::shared_ptr<VoxelObjectPrototype> & prototype);
 
     void schedule(const Camera3D & camera);
 

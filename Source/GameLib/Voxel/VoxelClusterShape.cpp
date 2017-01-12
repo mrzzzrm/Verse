@@ -1,7 +1,8 @@
 #include "VoxelClusterShape.h"
 
-#include <Deliberation/Core/Math/Morton.h>
-#include <Deliberation/Core/Math/Sphere.h>
+#include <functional>
+#include <iostream>
+
 #include <Deliberation/Core/Math/PrimitiveIntersection.h>
 #include <Deliberation/Core/Math/Transform3D.h>
 #include <Deliberation/Core/StreamUtils.h>
@@ -25,18 +26,52 @@ glm::mat3 VoxelClusterShape::localInertia() const
     return glm::mat3(1.0f);
 }
 
-bool VoxelClusterShape::rayCast(const Transform3D & transform, const Ray3D & ray, glm::uvec3 & voxel) const
+std::string VoxelClusterShape::toString() const
+{
+    std::stringstream stream;
+
+    std::function<void(u32,u32)> nodeToString = [&] (u32 index, u32 depth)
+    {
+        for (u32 d = 0; d < depth; d++)
+        {
+            stream << "  ";
+        }
+
+        if (m_nodes[index].isLeaf)
+        {
+            stream << "Voxel@" << m_nodes[index].leaf.voxel;
+            stream << std::endl;
+        }
+        else
+        {
+            stream << index << " " << m_nodes[index].node.bounds;
+            stream << std::endl;
+            if (m_nodeMask[index * 2 + 1])
+            {
+                nodeToString(index * 2 + 1, depth + 1);
+            }
+            if (m_nodeMask[index * 2 + 2])
+            {
+                nodeToString(index * 2 + 2, depth + 1);
+            }
+        }
+    };
+
+    stream << "Num Nodes: " << m_nodes.size() << std::endl;
+
+   // nodeToString(0, 0);
+
+    return stream.str();
+}
+
+bool VoxelClusterShape::lineCast(const Transform3D & transform, const Ray3D & ray, glm::uvec3 & voxel) const
 {
     std::vector<glm::uvec3> voxels;
 
     auto localOrigin = transform.pointWorldToLocal(ray.origin());
     auto localDirection = transform.directionWorldToLocal(ray.direction());
 
-    auto normalizedRay = Ray3D(localOrigin, localDirection).normalized();
-
-    std::cout << "    Ray: " << ray << "->"<< normalizedRay << std::endl;
-
-    rayCastTree(0, normalizedRay, voxels);
+    lineCastTree(0, Ray3D(localOrigin, localDirection), voxels);
 
     if (voxels.empty())
     {
@@ -64,16 +99,16 @@ bool VoxelClusterShape::rayCast(const Transform3D & transform, const Ray3D & ray
     return true;
 }
 
-void VoxelClusterShape::rayCastTree(u32 index, const Ray3D & ray, std::vector<glm::uvec3> & voxels) const
+void VoxelClusterShape::lineCastTree(u32 index, const Ray3D & ray, std::vector<glm::uvec3> & voxels) const
 {
     auto & node = m_nodes[index];
 
     if (node.isLeaf)
     {
-        if (NormalizedRay3DSphereIntersection(ray.origin(),
-                                              ray.direction(),
-                                              glm::vec3(node.leaf.voxel) + glm::vec3(0.5f),
-                                              0.5f))
+        if (LineSphereIntersection(ray.origin(),
+                                   ray.direction(),
+                                    glm::vec3(node.leaf.voxel) + glm::vec3(0.5f),
+                                    0.8f))
         {
             voxels.emplace_back(node.leaf.voxel);
         }
@@ -83,7 +118,7 @@ void VoxelClusterShape::rayCastTree(u32 index, const Ray3D & ray, std::vector<gl
         auto position = node.node.bounds.position();
         auto radius = node.node.bounds.radius();
 
-        if (!NormalizedRay3DSphereIntersection(ray.origin(), ray.direction(), position, radius))
+        if (!LineSphereIntersection(ray.origin(), ray.direction(), position, radius))
         {
             return;
         }
@@ -93,11 +128,11 @@ void VoxelClusterShape::rayCastTree(u32 index, const Ray3D & ray, std::vector<gl
 
         if (m_nodeMask[leftIndex])
         {
-            rayCastTree(leftIndex, ray, voxels);
+            lineCastTree(leftIndex, ray, voxels);
         }
         if (m_nodeMask[rightIndex])
         {
-            rayCastTree(rightIndex, ray, voxels);
+            lineCastTree(rightIndex, ray, voxels);
         }
     }
 }

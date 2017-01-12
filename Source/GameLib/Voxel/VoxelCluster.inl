@@ -10,7 +10,7 @@ VoxelCluster<T>::VoxelCluster(const glm::uvec3 & size):
 }
 
 template<typename T>
-const glm::vec3 & VoxelCluster<T>::size() const
+const glm::uvec3 & VoxelCluster<T>::size() const
 {
     return m_size;
 }

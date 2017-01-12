@@ -50,6 +50,13 @@ void VoxelObject::setPose(const Pose3D & pose)
     m_pose = pose;
 }
 
+void VoxelObject::setPrototype(const std::shared_ptr<VoxelObjectPrototype> & prototype)
+{
+    m_prototype->decRefCount();
+    m_prototype = prototype;
+    m_prototype->incRefCount();
+}
+
 void VoxelObject::schedule(const Camera3D & camera)
 {
     m_prototype->model().schedule(camera, m_pose);

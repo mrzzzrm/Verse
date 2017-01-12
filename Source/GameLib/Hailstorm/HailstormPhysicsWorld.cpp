@@ -17,11 +17,15 @@ HailstormPhysicsWorld::HailstormPhysicsWorld(PhysicsWorld & physicsWorld, VoxelW
 
 }
 
+const std::vector<HailstormBulletID> & HailstormPhysicsWorld::destroyedBullets() const
+{
+    return m_destroyedBullets;
+}
+
 void HailstormPhysicsWorld::addBullet(const HailstormBullet & bullet)
 {
     auto index = m_bullets.insert(bullet);
     m_bullets[index].id.physicsWorldIndex = index;
-    std::cout << "Adding bullet! "<< m_bullets[index].id.physicsWorldIndex << std::endl;
 }
 
 void HailstormPhysicsWorld::update(float seconds)
@@ -32,7 +36,7 @@ void HailstormPhysicsWorld::update(float seconds)
 
     for (auto & bullet : m_bullets)
     {
-        float t0 = ((float)currentMillis - bullet.birth) / 1000.0f;
+        float t0 = ((float)(currentMillis - bullet.birth)) / 1000.0f;
         float t1 = t0 + seconds;
 
         auto a = bullet.origin + bullet.velocity * t0;
@@ -40,23 +44,19 @@ void HailstormPhysicsWorld::update(float seconds)
 
         auto markedForDestruction = false;
 
-        m_physicsWorld.rayCast(Ray3D::fromTo(a, b), [&](const RayCastIntersection & intersection) -> bool
-        {
-            if (intersection.body.shape()->type() == (int)::CollisionShapeType::VoxelCluster)
-            {
+        m_physicsWorld.lineCast(Ray3D::fromTo(a, b), [&](const RayCastIntersection &intersection) -> bool {
+            if (intersection.body.shape()->type() == (int) ::CollisionShapeType::VoxelCluster) {
                 auto & voxelClusterIntersection =
-                    static_cast<const RayCastVoxelClusterIntersection&>(intersection);
+                    static_cast<const RayCastVoxelClusterIntersection &>(intersection);
 
-                if (voxelClusterIntersection.voxelObjectID.worldUID == bullet.creator)
-                {
+                if (voxelClusterIntersection.voxelObjectID.worldUID == bullet.creator) {
                     return true;
                 }
 
                 m_voxelWorld.removeVoxel(voxelClusterIntersection.voxelObjectID, voxelClusterIntersection.voxel);
             }
 
-            if (!markedForDestruction)
-            {
+            if (!markedForDestruction) {
                 m_destroyedBullets.emplace_back(bullet.id);
                 markedForDestruction = true;
             }

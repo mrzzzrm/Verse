@@ -1,5 +1,7 @@
 #include "VoxelObjectPrototype.h"
 
+#include <Deliberation/Core/ScopeProfiler.h>
+
 #include "VoxelCluster.h"
 
 VoxelObjectPrototype::VoxelObjectPrototype(VoxelWorld & world, const VoxelCluster<glm::vec3> & cluster):
@@ -7,6 +9,7 @@ VoxelObjectPrototype::VoxelObjectPrototype(VoxelWorld & world, const VoxelCluste
     m_cluster(cluster)
 {
     m_shape = std::make_shared<VoxelClusterShape>(m_cluster);
+    std::cout << m_shape->toString() << std::endl;
     m_model.reset(world, m_cluster);
 }
 
@@ -43,8 +46,17 @@ void VoxelObjectPrototype::decRefCount()
 
 void VoxelObjectPrototype::removeVoxel(const glm::uvec3 & voxel)
 {
+    ScopeProfiler scopeProfiler("VoxelObjectPrototype::removeVoxel");
+
     m_cluster.set(voxel, decltype(m_cluster)::EMPTY_VOXEL);
 
     m_shape = std::make_shared<VoxelClusterShape>(m_cluster);
     m_model.reset(m_world, m_cluster);
+}
+
+std::shared_ptr<VoxelObjectPrototype> VoxelObjectPrototype::clone()
+{
+    ScopeProfiler scopeProfiler("VoxelObjectPrototype::clone");
+
+    return std::make_shared<VoxelObjectPrototype>(m_world, m_cluster);
 }

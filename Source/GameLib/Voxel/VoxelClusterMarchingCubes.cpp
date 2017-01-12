@@ -1,5 +1,7 @@
 #include "VoxelClusterMarchingCubes.h"
 
+#include <Deliberation/Core/ScopeProfiler.h>
+
 VoxelClusterMarchingCubes::VoxelClusterMarchingCubes(const VoxelClusterMarchingCubesTriangulation & triangulation,
                                                      const VoxelCluster<glm::vec3> & cluster,
                                                      float scale):
@@ -11,37 +13,65 @@ VoxelClusterMarchingCubes::VoxelClusterMarchingCubes(const VoxelClusterMarchingC
 
 void VoxelClusterMarchingCubes::run()
 {
+
     auto vertexLayout = DataLayout({{"Position", Type_Vec3},
                                     {"Normal",   Type_Vec3},
                                     {"Color",    Type_Vec3}});
 
     m_vertices = LayoutedBlob(vertexLayout);
 
-    m_positions.reset(m_vertices.field<glm::vec3>("Position"));
-    m_normals.reset(m_vertices.field<glm::vec3>("Normal"));
-    m_colors.reset(m_vertices.field<glm::vec3>("Color"));
-
     auto &size = m_cluster.size();
     auto config = std::bitset<8>();
 
-    for (i32 z = 0; z <= size.z; z++)
+    size_t numVertices = 0;
+
+    VoxelCluster<u8> configCluster(size + glm::uvec3(1, 1, 1));
+
     {
-        for (i32 y = 0; y <= size.y; y++)
+        ScopeProfiler scopeProfiler("VoxelClusterMarchingCubes::run - prerun");
+
+        for (i32 z = 0; z <= size.z; z++)
         {
-            for (i32 x = 0; x <= size.x; x++)
+            for (i32 y = 0; y <= size.y; y++)
             {
-                config.reset();
+                for (i32 x = 0; x <= size.x; x++)
+                {
+                    config.reset();
 
-                config.set(0, checkVoxel(x - 1, y - 1, z - 1));
-                config.set(1, checkVoxel(x - 0, y - 1, z - 1));
-                config.set(2, checkVoxel(x - 0, y - 1, z - 0));
-                config.set(3, checkVoxel(x - 1, y - 1, z - 0));
-                config.set(4, checkVoxel(x - 1, y - 0, z - 1));
-                config.set(5, checkVoxel(x - 0, y - 0, z - 1));
-                config.set(6, checkVoxel(x - 0, y - 0, z - 0));
-                config.set(7, checkVoxel(x - 1, y - 0, z - 0));
+                    config.set(0, checkVoxel(x - 1, y - 1, z - 1));
+                    config.set(1, checkVoxel(x - 0, y - 1, z - 1));
+                    config.set(2, checkVoxel(x - 0, y - 1, z - 0));
+                    config.set(3, checkVoxel(x - 1, y - 1, z - 0));
+                    config.set(4, checkVoxel(x - 1, y - 0, z - 1));
+                    config.set(5, checkVoxel(x - 0, y - 0, z - 1));
+                    config.set(6, checkVoxel(x - 0, y - 0, z - 0));
+                    config.set(7, checkVoxel(x - 1, y - 0, z - 0));
 
-                generateMesh(x, y, z, config.to_ullong());
+                    configCluster.set({x, y, z}, config.to_ullong());
+
+                    auto & mesh = m_triangulation.configs()[config.to_ullong()];
+                    numVertices += mesh.size() * 3;
+                }
+            }
+        }
+        m_vertices.resize(numVertices);
+    }
+
+    m_positions = m_vertices.field<glm::vec3>("Position").iterator();
+    m_normals = m_vertices.field<glm::vec3>("Normal").iterator();
+    m_colors = m_vertices.field<glm::vec3>("Color").iterator();
+
+    {
+        ScopeProfiler scopeProfiler("VoxelClusterMarchingCubes::run - mesh generation");
+
+        for (i32 z = 0; z <= size.z; z++)
+        {
+            for (i32 y = 0; y <= size.y; y++)
+            {
+                for (i32 x = 0; x <= size.x; x++)
+                {
+                    generateMesh(x, y, z, configCluster.get({x, y, z}));
+                }
             }
         }
     }
@@ -74,18 +104,13 @@ void VoxelClusterMarchingCubes::generateMesh(i32 x, i32 y, i32 z, u8 configID)
         return;
     }
 
-    auto vertexIndex = m_vertices.count();
-
-    m_vertices.resize(m_vertices.count() + mesh.size() * 3);
-
     for (auto & triangle : mesh)
     {
         for (uint i = 0u; i < 3u; i++)
         {
-            (*m_positions)[vertexIndex] = (triangle.positions[i] + glm::vec3(x, y, z)) * m_scale;
-            (*m_normals)[vertexIndex] = triangle.normal;
-            (*m_colors)[vertexIndex] = getCubeColorAtCorner(x, y, z, triangle.corner);
-            vertexIndex++;
+            m_positions.put((triangle.positions[i] + glm::vec3(x, y, z)) * m_scale);
+            m_normals.put(triangle.normal);
+            m_colors.put(getCubeColorAtCorner(x, y, z, triangle.corner));
         }
     }
 }

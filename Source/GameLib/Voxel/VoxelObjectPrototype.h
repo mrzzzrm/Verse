@@ -23,6 +23,8 @@ public:
 
     void removeVoxel(const glm::uvec3 & voxel);
 
+    std::shared_ptr<VoxelObjectPrototype> clone();
+
 private:
     VoxelWorld &                        m_world;
     VoxelCluster<glm::vec3>             m_cluster;

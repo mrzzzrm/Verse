@@ -16,7 +16,7 @@ public:
     VoxelCluster() = default;
     VoxelCluster(const glm::uvec3 & size);
 
-    const glm::vec3 & size() const;
+    const glm::uvec3 & size() const;
     const std::vector<T> & voxels() const;
 
     void set(const glm::uvec3 & voxel, const T & value);
@@ -30,7 +30,7 @@ private:
     size_t voxelToIndex(const glm::uvec3 & voxel) const;
 
 private:
-    glm::vec3      m_size;
+    glm::uvec3     m_size;
     std::vector<T> m_voxels;
 };
 

@@ -425,8 +425,6 @@ VoxelClusterMarchingCubesTriangulation::VoxelClusterMarchingCubesTriangulation()
     for (uint c = (uint)BASE_CONFIGS.size(); c < baseAndInverseConfigs.size(); c++)
     {
         baseAndInverseConfigs[c] = ~BASE_CONFIGS[c - BASE_CONFIGS.size()];
-
-        std::cout << c << " = " << baseAndInverseConfigs[c].to_string() << std::endl;
     }
 
     /**
@@ -448,7 +446,6 @@ VoxelClusterMarchingCubesTriangulation::VoxelClusterMarchingCubesTriangulation()
                     auto configID = baseClassZ.to_ullong();
 
                     if (!configSet[configID]) {
-                        std::cout << configID << " = " << c << std::endl;
                         configSet[configID] = true;
 
                         auto & config = m_configs[configID];

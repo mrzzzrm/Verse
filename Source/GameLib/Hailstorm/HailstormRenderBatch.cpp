@@ -63,6 +63,7 @@ void HailstormRenderBatch::removeInstance(const HailstormBulletID & bulletID)
 
     m_lifetimes[bulletID.renderBatchIndex] = 0;
     m_births[bulletID.renderBatchIndex] = 0;
+    m_instanceBuffer.scheduleUpload(m_instances);
 
     m_freeInstanceSlots.push(bulletID.renderBatchIndex);
 }

@@ -11,6 +11,12 @@ class HailstormPhysicsWorld final
 public:
     HailstormPhysicsWorld(PhysicsWorld & physicsWorld, VoxelWorld & voxelWorld);
 
+    /**
+     * Bullets destroyed during the last update() call
+     * @return
+     */
+    const std::vector<HailstormBulletID> & destroyedBullets() const;
+
     void addBullet(const HailstormBullet & bullet);
 
     void update(float seconds);

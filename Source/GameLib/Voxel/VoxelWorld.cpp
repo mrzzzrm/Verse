@@ -1,5 +1,7 @@
 #include "VoxelWorld.h"
 
+#include <Deliberation/Core/ScopeProfiler.h>
+
 #include <Deliberation/Draw/Context.h>
 
 #include <Deliberation/Physics/PhysicsWorld.h>
@@ -47,24 +49,25 @@ void VoxelWorld::addVoxelObject(std::shared_ptr<VoxelObject> voxelObject)
 
 void VoxelWorld::removeVoxel(const VoxelObjectID & voxelObjectID, const glm::uvec3 & voxel)
 {
+    ScopeProfiler scopeProfiler("VoxelWorld::removeVoxel");
+
     auto it = m_objectsByUID.find(voxelObjectID.worldUID);
     Assert (it != m_objectsByUID.end(), "No such object");
 
     auto & object = it->second;
 
-    std::cout << "Prototype ref count: " << object->prototype().use_count() << std::endl;
+    std::cout << "Prototype ref count: " << object->prototype()->refCount() << std::endl;
 
     Assert(object->prototype()->refCount() > 0, "");
 
-    if (object->prototype()->refCount() == 1)
+    if (object->prototype()->refCount() > 1)
     {
-        object->prototype()->removeVoxel(voxel);
-        object->body()->setShape(object->prototype()->shape());
+        auto newPrototype = object->prototype()->clone();
+        object->setPrototype(newPrototype);
     }
-    else
-    {
 
-    }
+    object->prototype()->removeVoxel(voxel);
+    object->body()->setShape(object->prototype()->shape());
 }
 
 void VoxelWorld::update(float seconds)

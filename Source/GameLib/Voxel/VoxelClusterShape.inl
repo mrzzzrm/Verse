@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include <Deliberation/Core/Math/Morton.h>
+#include <Deliberation/Core/ScopeProfiler.h>
 
 #include "CollisionShapeTypes.h"
 #include "VoxelCluster.h"
@@ -13,6 +14,8 @@ VoxelClusterShape::VoxelClusterShape(const VoxelCluster<T> & cluster):
     CollisionShape((int)::CollisionShapeType::VoxelCluster),
     m_size(cluster.size())
 {
+    ScopeProfiler scopeProfiler("VoxelClusterShape::VoxelClusterShape");
+
     auto numCells = cluster.size().x * cluster.size().y * cluster.size().z;
 
     for (uint z = 0; z < cluster.size().z; z++)

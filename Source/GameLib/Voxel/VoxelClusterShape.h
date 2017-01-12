@@ -25,7 +25,9 @@ public:
     virtual AABB bounds(const Transform3D & transform) const override;
     virtual glm::mat3 localInertia() const override;
 
-    bool rayCast(const Transform3D & transform, const Ray3D & ray, glm::uvec3 & voxel) const;
+    bool lineCast(const Transform3D & transform, const Ray3D & ray, glm::uvec3 & voxel) const;
+
+    std::string toString() const;
 
 private:
     friend class VoxelClusterShapeTest_Basic_Test;
@@ -49,7 +51,7 @@ private:
 private:
     void addVoxel(const glm::uvec3 & voxel);
     void addVoxelToNode(u32 index, const glm::uvec3 & voxel, const glm::uvec3 & nodeLLF, const glm::uvec3 & nodeSize);
-    void rayCastTree(u32 index, const Ray3D & ray, std::vector<glm::uvec3> & voxels) const;
+    void lineCastTree(u32 index, const Ray3D & ray, std::vector<glm::uvec3> & voxels) const;
 
 private:
     glm::uvec3          m_size;

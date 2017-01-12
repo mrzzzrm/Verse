@@ -22,6 +22,6 @@ class VoxelClusterPrimitiveTest:
     public NarrowphasePrimitiveTest
 {
 public:
-    virtual std::unique_ptr<RayCastIntersection> rayCast(const Ray3D & ray,
+    virtual std::unique_ptr<RayCastIntersection> lineTest(const Ray3D & ray,
                                                          const RigidBody & body) const override;
 };
