@@ -35,6 +35,10 @@ add_library(${target}
     Voxel/VoxelObject.h
     Voxel/VoxelObjectPrototype.cpp
     Voxel/VoxelObjectPrototype.h
+    Voxel/VoxelRenderChunk.cpp
+    Voxel/VoxelRenderChunk.h
+    Voxel/VoxelRenderChunkTree.cpp
+    Voxel/VoxelRenderChunkTree.h
     Voxel/VoxelRigidBodyPayload.cpp
     Voxel/VoxelRigidBodyPayload.h
     Voxel/VoxelWorld.cpp

@@ -20,6 +20,10 @@ public:
     VoxelClusterMarchingCubes(const VoxelClusterMarchingCubesTriangulation & triangulation,
                               const VoxelCluster<glm::vec3> & cluster,
                               float scale = 1.0f);
+    VoxelClusterMarchingCubes(const VoxelClusterMarchingCubesTriangulation & triangulation,
+                              const VoxelCluster<u8> & configCluster,
+                              const VoxelCluster<glm::vec3> & cluster,
+                              float scale = 1.0f);
 
     void run();
 
