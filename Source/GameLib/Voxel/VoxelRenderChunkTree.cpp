@@ -4,8 +4,10 @@
 
 #include <Deliberation/Core/Assert.h>
 #include <Deliberation/Core/StreamUtils.h>
+#include <Deliberation/Core/ScopeProfiler.h>
 
-VoxelRenderChunkTree::VoxelRenderChunkTree(const glm::uvec3 & size):
+VoxelRenderChunkTree::VoxelRenderChunkTree(const VoxelWorld & voxelWorld, const glm::uvec3 & size):
+    m_voxelWorld(voxelWorld),
     m_size(size)
 {
     Assert(m_size.x >= 0 && m_size.y >= 0 && m_size.z >= 0, "");
@@ -13,7 +15,7 @@ VoxelRenderChunkTree::VoxelRenderChunkTree(const glm::uvec3 & size):
     size_t numChunks = 0;
     size_t numNodes = 0;
 
-    glm::uvec3 maxChunkSize(8); // Must be > 2
+    glm::uvec3 maxChunkSize(16); // Must be > 2
 
     std::function<void(u32, const glm::ivec3 &, const glm::ivec3 &)> buildTree = [&] (
         u32 index,
@@ -37,8 +39,6 @@ VoxelRenderChunkTree::VoxelRenderChunkTree(const glm::uvec3 & size):
         }
         else
         {
-            std::cout << std::endl;
-
             u8 longestAxis = 0;
 
             if (size.x >= size.y && size.x >= size.z) longestAxis = 0;
@@ -62,7 +62,7 @@ VoxelRenderChunkTree::VoxelRenderChunkTree(const glm::uvec3 & size):
         }
     };
 
-    buildTree(0, glm::ivec3(-1), m_size + glm::uvec3(2));
+    buildTree(0, glm::ivec3(0), m_size);
 
     m_chunks.resize(numChunks);
     m_nodeMask.resize(m_nodes.size());
@@ -71,6 +71,8 @@ VoxelRenderChunkTree::VoxelRenderChunkTree(const glm::uvec3 & size):
 
 void VoxelRenderChunkTree::addVoxels(const std::vector<Voxel> & voxels)
 {
+    ScopeProfiler scopeProfiler("VoxelRenderChunkTree::addVoxels()");
+
     for (auto & voxel : voxels)
     {
         addVoxelToNode(0, voxel);
@@ -85,8 +87,10 @@ void VoxelRenderChunkTree::removeVoxel(const std::vector<glm::uvec3> & voxels)
     }
 }
 
-void VoxelRenderChunkTree::schedule(const VoxelWorld & voxelWorld, const Pose3D & pose)
+void VoxelRenderChunkTree::schedule(const Pose3D & pose)
 {
+    //ScopeProfiler scopeProfiler("VoxelRenderChunkTree::schedule()");
+
     for (auto & chunk : m_chunks)
     {
         if (!chunk.chunk) continue;
@@ -94,7 +98,7 @@ void VoxelRenderChunkTree::schedule(const VoxelWorld & voxelWorld, const Pose3D 
         Pose3D chunkPose(pose);
         chunkPose.setPosition(pose.position() + pose.orientation() * chunk.position);
 
-        chunk.chunk->schedule(voxelWorld, chunkPose);
+        chunk.chunk->schedule(chunkPose);
     }
 }
 
@@ -126,7 +130,7 @@ void VoxelRenderChunkTree::addVoxelToNode(u32 index, const Voxel & voxel)
 {
     auto & node = m_nodes[index];
 
-    auto & c = voxel.cell;
+    auto c = glm::ivec3(voxel.cell);
 
     if (c.x < node.llf.x || c.x > node.urb.x ||
         c.y < node.llf.y || c.y > node.urb.y ||
@@ -155,8 +159,9 @@ void VoxelRenderChunkTree::addVoxelToNode(u32 index, const Voxel & voxel)
         }
         else
         {
-            chunk.position = node.llf - glm::ivec3(1);
-            chunk.chunk = std::make_shared<VoxelRenderChunk>(glm::uvec3(node.urb - node.llf - glm::ivec3(1)));
+            chunk.position = node.llf;
+            chunk.chunk = std::make_shared<VoxelRenderChunk>(m_voxelWorld,
+                                                             glm::uvec3(node.urb - node.llf + glm::ivec3(1)));
         }
 
         Voxel chunkLocalVoxel = voxel;
@@ -184,7 +189,7 @@ void VoxelRenderChunkTree::removeVoxelFromNode(u32 index, const glm::uvec3 & vox
 
     if (node.leaf)
     {
-        Assert(!!m_chunks[node.chunk], "");
+        Assert(!!m_chunks[node.chunk].chunk, "");
         m_chunks[node.chunk].chunk->removeVoxel(voxel - glm::uvec3(node.llf));
     }
     else

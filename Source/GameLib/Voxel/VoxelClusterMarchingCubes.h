@@ -20,24 +20,26 @@ public:
     VoxelClusterMarchingCubes(const VoxelClusterMarchingCubesTriangulation & triangulation,
                               const VoxelCluster<glm::vec3> & cluster,
                               float scale = 1.0f);
-    VoxelClusterMarchingCubes(const VoxelClusterMarchingCubesTriangulation & triangulation,
-                              const VoxelCluster<u8> & configCluster,
-                              const VoxelCluster<glm::vec3> & cluster,
-                              float scale = 1.0f);
+
+    void onClusterChanged(const glm::uvec3 & llf, const glm::uvec3 & urb);
 
     void run();
+    void run(const glm::uvec3 & llf, const glm::uvec3 & urb);
 
     LayoutedBlob && takeVertices();
 
 private:
     bool checkVoxel(i32 x, i32 y, i32 z) const;
-    void generateMesh(i32 x, i32 y, i32 z, u8 configID);
-    glm::vec3 getCubeColorAtCorner(i32 x, i32 y, i32 z, u8 corner) const;
+    inline void generateMesh(i32 x, i32 y, i32 z, u8 configID);
+    inline glm::vec3 getCubeColorAtCorner(i32 x, i32 y, i32 z, u8 corner) const;
 
 private:
     const VoxelClusterMarchingCubesTriangulation &  m_triangulation;
     const VoxelCluster<glm::vec3> &                 m_cluster;
+    VoxelCluster<u8>                                m_configCluster;
+    bool                                            m_configClusterDirty = true;
     float                                           m_scale;
+    size_t                                          m_numVertices = 0;
 
     LayoutedBlob                                    m_vertices;
 

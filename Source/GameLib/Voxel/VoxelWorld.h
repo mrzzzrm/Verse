@@ -29,6 +29,7 @@ public:
     VoxelWorld(Context & context, PhysicsWorld & physicsWorld, const Camera3D & camera);
 
     Context & context() const;
+    const Camera3D & camera() const;
     const VoxelClusterMarchingCubesTriangulation & marchingCubesTriangulation() const;
     const Program & program() const;
 

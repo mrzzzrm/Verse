@@ -18,14 +18,14 @@ class VoxelWorld;
 
 class VoxelRenderChunkTree final {
 public:
-    VoxelRenderChunkTree(const glm::uvec3 & size);
+    VoxelRenderChunkTree(const VoxelWorld & voxelWorld, const glm::uvec3 & size);
 
     const glm::uvec3 & size() const { return m_size; }
 
     void addVoxels(const std::vector<Voxel> & voxels);
     void removeVoxel(const std::vector<glm::uvec3> & voxels);
 
-    void schedule(const VoxelWorld & voxelWorld, const Pose3D & pose);
+    void schedule(const Pose3D & pose);
 
     std::string toString() const;
 
@@ -52,6 +52,7 @@ private:
     void removeVoxelFromNode(u32 index, const glm::uvec3 & voxel);
 
 protected:
+    const VoxelWorld &  m_voxelWorld;
     glm::uvec3          m_size;
     std::vector<bool>   m_nodeMask;
     std::vector<Node>   m_nodes;

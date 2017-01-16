@@ -22,6 +22,11 @@ Context & VoxelWorld::context() const
     return m_context;
 }
 
+const Camera3D & VoxelWorld::camera() const
+{
+    return m_camera;
+}
+
 const VoxelClusterMarchingCubesTriangulation & VoxelWorld::marchingCubesTriangulation() const
 {
     return m_marchingCubesTriangulation;

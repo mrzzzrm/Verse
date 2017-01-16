@@ -6,14 +6,21 @@
 
 #include <Deliberation/Core/Assert.h>
 
+#include <Deliberation/Draw/Context.h>
+
+#include <Deliberation/Scene/Camera3D.h>
+
 #include "VoxelClusterMarchingCubes.h"
 #include "VoxelWorld.h"
 
-VoxelRenderChunk::VoxelRenderChunk(const glm::uvec3 & size):
+VoxelRenderChunk::VoxelRenderChunk(const VoxelWorld & voxelWorld, const glm::uvec3 & size):
     m_cluster(size),
+    m_voxelWorld(voxelWorld),
+    m_marchingCubes(voxelWorld.marchingCubesTriangulation(), m_cluster, 1.0f),
     m_configCluster(size - glm::uvec3(1))
 {
-
+    m_llfVisible = glm::uvec3(std::numeric_limits<uint32_t>::max());
+    m_urbVisible = glm::uvec3(0);
 }
 
 void VoxelRenderChunk::addVoxel(const Voxel & voxel)
@@ -24,6 +31,12 @@ void VoxelRenderChunk::addVoxel(const Voxel & voxel)
 
     m_llfDirty = glm::min(m_llfDirty, voxel.cell);
     m_urbDirty = glm::max(m_urbDirty, voxel.cell);
+
+    if (voxel.visible)
+    {
+        m_llfVisible = glm::min(m_llfVisible, voxel.cell);
+        m_urbVisible = glm::max(m_urbVisible, voxel.cell);
+    }
 
     m_drawDirty = true;
     m_voxelCount++;
@@ -47,57 +60,28 @@ std::shared_ptr<VoxelRenderChunk> VoxelRenderChunk::clone()
 
 }
 
-void VoxelRenderChunk::schedule(const VoxelWorld & voxelWorld, const Pose3D & pose)
+void VoxelRenderChunk::schedule(const Pose3D & pose)
 {
     if (m_voxelCount == 0) return;
 
     if (m_drawDirty)
     {
-        auto llfConfig = glm::max(glm::uvec3(0), m_llfDirty - 1);
-        auto urbConfig = glm::min(m_configCluster.size() - 1, m_urbDirty);
+        m_marchingCubes.onClusterChanged(m_llfDirty, m_urbDirty);
+        m_marchingCubes.run(m_llfVisible, m_urbVisible);
 
-        auto checkVoxel = [] (i32 x, i32 y, i32 z) 
-        {
-            auto &size = m_cluster.size();
+        m_draw = m_voxelWorld.context().createDraw(m_voxelWorld.program());
+        m_draw.addVertices(m_marchingCubes.takeVertices());
+        m_draw.state().setCullState(CullState::disabled());
 
-            if (x < 0 || y < 0 || z < 0 ||
-                x >= size.x || y >= size.y || z >= size.z)
-            {
-                return false;
-            }
-
-            return m_cluster.test({x, y, z});
-        };
-        
-        for (i32 z = llfConfig.z; z <= urbConfig.z; z++)
-        {
-            for (i32 y = llfConfig.y; y <= urbConfig.y; y++)
-            {
-                for (i32 x = llfConfig.x; x <= urbConfig.x; x++)
-                {
-                    auto config = std::bitset<8>();
-
-                    config.set(0, checkVoxel(x - 0, y - 0, z - 0));
-                    config.set(1, checkVoxel(x + 1, y - 0, z - 0));
-                    config.set(2, checkVoxel(x + 1, y - 0, z + 1));
-                    config.set(3, checkVoxel(x - 0, y - 0, z + 1));
-                    config.set(4, checkVoxel(x - 0, y + 1, z - 0));
-                    config.set(5, checkVoxel(x + 1, y + 1, z - 0));
-                    config.set(6, checkVoxel(x + 1, y + 1, z + 1));
-                    config.set(7, checkVoxel(x - 0, y + 1, z + 1));
-
-                    m_configCluster.set({x, y, z}, config.to_ullong());
-                }
-            }
-        }
-
-        auto marchingCubes = VoxelClusterMarchingCubes(voxelWorld.marchingCubesTriangulation(), m_cluster,
-                                                       m_configCluster, 1.0f);
-        marchingCubes.run();
+        m_transformUniform = m_draw.uniform("Transform");
+        m_viewProjectionUniform = m_draw.uniform("ViewProjection");
 
         m_drawDirty = false;
+        m_llfDirty = glm::uvec3(std::numeric_limits<uint32_t>::max());
+        m_urbDirty = glm::uvec3(0);
     }
 
+    m_viewProjectionUniform.set(m_voxelWorld.camera().viewProjection());
     m_transformUniform.set(pose.matrix());
     m_draw.schedule();
 }
