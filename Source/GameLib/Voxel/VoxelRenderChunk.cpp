@@ -24,8 +24,8 @@ VoxelRenderChunk::VoxelRenderChunk(const VoxelWorld & voxelWorld, const glm::uve
     m_urbRender(urbRender),
     m_colorOverride(colorOverride)
 {
-    m_llfVisible = glm::uvec3(std::numeric_limits<uint32_t>::max());
-    m_urbVisible = glm::uvec3(0);
+//    m_llfVisible = glm::uvec3(std::numeric_limits<uint32_t>::max());
+//    m_urbVisible = glm::uvec3(0);
 }
 
 void VoxelRenderChunk::addVoxel(const Voxel & voxel)
@@ -37,11 +37,11 @@ void VoxelRenderChunk::addVoxel(const Voxel & voxel)
     m_llfDirty = glm::min(m_llfDirty, voxel.cell);
     m_urbDirty = glm::max(m_urbDirty, voxel.cell);
 
-    if (voxel.visible)
+    if (voxel.hull)
     {
-        m_llfVisible = glm::min(m_llfVisible, voxel.cell);
-        m_urbVisible = glm::max(m_urbVisible, voxel.cell);
-        m_visibleVoxelCount++;
+//        m_llfVisible = glm::min(m_llfVisible, voxel.cell);
+//        m_urbVisible = glm::max(m_urbVisible, voxel.cell);
+        m_hullVoxelCount++;
     }
 
     m_drawDirty = true;
@@ -66,15 +66,16 @@ std::shared_ptr<VoxelRenderChunk> VoxelRenderChunk::clone()
 
 }
 
-void VoxelRenderChunk::schedule(const Pose3D & pose)
+void VoxelRenderChunk::schedule(const Pose3D & pose) const
 {
     if (m_voxelCount == 0) return;
-    if (m_visibleVoxelCount == 0) return;
+    //if (m_hullVoxelCount == 0) return;
 
     if (m_drawDirty)
     {
         m_marchingCubes.onClusterChanged(m_llfDirty, m_urbDirty);
-        m_marchingCubes.run(glm::max(m_llfRender, m_llfVisible), glm::min(m_urbRender, m_urbVisible), m_colorOverride);
+        //m_marchingCubes.run(glm::max(m_llfRender, m_llfVisible), glm::min(m_urbRender, m_urbVisible), m_colorOverride);
+        m_marchingCubes.run(m_llfRender, m_urbRender, m_colorOverride);
 
         m_draw = m_voxelWorld.context().createDraw(m_voxelWorld.program());
         m_draw.addVertices(m_marchingCubes.takeVertices());

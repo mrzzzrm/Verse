@@ -15,9 +15,8 @@ VoxelRenderChunkTree::VoxelRenderChunkTree(const VoxelWorld & voxelWorld, const 
     Assert(m_size.x >= 0 && m_size.y >= 0 && m_size.z >= 0, "");
 
     size_t numChunks = 0;
-    size_t numNodes = 0;
 
-    glm::uvec3 maxChunkSize(8); // Must be > 2
+    glm::uvec3 maxChunkSize(6); // Must be > 2
 
     std::function<void(u32, const glm::ivec3 &, const glm::ivec3 &, const glm::ivec3 &, const glm::ivec3)> buildTree = [&] (
         u32 index,
@@ -35,8 +34,6 @@ VoxelRenderChunkTree::VoxelRenderChunkTree(const VoxelWorld & voxelWorld, const 
         node.urb = urb;
         node.llfRender = llfRender;
         node.urbRender = urbRender;
-
-        std::cout << index << " " << node.llf << node.urb << " " << node.llfRender<<node.urbRender<<std::endl;
 
         auto size = urb - llf + 1;
         auto renderSize = urbRender - llfRender + 1;
@@ -57,7 +54,7 @@ VoxelRenderChunkTree::VoxelRenderChunkTree(const VoxelWorld & voxelWorld, const 
             else if (size.y >= size.x && size.y >= size.z) longestAxis = 1;
             else longestAxis = 2;
 
-            auto separationIndex = (urb[longestAxis] + llf[longestAxis]) / 2 + 1;
+            auto separationIndex = (urbRender[longestAxis] + llfRender[longestAxis]) / 2;
 
             auto urbLeft = urb;
             urbLeft[longestAxis] = separationIndex;
@@ -105,7 +102,7 @@ void VoxelRenderChunkTree::removeVoxels(const std::vector<glm::uvec3> & voxels)
     }
 }
 
-void VoxelRenderChunkTree::schedule(const Pose3D & pose)
+void VoxelRenderChunkTree::schedule(const Pose3D & pose) const
 {
     //ScopeProfiler scopeProfiler("VoxelRenderChunkTree::schedule()");
 
@@ -157,12 +154,10 @@ void VoxelRenderChunkTree::addVoxelToNode(u32 index, const Voxel & voxel)
         return;
     }
 
-    if (voxel.visible)
+    if (voxel.hull)
     {
-        node.hidden = false;
+        node.hull = true;
     }
-
-    node.empty = false;
 
     if (node.leaf)
     {

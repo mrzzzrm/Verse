@@ -8,6 +8,7 @@
 
 #include "VoxelRenderChunkTree.h"
 #include "VoxelWorld.h"
+#include "VoxelClusterPrimitiveTest.h"
 
 using namespace deliberation;
 
@@ -29,19 +30,19 @@ public:
         m_camera.setOrientation(glm::quat({-0.0f, 0.0f, 0.0f}));
         m_camera.setAspectRatio((float)context().backbuffer().width() / context().backbuffer().height());
 
-        m_renderTree.reset(*m_voxelWorld, glm::uvec3(6, 12, 20));
+        m_voxelData.reset(*m_voxelWorld, glm::uvec3(15, 20, 25));
 
         std::vector<Voxel> voxels;
-        for (size_t z = 0; z < m_renderTree->size().z; z++)
+        for (size_t z = 0; z < m_voxelData->size().z; z++)
         {
-            for (size_t y = 0; y < m_renderTree->size().y; y++)
+            for (size_t y = 0; y < m_voxelData->size().y; y++)
             {
-                for (size_t x = 0; x < m_renderTree->size().x; x++)
+                for (size_t x = 0; x < m_voxelData->size().x; x++)
                 {
                     Voxel voxel({x, y, z}, {1.0f, 0.0f, 0.0f});
-                    voxel.visible = x == 0 || x == m_renderTree->size().x - 1 ||
-                        y == 0 || y == m_renderTree->size().y - 1 ||
-                        z == 0 || z == m_renderTree->size().z - 1;
+                    voxel.hull = x == 0 || x == m_voxelData->size().x - 1 ||
+                        y == 0 || y == m_voxelData->size().y - 1 ||
+                        z == 0 || z == m_voxelData->size().z - 1;
 
                     voxels.emplace_back(voxel);
                 }
@@ -49,19 +50,21 @@ public:
         }
 
         std::vector<glm::uvec3> rvoxels;
-        for (size_t z = 0; z < m_renderTree->size().z - 2; z++)
+        for (size_t z = 0; z < m_voxelData->size().z - 5; z++)
         {
-            for (size_t y = 0; y < m_renderTree->size().y - 2; y++)
+            for (size_t y = 0; y < m_voxelData->size().y - 6; y++)
             {
-                for (size_t x = 0; x < m_renderTree->size().x - 2; x++)
+                for (size_t x = 0; x < m_voxelData->size().x - 5; x++)
                 {
                     rvoxels.emplace_back(x, y, z);
                 }
             }
         }
 
-        m_renderTree->addVoxels(voxels);
-        m_renderTree->removeVoxels(rvoxels);
+        m_voxelData->addVoxels(voxels);
+        m_voxelData->removeVoxels(rvoxels);
+
+        m_object.reset(*m_voxelData);
 
         m_navigator.reset(m_camera, input(), 5.0f);
 
@@ -71,16 +74,35 @@ public:
     void onFrame(float seconds) override
     {
         m_navigator->update(seconds);
+
+        if (input().keyPressed(InputBase::Key_SPACE))
+        {
+            auto mouseNearPlane = (input().mousePosition() + 1.0f) / 2.0f;
+            auto nearPlane = m_camera.nearPlane();
+            auto mouseWorld = nearPlane.origin() + mouseNearPlane.x * nearPlane.right() + mouseNearPlane.y * nearPlane.up();
+            auto fireDirection = (mouseWorld - m_camera.position()) * 1000.0f;
+            auto origin = m_camera.position();
+            auto direction = fireDirection;
+
+            glm::uvec3 voxel;
+            auto hit = m_voxelData->shapeTree().lineCast(Ray3D(origin, fireDirection), voxel);
+
+            if (hit) m_object->removeVoxels({voxel});
+        }
+
         m_clear.schedule();
-        m_renderTree->schedule(Pose3D());
+        m_object->schedule();
     }
 
 private:
     Camera3D    m_camera;
     Clear       m_clear;
 
-    Optional<VoxelRenderChunkTree>
-                m_renderTree;
+    Optional<VoxelObjectVoxelData>
+                m_voxelData;
+
+    Optional<VoxelObject>
+                m_object;
 
     PhysicsWorld
                 m_physicsWorld;

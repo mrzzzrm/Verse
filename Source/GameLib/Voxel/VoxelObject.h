@@ -9,6 +9,7 @@
 #include "VoxelClusterShape.h"
 #include "VoxelDefines.h"
 #include "VoxelModel.h"
+#include "VoxelObjectVoxelData.h"
 
 namespace deliberation
 {
@@ -28,30 +29,28 @@ struct VoxelObjectID
 class VoxelObject final
 {
 public:
-    VoxelObject(const std::shared_ptr<VoxelObjectPrototype> & prototype);
+    VoxelObject(const VoxelObjectVoxelData & prototype);
     ~VoxelObject();
 
     const VoxelObjectID & id() const;
-
     const Pose3D & pose() const;
-
     std::shared_ptr<RigidBody> & body();
-    const std::shared_ptr<VoxelObjectPrototype> & prototype() const;
 
     void setId(VoxelObjectID id);
-
     void setPose(const Pose3D & pose);
-    void setPrototype(const std::shared_ptr<VoxelObjectPrototype> & prototype);
 
-    void schedule(const Camera3D & camera);
+    void addVoxels(const std::vector<Voxel> & voxels);
+    void removeVoxels(const std::vector<glm::uvec3> & voxels);
+
+    void schedule();
 
 private:
-    std::shared_ptr<VoxelObjectPrototype>
-                    m_prototype;
+    const VoxelWorld &      m_voxelWorld;
+    VoxelObjectVoxelData    m_voxelData;
     std::shared_ptr<VoxelRigidBodyPayload>
-                    m_rigidBodyPayload;
-    VoxelObjectID   m_id;
-    Pose3D          m_pose;
+                            m_rigidBodyPayload;
+    VoxelObjectID           m_id;
+    Pose3D                  m_pose;
     std::shared_ptr<RigidBody>
-                    m_body;
+                            m_body;
 };

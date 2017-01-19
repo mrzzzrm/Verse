@@ -60,19 +60,19 @@ void VoxelWorld::removeVoxel(const VoxelObjectID & voxelObjectID, const glm::uve
     Assert (it != m_objectsByUID.end(), "No such object");
 
     auto & object = it->second;
-
-    std::cout << "Prototype ref count: " << object->prototype()->refCount() << std::endl;
-
-    Assert(object->prototype()->refCount() > 0, "");
-
-    if (object->prototype()->refCount() > 1)
-    {
-        auto newPrototype = object->prototype()->clone();
-        object->setPrototype(newPrototype);
-    }
-
-    object->prototype()->removeVoxel(voxel);
-    object->body()->setShape(object->prototype()->shape());
+//
+//    std::cout << "Prototype ref count: " << object->prototype()->refCount() << std::endl;
+//
+//    Assert(object->prototype()->refCount() > 0, "");
+//
+//    if (object->prototype()->refCount() > 1)
+//    {
+//        auto newPrototype = object->prototype()->clone();
+//        object->setPrototype(newPrototype);
+//    }
+//
+//    object->prototype()->removeVoxel(voxel);
+//    object->body()->setShape(object->prototype()->shape());
 }
 
 void VoxelWorld::update(float seconds)
@@ -87,6 +87,6 @@ void VoxelWorld::update(float seconds)
 
         object->setPose(pose);
 
-        object->schedule(m_camera);
+        object->schedule();
     }
 }

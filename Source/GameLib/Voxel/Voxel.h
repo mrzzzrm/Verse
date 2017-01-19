@@ -11,5 +11,5 @@ struct Voxel
 
     glm::uvec3  cell;
     glm::vec3   color;
-    bool        visible = false;
+    bool        hull = false;
 };

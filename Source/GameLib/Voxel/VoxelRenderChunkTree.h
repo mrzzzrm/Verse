@@ -27,7 +27,7 @@ public:
     void addVoxels(const std::vector<Voxel> & voxels);
     void removeVoxels(const std::vector<glm::uvec3> & voxels);
 
-    void schedule(const Pose3D & pose);
+    void schedule(const Pose3D & pose) const;
 
     std::string toString() const;
 
@@ -42,8 +42,7 @@ protected:
         glm::ivec3  llfRender;
         glm::ivec3  urbRender;
 
-        bool        empty = true;
-        bool        hidden = true;
+        bool        hull = false;
         size_t      chunk = std::numeric_limits<size_t>::max();
         bool        leaf = false;
     };
