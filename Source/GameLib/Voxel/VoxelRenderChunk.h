@@ -17,7 +17,9 @@ class VoxelWorld;
 class VoxelRenderChunk final
 {
 public:
-    VoxelRenderChunk(const VoxelWorld & voxelWorld, const glm::uvec3 & size);
+    VoxelRenderChunk(const VoxelWorld & voxelWorld, const glm::uvec3 & size,
+                     const glm::uvec3 & llfRender, const glm::uvec3 & urbRender,
+                     const Optional<glm::vec3> & colorOverride);
 
     void addVoxel(const Voxel & voxel);
     void removeVoxel(const glm::uvec3 & voxel);
@@ -39,7 +41,11 @@ private:
     glm::uvec3          m_urbDirty;
     glm::uvec3          m_llfVisible;
     glm::uvec3          m_urbVisible;
+    glm::uvec3          m_llfRender;
+    glm::uvec3          m_urbRender;
     Draw                m_draw;
     Uniform             m_transformUniform;
     Uniform             m_viewProjectionUniform;
+    size_t              m_visibleVoxelCount = 0;
+    Optional<glm::vec3> m_colorOverride;
 };

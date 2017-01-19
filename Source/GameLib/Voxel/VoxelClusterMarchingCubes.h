@@ -24,12 +24,12 @@ public:
     void onClusterChanged(const glm::uvec3 & llf, const glm::uvec3 & urb);
 
     void run();
-    void run(const glm::uvec3 & llf, const glm::uvec3 & urb);
+    void run(const glm::uvec3 & llf, const glm::uvec3 & urb,
+             const Optional<glm::vec3> & colorOverride = Optional<glm::vec3>());
 
     LayoutedBlob && takeVertices();
 
 private:
-    bool checkVoxel(i32 x, i32 y, i32 z) const;
     inline void generateMesh(i32 x, i32 y, i32 z, u8 configID);
     inline glm::vec3 getCubeColorAtCorner(i32 x, i32 y, i32 z, u8 corner) const;
 

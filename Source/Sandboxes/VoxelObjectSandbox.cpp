@@ -29,7 +29,7 @@ public:
         m_camera.setOrientation(glm::quat({-0.0f, 0.0f, 0.0f}));
         m_camera.setAspectRatio((float)context().backbuffer().width() / context().backbuffer().height());
 
-        m_renderTree.reset(*m_voxelWorld, glm::uvec3(16, 16, 16));
+        m_renderTree.reset(*m_voxelWorld, glm::uvec3(6, 12, 20));
 
         std::vector<Voxel> voxels;
         for (size_t z = 0; z < m_renderTree->size().z; z++)
@@ -48,7 +48,20 @@ public:
             }
         }
 
+        std::vector<glm::uvec3> rvoxels;
+        for (size_t z = 0; z < m_renderTree->size().z - 2; z++)
+        {
+            for (size_t y = 0; y < m_renderTree->size().y - 2; y++)
+            {
+                for (size_t x = 0; x < m_renderTree->size().x - 2; x++)
+                {
+                    rvoxels.emplace_back(x, y, z);
+                }
+            }
+        }
+
         m_renderTree->addVoxels(voxels);
+        m_renderTree->removeVoxels(rvoxels);
 
         m_navigator.reset(m_camera, input(), 5.0f);
 
@@ -57,8 +70,6 @@ public:
 
     void onFrame(float seconds) override
     {
-        quit(0);
-
         m_navigator->update(seconds);
         m_clear.schedule();
         m_renderTree->schedule(Pose3D());

@@ -6,6 +6,8 @@
 
 #include <glm/glm.hpp>
 
+#include <Deliberation/Core/RandomColorGenerator.h>
+
 #include "Voxel.h"
 #include "VoxelRenderChunk.h"
 
@@ -23,7 +25,7 @@ public:
     const glm::uvec3 & size() const { return m_size; }
 
     void addVoxels(const std::vector<Voxel> & voxels);
-    void removeVoxel(const std::vector<glm::uvec3> & voxels);
+    void removeVoxels(const std::vector<glm::uvec3> & voxels);
 
     void schedule(const Pose3D & pose);
 
@@ -32,8 +34,14 @@ public:
 protected:
     struct Node
     {
+        // Object volume the node gets voxels from
         glm::ivec3  llf;
         glm::ivec3  urb;
+
+        // Object volume it is actually rendering
+        glm::ivec3  llfRender;
+        glm::ivec3  urbRender;
+
         bool        empty = true;
         bool        hidden = true;
         size_t      chunk = std::numeric_limits<size_t>::max();
@@ -58,4 +66,6 @@ protected:
     std::vector<Node>   m_nodes;
     std::vector<ChunkWrapper>
                         m_chunks;
+    RandomColorGenerator
+                        m_colorGenerator;
 };

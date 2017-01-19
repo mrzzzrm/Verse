@@ -16,6 +16,12 @@ const glm::uvec3 & VoxelCluster<T>::size() const
 }
 
 template<typename T>
+std::vector<T> & VoxelCluster<T>::voxels()
+{
+    return m_voxels;
+}
+
+template<typename T>
 const std::vector<T> & VoxelCluster<T>::voxels() const
 {
     return m_voxels;
@@ -29,14 +35,21 @@ void VoxelCluster<T>::set(const glm::uvec3 & voxel, const T & value)
 }
 
 template<typename T>
-T VoxelCluster<T>::get(const glm::uvec3 & voxel)
+void VoxelCluster<T>::set(size_t index, const T & value)
 {
-    auto index = voxelToIndex(voxel);
+    Assert(index < m_voxels.size(), "Voxel out of bounds");
+    m_voxels[index] = value;
+}
+
+template<typename T>
+const T & VoxelCluster<T>::get(size_t index) const
+{
+    Assert(index < m_voxels.size(), "Voxel out of bounds");
     return m_voxels[index];
 }
 
 template<typename T>
-const T VoxelCluster<T>::get(const glm::uvec3 & voxel) const
+const T & VoxelCluster<T>::get(const glm::uvec3 & voxel) const
 {
     auto index = voxelToIndex(voxel);
     return m_voxels[index];
@@ -46,6 +59,12 @@ template<typename T>
 bool VoxelCluster<T>::test(const glm::uvec3 & voxel) const
 {
     return get(voxel) != EMPTY_VOXEL;
+}
+
+template<typename T>
+bool VoxelCluster<T>::test(size_t index) const
+{
+    return get(index) != EMPTY_VOXEL;
 }
 
 template<typename T>

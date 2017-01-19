@@ -10,28 +10,40 @@ VoxelRenderChunkTree::VoxelRenderChunkTree(const VoxelWorld & voxelWorld, const 
     m_voxelWorld(voxelWorld),
     m_size(size)
 {
+    ScopeProfiler scopeProfiler("VoxelRenderChunkTree::VoxelRenderChunkTree()");
+
     Assert(m_size.x >= 0 && m_size.y >= 0 && m_size.z >= 0, "");
 
     size_t numChunks = 0;
     size_t numNodes = 0;
 
-    glm::uvec3 maxChunkSize(16); // Must be > 2
+    glm::uvec3 maxChunkSize(8); // Must be > 2
 
-    std::function<void(u32, const glm::ivec3 &, const glm::ivec3 &)> buildTree = [&] (
+    std::function<void(u32, const glm::ivec3 &, const glm::ivec3 &, const glm::ivec3 &, const glm::ivec3)> buildTree = [&] (
         u32 index,
-        const glm::uvec3 & llf,
-        const glm::uvec3 & size)
+        const glm::ivec3 & llf,
+        const glm::ivec3 & urb,
+        const glm::ivec3 & llfRender,
+        const glm::ivec3 & urbRender
+    )
     {
         if (index >= m_nodes.size()) m_nodes.resize(index + 1);
 
         auto & node = m_nodes[index];
 
         node.llf = llf;
-        node.urb = glm::ivec3(llf + size) - glm::ivec3(1);
+        node.urb = urb;
+        node.llfRender = llfRender;
+        node.urbRender = urbRender;
 
-        if (size.x <= maxChunkSize.x &&
-            size.y <= maxChunkSize.y &&
-            size.z <= maxChunkSize.z)
+        std::cout << index << " " << node.llf << node.urb << " " << node.llfRender<<node.urbRender<<std::endl;
+
+        auto size = urb - llf + 1;
+        auto renderSize = urbRender - llfRender + 1;
+
+        if (renderSize.x <= maxChunkSize.x &&
+            renderSize.y <= maxChunkSize.y &&
+            renderSize.z <= maxChunkSize.z)
         {
             node.chunk = numChunks;
             numChunks++;
@@ -39,30 +51,36 @@ VoxelRenderChunkTree::VoxelRenderChunkTree(const VoxelWorld & voxelWorld, const 
         }
         else
         {
-            u8 longestAxis = 0;
+            auto longestAxis = 0;
 
             if (size.x >= size.y && size.x >= size.z) longestAxis = 0;
             else if (size.y >= size.x && size.y >= size.z) longestAxis = 1;
             else longestAxis = 2;
 
-            i32 sharedIndex = size[longestAxis] / 2;
+            auto separationIndex = (urb[longestAxis] + llf[longestAxis]) / 2 + 1;
 
-            auto leftSize = size;
-            leftSize[longestAxis] = sharedIndex + 1 ;
+            auto urbLeft = urb;
+            urbLeft[longestAxis] = separationIndex;
 
-            auto rightSize = size;
-            rightSize[longestAxis] -= sharedIndex;
+            auto urbRenderLeft = urbLeft;
+            urbRenderLeft[longestAxis]--;
+            urbRenderLeft = glm::min(urbRenderLeft, urbRender);
 
-            buildTree(index * 2 + 1, llf, leftSize);
+            auto llfRight = llf;
+            llfRight[longestAxis] = separationIndex - 1;
 
-            glm::uvec3 llfOffset;
-            llfOffset[longestAxis] = leftSize[longestAxis] - 1;
+            auto llfRenderRight = llf;
+            llfRenderRight[longestAxis] = separationIndex;
+            llfRenderRight = glm::max(llfRenderRight, llfRender);
 
-            buildTree(index * 2 + 2, llf + llfOffset, rightSize);
+            buildTree(index * 2 + 1, llf, urbLeft, llfRender, urbRenderLeft);
+            buildTree(index * 2 + 2, llfRight, urb, llfRenderRight, urbRender);
         }
     };
 
-    buildTree(0, glm::ivec3(0), m_size);
+    auto llf = glm::ivec3(0);
+    auto urb = glm::ivec3(m_size) - 1;
+    buildTree(0, llf, urb, llf, urb);
 
     m_chunks.resize(numChunks);
     m_nodeMask.resize(m_nodes.size());
@@ -79,7 +97,7 @@ void VoxelRenderChunkTree::addVoxels(const std::vector<Voxel> & voxels)
     }
 }
 
-void VoxelRenderChunkTree::removeVoxel(const std::vector<glm::uvec3> & voxels)
+void VoxelRenderChunkTree::removeVoxels(const std::vector<glm::uvec3> & voxels)
 {
     for (auto & voxel : voxels)
     {
@@ -161,7 +179,9 @@ void VoxelRenderChunkTree::addVoxelToNode(u32 index, const Voxel & voxel)
         {
             chunk.position = node.llf;
             chunk.chunk = std::make_shared<VoxelRenderChunk>(m_voxelWorld,
-                                                             glm::uvec3(node.urb - node.llf + glm::ivec3(1)));
+                                                             glm::uvec3(node.urb - node.llf + glm::ivec3(1)),
+                                                             node.llfRender - node.llf, node.urbRender - node.llf,
+                                                             Optional<glm::vec3>(m_colorGenerator.generate()));
         }
 
         Voxel chunkLocalVoxel = voxel;
