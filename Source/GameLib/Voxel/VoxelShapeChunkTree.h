@@ -2,7 +2,12 @@
 
 #include <vector>
 
+#include <glm/glm.hpp>
+
+#include <Deliberation/Core/Math/Sphere.h"
+
 #include "GameLib.h"
+#include "VoxelShapeTree.h"
 #include "VoxelShapeChunk.h"
 #include "Voxel.h"
 
@@ -13,4 +18,6 @@ public:
     void removeVoxels(const std::vector<glm::uvec3> & voxels);
 
     bool lineCast(const Ray3D & ray, glm::uvec3 & voxel) const;
+
+private:
 };
