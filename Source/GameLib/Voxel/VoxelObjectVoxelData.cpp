@@ -3,7 +3,8 @@
 VoxelObjectVoxelData::VoxelObjectVoxelData(const VoxelWorld & voxelWorld, const glm::uvec3 & size):
     m_voxelWorld(voxelWorld),
     m_size(size),
-    m_renderTree(voxelWorld, m_size)
+    m_renderTree(voxelWorld, m_size),
+    m_shapeTree(m_size)
 {
 
 }
@@ -23,7 +24,7 @@ const VoxelRenderChunkTree & VoxelObjectVoxelData::renderTree() const
     return m_renderTree;
 }
 
-const VoxelShapeChunkTree & VoxelObjectVoxelData::shapeTree() const
+const VoxelShapeTree & VoxelObjectVoxelData::shapeTree() const
 {
     return m_shapeTree;
 }
@@ -31,9 +32,11 @@ const VoxelShapeChunkTree & VoxelObjectVoxelData::shapeTree() const
 void VoxelObjectVoxelData::addVoxels(std::vector<Voxel> voxels)
 {
     m_renderTree.addVoxels(voxels);
+    m_shapeTree.addVoxels(voxels);
 }
 
 void VoxelObjectVoxelData::removeVoxels(const std::vector<glm::uvec3> & voxels)
 {
     m_renderTree.removeVoxels(voxels);
+    m_shapeTree.removeVoxels(voxels);
 }

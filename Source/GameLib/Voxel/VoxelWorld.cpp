@@ -6,8 +6,6 @@
 
 #include <Deliberation/Physics/PhysicsWorld.h>
 
-#include "VoxelObjectPrototype.h"
-
 VoxelWorld::VoxelWorld(Context & context, PhysicsWorld & physicsWorld, const Camera3D & camera):
     m_context(context),
     m_physicsWorld(physicsWorld),

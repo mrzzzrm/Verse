@@ -30,7 +30,7 @@ public:
         m_camera.setOrientation(glm::quat({-0.0f, 0.0f, 0.0f}));
         m_camera.setAspectRatio((float)context().backbuffer().width() / context().backbuffer().height());
 
-        m_voxelData.reset(*m_voxelWorld, glm::uvec3(15, 20, 25));
+        m_voxelData.reset(*m_voxelWorld, glm::uvec3(20, 20, 20));
 
         std::vector<Voxel> voxels;
         for (size_t z = 0; z < m_voxelData->size().z; z++)
@@ -48,21 +48,21 @@ public:
                 }
             }
         }
-
-        std::vector<glm::uvec3> rvoxels;
-        for (size_t z = 0; z < m_voxelData->size().z - 5; z++)
-        {
-            for (size_t y = 0; y < m_voxelData->size().y - 6; y++)
-            {
-                for (size_t x = 0; x < m_voxelData->size().x - 5; x++)
-                {
-                    rvoxels.emplace_back(x, y, z);
-                }
-            }
-        }
+//
+//        std::vector<glm::uvec3> rvoxels;
+//        for (size_t z = 0; z < m_voxelData->size().z - 5; z++)
+//        {
+//            for (size_t y = 0; y < m_voxelData->size().y - 6; y++)
+//            {
+//                for (size_t x = 0; x < m_voxelData->size().x - 5; x++)
+//                {
+//                    rvoxels.emplace_back(x, y, z);
+//                }
+//            }
+//        }
 
         m_voxelData->addVoxels(voxels);
-        m_voxelData->removeVoxels(rvoxels);
+//        m_voxelData->removeVoxels(rvoxels);
 
         m_object.reset(*m_voxelData);
 
@@ -75,7 +75,7 @@ public:
     {
         m_navigator->update(seconds);
 
-        if (input().keyPressed(InputBase::Key_SPACE))
+        if (input().keyDown(InputBase::Key_SPACE))
         {
             auto mouseNearPlane = (input().mousePosition() + 1.0f) / 2.0f;
             auto nearPlane = m_camera.nearPlane();
@@ -85,7 +85,7 @@ public:
             auto direction = fireDirection;
 
             glm::uvec3 voxel;
-            auto hit = m_voxelData->shapeTree().lineCast(Ray3D(origin, fireDirection), voxel);
+            auto hit = m_voxelData->shapeTree().lineCast(Transform3D(), Ray3D(origin, fireDirection), voxel);
 
             if (hit) m_object->removeVoxels({voxel});
         }

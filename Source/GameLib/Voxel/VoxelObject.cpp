@@ -1,6 +1,5 @@
 #include "VoxelObject.h"
 
-#include "VoxelObjectPrototype.h"
 #include "VoxelRigidBodyPayload.h"
 
 VoxelObject::VoxelObject(const VoxelObjectVoxelData & voxelData):

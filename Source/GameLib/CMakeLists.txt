@@ -41,8 +41,8 @@ add_library(${target}
     Voxel/VoxelRenderChunkTree.h
     Voxel/VoxelRigidBodyPayload.cpp
     Voxel/VoxelRigidBodyPayload.h
-    Voxel/VoxelShapeChunkTree.cpp
-    Voxel/VoxelShapeChunkTree.h
+    Voxel/VoxelShapeTree.cpp
+    Voxel/VoxelShapeTree.h
     Voxel/VoxelWorld.cpp
     Voxel/VoxelWorld.h
     Voxel/VoxReader.cpp

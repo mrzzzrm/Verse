@@ -5,7 +5,7 @@
 #include "GameLib.h"
 #include "Voxel.h"
 #include "VoxelRenderChunkTree.h"
-#include "VoxelShapeChunkTree.h"
+#include "VoxelShapeTree.h"
 
 class VoxelWorld;
 
@@ -17,7 +17,7 @@ public:
     const VoxelWorld & voxelWorld() const;
     const glm::uvec3 & size() const;
     const VoxelRenderChunkTree & renderTree() const;
-    const VoxelShapeChunkTree & shapeTree() const;
+    const VoxelShapeTree & shapeTree() const;
 
     void addVoxels(std::vector<Voxel> voxels);
     void removeVoxels(const std::vector<glm::uvec3> & voxels);
@@ -26,5 +26,5 @@ private:
     const VoxelWorld &    m_voxelWorld;
     glm::uvec3            m_size;
     VoxelRenderChunkTree  m_renderTree;
-    VoxelShapeChunkTree   m_shapeTree;
+    VoxelShapeTree        m_shapeTree;
 };
