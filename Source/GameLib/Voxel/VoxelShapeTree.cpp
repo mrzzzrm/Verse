@@ -25,6 +25,11 @@ void VoxelShapeTree::removeVoxels(const std::vector<glm::uvec3> & voxels)
     m_tree.removeVoxels(voxels);
 }
 
+void VoxelShapeTree::updateHull(const glm::uvec3 & voxel, bool hull)
+{
+    m_tree.updateHull(0, voxel, hull);
+}
+
 bool VoxelShapeTree::lineCast(const Transform3D & transform, const Ray3D & ray, glm::uvec3 & voxel) const
 {
     std::vector<glm::uvec3> voxels;
@@ -120,6 +125,37 @@ VoxelShapeTree::Subtree<T>::Subtree(const glm::uvec3 & size, const glm::uvec3 & 
     buildTree(0, llf, urb);
 
     leaves.resize(numLeafs);
+}
+
+template<typename T>
+void VoxelShapeTree::Subtree<T>::updateHull(size_t index, const glm::uvec3 & voxel, bool hull)
+{
+    auto & node = nodes[index];
+
+    if (hull) node.numHullVoxels++;
+    else node.numHullVoxels--;
+
+    if (node.leaf != NO_LEAF)
+    {
+        updateHullLeaf(index, voxel, hull);
+    }
+    else
+    {
+        updateHull(index * 2 + 1, voxel, hull);
+        updateHull(index * 2 + 2, voxel, hull);
+    }
+}
+
+template<>
+void VoxelShapeTree::Subtree<VoxelShapeTree::ChunkLeaf>::updateHullLeaf(size_t index, const glm::uvec3 & voxel, bool hull)
+{
+    auto & node = nodes[index];
+    leaves[node.leaf]->updateHull(0, voxel, hull);
+}
+
+template<>
+void VoxelShapeTree::Subtree<VoxelShapeTree::VoxelLeaf>::updateHullLeaf(size_t index, const glm::uvec3 & voxel, bool hull)
+{
 }
 
 template<typename T>

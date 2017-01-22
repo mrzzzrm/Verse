@@ -24,6 +24,7 @@ public:
 
     void addVoxels(const std::vector<Voxel> & voxels);
     void removeVoxels(const std::vector<glm::uvec3> & voxels);
+    void updateHull(const glm::uvec3 & voxel, bool hull);
 
     bool lineCast(const Transform3D & transform, const Ray3D & ray, glm::uvec3 & voxel) const;
 
@@ -42,6 +43,8 @@ private:
         void removeVoxelFromNode(size_t index, const glm::uvec3 & voxel);
         void addVoxelToLeaf(size_t index, const Voxel & voxel);
         void removeVoxelFromLeaf(size_t index, const glm::uvec3 & voxel);
+        void updateHull(size_t index, const glm::uvec3 & voxel, bool hull);
+        void updateHullLeaf(size_t index, const glm::uvec3 & voxel, bool hull);
 
         void lineCast(size_t index, const Ray3D & ray, std::vector<glm::uvec3> & voxels) const;
         void lineCastLeaf(size_t index, const Ray3D & ray, std::vector<glm::uvec3> & voxels) const;
