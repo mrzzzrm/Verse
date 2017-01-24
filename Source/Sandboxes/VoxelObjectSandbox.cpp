@@ -30,7 +30,7 @@ public:
         m_camera.setOrientation(glm::quat({-0.0f, 0.0f, 0.0f}));
         m_camera.setAspectRatio((float)context().backbuffer().width() / context().backbuffer().height());
 
-        m_voxelData.reset(*m_voxelWorld, glm::uvec3(20, 1, 1));
+        m_voxelData.reset(*m_voxelWorld, glm::uvec3(60,60,60));
 
         std::vector<Voxel> voxels;
         for (size_t z = 0; z < m_voxelData->size().z; z++)
@@ -46,8 +46,6 @@ public:
         }
 
         m_voxelData->addVoxels(voxels);
-        //m_voxelData->removeVoxels(rvoxels);
-
 
 //        std::vector<glm::uvec3> rvoxels;
 //        for (size_t z = 0; z < m_voxelData->size().z; z++)
@@ -56,13 +54,18 @@ public:
 //            {
 //                for (size_t x = 0; x < m_voxelData->size().x; x++)
 //                {
-//                    if (glm::uvec3(x, y, z) == m_voxelData->size() - 1u) continue;
-//
-//                    m_voxelData->removeVoxels({glm::uvec3(x, y, z)});
+//                    auto a = m_voxelData->size() - 1u;
+//                    auto b = a - glm::uvec3(1,0,0);
+
+//                    if (glm::uvec3(x, y, z) == a) continue;
+//                    if (glm::uvec3(x, y, z) == b) continue;
+
 //                    //rvoxels.emplace_back(x, y, z);
+//                    m_voxelData->removeVoxels({glm::uvec3(x, y, z)});
 //                }
 //            }
 //        }
+
 
         m_object.reset(*m_voxelData);
 
@@ -114,12 +117,12 @@ public:
 
         m_clear.schedule();
         m_object->schedule();
-
-        if (!m_removalDone)
-        {
-            m_voxelData->removeVoxels({glm::uvec3(0,0,0)});
-            m_removalDone = true;
-        }
+//
+//        if (!m_removalDone)
+//        {
+//          //  m_object->removeVoxels({glm::uvec3(0,0,0)});
+//            m_removalDone = true;
+//        }
     }
 
 private:

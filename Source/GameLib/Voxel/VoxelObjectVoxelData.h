@@ -19,6 +19,7 @@ public:
     const glm::uvec3 & size() const;
     const VoxelRenderChunkTree & renderTree() const;
     const VoxelShapeTree & shapeTree() const;
+    const VoxelHull & hull() const;
 
     void addVoxels(std::vector<Voxel> voxels);
     void removeVoxels(const std::vector<glm::uvec3> & voxels);

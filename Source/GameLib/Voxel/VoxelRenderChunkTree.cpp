@@ -16,7 +16,7 @@ VoxelRenderChunkTree::VoxelRenderChunkTree(const VoxelWorld & voxelWorld, const 
 
     size_t numChunks = 0;
 
-    glm::uvec3 maxChunkSize(3); // Must be > 2
+    glm::uvec3 maxChunkSize(15); // Must be > 2
 
     std::function<void(u32, const glm::ivec3 &, const glm::ivec3 &, const glm::ivec3 &, const glm::ivec3)> buildTree = [&] (
         u32 index,
@@ -144,7 +144,9 @@ void VoxelRenderChunkTree::addVoxelToNode(u32 index, const Voxel & voxel, bool v
 
     auto & node = m_nodes[index];
 
-    if (visible) node.numVisibleVoxels++;
+    auto voxelMadeVisibleByThisNode = visible && isVoxelRenderedByNode(index, voxel.cell);
+
+    if (voxelMadeVisibleByThisNode) node.numVisibleVoxels++;
 
     if (node.leaf)
     {
@@ -169,7 +171,7 @@ void VoxelRenderChunkTree::addVoxelToNode(u32 index, const Voxel & voxel, bool v
         Voxel chunkLocalVoxel = voxel;
         chunkLocalVoxel.cell -= node.llf;
 
-        chunk.chunk->addVoxel(chunkLocalVoxel, visible);
+        chunk.chunk->addVoxel(chunkLocalVoxel, voxelMadeVisibleByThisNode);
     }
     else
     {
@@ -184,17 +186,18 @@ void VoxelRenderChunkTree::removeVoxelFromNode(u32 index, const glm::uvec3 & vox
 
     auto & node = m_nodes[index];
 
+    if (visible && isVoxelRenderedByNode(index, voxel)) node.numVisibleVoxels--;
+
     if (node.leaf)
     {
         Assert(!!m_chunks[node.chunk].chunk, "");
-        m_chunks[node.chunk].chunk->removeVoxel(voxel - glm::uvec3(node.llf), visible);
+        m_chunks[node.chunk].chunk->removeVoxel(voxel - glm::uvec3(node.llf),
+                                                visible && isVoxelRenderedByNode(index, voxel));
     }
     else
     {
         removeVoxelFromNode(index * 2 + 1, voxel, visible);
         removeVoxelFromNode(index * 2 + 2, voxel, visible);
-
-        if (visible) node.numVisibleVoxels--;
     }
 }
 
@@ -204,12 +207,17 @@ void VoxelRenderChunkTree::updateVoxelVisibilityInNode(size_t index, const glm::
 
     auto & node = m_nodes[index];
 
-    if (visible) node.numVisibleVoxels++;
-    else node.numVisibleVoxels--;
+    auto voxelIsRenderedByThisNode = isVoxelRenderedByNode(index, voxel);
+
+    if (voxelIsRenderedByThisNode)
+    {
+        if (visible) node.numVisibleVoxels++;
+        else node.numVisibleVoxels--;
+    }
 
     if (node.leaf)
     {
-        m_chunks[node.chunk].chunk->updateVoxelVisibility(voxel - glm::uvec3(node.llf), visible);
+        m_chunks[node.chunk].chunk->updateVoxelVisibility(voxel - glm::uvec3(node.llf), visible && voxelIsRenderedByThisNode);
     }
     else
     {
@@ -227,4 +235,15 @@ bool VoxelRenderChunkTree::isVoxelInNode(size_t index, const glm::uvec3 & voxel)
     return c.x >= node.llf.x && c.x <= node.urb.x &&
         c.y >= node.llf.y && c.y <= node.urb.y &&
         c.z >= node.llf.z && c.z <= node.urb.z;
+}
+
+bool VoxelRenderChunkTree::isVoxelRenderedByNode(size_t index, const glm::uvec3 & voxel)
+{
+    auto & node = m_nodes[index];
+
+    auto c = glm::ivec3(voxel);
+
+    return c.x >= node.llfRender.x && c.x <= node.urbRender.x &&
+        c.y >= node.llfRender.y && c.y <= node.urbRender.y &&
+        c.z >= node.llfRender.z && c.z <= node.urbRender.z;
 }

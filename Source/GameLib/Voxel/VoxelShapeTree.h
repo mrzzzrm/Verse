@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <stdlib.h>
+#include <string>
 #include <vector>
 
 #include <glm/glm.hpp>
@@ -26,6 +27,8 @@ public:
 
     bool lineCast(const Transform3D & transform, const Ray3D & ray, glm::uvec3 & voxel) const;
 
+    std::string toString() const;
+
 private:
     static constexpr size_t NO_LEAF = std::numeric_limits<size_t>::max();
 
@@ -42,6 +45,9 @@ private:
         void lineCastLeaf(size_t index, const Ray3D & ray, std::vector<glm::uvec3> & voxels) const;
 
         std::shared_ptr<Subtree<T>> clone() const;
+
+        void toString(std::stringstream & stream, size_t index, size_t indentation) const;
+        void leafToString(std::stringstream & stream, size_t index, size_t indentation) const;
 
         struct Node
         {

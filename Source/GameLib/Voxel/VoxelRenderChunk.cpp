@@ -71,7 +71,11 @@ void VoxelRenderChunk::removeVoxel(const glm::uvec3 & voxel, bool visible)
     m_llfDirty = glm::min(m_llfDirty, voxel);
     m_urbDirty = glm::max(m_urbDirty, voxel);
 
-    if (visible) m_numVisibleVoxels--;
+    if (visible)
+    {
+        Assert(m_numVisibleVoxels > 0, "");
+        m_numVisibleVoxels--;
+    }
 
     m_drawDirty = true;
     m_voxelCount--;
@@ -79,7 +83,15 @@ void VoxelRenderChunk::removeVoxel(const glm::uvec3 & voxel, bool visible)
 
 void VoxelRenderChunk::updateVoxelVisibility(const glm::uvec3 & voxel, bool visible)
 {
-    if (visible) m_numVisibleVoxels--;
+    if (visible)
+    {
+        m_numVisibleVoxels++;
+    }
+    else
+    {
+        Assert(m_numVisibleVoxels > 0, "");
+        m_numVisibleVoxels--;
+    }
 }
 
 std::shared_ptr<VoxelRenderChunk> VoxelRenderChunk::clone()
@@ -100,7 +112,7 @@ void VoxelRenderChunk::schedule(const Pose3D & pose) const
 
         m_draw = m_voxelWorld.context().createDraw(m_voxelWorld.program());
         m_draw.addVertices(m_marchingCubes.takeVertices());
-        m_draw.state().setCullState(CullState::disabled());
+   //     m_draw.state().setCullState(CullState::disabled());
 
         m_transformUniform = m_draw.uniform("Transform");
         m_viewProjectionUniform = m_draw.uniform("ViewProjection");

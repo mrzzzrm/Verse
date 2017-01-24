@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <vector>
 
 #include <glm/glm.hpp>
@@ -20,6 +21,8 @@ public:
     void removeVoxels(const std::vector<glm::uvec3> & voxels);
 
     bool isHullVoxel(const glm::uvec3 & voxel);
+
+    std::string toString() const;
 
 private:
     void incVoxel(i32 index);

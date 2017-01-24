@@ -1,5 +1,7 @@
 #include "VoxelHull.h"
 
+#include <sstream>
+
 namespace
 {
 constexpr u8 VOXEL_IS_SET_BIT = 0x80;
@@ -69,7 +71,7 @@ void VoxelHull::removeVoxels(const std::vector<glm::uvec3> & voxels)
     size_t w = 0;
     for (size_t v = 0; v < m_newHullVoxels.size(); v++)
     {
-        auto & voxel = m_newHullVoxels[v];
+         auto & voxel = m_newHullVoxels[v];
 
         if (m_cluster.get(voxel + glm::uvec3(1)) & VOXEL_IS_SET_BIT)
         {
@@ -83,6 +85,27 @@ void VoxelHull::removeVoxels(const std::vector<glm::uvec3> & voxels)
 bool VoxelHull::isHullVoxel(const glm::uvec3 & voxel)
 {
     return (m_cluster.get(voxel + glm::uvec3(1)) & ~VOXEL_IS_SET_BIT) < 6;
+}
+
+std::string VoxelHull::toString() const
+{
+    std::stringstream stream;
+
+    for (size_t z = 0; z < m_cluster.size().z; z++)
+    {
+        for (size_t y = 0; y < m_cluster.size().y; y++)
+        {
+            for (size_t x = 0; x < m_cluster.size().x; x++)
+            {
+                stream << "[" << (m_cluster.get({x, y, z}) & 0x7F) << "" << ((m_cluster.get({x, y, z}) & 0x80)?"-":"X")<<"]";
+            }
+            stream << std::endl;
+        }
+
+        stream << std::endl;
+    }
+
+    return stream.str();
 }
 
 void VoxelHull::incVoxel(i32 index)

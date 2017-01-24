@@ -61,6 +61,7 @@ private:
     void removeVoxelFromNode(u32 index, const glm::uvec3 & voxel, bool visible);
     void updateVoxelVisibilityInNode(size_t index, const glm::uvec3 & voxel, bool visible);
     bool isVoxelInNode(size_t index, const glm::uvec3 & voxel);
+    bool isVoxelRenderedByNode(size_t index, const glm::uvec3 & voxel);
 
 protected:
     const VoxelWorld &  m_voxelWorld;

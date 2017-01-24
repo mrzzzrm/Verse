@@ -30,6 +30,11 @@ const VoxelShapeTree & VoxelObjectVoxelData::shapeTree() const
     return m_shapeTree;
 }
 
+const VoxelHull & VoxelObjectVoxelData::hull() const
+{
+    return m_hull;
+}
+
 void VoxelObjectVoxelData::addVoxels(std::vector<Voxel> voxels)
 {
     m_hull.addVoxels(voxels);

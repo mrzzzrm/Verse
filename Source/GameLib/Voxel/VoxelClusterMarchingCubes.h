@@ -39,7 +39,7 @@ private:
     VoxelCluster<u8>                                m_configCluster;
     bool                                            m_configClusterDirty = true;
     float                                           m_scale;
-    size_t                                          m_numVertices = 0;
+    size_t                                          m_maxNumVertices = 0;
 
     LayoutedBlob                                    m_vertices;
 

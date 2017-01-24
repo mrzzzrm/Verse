@@ -33,24 +33,21 @@ void VoxelClusterMarchingCubes::run(const glm::uvec3 & llf, const glm::uvec3 & u
     if (m_configClusterDirty) onClusterChanged(glm::uvec3(0u), m_cluster.size() - 1u);
 
     auto & size = m_cluster.size();
-    auto config = std::bitset<8>();
-
+    
     m_positions = m_vertices.field<glm::vec3>("Position").iterator();
     m_normals = m_vertices.field<glm::vec3>("Normal").iterator();
     m_colors = m_vertices.field<glm::vec3>("Color").iterator();
 
     {
-        m_numVertices = 0; // Recount vertices actually used
-
-        //ScopeProfiler scopeProfiler("VoxelClusterMarchingCubes::run() - mesh generation");
+        size_t actualNumVertices{0};
 
         auto configLineInc = m_configCluster.size().x - (urb.x - llf.x + 2);
         auto configSliceInc = (m_configCluster.size().y - (urb.y - llf.y + 2)) * m_configCluster.size().x;
         auto configIndex = m_configCluster.voxelToIndex(llf);
-        i32 clusterIndex = (i32)m_cluster.voxelToIndex(llf);
-
-        auto clusterLineLength = m_cluster.size().x;
-        auto clusterSliceLength = m_cluster.size().x * m_cluster.size().y;
+//        i32 clusterIndex = (i32)m_cluster.voxelToIndex(llf);
+//
+//        auto clusterLineLength = m_cluster.size().x;
+//        auto clusterSliceLength = m_cluster.size().x * m_cluster.size().y;
 
         for (i32 z = llf.z; z <= urb.z + 1; z++)
         {
@@ -59,7 +56,7 @@ void VoxelClusterMarchingCubes::run(const glm::uvec3 & llf, const glm::uvec3 & u
                 for (i32 x = llf.x; x <= urb.x + 1; x++)
                 {
                     auto & mesh = m_triangulation.configs()[m_configCluster.get(configIndex)];
-                    m_numVertices += mesh.size() * 3;
+                    actualNumVertices += mesh.size() * 3;
 
                     for (auto & triangle : mesh)
                     {
@@ -93,13 +90,19 @@ void VoxelClusterMarchingCubes::run(const glm::uvec3 & llf, const glm::uvec3 & u
             }
             configIndex += configSliceInc;
         }
+
+        m_vertices.resize(actualNumVertices);
+
+        if (actualNumVertices == 0)
+        {
+            std::cout << "Dummy";
+        }
     }
-      m_vertices.resize(m_numVertices);
 
     if (colorOverride)
     {
         m_colors = m_vertices.field<glm::vec3>("Color").iterator();
-        for (size_t v = 0; v < m_numVertices; v++)
+        for (size_t v = 0; v < m_vertices.count(); v++)
         {
             m_colors.put(*colorOverride);
         }
@@ -108,9 +111,6 @@ void VoxelClusterMarchingCubes::run(const glm::uvec3 & llf, const glm::uvec3 & u
 
 void VoxelClusterMarchingCubes::onClusterChanged(const glm::uvec3 & llfCluster, const glm::uvec3 & urbCluster)
 {
-   // ScopeProfiler scopeProfiler("VoxelClusterMarchingCubes::onClusterChanged()");
-
-
     auto clusterWidth = urbCluster.x - llfCluster.x + 1;
     auto clusterHeight = urbCluster.y - llfCluster.y + 1;
     auto clusterDepth = urbCluster.z - llfCluster.z + 1;
@@ -134,7 +134,7 @@ void VoxelClusterMarchingCubes::onClusterChanged(const glm::uvec3 & llfCluster, 
                 for (size_t w = 0; w < configWidth; w++)
                 {
                     auto & currentMesh = m_triangulation.configs()[m_configCluster.voxels()[configIndex]];
-                    m_numVertices -= currentMesh.size() * 3;
+                    m_maxNumVertices -= currentMesh.size() * 3;
 
                     configIndex++;
                 }
@@ -231,7 +231,7 @@ void VoxelClusterMarchingCubes::onClusterChanged(const glm::uvec3 & llfCluster, 
                 for (size_t w = 0; w < configWidth; w++)
                 {
                     auto & mesh = m_triangulation.configs()[m_configCluster.get(configIndex)];
-                    m_numVertices += mesh.size() * 3;
+                    m_maxNumVertices += mesh.size() * 3;
 
                     configIndex++;
                 }
@@ -242,7 +242,7 @@ void VoxelClusterMarchingCubes::onClusterChanged(const glm::uvec3 & llfCluster, 
         }
     }
 
-    m_vertices.resize(m_numVertices);
+    m_vertices.resize(m_maxNumVertices);
 
     m_configClusterDirty = false;
 }

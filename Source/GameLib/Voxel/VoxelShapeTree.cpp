@@ -10,13 +10,14 @@
 
 VoxelShapeTree::VoxelShapeTree(const glm::uvec3 & size):
     m_size(size),
-    m_tree(m_size, glm::uvec3(1))
+    m_tree(m_size, glm::uvec3(20))
 {
 
 }
 
 void VoxelShapeTree::updateVoxel(const glm::uvec3 & voxel, bool set)
 {
+    std::cout << "VoxelShapeTree::updateVoxel(): " << voxel << "=" << set << std::endl;
     m_tree.updateVoxel(0, voxel, set);
 }
 
@@ -50,6 +51,13 @@ bool VoxelShapeTree::lineCast(const Transform3D & transform, const Ray3D & ray, 
     voxel = voxels[minimumDistanceVoxel];
 
     return true;
+}
+
+std::string VoxelShapeTree::toString() const
+{
+    std::stringstream stream;
+    m_tree.toString(stream, 0, 0);
+    return stream.str();
 }
 
 template<typename T>
@@ -165,7 +173,7 @@ void VoxelShapeTree::Subtree<VoxelShapeTree::ChunkLeaf>::updateVoxelLeaf(size_t 
         leaf = std::make_shared<Subtree<VoxelLeaf>>(node.urb - node.llf + glm::uvec3(1), maxChunkSize);
     }
 
-    leaf->updateVoxel(0, voxel, set);
+    leaf->updateVoxel(0, voxel - node.llf, set);
 }
 
 template<>
@@ -209,6 +217,47 @@ void VoxelShapeTree::Subtree<T>::lineCast(size_t index, const Ray3D & ray, std::
     }
 }
 
+template<typename T>
+void VoxelShapeTree::Subtree<T>::toString(std::stringstream & stream, size_t index, size_t indentation) const
+{
+    auto & node = nodes[index];
+
+    for (auto i = 0; i < indentation; i++) stream << "  ";
+
+    stream << index << ": " << node.llf << "->" << node.urb << "; " << node.numVoxels << " " << std::endl;
+
+    if (node.leaf != NO_LEAF)
+    {
+        leafToString(stream, index, indentation + 1);
+    }
+    else
+    {
+        toString(stream, index * 2 + 1, indentation + 1);
+        toString(stream, index * 2 + 2, indentation + 1);
+    }
+}
+
+template<>
+void VoxelShapeTree::Subtree<VoxelShapeTree::ChunkLeaf>::leafToString(std::stringstream & stream,
+                                                                      size_t index, size_t indentation) const
+{
+    auto & node = nodes[index];
+    auto & leaf = leaves[node.leaf];
+
+    if (leaf) leaves[node.leaf]->toString(stream, 0, indentation);
+    else stream << "<Empty>" << std::endl;
+}
+
+template<>
+void VoxelShapeTree::Subtree<VoxelShapeTree::VoxelLeaf>::leafToString(std::stringstream & stream,
+                                                                      size_t index, size_t indentation) const
+{
+    auto & node = nodes[index];
+    for (auto i = 0; i < indentation; i++) stream << "  ";
+
+    stream << "Voxel: " << leaves[node.leaf] << std::endl;
+}
+
 template<>
 void VoxelShapeTree::Subtree<VoxelShapeTree::ChunkLeaf>::lineCastLeaf(size_t index,
                                                                       const Ray3D & ray,
@@ -243,7 +292,7 @@ void VoxelShapeTree::Subtree<VoxelShapeTree::VoxelLeaf>::lineCastLeaf(size_t ind
                                glm::vec3(node.llf) + glm::vec3(0.5f),
                                0.8f))
     {
-                 voxels.emplace_back(node.llf);
+        voxels.emplace_back(node.llf);
     }
 }
 
