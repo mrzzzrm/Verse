@@ -26,11 +26,11 @@ public:
     {
         m_voxelWorld.reset(context(), m_physicsWorld, m_camera);
 
-        m_camera.setPosition({0.0f, 0.0f, 3.0f});
+        m_camera.setPosition({0.0f, 0.0f, 10.0f});
         m_camera.setOrientation(glm::quat({-0.0f, 0.0f, 0.0f}));
         m_camera.setAspectRatio((float)context().backbuffer().width() / context().backbuffer().height());
 
-        m_voxelData.reset(*m_voxelWorld, glm::uvec3(20, 20, 20));
+        m_voxelData.reset(*m_voxelWorld, glm::uvec3(20, 1, 1));
 
         std::vector<Voxel> voxels;
         for (size_t z = 0; z < m_voxelData->size().z; z++)
@@ -40,29 +40,29 @@ public:
                 for (size_t x = 0; x < m_voxelData->size().x; x++)
                 {
                     Voxel voxel({x, y, z}, {1.0f, 0.0f, 0.0f});
-                    voxel.hull = x == 0 || x == m_voxelData->size().x - 1 ||
-                        y == 0 || y == m_voxelData->size().y - 1 ||
-                        z == 0 || z == m_voxelData->size().z - 1;
-
                     voxels.emplace_back(voxel);
                 }
             }
         }
-//
+
+        m_voxelData->addVoxels(voxels);
+        //m_voxelData->removeVoxels(rvoxels);
+
+
 //        std::vector<glm::uvec3> rvoxels;
-//        for (size_t z = 0; z < m_voxelData->size().z - 5; z++)
+//        for (size_t z = 0; z < m_voxelData->size().z; z++)
 //        {
-//            for (size_t y = 0; y < m_voxelData->size().y - 6; y++)
+//            for (size_t y = 0; y < m_voxelData->size().y; y++)
 //            {
-//                for (size_t x = 0; x < m_voxelData->size().x - 5; x++)
+//                for (size_t x = 0; x < m_voxelData->size().x; x++)
 //                {
-//                    rvoxels.emplace_back(x, y, z);
+//                    if (glm::uvec3(x, y, z) == m_voxelData->size() - 1u) continue;
+//
+//                    m_voxelData->removeVoxels({glm::uvec3(x, y, z)});
+//                    //rvoxels.emplace_back(x, y, z);
 //                }
 //            }
 //        }
-
-        m_voxelData->addVoxels(voxels);
-//        m_voxelData->removeVoxels(rvoxels);
 
         m_object.reset(*m_voxelData);
 
@@ -73,6 +73,28 @@ public:
 
     void onFrame(float seconds) override
     {
+//        if (!m_removalDone) {
+//            m_removalCooldown -= seconds;
+//            if (m_removalCooldown < 0) {
+//                m_object->removeVoxels({m_removalPointer});
+//
+//                m_removalPointer.x++;
+//                if (m_removalPointer.x == m_object->data().size().x) {
+//                    m_removalPointer.x = 0;
+//                    m_removalPointer.y++;
+//                    if (m_removalPointer.y == m_object->data().size().y) {
+//                        m_removalPointer.y = 0;
+//                        m_removalPointer.z++;
+//                        if (m_removalPointer.z == m_object->data().size().z) {
+//                            m_removalDone = true;
+//                        }
+//                    }
+//                }
+//
+//                m_removalCooldown = 0.5f;
+//            }
+//        }
+
         m_navigator->update(seconds);
 
         if (input().keyDown(InputBase::Key_SPACE))
@@ -85,13 +107,19 @@ public:
             auto direction = fireDirection;
 
             glm::uvec3 voxel;
-            auto hit = m_voxelData->shapeTree().lineCast(Transform3D(), Ray3D(origin, fireDirection), voxel);
+            auto hit = m_object->data().shapeTree().lineCast(Transform3D(), Ray3D(origin, fireDirection), voxel);
 
             if (hit) m_object->removeVoxels({voxel});
         }
 
         m_clear.schedule();
         m_object->schedule();
+
+        if (!m_removalDone)
+        {
+            m_voxelData->removeVoxels({glm::uvec3(0,0,0)});
+            m_removalDone = true;
+        }
     }
 
 private:
@@ -112,6 +140,10 @@ private:
 
     Optional<DebugCameraNavigator3D>
                 m_navigator;
+
+    float m_removalCooldown = 0.2f;
+    glm::uvec3 m_removalPointer;
+    bool m_removalDone = false;
 };
 
 int main(int argc, char *argv[])

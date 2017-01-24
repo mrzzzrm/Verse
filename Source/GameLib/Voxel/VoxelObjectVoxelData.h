@@ -4,6 +4,7 @@
 
 #include "GameLib.h"
 #include "Voxel.h"
+#include "VoxelHull.h"
 #include "VoxelRenderChunkTree.h"
 #include "VoxelShapeTree.h"
 
@@ -27,4 +28,5 @@ private:
     glm::uvec3            m_size;
     VoxelRenderChunkTree  m_renderTree;
     VoxelShapeTree        m_shapeTree;
+    VoxelHull             m_hull;
 };

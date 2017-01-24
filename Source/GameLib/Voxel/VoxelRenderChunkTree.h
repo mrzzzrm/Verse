@@ -8,6 +8,7 @@
 
 #include <Deliberation/Core/RandomColorGenerator.h>
 
+#include "GameLib.h"
 #include "Voxel.h"
 #include "VoxelRenderChunk.h"
 
@@ -24,8 +25,9 @@ public:
 
     const glm::uvec3 & size() const { return m_size; }
 
-    void addVoxels(const std::vector<Voxel> & voxels);
-    void removeVoxels(const std::vector<glm::uvec3> & voxels);
+    void addVoxel(const Voxel & voxel, bool visible);
+    void removeVoxel(const glm::uvec3 & voxel, bool visible);
+    void updateVoxelVisibility(const glm::uvec3 & voxel, bool visible);
 
     void schedule(const Pose3D & pose) const;
 
@@ -42,7 +44,7 @@ protected:
         glm::ivec3  llfRender;
         glm::ivec3  urbRender;
 
-        bool        hull = false;
+        size_t      numVisibleVoxels = 0;
         size_t      chunk = std::numeric_limits<size_t>::max();
         bool        leaf = false;
     };
@@ -55,8 +57,10 @@ protected:
     };
 
 private:
-    void addVoxelToNode(u32 index, const Voxel & voxel);
-    void removeVoxelFromNode(u32 index, const glm::uvec3 & voxel);
+    void addVoxelToNode(u32 index, const Voxel & voxel, bool visible);
+    void removeVoxelFromNode(u32 index, const glm::uvec3 & voxel, bool visible);
+    void updateVoxelVisibilityInNode(size_t index, const glm::uvec3 & voxel, bool visible);
+    bool isVoxelInNode(size_t index, const glm::uvec3 & voxel);
 
 protected:
     const VoxelWorld &  m_voxelWorld;

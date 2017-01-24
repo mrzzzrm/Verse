@@ -30,8 +30,6 @@ void VoxelClusterMarchingCubes::run()
 void VoxelClusterMarchingCubes::run(const glm::uvec3 & llf, const glm::uvec3 & urb,
                                     const Optional<glm::vec3> & colorOverride)
 {
-    std::cout << "Marching cubes: " << llf << urb << std::endl;
-
     if (m_configClusterDirty) onClusterChanged(glm::uvec3(0u), m_cluster.size() - 1u);
 
     auto & size = m_cluster.size();
@@ -42,7 +40,9 @@ void VoxelClusterMarchingCubes::run(const glm::uvec3 & llf, const glm::uvec3 & u
     m_colors = m_vertices.field<glm::vec3>("Color").iterator();
 
     {
-        ScopeProfiler scopeProfiler("VoxelClusterMarchingCubes::run() - mesh generation");
+        m_numVertices = 0; // Recount vertices actually used
+
+        //ScopeProfiler scopeProfiler("VoxelClusterMarchingCubes::run() - mesh generation");
 
         auto configLineInc = m_configCluster.size().x - (urb.x - llf.x + 2);
         auto configSliceInc = (m_configCluster.size().y - (urb.y - llf.y + 2)) * m_configCluster.size().x;
@@ -59,6 +59,7 @@ void VoxelClusterMarchingCubes::run(const glm::uvec3 & llf, const glm::uvec3 & u
                 for (i32 x = llf.x; x <= urb.x + 1; x++)
                 {
                     auto & mesh = m_triangulation.configs()[m_configCluster.get(configIndex)];
+                    m_numVertices += mesh.size() * 3;
 
                     for (auto & triangle : mesh)
                     {
@@ -93,6 +94,7 @@ void VoxelClusterMarchingCubes::run(const glm::uvec3 & llf, const glm::uvec3 & u
             configIndex += configSliceInc;
         }
     }
+      m_vertices.resize(m_numVertices);
 
     if (colorOverride)
     {
@@ -106,7 +108,7 @@ void VoxelClusterMarchingCubes::run(const glm::uvec3 & llf, const glm::uvec3 & u
 
 void VoxelClusterMarchingCubes::onClusterChanged(const glm::uvec3 & llfCluster, const glm::uvec3 & urbCluster)
 {
-    ScopeProfiler scopeProfiler("VoxelClusterMarchingCubes::onClusterChanged()");
+   // ScopeProfiler scopeProfiler("VoxelClusterMarchingCubes::onClusterChanged()");
 
 
     auto clusterWidth = urbCluster.x - llfCluster.x + 1;

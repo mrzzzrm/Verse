@@ -11,7 +11,8 @@ add_executable(
     ${target}
 
     Tests.cpp
-    VoxelClusterShapeTest.cpp
+    VoxelHullTest.cpp
+    VoxelShapeTreeTest.cpp
 )
 
 target_link_libraries(${target}

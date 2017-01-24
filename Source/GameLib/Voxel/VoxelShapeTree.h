@@ -22,9 +22,7 @@ class VoxelShapeTree final
 public:
     VoxelShapeTree(const glm::uvec3 & size);
 
-    void addVoxels(const std::vector<Voxel> & voxels);
-    void removeVoxels(const std::vector<glm::uvec3> & voxels);
-    void updateHull(const glm::uvec3 & voxel, bool hull);
+    void updateVoxel(const glm::uvec3 & voxel, bool set);
 
     bool lineCast(const Transform3D & transform, const Ray3D & ray, glm::uvec3 & voxel) const;
 
@@ -37,14 +35,8 @@ private:
     {
         Subtree(const glm::uvec3 & size, const glm::uvec3 & maxChunkSize);
 
-        void addVoxels(const std::vector<Voxel> & voxels);
-        void removeVoxels(const std::vector<glm::uvec3> & voxels);
-        void addVoxelToNode(size_t index, const Voxel & voxel);
-        void removeVoxelFromNode(size_t index, const glm::uvec3 & voxel);
-        void addVoxelToLeaf(size_t index, const Voxel & voxel);
-        void removeVoxelFromLeaf(size_t index, const glm::uvec3 & voxel);
-        void updateHull(size_t index, const glm::uvec3 & voxel, bool hull);
-        void updateHullLeaf(size_t index, const glm::uvec3 & voxel, bool hull);
+        void updateVoxel(size_t index, const glm::uvec3 & voxel, bool set);
+        void updateVoxelLeaf(size_t index, const glm::uvec3 & voxel, bool set);
 
         void lineCast(size_t index, const Ray3D & ray, std::vector<glm::uvec3> & voxels) const;
         void lineCastLeaf(size_t index, const Ray3D & ray, std::vector<glm::uvec3> & voxels) const;
@@ -57,20 +49,15 @@ private:
             glm::uvec3  urb;
             Sphere      bounds;
             size_t      leaf = NO_LEAF;
-            size_t      numHullVoxels = 0;
+            size_t      numVoxels = 0;
         };
 
         std::vector<Node>   nodes;
         std::vector<T>      leaves;
     };
 
-    struct VoxelLeaf
-    {
-        bool isSet = false;
-        glm::uvec3 cell;
-    };
-
 private:
+    using VoxelLeaf = bool;
     using ChunkLeaf = std::shared_ptr<Subtree<VoxelLeaf>>;
 
 private:

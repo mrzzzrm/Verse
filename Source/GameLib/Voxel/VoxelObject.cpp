@@ -26,6 +26,11 @@ const VoxelObjectID & VoxelObject::id() const
 const Pose3D & VoxelObject::pose() const
 {
     return m_pose;
+};
+
+const VoxelObjectVoxelData & VoxelObject::data() const
+{
+    return m_voxelData;
 }
 
 std::shared_ptr<RigidBody> & VoxelObject::body()

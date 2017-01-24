@@ -34,6 +34,7 @@ public:
 
     const VoxelObjectID & id() const;
     const Pose3D & pose() const;
+    const VoxelObjectVoxelData & data() const;
     std::shared_ptr<RigidBody> & body();
 
     void setId(VoxelObjectID id);

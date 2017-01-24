@@ -28,7 +28,21 @@ VoxelRenderChunk::VoxelRenderChunk(const VoxelWorld & voxelWorld, const glm::uve
 //    m_urbVisible = glm::uvec3(0);
 }
 
-void VoxelRenderChunk::addVoxel(const Voxel & voxel)
+VoxelRenderChunk::VoxelRenderChunk(const VoxelRenderChunk & other):
+    m_cluster(other.m_cluster),
+    m_voxelWorld(other.m_voxelWorld),
+    m_marchingCubes(m_voxelWorld.marchingCubesTriangulation(), m_cluster, 1.0f),
+    m_configCluster(other.m_configCluster),
+    m_voxelCount(other.m_voxelCount),
+    m_llfRender(other.m_llfRender),
+    m_urbRender(other.m_urbRender),
+    m_numVisibleVoxels(other.m_numVisibleVoxels),
+    m_colorOverride(other.m_colorOverride)
+{
+
+}
+
+void VoxelRenderChunk::addVoxel(const Voxel & voxel, bool visible)
 {
     Assert(!m_cluster.test(voxel.cell), "Voxel already added");
 
@@ -37,18 +51,18 @@ void VoxelRenderChunk::addVoxel(const Voxel & voxel)
     m_llfDirty = glm::min(m_llfDirty, voxel.cell);
     m_urbDirty = glm::max(m_urbDirty, voxel.cell);
 
-    if (voxel.hull)
+    if (visible)
     {
 //        m_llfVisible = glm::min(m_llfVisible, voxel.cell);
 //        m_urbVisible = glm::max(m_urbVisible, voxel.cell);
-        m_hullVoxelCount++;
+        m_numVisibleVoxels++;
     }
 
     m_drawDirty = true;
     m_voxelCount++;
 }
 
-void VoxelRenderChunk::removeVoxel(const glm::uvec3 & voxel)
+void VoxelRenderChunk::removeVoxel(const glm::uvec3 & voxel, bool visible)
 {
     Assert(m_cluster.test(voxel), "No voxel to remove");
 
@@ -57,19 +71,26 @@ void VoxelRenderChunk::removeVoxel(const glm::uvec3 & voxel)
     m_llfDirty = glm::min(m_llfDirty, voxel);
     m_urbDirty = glm::max(m_urbDirty, voxel);
 
+    if (visible) m_numVisibleVoxels--;
+
     m_drawDirty = true;
     m_voxelCount--;
 }
 
+void VoxelRenderChunk::updateVoxelVisibility(const glm::uvec3 & voxel, bool visible)
+{
+    if (visible) m_numVisibleVoxels--;
+}
+
 std::shared_ptr<VoxelRenderChunk> VoxelRenderChunk::clone()
 {
-
+    return std::make_shared<VoxelRenderChunk>(*this);
 }
 
 void VoxelRenderChunk::schedule(const Pose3D & pose) const
 {
     if (m_voxelCount == 0) return;
-    //if (m_hullVoxelCount == 0) return;
+    if (m_numVisibleVoxels == 0) return;
 
     if (m_drawDirty)
     {

@@ -15,19 +15,9 @@ VoxelShapeTree::VoxelShapeTree(const glm::uvec3 & size):
 
 }
 
-void VoxelShapeTree::addVoxels(const std::vector<Voxel> & voxels)
+void VoxelShapeTree::updateVoxel(const glm::uvec3 & voxel, bool set)
 {
-    m_tree.addVoxels(voxels);
-}
-
-void VoxelShapeTree::removeVoxels(const std::vector<glm::uvec3> & voxels)
-{
-    m_tree.removeVoxels(voxels);
-}
-
-void VoxelShapeTree::updateHull(const glm::uvec3 & voxel, bool hull)
-{
-    m_tree.updateHull(0, voxel, hull);
+    m_tree.updateVoxel(0, voxel, set);
 }
 
 bool VoxelShapeTree::lineCast(const Transform3D & transform, const Ray3D & ray, glm::uvec3 & voxel) const
@@ -82,18 +72,16 @@ VoxelShapeTree::Subtree<T>::Subtree(const glm::uvec3 & size, const glm::uvec3 & 
         node.llf = llf;
         node.urb = urb;
 
-        auto size = urb - llf + 1;
+        auto nodeSize = urb - llf + 1;
 
-        auto position = glm::vec3(llf) + glm::vec3(size) / 2.0f;
-        auto radius = glm::length(glm::vec3(size) / 2.0f);
+        auto position = glm::vec3(llf) + glm::vec3(nodeSize) / 2.0f;
+        auto radius = glm::length(glm::vec3(nodeSize) / 2.0f);
 
         node.bounds = Sphere(position, radius);
 
-        std::cout << index << " " << llf << urb << " " << node.bounds << std::endl;
-
-        if (size.x <= maxChunkSize.x &&
-            size.y <= maxChunkSize.y &&
-            size.z <= maxChunkSize.z)
+        if (nodeSize.x <= maxChunkSize.x &&
+            nodeSize.y <= maxChunkSize.y &&
+            nodeSize.z <= maxChunkSize.z)
         {
             node.leaf = numLeafs;
             numLeafs++;
@@ -102,8 +90,8 @@ VoxelShapeTree::Subtree<T>::Subtree(const glm::uvec3 & size, const glm::uvec3 & 
         {
             auto longestAxis = 0;
 
-            if (size.x >= size.y && size.x >= size.z) longestAxis = 0;
-            else if (size.y >= size.x && size.y >= size.z) longestAxis = 1;
+            if (nodeSize.x >= nodeSize.y && nodeSize.x >= nodeSize.z) longestAxis = 0;
+            else if (nodeSize.y >= nodeSize.x && nodeSize.y >= nodeSize.z) longestAxis = 1;
             else longestAxis = 2;
 
             auto separationIndex = (urb[longestAxis] + llf[longestAxis]) / 2;
@@ -128,92 +116,18 @@ VoxelShapeTree::Subtree<T>::Subtree(const glm::uvec3 & size, const glm::uvec3 & 
 }
 
 template<typename T>
-void VoxelShapeTree::Subtree<T>::updateHull(size_t index, const glm::uvec3 & voxel, bool hull)
+void VoxelShapeTree::Subtree<T>::updateVoxel(size_t index, const glm::uvec3 & voxel, bool set)
 {
     auto & node = nodes[index];
 
-    if (hull) node.numHullVoxels++;
-    else node.numHullVoxels--;
+    if (set) node.numVoxels++;
+    else node.numVoxels--;
 
     if (node.leaf != NO_LEAF)
     {
-        updateHullLeaf(index, voxel, hull);
+        updateVoxelLeaf(index, voxel, set);
     }
     else
-    {
-        updateHull(index * 2 + 1, voxel, hull);
-        updateHull(index * 2 + 2, voxel, hull);
-    }
-}
-
-template<>
-void VoxelShapeTree::Subtree<VoxelShapeTree::ChunkLeaf>::updateHullLeaf(size_t index, const glm::uvec3 & voxel, bool hull)
-{
-    auto & node = nodes[index];
-    leaves[node.leaf]->updateHull(0, voxel, hull);
-}
-
-template<>
-void VoxelShapeTree::Subtree<VoxelShapeTree::VoxelLeaf>::updateHullLeaf(size_t index, const glm::uvec3 & voxel, bool hull)
-{
-}
-
-template<typename T>
-void VoxelShapeTree::Subtree<T>::addVoxels(const std::vector<Voxel> & voxels)
-{
-    for (auto & voxel : voxels)
-    {
-        addVoxelToNode(0, voxel);
-    }
-}
-
-template<typename T>
-void VoxelShapeTree::Subtree<T>::removeVoxels(const std::vector<glm::uvec3> & voxels)
-{
-    for (auto & voxel : voxels)
-    {
-        removeVoxelFromNode(0, voxel);
-    }
-}
-
-template<typename T>
-void VoxelShapeTree::Subtree<T>::addVoxelToNode(size_t index, const Voxel & voxel)
-{
-    auto & node = nodes[index];
-
-    if (voxel.hull) node.numHullVoxels++;
-
-    if (node.leaf == NO_LEAF)
-    {
-        auto & c = voxel.cell;
-        auto leftIndex = index * 2 + 1;
-        auto & left = nodes[leftIndex];
-
-        if (c.x >= left.llf.x && c.x <= left.urb.x &&
-            c.y >= left.llf.y && c.y <= left.urb.y &&
-            c.z >= left.llf.z && c.z <= left.urb.z)
-        {
-            addVoxelToNode(leftIndex, voxel);
-        }
-        else
-        {
-            addVoxelToNode(index * 2 + 2, voxel);
-        }
-    }
-    else
-    {
-        addVoxelToLeaf(index, voxel);
-    }
-}
-
-template<typename T>
-void VoxelShapeTree::Subtree<T>::removeVoxelFromNode(size_t index, const glm::uvec3 & voxel)
-{
-    auto & node = nodes[index];
-
-    //if (voxel.hull) node.numHullVoxels++;
-
-    if (node.leaf == NO_LEAF)
     {
         auto & c = voxel;
         auto leftIndex = index * 2 + 1;
@@ -223,21 +137,17 @@ void VoxelShapeTree::Subtree<T>::removeVoxelFromNode(size_t index, const glm::uv
             c.y >= left.llf.y && c.y <= left.urb.y &&
             c.z >= left.llf.z && c.z <= left.urb.z)
         {
-            removeVoxelFromNode(leftIndex, voxel);
+            updateVoxel(index * 2 + 1, voxel, set);
         }
         else
         {
-            removeVoxelFromNode(index * 2 + 2, voxel);
+            updateVoxel(index * 2 + 2, voxel, set);
         }
-    }
-    else
-    {
-        removeVoxelFromLeaf(index, voxel);
     }
 }
 
 template<>
-void VoxelShapeTree::Subtree<VoxelShapeTree::ChunkLeaf>::addVoxelToLeaf(size_t index, const Voxel & voxel)
+void VoxelShapeTree::Subtree<VoxelShapeTree::ChunkLeaf>::updateVoxelLeaf(size_t index, const glm::uvec3 & voxel, bool set)
 {
     auto & node = nodes[index];
     auto & leaf = leaves[node.leaf];
@@ -255,37 +165,21 @@ void VoxelShapeTree::Subtree<VoxelShapeTree::ChunkLeaf>::addVoxelToLeaf(size_t i
         leaf = std::make_shared<Subtree<VoxelLeaf>>(node.urb - node.llf + glm::uvec3(1), maxChunkSize);
     }
 
-    leaf->addVoxelToNode(0, voxel);
+    leaf->updateVoxel(0, voxel, set);
 }
 
 template<>
-void VoxelShapeTree::Subtree<VoxelShapeTree::VoxelLeaf>::addVoxelToLeaf(size_t index, const Voxel & voxel)
+void VoxelShapeTree::Subtree<VoxelShapeTree::VoxelLeaf>::updateVoxelLeaf(size_t index, const glm::uvec3 & voxel, bool set)
 {
-    auto & node = nodes[index];
-    leaves[node.leaf].isSet = true;
-    leaves[node.leaf].cell = voxel.cell;
-}
-
-template<>
-void VoxelShapeTree::Subtree<VoxelShapeTree::ChunkLeaf>::removeVoxelFromLeaf(size_t index, const glm::uvec3 & voxel)
-{
-    auto & node = nodes[index];
-    auto & leaf = leaves[node.leaf];
-    Assert(!!leaf, "Voxel doesn't exist");
-    leaf->removeVoxelFromNode(0, voxel);
-}
-
-template<>
-void VoxelShapeTree::Subtree<VoxelShapeTree::VoxelLeaf>::removeVoxelFromLeaf(size_t index, const glm::uvec3 & voxel)
-{
-    auto & node = nodes[index];
-    leaves[node.leaf].isSet = false;
+    leaves[nodes[index].leaf] = set;
 }
 
 template<typename T>
 void VoxelShapeTree::Subtree<T>::lineCast(size_t index, const Ray3D & ray, std::vector<glm::uvec3> & voxels) const
 {
     auto & node = nodes[index];
+
+    if (node.numVoxels == 0) return;
 
     if (node.leaf != NO_LEAF)
     {
@@ -304,11 +198,11 @@ void VoxelShapeTree::Subtree<T>::lineCast(size_t index, const Ray3D & ray, std::
         auto leftIndex = index * 2 + 1;
         auto rightIndex = leftIndex + 1;
 
-        if (nodes[leftIndex].numHullVoxels > 0)
+        if (nodes[leftIndex].numVoxels > 0)
         {
             lineCast(leftIndex, ray, voxels);
         }
-        if (nodes[rightIndex].numHullVoxels > 0)
+        if (nodes[rightIndex].numVoxels > 0)
         {
             lineCast(rightIndex, ray, voxels);
         }
@@ -320,7 +214,18 @@ void VoxelShapeTree::Subtree<VoxelShapeTree::ChunkLeaf>::lineCastLeaf(size_t ind
                                                                       const Ray3D & ray,
                                                                       std::vector<glm::uvec3> & voxels) const
 {
-    leaves[nodes[index].leaf]->lineCast(0, ray, voxels);
+    auto & node = nodes[index];
+
+    Ray3D chunkLocalRay(ray.origin() - glm::vec3(node.llf), ray.direction());
+
+    auto prevNumVoxels = voxels.size();
+
+    leaves[node.leaf]->lineCast(0, chunkLocalRay, voxels);
+
+    for (size_t v = prevNumVoxels; v < voxels.size(); v++)
+    {
+        voxels[v] += node.llf;
+    }
 }
 
 template<>
@@ -329,21 +234,21 @@ void VoxelShapeTree::Subtree<VoxelShapeTree::VoxelLeaf>::lineCastLeaf(size_t ind
                                                                   std::vector<glm::uvec3> & voxels) const
 {
     auto & node = nodes[index];
-    auto & leaf = leaves[node.leaf];
+    auto leaf = leaves[node.leaf];
 
-    if (!leaf.isSet) return;
+    if (!leaf) return;
 
     if (LineSphereIntersection(ray.origin(),
                                ray.direction(),
-                               glm::vec3(leaf.cell) + glm::vec3(0.5f),
+                               glm::vec3(node.llf) + glm::vec3(0.5f),
                                0.8f))
     {
-        voxels.emplace_back(leaf.cell);
+                 voxels.emplace_back(node.llf);
     }
 }
 
 template<typename T>
 std::shared_ptr<VoxelShapeTree::Subtree<T>> VoxelShapeTree::Subtree<T>::clone() const
 {
-
+    return std::make_shared<Subtree<T>>(*this);
 }
