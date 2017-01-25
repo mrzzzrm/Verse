@@ -4,7 +4,9 @@
 
 namespace
 {
+constexpr u8 VOXEL_COUNT_MASK = 0x0F;
 constexpr u8 VOXEL_IS_SET_BIT = 0x80;
+constexpr u8 VOXEL_PENDING_BIT = 0x40;
 }
 
 VoxelHull::VoxelHull(const glm::uvec3 & size):
@@ -31,7 +33,7 @@ void VoxelHull::addVoxels(const std::vector<Voxel> & voxels)
     {
         i32 index = m_cluster.voxelToIndex(voxel.cell + glm::uvec3(1));
 
-        m_cluster.set(index, m_cluster.get(index) | VOXEL_IS_SET_BIT);
+        m_cluster.set(index, m_cluster.get(index) | VOXEL_IS_SET_BIT | VOXEL_PENDING_BIT);
 
         incVoxel(index + 1);
         incVoxel(index - 1);
@@ -43,8 +45,10 @@ void VoxelHull::addVoxels(const std::vector<Voxel> & voxels)
 
     for (auto & voxel : voxels)
     {
-        i32 index = m_cluster.voxelToIndex(voxel.cell);
-        if ((m_cluster.get(index) & ~VOXEL_IS_SET_BIT) < 6) m_newHullVoxels.emplace_back(voxel.cell);
+        auto & cell = m_cluster.getRef(voxel.cell + glm::uvec3(1));
+
+        cell &= ~VOXEL_PENDING_BIT;
+        if ((cell & VOXEL_COUNT_MASK) < 6) m_newHullVoxels.emplace_back(voxel.cell);
     }
 }
 
@@ -58,7 +62,7 @@ void VoxelHull::removeVoxels(const std::vector<glm::uvec3> & voxels)
     {
         i32 index = m_cluster.voxelToIndex(voxel + glm::uvec3(1));
 
-        m_cluster.set(index, m_cluster.get(index) & ~VOXEL_IS_SET_BIT);
+        m_cluster.set(index, m_cluster.get(index) & VOXEL_COUNT_MASK);
 
         decVoxel(index + 1);
         decVoxel(index - 1);
@@ -71,7 +75,7 @@ void VoxelHull::removeVoxels(const std::vector<glm::uvec3> & voxels)
     size_t w = 0;
     for (size_t v = 0; v < m_newHullVoxels.size(); v++)
     {
-         auto & voxel = m_newHullVoxels[v];
+        auto & voxel = m_newHullVoxels[v];
 
         if (m_cluster.get(voxel + glm::uvec3(1)) & VOXEL_IS_SET_BIT)
         {
@@ -84,7 +88,7 @@ void VoxelHull::removeVoxels(const std::vector<glm::uvec3> & voxels)
 
 bool VoxelHull::isHullVoxel(const glm::uvec3 & voxel)
 {
-    return (m_cluster.get(voxel + glm::uvec3(1)) & ~VOXEL_IS_SET_BIT) < 6;
+    return (m_cluster.get(voxel + glm::uvec3(1)) & VOXEL_COUNT_MASK) < 6;
 }
 
 std::string VoxelHull::toString() const
@@ -97,7 +101,8 @@ std::string VoxelHull::toString() const
         {
             for (size_t x = 0; x < m_cluster.size().x; x++)
             {
-                stream << "[" << (m_cluster.get({x, y, z}) & 0x7F) << "" << ((m_cluster.get({x, y, z}) & 0x80)?"-":"X")<<"]";
+                stream << "[" << (m_cluster.get({x, y, z}) & VOXEL_COUNT_MASK)
+                       << "" << ((m_cluster.get({x, y, z}) & 0x80)?"-":"X")<<"]";
             }
             stream << std::endl;
         }
@@ -112,22 +117,21 @@ void VoxelHull::incVoxel(i32 index)
 {
     if (!m_cluster.contains(index)) return;
 
-    m_cluster.get(index)++;
+    m_cluster.getRef(index)++;
 
-    if ((m_cluster.get(index) & 0x7F) == 6)
+    if ((m_cluster.get(index) & VOXEL_COUNT_MASK) == 6 && !(m_cluster.get(index) & VOXEL_PENDING_BIT))
     {
         m_newObscuredVoxels.emplace_back(m_cluster.indexToVoxel(index) - glm::uvec3(1));
     }
-
 }
 
 void VoxelHull::decVoxel(i32 index)
 {
     if (!m_cluster.contains(index)) return;
 
-    m_cluster.get(index)--;
+    m_cluster.getRef(index)--;
 
-    if ((m_cluster.get(index) & 0x7F) == 5)
+    if ((m_cluster.get(index) & VOXEL_COUNT_MASK) == 5)
     {
         m_newHullVoxels.emplace_back(m_cluster.indexToVoxel(index) - glm::uvec3(1));
     }

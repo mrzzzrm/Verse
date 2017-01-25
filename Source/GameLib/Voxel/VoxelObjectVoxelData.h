@@ -17,6 +17,7 @@ public:
 
     const VoxelWorld & voxelWorld() const;
     const glm::uvec3 & size() const;
+    const VoxelCluster<bool> & cluster() const;
     const VoxelRenderChunkTree & renderTree() const;
     const VoxelShapeTree & shapeTree() const;
     const VoxelHull & hull() const;
@@ -26,7 +27,7 @@ public:
 
 private:
     const VoxelWorld &    m_voxelWorld;
-    glm::uvec3            m_size;
+    VoxelCluster<bool>    m_cluster;
     VoxelRenderChunkTree  m_renderTree;
     VoxelShapeTree        m_shapeTree;
     VoxelHull             m_hull;

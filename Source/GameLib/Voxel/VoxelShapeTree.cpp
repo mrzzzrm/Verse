@@ -17,7 +17,6 @@ VoxelShapeTree::VoxelShapeTree(const glm::uvec3 & size):
 
 void VoxelShapeTree::updateVoxel(const glm::uvec3 & voxel, bool set)
 {
-    std::cout << "VoxelShapeTree::updateVoxel(): " << voxel << "=" << set << std::endl;
     m_tree.updateVoxel(0, voxel, set);
 }
 
@@ -179,6 +178,7 @@ void VoxelShapeTree::Subtree<VoxelShapeTree::ChunkLeaf>::updateVoxelLeaf(size_t 
 template<>
 void VoxelShapeTree::Subtree<VoxelShapeTree::VoxelLeaf>::updateVoxelLeaf(size_t index, const glm::uvec3 & voxel, bool set)
 {
+    Assert(leaves[nodes[index].leaf] != set, "");
     leaves[nodes[index].leaf] = set;
 }
 

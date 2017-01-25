@@ -2,10 +2,10 @@
 
 VoxelObjectVoxelData::VoxelObjectVoxelData(const VoxelWorld & voxelWorld, const glm::uvec3 & size):
     m_voxelWorld(voxelWorld),
-    m_size(size),
-    m_renderTree(voxelWorld, m_size),
-    m_shapeTree(m_size),
-    m_hull(m_size)
+    m_cluster(size),
+    m_renderTree(voxelWorld, size),
+    m_shapeTree(size),
+    m_hull(size)
 {
 
 }
@@ -17,7 +17,12 @@ const VoxelWorld & VoxelObjectVoxelData::voxelWorld() const
 
 const glm::uvec3 & VoxelObjectVoxelData::size() const
 {
-    return m_size;
+    return m_cluster.size();
+}
+
+const VoxelCluster<bool> & VoxelObjectVoxelData::cluster() const
+{
+    return m_cluster;
 }
 
 const VoxelRenderChunkTree & VoxelObjectVoxelData::renderTree() const
@@ -41,13 +46,13 @@ void VoxelObjectVoxelData::addVoxels(std::vector<Voxel> voxels)
 
     for (auto & voxel : voxels)
     {
-        if (m_hull.isHullVoxel(voxel.cell)) m_shapeTree.updateVoxel(voxel.cell, true);
+        m_cluster.set(voxel.cell, true);
         m_renderTree.addVoxel(voxel, m_hull.isHullVoxel(voxel.cell));
     }
 
     for (auto & voxel : m_hull.newHullVoxels())
     {
-        // No render tree update, already happened in addVoxel()!
+        m_shapeTree.updateVoxel(voxel, true);
     }
 
     for (auto & voxel : m_hull.newObscuredVoxels())
@@ -60,6 +65,7 @@ void VoxelObjectVoxelData::removeVoxels(const std::vector<glm::uvec3> & voxels)
 {
     for (auto & voxel : voxels)
     {
+        m_cluster.set(voxel, false);
         if (m_hull.isHullVoxel(voxel)) m_shapeTree.updateVoxel(voxel, false);
         m_renderTree.removeVoxel(voxel, m_hull.isHullVoxel(voxel));
     }

@@ -30,7 +30,7 @@ public:
         m_camera.setOrientation(glm::quat({-0.0f, 0.0f, 0.0f}));
         m_camera.setAspectRatio((float)context().backbuffer().width() / context().backbuffer().height());
 
-        m_voxelData.reset(*m_voxelWorld, glm::uvec3(60,60,60));
+        m_voxelData.reset(*m_voxelWorld, glm::uvec3(10,10,10));
 
         std::vector<Voxel> voxels;
         for (size_t z = 0; z < m_voxelData->size().z; z++)
@@ -112,7 +112,22 @@ public:
             glm::uvec3 voxel;
             auto hit = m_object->data().shapeTree().lineCast(Transform3D(), Ray3D(origin, fireDirection), voxel);
 
-            if (hit) m_object->removeVoxels({voxel});
+            if (hit)
+            {
+                auto r = 5;
+                for (i32 z = (i32)voxel.z - r; z <= (i32)voxel.z + r; z++)
+                for (i32 y = (i32)voxel.y - r; y <= (i32)voxel.y + r; y++)
+                for (i32 x = (i32)voxel.x - r; x <= (i32)voxel.x + r; x++)
+                {
+                    auto v = glm::vec3(x, y, z);
+                    if (glm::length(v - glm::vec3(voxel)) > r) continue;
+
+                    if (m_object->data().cluster().contains(v) && m_object->data().cluster().test(v))
+                    {
+                        m_object->removeVoxels({v});
+                    }
+                }
+            }
         }
 
         m_clear.schedule();

@@ -16,7 +16,7 @@ VoxelRenderChunkTree::VoxelRenderChunkTree(const VoxelWorld & voxelWorld, const 
 
     size_t numChunks = 0;
 
-    glm::uvec3 maxChunkSize(15); // Must be > 2
+    glm::uvec3 maxChunkSize(6); // Must be > 2
 
     std::function<void(u32, const glm::ivec3 &, const glm::ivec3 &, const glm::ivec3 &, const glm::ivec3)> buildTree = [&] (
         u32 index,
@@ -38,6 +38,8 @@ VoxelRenderChunkTree::VoxelRenderChunkTree(const VoxelWorld & voxelWorld, const 
         auto size = urb - llf + 1;
         auto renderSize = urbRender - llfRender + 1;
 
+        std::cout << index << node.llf << node.urb << node.llfRender<<node.urbRender << std::endl;
+
         if (renderSize.x <= maxChunkSize.x &&
             renderSize.y <= maxChunkSize.y &&
             renderSize.z <= maxChunkSize.z)
@@ -50,25 +52,24 @@ VoxelRenderChunkTree::VoxelRenderChunkTree(const VoxelWorld & voxelWorld, const 
         {
             auto longestAxis = 0;
 
-            if (size.x >= size.y && size.x >= size.z) longestAxis = 0;
-            else if (size.y >= size.x && size.y >= size.z) longestAxis = 1;
+            if (renderSize.x >= renderSize.y && renderSize.x >= renderSize.z) longestAxis = 0;
+            else if (renderSize.y >= renderSize.x && renderSize.y >= renderSize.z) longestAxis = 1;
             else longestAxis = 2;
 
-            auto separationIndex = (urbRender[longestAxis] + llfRender[longestAxis]) / 2;
+            auto separationIndex = (llfRender[longestAxis] + urbRender[longestAxis]) / 2;
+            std::cout << "  Seperating at " << separationIndex << std::endl;
 
             auto urbLeft = urb;
-            urbLeft[longestAxis] = separationIndex;
+            urbLeft[longestAxis] = std::min(separationIndex + 1, urb[longestAxis]);
 
-            auto urbRenderLeft = urbLeft;
-            urbRenderLeft[longestAxis]--;
-            urbRenderLeft = glm::min(urbRenderLeft, urbRender);
+            auto urbRenderLeft = urbRender;
+            urbRenderLeft[longestAxis] = separationIndex;
 
             auto llfRight = llf;
-            llfRight[longestAxis] = separationIndex - 1;
+            llfRight[longestAxis] = std::max(separationIndex - 1, llf[longestAxis]);
 
-            auto llfRenderRight = llf;
-            llfRenderRight[longestAxis] = separationIndex;
-            llfRenderRight = glm::max(llfRenderRight, llfRender);
+            auto llfRenderRight = llfRender;
+            llfRenderRight[longestAxis] = std::min(separationIndex + 1, urbRender[longestAxis]);
 
             buildTree(index * 2 + 1, llf, urbLeft, llfRender, urbRenderLeft);
             buildTree(index * 2 + 2, llfRight, urb, llfRenderRight, urbRender);
@@ -144,9 +145,9 @@ void VoxelRenderChunkTree::addVoxelToNode(u32 index, const Voxel & voxel, bool v
 
     auto & node = m_nodes[index];
 
-    auto voxelMadeVisibleByThisNode = visible && isVoxelRenderedByNode(index, voxel.cell);
+    visible = visible && isVoxelRenderedByNode(index, voxel.cell);
 
-    if (voxelMadeVisibleByThisNode) node.numVisibleVoxels++;
+    if (visible) node.numVisibleVoxels++;
 
     if (node.leaf)
     {
@@ -171,7 +172,7 @@ void VoxelRenderChunkTree::addVoxelToNode(u32 index, const Voxel & voxel, bool v
         Voxel chunkLocalVoxel = voxel;
         chunkLocalVoxel.cell -= node.llf;
 
-        chunk.chunk->addVoxel(chunkLocalVoxel, voxelMadeVisibleByThisNode);
+        chunk.chunk->addVoxel(chunkLocalVoxel, visible);
     }
     else
     {
@@ -186,13 +187,19 @@ void VoxelRenderChunkTree::removeVoxelFromNode(u32 index, const glm::uvec3 & vox
 
     auto & node = m_nodes[index];
 
-    if (visible && isVoxelRenderedByNode(index, voxel)) node.numVisibleVoxels--;
+    visible = visible && isVoxelRenderedByNode(index, voxel);
+
+    if (visible)
+    {
+        Assert(node.numVisibleVoxels > 0, "");
+        node.numVisibleVoxels--;
+    }
 
     if (node.leaf)
     {
         Assert(!!m_chunks[node.chunk].chunk, "");
         m_chunks[node.chunk].chunk->removeVoxel(voxel - glm::uvec3(node.llf),
-                                                visible && isVoxelRenderedByNode(index, voxel));
+                                                visible);
     }
     else
     {
@@ -203,21 +210,23 @@ void VoxelRenderChunkTree::removeVoxelFromNode(u32 index, const glm::uvec3 & vox
 
 void VoxelRenderChunkTree::updateVoxelVisibilityInNode(size_t index, const glm::uvec3 & voxel, bool visible)
 {
-    if (!isVoxelInNode(index, voxel)) return;
+    if (!isVoxelRenderedByNode(index, voxel)) return;
 
     auto & node = m_nodes[index];
 
-    auto voxelIsRenderedByThisNode = isVoxelRenderedByNode(index, voxel);
-
-    if (voxelIsRenderedByThisNode)
+    if (visible)
     {
-        if (visible) node.numVisibleVoxels++;
-        else node.numVisibleVoxels--;
+        node.numVisibleVoxels++;
+    }
+    else
+    {
+        Assert(node.numVisibleVoxels > 0, "");
+        node.numVisibleVoxels--;
     }
 
     if (node.leaf)
     {
-        m_chunks[node.chunk].chunk->updateVoxelVisibility(voxel - glm::uvec3(node.llf), visible && voxelIsRenderedByThisNode);
+        m_chunks[node.chunk].chunk->updateVoxelVisibility(voxel - glm::uvec3(node.llf), visible);
     }
     else
     {

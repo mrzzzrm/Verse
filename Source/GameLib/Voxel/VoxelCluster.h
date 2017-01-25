@@ -26,10 +26,13 @@ public:
     void set(const glm::uvec3 & voxel, const T & value);
     void set(size_t index, const T & value);
 
-    T & get(const glm::uvec3 & voxel);
-    const T & get(const glm::uvec3 & voxel) const;
-    T & get(size_t index);
-    const T & get(size_t index) const;
+    T get(const glm::uvec3 & voxel) const;
+    T get(size_t index) const;
+
+    T & getRef(const glm::uvec3 & voxel);
+    const T & getRef(const glm::uvec3 & voxel) const;
+    T & getRef(size_t index);
+    const T & getRef(size_t index) const;
 
     bool contains(const glm::ivec3 & voxel) const;
     bool contains(i32 index);
