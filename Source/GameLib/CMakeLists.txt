@@ -26,17 +26,22 @@ add_library(${target}
     Voxel/VoxelClusterMarchingCubesTriangulation.h
     Voxel/VoxelClusterPrimitiveTest.cpp
     Voxel/VoxelClusterPrimitiveTest.h
-    Voxel/VoxelClusterShape.cpp
-    Voxel/VoxelClusterShape.h
-    Voxel/VoxelClusterShape.inl
+    Voxel/VoxelHull.cpp
+    Voxel/VoxelHull.h
     Voxel/VoxelModel.cpp
     Voxel/VoxelModel.h
     Voxel/VoxelObject.cpp
     Voxel/VoxelObject.h
-    Voxel/VoxelObjectPrototype.cpp
-    Voxel/VoxelObjectPrototype.h
+    Voxel/VoxelObjectVoxelData.cpp
+    Voxel/VoxelObjectVoxelData.h
+    Voxel/VoxelRenderChunk.cpp
+    Voxel/VoxelRenderChunk.h
+    Voxel/VoxelRenderChunkTree.cpp
+    Voxel/VoxelRenderChunkTree.h
     Voxel/VoxelRigidBodyPayload.cpp
     Voxel/VoxelRigidBodyPayload.h
+    Voxel/VoxelShape.cpp
+    Voxel/VoxelShape.h
     Voxel/VoxelWorld.cpp
     Voxel/VoxelWorld.h
     Voxel/VoxReader.cpp

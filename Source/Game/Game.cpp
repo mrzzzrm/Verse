@@ -18,13 +18,12 @@
 #include <Voxel/VoxelRigidBodyPayload.h>
 #include <Voxel/VoxelClusterPrimitiveTest.h>
 
+#include "CollisionShapeTypes.h"
 #include "HailstormRenderer.h"
 #include "VoxelClusterMarchingCubesTriangulation.h"
 #include "VoxelClusterMarchingCubes.h"
-#include "VoxelClusterShape.h"
 #include "VoxelClusterContact.h"
 #include "VoxelObject.h"
-#include "VoxelObjectPrototype.h"
 #include "VoxelWorld.h"
 #include "VoxReader.h"
 #include "PlayerInput.h"
@@ -53,52 +52,53 @@ public:
          */
         VoxReader voxReader;
         {
-            auto clusters = voxReader.read(deliberation::dataPath("Data/VoxelCluster/ship.vox"));
-            if (!clusters.empty())
+            auto models = voxReader.read(deliberation::dataPath("Data/VoxelCluster/ship.vox"));
+            if (!models.empty())
             {
-                m_shipPrototype = std::make_shared<VoxelObjectPrototype>(*m_voxelWorld, clusters[0]);
+                m_shipData = std::make_shared<VoxelObjectVoxelData>(*m_voxelWorld, models[0].size);
+                m_shipData->addVoxels(models[0].voxels);
             }
         }
         {
-            auto clusters = voxReader.read(deliberation::dataPath("Data/VoxelCluster/station.vox"));
-            if (!clusters.empty())
+            auto models = voxReader.read(deliberation::dataPath("Data/VoxelCluster/station.vox"));
+            if (!models.empty())
             {
-                m_stationPrototype = std::make_shared<VoxelObjectPrototype>(*m_voxelWorld, clusters[0]);
+                m_stationData = std::make_shared<VoxelObjectVoxelData>(*m_voxelWorld, models[0].size);
+                m_stationData->addVoxels(models[0].voxels);
             }
         }
         {
-            VoxelCluster<glm::vec3> blockCluster(glm::uvec3(45, 34, 13));
-            for (size_t z = 0; z < blockCluster.size().z; z++)
+            m_blockData = std::make_shared<VoxelObjectVoxelData>(*m_voxelWorld, glm::uvec3(3,3,3));
+            for (size_t z = 0; z < m_blockData->size().z; z++)
             {
-                for (size_t y = 0; y < blockCluster.size().y; y++)
+                for (size_t y = 0; y < m_blockData->size().y; y++)
                 {
-                    for (size_t x = 0; x < blockCluster.size().x; x++)
+                    for (size_t x = 0; x < m_blockData->size().x; x++)
                     {
-                        blockCluster.set({x, y, z}, glm::vec3(0.5f, 0.4f, 0.8f));
+                        m_blockData->addVoxels({Voxel({x, y, z}, glm::vec3(0.5f, 0.4f, 0.8f))});
                     }
                 }
             }
-            m_blockPrototype = std::make_shared<VoxelObjectPrototype>(*m_voxelWorld, blockCluster);
         }
 
         /**
          * Create VoxelObjects
          */
-        m_shipObject = std::make_shared<VoxelObject>(m_shipPrototype);
+        m_shipObject = std::make_shared<VoxelObject>(*m_shipData);
         m_shipObject->body()->transform().setPosition({0.0f, 0.0f, 35.0f});
 
-        m_stationObject = std::make_shared<VoxelObject>(m_blockPrototype);
+        m_stationObject = std::make_shared<VoxelObject>(*m_stationData);
         m_stationObject->body()->transform().setPosition({-16.0f, 40.0f, -200.0f});
         m_stationObject->body()->setAngularVelocity({0.0f, 0.0f, 0.05f});
 
-        m_blockObject = std::make_shared<VoxelObject>(m_blockPrototype);
+        m_blockObject = std::make_shared<VoxelObject>(*m_blockData);
         m_blockObject->body()->transform().setPosition({0.0f, 0.0f, 0.0f});
 
         /**
          * Add VoxelObjects to world
          */
         m_voxelWorld->addVoxelObject(m_shipObject);
-        //m_voxelWorld->addVoxelObject(m_stationObject);
+        m_voxelWorld->addVoxelObject(m_stationObject);
         m_voxelWorld->addVoxelObject(m_blockObject);
 
         /**
@@ -157,8 +157,8 @@ public:
         m_hailstormManager->update(seconds);
 
         glm::vec3 offset;
-        offset.z = m_shipObject->prototype()->cluster().size().z * 1.4f;
-        offset.y = m_shipObject->prototype()->cluster().size().y * 2;
+        offset.z = m_shipObject->data().size().z * 1.4f;
+        offset.y = m_shipObject->data().size().y * 2;
 
         m_dolly->update(m_shipObject->pose().position() + m_shipObject->pose().orientation() * offset,
                         m_shipObject->pose().orientation(), seconds);
@@ -187,27 +187,27 @@ public:
             if (input().keyPressed(InputBase::Key_SPACE))
             {
                 auto origin = m_camera.position();
-                auto direction = fireDirection;
+                auto direction = fireDirection * 1000.0f;
 
-                m_physicsWorld.lineCast(Ray3D(m_camera.position(), fireDirection),
+                m_physicsWorld.lineCast(Ray3D(m_camera.position(), direction),
                                         [&](const RayCastIntersection &intersection) -> bool {
                                             if (intersection.body.shape()->type() ==
                                                 (int) ::CollisionShapeType::VoxelCluster) {
                                                 auto &voxelClusterIntersection =
                                                     static_cast<const RayCastVoxelClusterIntersection &>(intersection);
 
-                                                if (voxelClusterIntersection.voxelObjectID.worldUID ==
+                                                if (voxelClusterIntersection.object.lock()->id().worldUID ==
                                                     m_shipObject->id().worldUID) {
                                                     std::cout << "Skipped because of UID" << std::endl;
                                                     return true;
                                                 }
 
                                                 std::cout << "Hit voxel: " << voxelClusterIntersection.voxel << " of "
-                                                          << voxelClusterIntersection.voxelObjectID.worldUID
+                                                          << voxelClusterIntersection.object.lock()->id().worldUID
                                                           << std::endl;
 
-                                                m_voxelWorld->removeVoxel(voxelClusterIntersection.voxelObjectID,
-                                                                          voxelClusterIntersection.voxel);
+                                                voxelClusterIntersection.object.lock()->removeVoxels({
+                                                                          voxelClusterIntersection.voxel});
                                             } else {
                                                 std::cout << "Skipped because not a voxelCluster" << std::endl;
                                             }
@@ -254,12 +254,12 @@ private:
                 m_stationObject;
     std::shared_ptr<VoxelObject>
                 m_blockObject;
-    std::shared_ptr<VoxelObjectPrototype>
-                m_shipPrototype;
-    std::shared_ptr<VoxelObjectPrototype>
-                m_stationPrototype;
-    std::shared_ptr<VoxelObjectPrototype>
-                m_blockPrototype;
+    std::shared_ptr<VoxelObjectVoxelData>
+                m_shipData;
+    std::shared_ptr<VoxelObjectVoxelData>
+                m_stationData;
+    std::shared_ptr<VoxelObjectVoxelData>
+                m_blockData;
 
     Optional<HailstormManager>
                 m_hailstormManager;

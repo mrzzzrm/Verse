@@ -29,12 +29,11 @@ public:
     VoxelWorld(Context & context, PhysicsWorld & physicsWorld, const Camera3D & camera);
 
     Context & context() const;
+    const Camera3D & camera() const;
     const VoxelClusterMarchingCubesTriangulation & marchingCubesTriangulation() const;
     const Program & program() const;
 
     void addVoxelObject(std::shared_ptr<VoxelObject> voxelObject);
-
-    void removeVoxel(const VoxelObjectID & voxelObjectID, const glm::uvec3 & voxel);
 
     void update(float seconds);
 

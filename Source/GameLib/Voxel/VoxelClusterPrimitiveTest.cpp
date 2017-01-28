@@ -1,6 +1,5 @@
 #include "VoxelClusterPrimitiveTest.h"
 
-#include "VoxelClusterShape.h"
 #include "VoxelRigidBodyPayload.h"
 
 RayCastVoxelClusterIntersection::RayCastVoxelClusterIntersection(const RigidBody & body):
@@ -14,7 +13,7 @@ std::unique_ptr<RayCastIntersection> VoxelClusterPrimitiveTest::lineTest(const R
 {
     auto shape = body.shape();
 
-    auto voxelClusterShape = std::dynamic_pointer_cast<VoxelClusterShape>(shape);
+    auto voxelClusterShape = std::dynamic_pointer_cast<VoxelShape>(shape);
 
     glm::uvec3 voxel;
     if (voxelClusterShape->lineCast(body.transform(), ray, voxel))
@@ -24,7 +23,7 @@ std::unique_ptr<RayCastIntersection> VoxelClusterPrimitiveTest::lineTest(const R
 
         auto intersection = std::make_unique<RayCastVoxelClusterIntersection>(body);
         intersection->voxel = voxel;
-        intersection->voxelObjectID = voxelPayload.voxelObjectID;
+        intersection->object = voxelPayload.object;
 
         return std::unique_ptr<RayCastIntersection>(std::move(intersection));
     }

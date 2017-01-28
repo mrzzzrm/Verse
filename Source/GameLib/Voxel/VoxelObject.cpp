@@ -1,22 +1,15 @@
 #include "VoxelObject.h"
 
-#include "VoxelObjectPrototype.h"
 #include "VoxelRigidBodyPayload.h"
 
-VoxelObject::VoxelObject(const std::shared_ptr<VoxelObjectPrototype> & prototype):
-    m_prototype(prototype)
+VoxelObject::VoxelObject(const VoxelObjectVoxelData & voxelData):
+    m_voxelWorld(voxelData.voxelWorld()),
+    m_voxelData(voxelData)
 {
-    m_prototype->incRefCount();
-
-    m_rigidBodyPayload = std::make_shared<VoxelRigidBodyPayload>(m_id);
-    m_body = std::make_shared<RigidBody>(m_prototype->shape());
-    m_body->setPayload(m_rigidBodyPayload);
-    m_body->transform().setCenter(glm::vec3(prototype->cluster().size()) / 2.0f);
 }
 
 VoxelObject::~VoxelObject()
 {
-    m_prototype->decRefCount();
 }
 
 const VoxelObjectID & VoxelObject::id() const
@@ -27,22 +20,29 @@ const VoxelObjectID & VoxelObject::id() const
 const Pose3D & VoxelObject::pose() const
 {
     return m_pose;
+};
+
+const VoxelObjectVoxelData & VoxelObject::data() const
+{
+    return m_voxelData;
 }
 
 std::shared_ptr<RigidBody> & VoxelObject::body()
 {
-    return m_body;
-}
+    if (!m_body)
+    {
+        m_rigidBodyPayload = std::make_shared<VoxelRigidBodyPayload>(shared_from_this());
+        m_body = std::make_shared<RigidBody>(m_voxelData.shapeTree());
+        m_body->setPayload(m_rigidBodyPayload);
+        m_body->transform().setCenter(glm::vec3(m_voxelData.size()) / 2.0f);
+    }
 
-const std::shared_ptr<VoxelObjectPrototype> & VoxelObject::prototype() const
-{
-    return m_prototype;
+    return m_body;
 }
 
 void VoxelObject::setId(VoxelObjectID id)
 {
     m_id = id;
-    m_rigidBodyPayload->voxelObjectID = id;
 }
 
 void VoxelObject::setPose(const Pose3D & pose)
@@ -50,14 +50,17 @@ void VoxelObject::setPose(const Pose3D & pose)
     m_pose = pose;
 }
 
-void VoxelObject::setPrototype(const std::shared_ptr<VoxelObjectPrototype> & prototype)
+void VoxelObject::addVoxels(const std::vector<Voxel> & voxels)
 {
-    m_prototype->decRefCount();
-    m_prototype = prototype;
-    m_prototype->incRefCount();
+    m_voxelData.addVoxels(voxels);
 }
 
-void VoxelObject::schedule(const Camera3D & camera)
+void VoxelObject::removeVoxels(const std::vector<glm::uvec3> & voxels)
 {
-    m_prototype->model().schedule(camera, m_pose);
+    m_voxelData.removeVoxels(voxels);
+}
+
+void VoxelObject::schedule()
+{
+    m_voxelData.renderTree().schedule(m_pose);
 }

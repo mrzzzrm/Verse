@@ -6,8 +6,6 @@
 
 #include <Deliberation/Physics/PhysicsWorld.h>
 
-#include "VoxelObjectPrototype.h"
-
 VoxelWorld::VoxelWorld(Context & context, PhysicsWorld & physicsWorld, const Camera3D & camera):
     m_context(context),
     m_physicsWorld(physicsWorld),
@@ -20,6 +18,11 @@ VoxelWorld::VoxelWorld(Context & context, PhysicsWorld & physicsWorld, const Cam
 Context & VoxelWorld::context() const
 {
     return m_context;
+}
+
+const Camera3D & VoxelWorld::camera() const
+{
+    return m_camera;
 }
 
 const VoxelClusterMarchingCubesTriangulation & VoxelWorld::marchingCubesTriangulation() const
@@ -47,29 +50,6 @@ void VoxelWorld::addVoxelObject(std::shared_ptr<VoxelObject> voxelObject)
     m_physicsWorld.addRigidBody(voxelObject->body());
 }
 
-void VoxelWorld::removeVoxel(const VoxelObjectID & voxelObjectID, const glm::uvec3 & voxel)
-{
-    ScopeProfiler scopeProfiler("VoxelWorld::removeVoxel");
-
-    auto it = m_objectsByUID.find(voxelObjectID.worldUID);
-    Assert (it != m_objectsByUID.end(), "No such object");
-
-    auto & object = it->second;
-
-    std::cout << "Prototype ref count: " << object->prototype()->refCount() << std::endl;
-
-    Assert(object->prototype()->refCount() > 0, "");
-
-    if (object->prototype()->refCount() > 1)
-    {
-        auto newPrototype = object->prototype()->clone();
-        object->setPrototype(newPrototype);
-    }
-
-    object->prototype()->removeVoxel(voxel);
-    object->body()->setShape(object->prototype()->shape());
-}
-
 void VoxelWorld::update(float seconds)
 {
     for (auto & object : m_objects)
@@ -82,6 +62,6 @@ void VoxelWorld::update(float seconds)
 
         object->setPose(pose);
 
-        object->schedule(m_camera);
+        object->schedule();
     }
 }

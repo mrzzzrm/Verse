@@ -45,7 +45,7 @@ VoxReader::Palette DEFAULT_PALETTE = {
 
 }
 
-std::vector<VoxelCluster<glm::vec3>> VoxReader::read(const std::string & path)
+std::vector<VoxReader::VoxelModel> VoxReader::read(const std::string & path)
 {
     std::ifstream file(path, std::ios_base::binary);
 
@@ -99,11 +99,11 @@ std::vector<VoxelCluster<glm::vec3>> VoxReader::read(const std::string & path)
         file.read((char*)&numVoxels, sizeof(numVoxels));
         Assert(numVoxels < 256 * 256 * 256, "Number of voxels too high");
 
-        voxelModels[m].voxels.reserve(numVoxels);
+        voxelModels[m].palettedVoxels.reserve(numVoxels);
 
         for (u32 v = 0; v < numVoxels; v++)
         {
-            voxelModels[m].voxels.emplace_back(readVoxel(file));
+            voxelModels[m].palettedVoxels.emplace_back(readVoxel(file));
         }
     }
 
@@ -143,7 +143,9 @@ std::vector<VoxelCluster<glm::vec3>> VoxReader::read(const std::string & path)
 
         auto & voxelCluster = voxelClusters.back();
 
-        for (auto & voxel : voxelModel.voxels)
+        voxelModel.voxels.reserve(voxelModel.palettedVoxels.size());
+
+        for (auto & voxel : voxelModel.palettedVoxels)
         {
             auto color = (*palette)[voxel.colorIndex];
 
@@ -152,11 +154,11 @@ std::vector<VoxelCluster<glm::vec3>> VoxReader::read(const std::string & path)
             colorv.y = (float)((color >> 8) & 0xFF) / 255.0f;
             colorv.z = (float)((color >> 16) & 0xFF) / 255.0f;
 
-            voxelCluster.set(voxel.position, colorv);
+            voxelModel.voxels.emplace_back(voxel.position, colorv);
         }
     }
 
-    return voxelClusters;
+    return voxelModels;
 }
 
 VoxReader::Chunk VoxReader::readChunkHeader(std::ifstream & file)
@@ -168,12 +170,12 @@ VoxReader::Chunk VoxReader::readChunkHeader(std::ifstream & file)
     return chunk;
 }
 
-VoxReader::Voxel VoxReader::readVoxel(std::ifstream & file)
+VoxReader::PalettedVoxel VoxReader::readVoxel(std::ifstream & file)
 {
     std::array<u8, 4> voxelData;
     file.read((char*)voxelData.data(), voxelData.size());
 
-    Voxel voxel;
+    PalettedVoxel voxel;
     voxel.position.x = voxelData[0];
     voxel.position.y = voxelData[2];
     voxel.position.z = voxelData[1];
