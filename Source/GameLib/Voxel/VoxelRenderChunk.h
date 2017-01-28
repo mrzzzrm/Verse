@@ -39,6 +39,7 @@ private:
     VoxelCluster<u8>    m_configCluster;
     u32                 m_voxelCount = 0;
     mutable bool        m_drawDirty = true;
+    mutable bool        m_meshEmpty = true;
     mutable glm::uvec3  m_llfDirty{std::numeric_limits<u32>::max()};
     mutable glm::uvec3  m_urbDirty;
 //    glm::uvec3          m_llfVisible;

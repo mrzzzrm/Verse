@@ -6,9 +6,9 @@
 
 #include <Deliberation/Core/IntTypes.h>
 
-#include "Voxel/VoxelCluster.h"
-
 #include "GameLib.h"
+#include "Voxel.h"
+#include "VoxelCluster.h"
 
 class VoxReader final
 {
@@ -20,7 +20,7 @@ public:
         u32 numBytesChildren = 0;
     };
 
-    struct Voxel
+    struct PalettedVoxel
     {
         glm::u8vec3 position;
         u8 colorIndex;
@@ -29,15 +29,16 @@ public:
     struct VoxelModel
     {
         glm::u32vec3 size;
+        std::vector<PalettedVoxel> palettedVoxels;
         std::vector<Voxel> voxels;
     };
 
     using Palette = std::array<u32, 256>;
 
 public:
-    std::vector<VoxelCluster<glm::vec3>> read(const std::string & path);
+    std::vector<VoxelModel> read(const std::string & path);
 
 private:
     Chunk readChunkHeader(std::ifstream & file);
-    Voxel readVoxel(std::ifstream & file);
+    PalettedVoxel readVoxel(std::ifstream & file);
 };

@@ -51,6 +51,7 @@ protected:
 
     struct ChunkWrapper
     {
+        size_t      index;
         glm::vec3   position;
         std::shared_ptr<VoxelRenderChunk>
                     chunk;
@@ -66,7 +67,6 @@ private:
 protected:
     const VoxelWorld &  m_voxelWorld;
     glm::uvec3          m_size;
-    std::vector<bool>   m_nodeMask;
     std::vector<Node>   m_nodes;
     std::vector<ChunkWrapper>
                         m_chunks;

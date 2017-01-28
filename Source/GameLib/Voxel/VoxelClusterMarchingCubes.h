@@ -27,7 +27,7 @@ public:
     void run(const glm::uvec3 & llf, const glm::uvec3 & urb,
              const Optional<glm::vec3> & colorOverride = Optional<glm::vec3>());
 
-    LayoutedBlob && takeVertices();
+    LayoutedBlob takeVertices();
 
 private:
     inline void generateMesh(i32 x, i32 y, i32 z, u8 configID);
@@ -41,6 +41,7 @@ private:
     float                                           m_scale;
     size_t                                          m_maxNumVertices = 0;
 
+    DataLayout                                      m_vertexLayout;
     LayoutedBlob                                    m_vertices;
 
     LayoutedBlob::Iterator<glm::vec3>               m_positions;

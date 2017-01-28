@@ -1,5 +1,5 @@
 #include "VoxelRigidBodyPayload.h"
 
-VoxelRigidBodyPayload::VoxelRigidBodyPayload(VoxelObjectID voxelObjectID):
-    voxelObjectID(voxelObjectID)
+VoxelRigidBodyPayload::VoxelRigidBodyPayload(std::weak_ptr<VoxelObject> object):
+    object(object)
 {}

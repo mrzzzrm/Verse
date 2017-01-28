@@ -35,8 +35,6 @@ public:
 
     void addVoxelObject(std::shared_ptr<VoxelObject> voxelObject);
 
-    void removeVoxel(const VoxelObjectID & voxelObjectID, const glm::uvec3 & voxel);
-
     void update(float seconds);
 
 private:

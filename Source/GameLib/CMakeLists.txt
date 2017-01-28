@@ -26,9 +26,6 @@ add_library(${target}
     Voxel/VoxelClusterMarchingCubesTriangulation.h
     Voxel/VoxelClusterPrimitiveTest.cpp
     Voxel/VoxelClusterPrimitiveTest.h
-    Voxel/VoxelClusterShape.cpp
-    Voxel/VoxelClusterShape.h
-    Voxel/VoxelClusterShape.inl
     Voxel/VoxelHull.cpp
     Voxel/VoxelHull.h
     Voxel/VoxelModel.cpp

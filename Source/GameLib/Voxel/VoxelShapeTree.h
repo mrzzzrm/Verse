@@ -9,6 +9,8 @@
 
 #include <Deliberation/Core/Math/Sphere.h>
 
+#include <Deliberation/Physics/CollisionShape.h>
+
 #include "GameLib.h"
 #include "Voxel.h"
 
@@ -18,10 +20,14 @@ class Ray3D;
 class Transform3D;
 }
 
-class VoxelShapeTree final
+class VoxelShapeTree final:
+    public CollisionShape
 {
 public:
     VoxelShapeTree(const glm::uvec3 & size);
+
+    virtual AABB bounds(const Transform3D & transform) const override;
+    virtual glm::mat3 localInertia() const override;
 
     void updateVoxel(const glm::uvec3 & voxel, bool set);
 

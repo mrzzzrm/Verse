@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <Deliberation/Physics/RigidBody.h>
 
 #include "GameLib.h"
@@ -8,7 +10,7 @@
 struct VoxelRigidBodyPayload:
     public RigidBodyPayload
 {
-    VoxelRigidBodyPayload(VoxelObjectID voxelObjectID);
+    VoxelRigidBodyPayload(std::weak_ptr<VoxelObject> object);
 
-    VoxelObjectID voxelObjectID;
+    std::weak_ptr<VoxelObject> object;
 };

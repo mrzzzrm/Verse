@@ -49,11 +49,11 @@ void HailstormPhysicsWorld::update(float seconds)
                 auto & voxelClusterIntersection =
                     static_cast<const RayCastVoxelClusterIntersection &>(intersection);
 
-                if (voxelClusterIntersection.voxelObjectID.worldUID == bullet.creator) {
+                if (voxelClusterIntersection.object.lock()->id().worldUID == bullet.creator) {
                     return true;
                 }
 
-                m_voxelWorld.removeVoxel(voxelClusterIntersection.voxelObjectID, voxelClusterIntersection.voxel);
+                voxelClusterIntersection.object.lock()->removeVoxels({voxelClusterIntersection.voxel});
             }
 
             if (!markedForDestruction) {

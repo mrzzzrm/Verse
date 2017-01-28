@@ -13,13 +13,11 @@ VoxelClusterMarchingCubes::VoxelClusterMarchingCubes(const VoxelClusterMarchingC
         m_configCluster(cluster.size() + glm::uvec3(1, 1, 1)),
         m_scale(scale)
 {
-
-
-    auto vertexLayout = DataLayout({{"Position", Type_Vec3},
+    m_vertexLayout = DataLayout({{"Position", Type_Vec3},
                                     {"Normal",   Type_Vec3},
                                     {"Color",    Type_Vec3}});
 
-    m_vertices = LayoutedBlob(vertexLayout);
+    m_vertices = LayoutedBlob(m_vertexLayout);
 }
 
 void VoxelClusterMarchingCubes::run()
@@ -92,11 +90,6 @@ void VoxelClusterMarchingCubes::run(const glm::uvec3 & llf, const glm::uvec3 & u
         }
 
         m_vertices.resize(actualNumVertices);
-
-        if (actualNumVertices == 0)
-        {
-            std::cout << "Dummy";
-        }
     }
 
     if (colorOverride)
@@ -247,9 +240,11 @@ void VoxelClusterMarchingCubes::onClusterChanged(const glm::uvec3 & llfCluster, 
     m_configClusterDirty = false;
 }
 
-LayoutedBlob && VoxelClusterMarchingCubes::takeVertices()
+LayoutedBlob VoxelClusterMarchingCubes::takeVertices()
 {
-    return std::move(m_vertices);
+    auto result = std::move(m_vertices);
+    m_vertices = LayoutedBlob(m_vertexLayout);
+    return result;
 }
 
 inline void VoxelClusterMarchingCubes::generateMesh(i32 x, i32 y, i32 z, u8 configID)

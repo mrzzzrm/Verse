@@ -110,17 +110,26 @@ void VoxelRenderChunk::schedule(const Pose3D & pose) const
         //m_marchingCubes.run(glm::max(m_llfRender, m_llfVisible), glm::min(m_urbRender, m_urbVisible), m_colorOverride);
         m_marchingCubes.run(m_llfRender, m_urbRender, m_colorOverride);
 
-        m_draw = m_voxelWorld.context().createDraw(m_voxelWorld.program());
-        m_draw.addVertices(m_marchingCubes.takeVertices());
-   //     m_draw.state().setCullState(CullState::disabled());
+        auto vertices = m_marchingCubes.takeVertices();
 
-        m_transformUniform = m_draw.uniform("Transform");
-        m_viewProjectionUniform = m_draw.uniform("ViewProjection");
+        m_meshEmpty = vertices.empty();
 
-        m_drawDirty = false;
-        m_llfDirty = glm::uvec3(std::numeric_limits<uint32_t>::max());
-        m_urbDirty = glm::uvec3(0);
+        if (!m_meshEmpty)
+        {
+            m_draw = m_voxelWorld.context().createDraw(m_voxelWorld.program());
+            m_draw.addVertices(std::move(vertices));
+            //     m_draw.state().setCullState(CullState::disabled());
+
+            m_transformUniform = m_draw.uniform("Transform");
+            m_viewProjectionUniform = m_draw.uniform("ViewProjection");
+
+            m_drawDirty = false;
+            m_llfDirty = glm::uvec3(std::numeric_limits<uint32_t>::max());
+            m_urbDirty = glm::uvec3(0);
+        }
     }
+
+    if (m_meshEmpty) return;
 
     m_viewProjectionUniform.set(m_voxelWorld.camera().viewProjection());
     m_transformUniform.set(pose.matrix());

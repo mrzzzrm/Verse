@@ -30,7 +30,7 @@ public:
         m_camera.setOrientation(glm::quat({-0.0f, 0.0f, 0.0f}));
         m_camera.setAspectRatio((float)context().backbuffer().width() / context().backbuffer().height());
 
-        m_voxelData.reset(*m_voxelWorld, glm::uvec3(10,10,10));
+        m_voxelData.reset(*m_voxelWorld, glm::uvec3(3));
 
         std::vector<Voxel> voxels;
         for (size_t z = 0; z < m_voxelData->size().z; z++)
@@ -46,6 +46,7 @@ public:
         }
 
         m_voxelData->addVoxels(voxels);
+        std::cout << m_voxelData->shapeTree()->toString() << std::endl;
 
 //        std::vector<glm::uvec3> rvoxels;
 //        for (size_t z = 0; z < m_voxelData->size().z; z++)
@@ -69,13 +70,17 @@ public:
 
         m_object.reset(*m_voxelData);
 
-        m_navigator.reset(m_camera, input(), 5.0f);
+        m_navigator.reset(m_camera, input(), 25.0f);
 
         m_clear = context().createClear();
     }
 
     void onFrame(float seconds) override
     {
+//        auto pose = m_object->pose();
+//        pose.worldRotate(glm::quat(glm::vec3(0.1f, 0.2, 0.3f) * seconds));
+//        m_object->setPose(pose);
+
 //        if (!m_removalDone) {
 //            m_removalCooldown -= seconds;
 //            if (m_removalCooldown < 0) {
@@ -100,7 +105,7 @@ public:
 
         m_navigator->update(seconds);
 
-        if (input().keyDown(InputBase::Key_SPACE))
+        if (input().keyPressed(InputBase::Key_SPACE))
         {
             auto mouseNearPlane = (input().mousePosition() + 1.0f) / 2.0f;
             auto nearPlane = m_camera.nearPlane();
@@ -110,23 +115,24 @@ public:
             auto direction = fireDirection;
 
             glm::uvec3 voxel;
-            auto hit = m_object->data().shapeTree().lineCast(Transform3D(), Ray3D(origin, fireDirection), voxel);
+            auto hit = m_object->data().shapeTree()->lineCast(Transform3D(), Ray3D(origin, fireDirection), voxel);
 
             if (hit)
             {
-                auto r = 5;
-                for (i32 z = (i32)voxel.z - r; z <= (i32)voxel.z + r; z++)
-                for (i32 y = (i32)voxel.y - r; y <= (i32)voxel.y + r; y++)
-                for (i32 x = (i32)voxel.x - r; x <= (i32)voxel.x + r; x++)
-                {
-                    auto v = glm::vec3(x, y, z);
-                    if (glm::length(v - glm::vec3(voxel)) > r) continue;
+                m_object->removeVoxels({voxel});
+//                auto r = 4;
+//                for (i32 z = (i32)voxel.z - r; z <= (i32)voxel.z + r; z++)
+//                for (i32 y = (i32)voxel.y - r; y <= (i32)voxel.y + r; y++)
+//                for (i32 x = (i32)voxel.x - r; x <= (i32)voxel.x + r; x++)
+//                {
+//                    auto v = glm::vec3(x, y, z);
+//                    if (glm::length(v - glm::vec3(voxel)) > r) continue;
 
-                    if (m_object->data().cluster().contains(v) && m_object->data().cluster().test(v))
-                    {
-                        m_object->removeVoxels({v});
-                    }
-                }
+//                    if (m_object->data().cluster().contains(v) && m_object->data().cluster().test(v))
+//                    {
+//                        m_object->removeVoxels({v});
+//                    }
+//                }
             }
         }
 

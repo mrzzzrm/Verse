@@ -8,11 +8,27 @@
 #include <Deliberation/Core/Math/Transform3D.h>
 #include <Deliberation/Core/Math/Ray3D.h>
 
+#include "CollisionShapeTypes.h"
+
 VoxelShapeTree::VoxelShapeTree(const glm::uvec3 & size):
+    CollisionShape((int)::CollisionShapeType::VoxelCluster),
     m_size(size),
     m_tree(m_size, glm::uvec3(20))
 {
 
+}
+
+AABB VoxelShapeTree::bounds(const Transform3D & transform) const
+{
+    const auto halfSize = glm::vec3(m_size) / 2.0f;
+    const auto center = transform.pointLocalToWorld(halfSize);
+    const auto radius = glm::length(halfSize);
+    return AABB(center - glm::vec3(radius), center + glm::vec3(radius));
+}
+
+glm::mat3 VoxelShapeTree::localInertia() const
+{
+    return glm::mat3(1.0f);
 }
 
 void VoxelShapeTree::updateVoxel(const glm::uvec3 & voxel, bool set)

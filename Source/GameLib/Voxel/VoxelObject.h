@@ -6,7 +6,6 @@
 #include <Deliberation/Physics/RigidBody.h>
 
 #include "GameLib.h"
-#include "VoxelClusterShape.h"
 #include "VoxelDefines.h"
 #include "VoxelModel.h"
 #include "VoxelObjectVoxelData.h"
@@ -26,7 +25,8 @@ struct VoxelObjectID
     VoxelObjectWorldUID worldUID = INVALID_VOXEL_OBJECT_WORLD_UID;
 };
 
-class VoxelObject final
+class VoxelObject final:
+    public std::enable_shared_from_this<VoxelObject>
 {
 public:
     VoxelObject(const VoxelObjectVoxelData & prototype);

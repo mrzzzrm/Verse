@@ -6,12 +6,6 @@ VoxelObject::VoxelObject(const VoxelObjectVoxelData & voxelData):
     m_voxelWorld(voxelData.voxelWorld()),
     m_voxelData(voxelData)
 {
-//    m_prototype->incRefCount();
-//
-//    m_rigidBodyPayload = std::make_shared<VoxelRigidBodyPayload>(m_id);
-//    m_body = std::make_shared<RigidBody>(m_prototype->shape());
-//    m_body->setPayload(m_rigidBodyPayload);
-//    m_body->transform().setCenter(glm::vec3(prototype->cluster().size()) / 2.0f);
 }
 
 VoxelObject::~VoxelObject()
@@ -35,13 +29,20 @@ const VoxelObjectVoxelData & VoxelObject::data() const
 
 std::shared_ptr<RigidBody> & VoxelObject::body()
 {
+    if (!m_body)
+    {
+        m_rigidBodyPayload = std::make_shared<VoxelRigidBodyPayload>(shared_from_this());
+        m_body = std::make_shared<RigidBody>(m_voxelData.shapeTree());
+        m_body->setPayload(m_rigidBodyPayload);
+        m_body->transform().setCenter(glm::vec3(m_voxelData.size()) / 2.0f);
+    }
+
     return m_body;
 }
 
 void VoxelObject::setId(VoxelObjectID id)
 {
     m_id = id;
-    m_rigidBodyPayload->voxelObjectID = id;
 }
 
 void VoxelObject::setPose(const Pose3D & pose)
