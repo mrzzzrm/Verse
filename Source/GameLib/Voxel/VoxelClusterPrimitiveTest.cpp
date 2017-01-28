@@ -13,7 +13,7 @@ std::unique_ptr<RayCastIntersection> VoxelClusterPrimitiveTest::lineTest(const R
 {
     auto shape = body.shape();
 
-    auto voxelClusterShape = std::dynamic_pointer_cast<VoxelShapeTree>(shape);
+    auto voxelClusterShape = std::dynamic_pointer_cast<VoxelShape>(shape);
 
     glm::uvec3 voxel;
     if (voxelClusterShape->lineCast(body.transform(), ray, voxel))

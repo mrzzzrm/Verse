@@ -7,7 +7,7 @@
 
 #include "Voxel.h"
 #include "VoxelCluster.h"
-#include "VoxelShapeTree.h"
+#include "VoxelShape.h"
 
 #include <memory>
 
@@ -48,11 +48,11 @@ protected:
     }
 
     VoxelCluster<bool> cluster1x1x1;
-    Optional<VoxelShapeTree> shape1x1x1;
+    Optional<VoxelShape> shape1x1x1;
     VoxelCluster<bool> cluster2x1x1;
-    Optional<VoxelShapeTree> shape2x1x1;
+    Optional<VoxelShape> shape2x1x1;
     VoxelCluster<bool> cluster3x2x1;
-    Optional<VoxelShapeTree> shape3x2x1;
+    Optional<VoxelShape> shape3x2x1;
 };
 
 TEST_F(VoxelShapeTreeTest, Basic)

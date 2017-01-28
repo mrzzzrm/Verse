@@ -1,4 +1,4 @@
-#include "VoxelShapeTree.h"
+#include "VoxelShape.h"
 
 #include <functional>
 
@@ -10,7 +10,7 @@
 
 #include "CollisionShapeTypes.h"
 
-VoxelShapeTree::VoxelShapeTree(const glm::uvec3 & size):
+VoxelShape::VoxelShape(const glm::uvec3 & size):
     CollisionShape((int)::CollisionShapeType::VoxelCluster),
     m_size(size),
     m_tree(m_size, glm::uvec3(20))
@@ -18,7 +18,7 @@ VoxelShapeTree::VoxelShapeTree(const glm::uvec3 & size):
 
 }
 
-AABB VoxelShapeTree::bounds(const Transform3D & transform) const
+AABB VoxelShape::bounds(const Transform3D & transform) const
 {
     const auto halfSize = glm::vec3(m_size) / 2.0f;
     const auto center = transform.pointLocalToWorld(halfSize);
@@ -26,17 +26,17 @@ AABB VoxelShapeTree::bounds(const Transform3D & transform) const
     return AABB(center - glm::vec3(radius), center + glm::vec3(radius));
 }
 
-glm::mat3 VoxelShapeTree::localInertia() const
+glm::mat3 VoxelShape::localInertia() const
 {
     return glm::mat3(1.0f);
 }
 
-void VoxelShapeTree::updateVoxel(const glm::uvec3 & voxel, bool set)
+void VoxelShape::updateVoxel(const glm::uvec3 & voxel, bool set)
 {
     m_tree.updateVoxel(0, voxel, set);
 }
 
-bool VoxelShapeTree::lineCast(const Transform3D & transform, const Ray3D & ray, glm::uvec3 & voxel) const
+bool VoxelShape::lineCast(const Transform3D & transform, const Ray3D & ray, glm::uvec3 & voxel) const
 {
     std::vector<glm::uvec3> voxels;
 
@@ -68,7 +68,7 @@ bool VoxelShapeTree::lineCast(const Transform3D & transform, const Ray3D & ray, 
     return true;
 }
 
-std::string VoxelShapeTree::toString() const
+std::string VoxelShape::toString() const
 {
     std::stringstream stream;
     m_tree.toString(stream, 0, 0);
@@ -76,7 +76,7 @@ std::string VoxelShapeTree::toString() const
 }
 
 template<typename T>
-VoxelShapeTree::Subtree<T>::Subtree(const glm::uvec3 & size, const glm::uvec3 & maxChunkSize)
+VoxelShape::Subtree<T>::Subtree(const glm::uvec3 & size, const glm::uvec3 & maxChunkSize)
 {
     Assert(size.x >= 0 && size.y >= 0 && size.z >= 0, "");
 
@@ -139,7 +139,7 @@ VoxelShapeTree::Subtree<T>::Subtree(const glm::uvec3 & size, const glm::uvec3 & 
 }
 
 template<typename T>
-void VoxelShapeTree::Subtree<T>::updateVoxel(size_t index, const glm::uvec3 & voxel, bool set)
+void VoxelShape::Subtree<T>::updateVoxel(size_t index, const glm::uvec3 & voxel, bool set)
 {
     auto & node = nodes[index];
 
@@ -170,7 +170,7 @@ void VoxelShapeTree::Subtree<T>::updateVoxel(size_t index, const glm::uvec3 & vo
 }
 
 template<>
-void VoxelShapeTree::Subtree<VoxelShapeTree::ChunkLeaf>::updateVoxelLeaf(size_t index, const glm::uvec3 & voxel, bool set)
+void VoxelShape::Subtree<VoxelShape::ChunkLeaf>::updateVoxelLeaf(size_t index, const glm::uvec3 & voxel, bool set)
 {
     auto & node = nodes[index];
     auto & leaf = leaves[node.leaf];
@@ -192,14 +192,14 @@ void VoxelShapeTree::Subtree<VoxelShapeTree::ChunkLeaf>::updateVoxelLeaf(size_t 
 }
 
 template<>
-void VoxelShapeTree::Subtree<VoxelShapeTree::VoxelLeaf>::updateVoxelLeaf(size_t index, const glm::uvec3 & voxel, bool set)
+void VoxelShape::Subtree<VoxelShape::VoxelLeaf>::updateVoxelLeaf(size_t index, const glm::uvec3 & voxel, bool set)
 {
     Assert(leaves[nodes[index].leaf] != set, "");
     leaves[nodes[index].leaf] = set;
 }
 
 template<typename T>
-void VoxelShapeTree::Subtree<T>::lineCast(size_t index, const Ray3D & ray, std::vector<glm::uvec3> & voxels) const
+void VoxelShape::Subtree<T>::lineCast(size_t index, const Ray3D & ray, std::vector<glm::uvec3> & voxels) const
 {
     auto & node = nodes[index];
 
@@ -234,7 +234,7 @@ void VoxelShapeTree::Subtree<T>::lineCast(size_t index, const Ray3D & ray, std::
 }
 
 template<typename T>
-void VoxelShapeTree::Subtree<T>::toString(std::stringstream & stream, size_t index, size_t indentation) const
+void VoxelShape::Subtree<T>::toString(std::stringstream & stream, size_t index, size_t indentation) const
 {
     auto & node = nodes[index];
 
@@ -254,7 +254,7 @@ void VoxelShapeTree::Subtree<T>::toString(std::stringstream & stream, size_t ind
 }
 
 template<>
-void VoxelShapeTree::Subtree<VoxelShapeTree::ChunkLeaf>::leafToString(std::stringstream & stream,
+void VoxelShape::Subtree<VoxelShape::ChunkLeaf>::leafToString(std::stringstream & stream,
                                                                       size_t index, size_t indentation) const
 {
     auto & node = nodes[index];
@@ -265,7 +265,7 @@ void VoxelShapeTree::Subtree<VoxelShapeTree::ChunkLeaf>::leafToString(std::strin
 }
 
 template<>
-void VoxelShapeTree::Subtree<VoxelShapeTree::VoxelLeaf>::leafToString(std::stringstream & stream,
+void VoxelShape::Subtree<VoxelShape::VoxelLeaf>::leafToString(std::stringstream & stream,
                                                                       size_t index, size_t indentation) const
 {
     auto & node = nodes[index];
@@ -275,7 +275,7 @@ void VoxelShapeTree::Subtree<VoxelShapeTree::VoxelLeaf>::leafToString(std::strin
 }
 
 template<>
-void VoxelShapeTree::Subtree<VoxelShapeTree::ChunkLeaf>::lineCastLeaf(size_t index,
+void VoxelShape::Subtree<VoxelShape::ChunkLeaf>::lineCastLeaf(size_t index,
                                                                       const Ray3D & ray,
                                                                       std::vector<glm::uvec3> & voxels) const
 {
@@ -294,7 +294,7 @@ void VoxelShapeTree::Subtree<VoxelShapeTree::ChunkLeaf>::lineCastLeaf(size_t ind
 }
 
 template<>
-void VoxelShapeTree::Subtree<VoxelShapeTree::VoxelLeaf>::lineCastLeaf(size_t index,
+void VoxelShape::Subtree<VoxelShape::VoxelLeaf>::lineCastLeaf(size_t index,
                                                                   const Ray3D & ray,
                                                                   std::vector<glm::uvec3> & voxels) const
 {
@@ -313,7 +313,7 @@ void VoxelShapeTree::Subtree<VoxelShapeTree::VoxelLeaf>::lineCastLeaf(size_t ind
 }
 
 template<typename T>
-std::shared_ptr<VoxelShapeTree::Subtree<T>> VoxelShapeTree::Subtree<T>::clone() const
+std::shared_ptr<VoxelShape::Subtree<T>> VoxelShape::Subtree<T>::clone() const
 {
     return std::make_shared<Subtree<T>>(*this);
 }
