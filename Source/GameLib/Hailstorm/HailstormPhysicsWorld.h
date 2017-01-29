@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "HailstormBullet.h"
+#include "HailstormParticle.h"
 
 class VoxelWorld;
 
@@ -15,9 +15,9 @@ public:
      * Bullets destroyed during the last update() call
      * @return
      */
-    const std::vector<HailstormBulletID> & destroyedBullets() const;
+    const std::vector<HailstormParticleID> & destroyedBullets() const;
 
-    void addBullet(const HailstormBullet & bullet);
+    void addBullet(const HailstormParticle & bullet);
 
     void update(float seconds);
 
@@ -25,6 +25,6 @@ private:
     VoxelWorld &                    m_voxelWorld;
     PhysicsWorld &                  m_physicsWorld;
 
-    SparseVector<HailstormBullet>   m_bullets;
-    std::vector<HailstormBulletID>  m_destroyedBullets;
+    SparseVector<HailstormParticle>   m_bullets;
+    std::vector<HailstormParticleID>  m_destroyedBullets;
 };

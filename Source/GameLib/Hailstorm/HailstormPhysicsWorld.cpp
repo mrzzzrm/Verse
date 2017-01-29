@@ -17,12 +17,12 @@ HailstormPhysicsWorld::HailstormPhysicsWorld(PhysicsWorld & physicsWorld, VoxelW
 
 }
 
-const std::vector<HailstormBulletID> & HailstormPhysicsWorld::destroyedBullets() const
+const std::vector<HailstormParticleID> & HailstormPhysicsWorld::destroyedBullets() const
 {
     return m_destroyedBullets;
 }
 
-void HailstormPhysicsWorld::addBullet(const HailstormBullet & bullet)
+void HailstormPhysicsWorld::addBullet(const HailstormParticle & bullet)
 {
     auto index = m_bullets.insert(bullet);
     m_bullets[index].id.physicsWorldIndex = index;

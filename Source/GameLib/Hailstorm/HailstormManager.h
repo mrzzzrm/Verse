@@ -3,7 +3,7 @@
 #include <Deliberation/Core/Optional.h>
 #include <Deliberation/Physics/PhysicsWorld.h>
 
-#include "Hailstorm/HailstormBullet.h"
+#include "Hailstorm/HailstormParticle.h"
 #include "Hailstorm/HailstormRenderer.h"
 #include "Hailstorm/HailstormPhysicsWorld.h"
 
@@ -17,7 +17,7 @@ public:
     HailstormRenderer & renderer();
     const HailstormRenderer & renderer() const;
 
-    void addBullet(HailstormBullet bullet);
+    void addBullet(HailstormParticle bullet);
 
     void update(float seconds);
 

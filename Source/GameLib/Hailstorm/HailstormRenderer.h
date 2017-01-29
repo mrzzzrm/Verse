@@ -8,7 +8,7 @@
 
 #include <Deliberation/Scene/Mesh2.h>
 
-#include "Hailstorm/HailstormBullet.h"
+#include "Hailstorm/HailstormParticle.h"
 #include "Hailstorm/HailstormRenderBatch.h"
 
 #include "GameLib.h"
@@ -33,8 +33,8 @@ public:
 
     HailstormMeshID addMesh(const Mesh2 & mesh);
 
-    void addBullet(HailstormBullet & bullet);
-    void removeBullet(const HailstormBulletID & bullet);
+    void addBullet(HailstormParticle & bullet);
+    void removeBullet(const HailstormParticleID & bullet);
 
     void update(float seconds);
 

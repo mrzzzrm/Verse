@@ -10,9 +10,9 @@
 #include "HailstormDefines.h"
 #include "VoxelDefines.h"
 
-struct HailstormBulletID
+struct HailstormParticleID
 {
-    HailstormBulletID(HailstormMeshID meshID,
+    HailstormParticleID(HailstormMeshID meshID,
                       u32 renderBatchIndex,
                       size_t physicsWorldIndex);
 
@@ -21,12 +21,12 @@ struct HailstormBulletID
     size_t          physicsWorldIndex;
 };
 
-struct HailstormBullet
+struct HailstormParticle
 {
-    HailstormBullet(const glm::vec3 & origin, const glm::vec3 & velocity, float energy, TimestampMillis birth,
+    HailstormParticle(const glm::vec3 & origin, const glm::vec3 & velocity, float energy, TimestampMillis birth,
                     DurationMillis lifetime, HailstormMeshID meshID, VoxelObjectWorldUID creator);
 
-    HailstormBulletID   id;
+    HailstormParticleID   id;
     glm::vec3           origin;
     glm::vec3           velocity;
     float               energy = 0.0f;

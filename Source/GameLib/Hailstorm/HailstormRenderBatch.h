@@ -10,7 +10,7 @@
 
 #include <Deliberation/Scene/Mesh2.h>
 
-#include "HailstormBullet.h"
+#include "HailstormParticle.h"
 
 #include "GameLib.h"
 
@@ -21,13 +21,13 @@ class HailstormRenderBatch
 public:
     HailstormRenderBatch(HailstormRenderer & renderer, const Mesh2 & mesh);
 
-    void addInstance(HailstormBullet & bullet);
-    void removeInstance(const HailstormBulletID & bullet);
+    void addInstance(HailstormParticle & bullet);
+    void removeInstance(const HailstormParticleID & bullet);
 
     void update();
 
 private:
-    void addInstanceInSlot(HailstormBullet & bullet, size_t index);
+    void addInstanceInSlot(HailstormParticle & bullet, size_t index);
 
 private:
     HailstormRenderer & m_renderer;

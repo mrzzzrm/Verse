@@ -1,6 +1,6 @@
 #pragma once
 
-inline HailstormBulletID::HailstormBulletID(HailstormMeshID meshID,
+inline HailstormParticleID::HailstormParticleID(HailstormMeshID meshID,
                                             u32 renderBatchIndex,
                                             size_t physicsWorldIndex):
     meshID(meshID),
@@ -10,7 +10,7 @@ inline HailstormBulletID::HailstormBulletID(HailstormMeshID meshID,
 
 }
 
-inline HailstormBullet::HailstormBullet(const glm::vec3 & origin,
+inline HailstormParticle::HailstormParticle(const glm::vec3 & origin,
                                         const glm::vec3 & velocity,
                                         float energy,
                                         TimestampMillis birth,

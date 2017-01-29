@@ -19,7 +19,7 @@ class VoxelRenderChunk final
 public:
     VoxelRenderChunk(const VoxelWorld & voxelWorld, const glm::uvec3 & size,
                      const glm::uvec3 & llfRender, const glm::uvec3 & urbRender,
-                     const Optional<glm::vec3> & colorOverride);
+                     const Optional<glm::vec3> & colorOverride = Optional<glm::vec3>());
     VoxelRenderChunk(const VoxelRenderChunk & other);
 
     void addVoxel(const Voxel & voxel, bool visible);

@@ -396,7 +396,7 @@ VoxelClusterMarchingCubesTriangulation::VoxelClusterMarchingCubesTriangulation()
     baseMeshes[15].addFace(3, std::vector<BaseTriangleIndex>({{5, 3}, {3}, {3, 9}}));
     baseMeshes[15].addFace(4, std::vector<BaseTriangleIndex>({{4, 3}, {4}, {8}, {8, 3}}));
     baseMeshes[15].addFace(4, std::vector<BaseTriangleIndex>({{8}, {8, 9}, {3, 9}, {8, 3}}));
-    baseMeshes[15].addFace(6, std::vector<BaseTriangleIndex>({{8, 9}, {3, 9}, {9}}));
+    baseMeshes[15].addFace(6, std::vector<BaseTriangleIndex>({{3, 9}, {8, 9}, {9}}));
     baseMeshes[15].addFace(6, std::vector<BaseTriangleIndex>({{3, 9}, {9}, {5, 9}}));
 
     baseMeshes[16].addFace(1, std::vector<BaseTriangleIndex>({{0}, {0, 3}, {3, 5}, {5}}));

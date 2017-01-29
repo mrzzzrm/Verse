@@ -32,7 +32,7 @@ HailstormRenderBatch::HailstormRenderBatch(HailstormRenderer & renderer, const M
     m_draw.uniform("Color").set(glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
-void HailstormRenderBatch::addInstance(HailstormBullet & bullet)
+void HailstormRenderBatch::addInstance(HailstormParticle & bullet)
 {
     if (m_freeInstanceSlots.empty())
     {
@@ -57,7 +57,7 @@ void HailstormRenderBatch::addInstance(HailstormBullet & bullet)
     addInstanceInSlot(bullet, index);
 }
 
-void HailstormRenderBatch::removeInstance(const HailstormBulletID & bulletID)
+void HailstormRenderBatch::removeInstance(const HailstormParticleID & bulletID)
 {
     Assert(bulletID.renderBatchIndex < m_instances.count(), "");
 
@@ -78,7 +78,7 @@ void HailstormRenderBatch::update()
     m_draw.schedule();
 }
 
-void HailstormRenderBatch::addInstanceInSlot(HailstormBullet & bullet, size_t index)
+void HailstormRenderBatch::addInstanceInSlot(HailstormParticle & bullet, size_t index)
 {
     bullet.id.renderBatchIndex = index;
 

@@ -24,7 +24,7 @@ void Weapon::update(float seconds)
         return;
     }
 
-    auto bullet = HailstormBullet(m_fireRequestOrigin,
+    auto bullet = HailstormParticle(m_fireRequestOrigin,
                                   m_fireRequestDirection * 400.0f,
                                   100,
                                   CurrentMillis(),

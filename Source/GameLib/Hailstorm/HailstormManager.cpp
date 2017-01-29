@@ -20,7 +20,7 @@ const HailstormRenderer & HailstormManager::renderer() const
     return *m_renderer;
 }
 
-void HailstormManager::addBullet(HailstormBullet bullet)
+void HailstormManager::addBullet(HailstormParticle bullet)
 {
     m_renderer->addBullet(bullet);
     m_physicsWorld->addBullet(bullet);

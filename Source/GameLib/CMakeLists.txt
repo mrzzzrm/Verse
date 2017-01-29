@@ -3,7 +3,7 @@ set(target GameLib)
 add_library(${target}
     STATIC
 
-    Hailstorm/HailstormBullet.h
+    Hailstorm/HailstormParticle.h
     Hailstorm/HailstormBullet.inl
     Hailstorm/HailstormDefines.h
     Hailstorm/HailstormManager.cpp
@@ -47,6 +47,8 @@ add_library(${target}
     Voxel/VoxReader.cpp
     Voxel/VoxReader.h
 
+    AimHelper.cpp
+    AimHelper.h
     CollisionShapeTypes.h
     FlightControl.cpp
     FlightControl.h
@@ -64,6 +66,7 @@ target_include_directories(${target}
 
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/Hailstorm
+    ${CMAKE_CURRENT_SOURCE_DIR}/Vfx
     ${CMAKE_CURRENT_SOURCE_DIR}/Voxel
 
     ${DELIBERATION_INCLUDE_DIRS}

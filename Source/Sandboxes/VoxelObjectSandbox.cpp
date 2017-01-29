@@ -30,7 +30,7 @@ public:
         m_camera.setOrientation(glm::quat({-0.0f, 0.0f, 0.0f}));
         m_camera.setAspectRatio((float)context().backbuffer().width() / context().backbuffer().height());
 
-        m_voxelData.reset(*m_voxelWorld, glm::uvec3(3));
+        m_voxelData.reset(*m_voxelWorld, glm::uvec3(100));
 
         std::vector<Voxel> voxels;
         for (size_t z = 0; z < m_voxelData->size().z; z++)
@@ -46,7 +46,6 @@ public:
         }
 
         m_voxelData->addVoxels(voxels);
-        std::cout << m_voxelData->shapeTree()->toString() << std::endl;
 
 //        std::vector<glm::uvec3> rvoxels;
 //        for (size_t z = 0; z < m_voxelData->size().z; z++)
@@ -105,7 +104,7 @@ public:
 
         m_navigator->update(seconds);
 
-        if (input().keyPressed(InputBase::Key_SPACE))
+        if (input().keyDown(InputBase::Key_SPACE))
         {
             auto mouseNearPlane = (input().mousePosition() + 1.0f) / 2.0f;
             auto nearPlane = m_camera.nearPlane();
@@ -119,20 +118,20 @@ public:
 
             if (hit)
             {
-                m_object->removeVoxels({voxel});
-//                auto r = 4;
-//                for (i32 z = (i32)voxel.z - r; z <= (i32)voxel.z + r; z++)
-//                for (i32 y = (i32)voxel.y - r; y <= (i32)voxel.y + r; y++)
-//                for (i32 x = (i32)voxel.x - r; x <= (i32)voxel.x + r; x++)
-//                {
-//                    auto v = glm::vec3(x, y, z);
-//                    if (glm::length(v - glm::vec3(voxel)) > r) continue;
+             //   m_object->removeVoxels({voxel});
+                auto r = 5;
+                for (i32 z = (i32)voxel.z - r; z <= (i32)voxel.z + r; z++)
+                for (i32 y = (i32)voxel.y - r; y <= (i32)voxel.y + r; y++)
+                for (i32 x = (i32)voxel.x - r; x <= (i32)voxel.x + r; x++)
+                {
+                    auto v = glm::vec3(x, y, z);
+                    if (glm::length(v - glm::vec3(voxel)) > r) continue;
 
-//                    if (m_object->data().cluster().contains(v) && m_object->data().cluster().test(v))
-//                    {
-//                        m_object->removeVoxels({v});
-//                    }
-//                }
+                    if (m_object->data().cluster().contains(v) && m_object->data().cluster().test(v))
+                    {
+                        m_object->removeVoxels({v});
+                    }
+                }
             }
         }
 

@@ -13,8 +13,6 @@ HailstormRenderer::HailstormRenderer(Context & context, const Camera3D & camera)
     m_program = m_context.createProgram({"Data/Shaders/Hailstorm.vert",
                                          "Data/Shaders/Hailstorm.frag"});
 
-    std::cout << m_program.interface().toString() << std::endl;
-
     auto globalsDataLayout = m_program.interface().uniformBlock("Globals").layout();
 
     m_globals = LayoutedBlob(globalsDataLayout, 1);
@@ -45,13 +43,13 @@ HailstormMeshID HailstormRenderer::addMesh(const Mesh2 & mesh)
     return (HailstormMeshID)(m_batches.size() - 1);
 }
 
-void HailstormRenderer::addBullet(HailstormBullet & bullet)
+void HailstormRenderer::addBullet(HailstormParticle & bullet)
 {
     Assert(bullet.id.meshID < m_batches.size(), "MeshID not registered");
     m_batches[bullet.id.meshID]->addInstance(bullet);
 }
 
-void HailstormRenderer::removeBullet(const HailstormBulletID & bullet)
+void HailstormRenderer::removeBullet(const HailstormParticleID & bullet)
 {
     Assert(bullet.meshID < m_batches.size(), "MeshID not registered");
     m_batches[bullet.meshID]->removeInstance(bullet);

@@ -4,6 +4,7 @@
 
 #include <Deliberation/Core/ScopeProfiler.h>
 #include <Deliberation/Core/StreamUtils.h>
+#include <Deliberation/Core/RandomColorGenerator.h>
 
 VoxelClusterMarchingCubes::VoxelClusterMarchingCubes(const VoxelClusterMarchingCubesTriangulation & triangulation,
                                                      const VoxelCluster<glm::vec3> & cluster,
@@ -53,7 +54,8 @@ void VoxelClusterMarchingCubes::run(const glm::uvec3 & llf, const glm::uvec3 & u
             {
                 for (i32 x = llf.x; x <= urb.x + 1; x++)
                 {
-                    auto & mesh = m_triangulation.configs()[m_configCluster.get(configIndex)];
+                    auto config = m_configCluster.get(configIndex);
+                    auto & mesh = m_triangulation.configs()[config];
                     actualNumVertices += mesh.size() * 3;
 
                     for (auto & triangle : mesh)

@@ -18,6 +18,8 @@
 #include <Voxel/VoxelRigidBodyPayload.h>
 #include <Voxel/VoxelClusterPrimitiveTest.h>
 
+#include "AimHelper.h"
+#include "EngineEmitter.h"
 #include "CollisionShapeTypes.h"
 #include "HailstormRenderer.h"
 #include "VoxelClusterMarchingCubesTriangulation.h"
@@ -138,8 +140,12 @@ public:
 
         m_hailstormManager.reset(context(), m_camera, m_physicsWorld, *m_voxelWorld);
 
+        m_engineEmitter.reset(*m_hailstormManager, particleMeshIDs);
+
         auto bulletMesh = UVSphere(5, 5).generateMesh2();
         m_bulletMeshID = m_hailstormManager->renderer().addMesh(bulletMesh);
+
+        m_engineEmitter.reset(*m_hailstormManager, {m_bulletMeshID, m_bulletMeshID, m_bulletMeshID});
 
         WeaponConfig weaponConfig;
         weaponConfig.cooldown = 1.0f / 2.0f;
@@ -150,27 +156,29 @@ public:
 
     void onFrame(float seconds) override
     {
+        m_engineEmitter->update(seconds);
+
         m_playerInput->update(seconds);
         m_flightControl->update(seconds);
 
-        m_physicsWorld.update(seconds);
+        auto simulatedTime = m_physicsWorld.update(seconds);
         m_hailstormManager->update(seconds);
 
         glm::vec3 offset;
         offset.z = m_shipObject->data().size().z * 1.4f;
         offset.y = m_shipObject->data().size().y * 2;
 
-        m_dolly->update(m_shipObject->pose().position() + m_shipObject->pose().orientation() * offset,
-                        m_shipObject->pose().orientation(), seconds);
+        m_dolly->update(m_shipObject->body()->transform().position() +
+                        m_shipObject->body()->transform().orientation() * offset,
+                        m_shipObject->body()->transform().orientation(), simulatedTime);
 
         {
+            AimHelper aimHelper(m_camera, m_physicsWorld);
+
+            auto target = aimHelper.getTarget(input().mousePosition());
+
             auto fireOrigin = m_shipObject->pose().position() + m_shipObject->pose().orientation() * glm::vec3(0, 0, -15);
-
-            auto mouseNearPlane = (input().mousePosition() + 1.0f) / 2.0f;
-            auto nearPlane = m_camera.nearPlane();
-
-            auto mouseWorld = nearPlane.origin() + mouseNearPlane.x * nearPlane.right() + mouseNearPlane.y * nearPlane.up();
-            auto fireDirection = mouseWorld - m_camera.position();
+            auto fireDirection = target - fireOrigin;
 
             if (input().mouseButtonDown(InputBase::MouseButton_Right))
             {
@@ -263,6 +271,9 @@ private:
 
     Optional<HailstormManager>
                 m_hailstormManager;
+
+    Optional<EngineEmitter>
+                m_engineEmitter;
 
     HailstormMeshID
                 m_bulletMeshID;

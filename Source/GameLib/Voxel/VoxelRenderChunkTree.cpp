@@ -175,8 +175,8 @@ void VoxelRenderChunkTree::addVoxelToNode(u32 index, const Voxel & voxel, bool v
             chunk.position = node.llf;
             chunk.chunk = std::make_shared<VoxelRenderChunk>(m_voxelWorld,
                                                              glm::uvec3(node.urb - node.llf + glm::ivec3(1)),
-                                                             node.llfRender - node.llf, node.urbRender - node.llf,
-                                                             Optional<glm::vec3>(m_colorGenerator.generate()));
+                                                             node.llfRender - node.llf, node.urbRender - node.llf/*,
+                                                             Optional<glm::vec3>(m_colorGenerator.generate())*/);
         }
 
         Voxel chunkLocalVoxel = voxel;
