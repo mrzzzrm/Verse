@@ -1,12 +1,14 @@
 #include "Emitter.h"
 
+#include "HailstormManager.h"
 #include "HailstormParticle.h"
 
-Emitter::Emitter(HailstormManager & manager,
+Emitter::Emitter(HailstormManager & hailstormManager,
                  HailstormMeshID meshID,
-                 std::shared_ptr<EmitterDirectionStrategy> velocity,
+                 std::shared_ptr<EmitterVelocityStrategy> velocity,
                  std::shared_ptr<EmitterIntensityStrategy> intensity,
-                 std::shared_ptr<EmitterLifetimeStrategy> lifetime):
+                 std::shared_ptr<EmitterLifetimeStrategy> lifetime,
+                 const Pose3D & pose):
     m_hailstormManager(hailstormManager),
     m_meshID(meshID),
     m_velocity(velocity),
@@ -16,27 +18,33 @@ Emitter::Emitter(HailstormManager & manager,
     m_countdown = m_intensity->generateInterval();
 }
 
+const Pose3D & Emitter::pose() const
+{
+    return m_pose;
+}
+
 void Emitter::update(float seconds, const Pose3D & pose)
 {
-    const auto emitterMovementDirection = position - m_position;
-    const auto emitterMovementVelocity = emitterMovementDirection / seconds;
+    auto timeAccumulator = 0.0f;
+
+    Pose3D intermediatePose;
 
     while (true)
     {
-        const auto timeStep = std::min(seconds, m_countdown);
-        seconds -= timeStep;
+        const auto timeStep = std::min(seconds - timeAccumulator, m_countdown);
+        timeAccumulator += timeStep;
         m_countdown -= timeStep;
 
         if (m_countdown > 0.0f) break;
 
-        m_position += emitterMovementVelocity * timeStep;
+        intermediatePose = m_pose.interpolated(pose, timeAccumulator / seconds);
 
         auto particle = HailstormParticle(
-            m_position,
-            m_velocity->generateVelocity(),
+            intermediatePose.position(),
+            intermediatePose.orientation() * m_velocity->generateVelocity(),
             100,
             CurrentMillis(),
-            m_lifetime->generateLifetime(),
+            (DurationMillis)(m_lifetime->generateLifetime() * 1000),
             m_meshID,
             INVALID_VOXEL_OBJECT_WORLD_UID
         );
@@ -46,5 +54,5 @@ void Emitter::update(float seconds, const Pose3D & pose)
         m_countdown += m_intensity->generateInterval();
     }
 
-    m_position = position;
+    m_pose = pose;
 }

@@ -33,8 +33,8 @@ public:
 
     HailstormMeshID addMesh(const Mesh2 & mesh);
 
-    void addBullet(HailstormParticle & bullet);
-    void removeBullet(const HailstormParticleID & bullet);
+    void addParticle(HailstormParticle & bullet);
+    void removeParticle(const HailstormParticleID & bullet);
 
     void update(float seconds);
 

@@ -18,6 +18,7 @@ public:
     const HailstormRenderer & renderer() const;
 
     void addBullet(HailstormParticle bullet);
+    void addParticle(HailstormParticle bullet);
 
     void update(float seconds);
 

@@ -22,8 +22,13 @@ const HailstormRenderer & HailstormManager::renderer() const
 
 void HailstormManager::addBullet(HailstormParticle bullet)
 {
-    m_renderer->addBullet(bullet);
+    m_renderer->addParticle(bullet);
     m_physicsWorld->addBullet(bullet);
+}
+
+void HailstormManager::addParticle(HailstormParticle bullet)
+{
+    m_renderer->addParticle(bullet);
 }
 
 void HailstormManager::update(float seconds)
@@ -33,6 +38,6 @@ void HailstormManager::update(float seconds)
 
     for (auto & bulletID : m_physicsWorld->destroyedBullets())
     {
-        m_renderer->removeBullet(bulletID);
+        m_renderer->removeParticle(bulletID);
     }
 }

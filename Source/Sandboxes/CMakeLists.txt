@@ -1,11 +1,5 @@
-set(target VoxelObjectSandbox)
+add_executable(VoxelObjectSandbox VoxelObjectSandbox.cpp)
+target_link_libraries(VoxelObjectSandbox GameLib)
 
-add_executable(
-    ${target}
-
-    VoxelObjectSandbox.cpp
-    )
-
-target_link_libraries(${target}
-    GameLib
-    )
+add_executable(VfxSandbox VfxSandbox.cpp)
+target_link_libraries(VfxSandbox GameLib)

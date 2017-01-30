@@ -19,7 +19,7 @@
 #include <Voxel/VoxelClusterPrimitiveTest.h>
 
 #include "AimHelper.h"
-#include "EngineEmitter.h"
+#include "Emitter.h"
 #include "CollisionShapeTypes.h"
 #include "HailstormRenderer.h"
 #include "VoxelClusterMarchingCubesTriangulation.h"
@@ -272,8 +272,8 @@ private:
     Optional<HailstormManager>
                 m_hailstormManager;
 
-    Optional<EngineEmitter>
-                m_engineEmitter;
+    Optional<Emitter>
+                m_emitter;
 
     HailstormMeshID
                 m_bulletMeshID;

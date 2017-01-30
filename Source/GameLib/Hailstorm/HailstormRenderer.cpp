@@ -43,13 +43,13 @@ HailstormMeshID HailstormRenderer::addMesh(const Mesh2 & mesh)
     return (HailstormMeshID)(m_batches.size() - 1);
 }
 
-void HailstormRenderer::addBullet(HailstormParticle & bullet)
+void HailstormRenderer::addParticle(HailstormParticle & bullet)
 {
     Assert(bullet.id.meshID < m_batches.size(), "MeshID not registered");
     m_batches[bullet.id.meshID]->addInstance(bullet);
 }
 
-void HailstormRenderer::removeBullet(const HailstormParticleID & bullet)
+void HailstormRenderer::removeParticle(const HailstormParticleID & bullet)
 {
     Assert(bullet.meshID < m_batches.size(), "MeshID not registered");
     m_batches[bullet.meshID]->removeInstance(bullet);

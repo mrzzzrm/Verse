@@ -15,6 +15,15 @@ add_library(${target}
     Hailstorm/HailstormRenderer.cpp
     Hailstorm/HailstormRenderer.h
 
+    Vfx/Emitter.cpp
+    Vfx/Emitter.h
+    Vfx/EmitterIntensityStrategy.cpp
+    Vfx/EmitterIntensityStrategy.h
+    Vfx/EmitterLifetimeStrategy.cpp
+    Vfx/EmitterLifetimeStrategy.h
+    Vfx/EmitterVelocityStrategy.cpp
+    Vfx/EmitterVelocityStrategy.h
+
     Voxel/VoxelCluster.cpp
     Voxel/VoxelCluster.h
     Voxel/VoxelCluster.inl
