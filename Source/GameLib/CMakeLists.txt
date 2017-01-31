@@ -21,6 +21,8 @@ add_library(${target}
     Vfx/EmitterIntensityStrategy.h
     Vfx/EmitterLifetimeStrategy.cpp
     Vfx/EmitterLifetimeStrategy.h
+    Vfx/EmitterPlacementStrategy.cpp
+    Vfx/EmitterPlacementStrategy.h
     Vfx/EmitterVelocityStrategy.cpp
     Vfx/EmitterVelocityStrategy.h
 

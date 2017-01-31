@@ -22,3 +22,17 @@ private:
     mutable std::normal_distribution<float>
                                 m_dist;
 };
+
+class EmitterFalloffIntensity:
+    public EmitterIntensityStrategy
+{
+public:
+    EmitterFalloffIntensity(float intercept, float standardDeviation);
+
+    float generateInterval() const override;
+
+private:
+    mutable std::default_random_engine  m_engine;
+    mutable std::normal_distribution<float>
+                                m_dist;
+};
