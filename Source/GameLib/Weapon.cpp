@@ -8,31 +8,51 @@ Weapon::Weapon(const WeaponConfig & config, HailstormManager & hailstormManager,
 
 }
 
-void Weapon::setFireRequest(bool active, const glm::vec3 & origin, const glm::vec3 & direction)
+void Weapon::setFireRequest(bool active, const glm::vec3 & target)
 {
     m_fireRequestActive = active;
-    m_fireRequestOrigin = origin;
-    m_fireRequestDirection = glm::normalize(direction);
+    m_fireRequestTarget = target;
 }
 
-void Weapon::update(float seconds)
+void Weapon::setPosition(const glm::vec3 & position)
 {
-    m_cooldown = std::max(0.0f, m_cooldown - seconds);
+    m_position = position;
+}
 
-    if (m_cooldown > 0.0f || !m_fireRequestActive)
+void Weapon::update(float seconds, const glm::vec3 & position)
+{
+    if (!m_fireRequestActive)
     {
+        m_position = position;
+        m_cooldown = std::max(0.0f, m_cooldown - seconds);
         return;
     }
 
-    auto bullet = HailstormParticle(m_fireRequestOrigin,
-                                  m_fireRequestDirection * 400.0f,
-                                  100,
-                                  CurrentMillis(),
-                                  2000,
-                                  m_config.meshID,
-                                  m_creatorUID);
+    auto timeAccumulator = 0.0f;
+    auto velocity = (position - m_position) / seconds;
 
-    m_hailstormManager.addBullet(bullet);
+    auto baseMillis = (CurrentMillis() - ((TimestampMillis)std::ceil(seconds * 1000.0f)));
 
-    m_cooldown = m_config.cooldown;
+    while (seconds > m_cooldown)
+    {
+        seconds -= m_cooldown;
+        timeAccumulator += m_cooldown;
+
+        auto intermediatePosition = m_position + velocity * timeAccumulator;
+
+        auto bullet = HailstormParticle(intermediatePosition,
+                                        glm::normalize(m_fireRequestTarget - intermediatePosition) * 400.0f,
+                                        100,
+                                        baseMillis + ((TimestampMillis)(timeAccumulator * 1000.0f)),
+                                        2000,
+                                        m_config.meshID,
+                                        m_creatorUID);
+
+        m_hailstormManager.addBullet(bullet);
+
+        m_cooldown = m_config.cooldown;
+    }
+
+    m_position = position;
+    m_cooldown -= seconds;
 }

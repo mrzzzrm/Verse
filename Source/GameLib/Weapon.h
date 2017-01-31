@@ -15,22 +15,26 @@ struct WeaponConfig
 class Weapon final
 {
 public:
-    Weapon(const WeaponConfig & config, HailstormManager & hailstormManager, VoxelObjectWorldUID creatorUID);
+    Weapon(const WeaponConfig & config,
+           HailstormManager & hailstormManager,
+           VoxelObjectWorldUID creatorUID);
 
     void setFireRequest(bool active,
-                        const glm::vec3 & origin = {},
-                        const glm::vec3 & direction = {});
+                        const glm::vec3 & target);
 
-    void update(float seconds);
+    void setPosition(const glm::vec3 & position);
+
+    void update(float seconds, const glm::vec3 & position);
 
 private:
     WeaponConfig        m_config;
     HailstormManager &  m_hailstormManager;
     VoxelObjectWorldUID m_creatorUID;
 
+    glm::vec3           m_position;
+
     bool                m_fireRequestActive = false;
-    glm::vec3           m_fireRequestOrigin;
-    glm::vec3           m_fireRequestDirection;
+    glm::vec3           m_fireRequestTarget;
 
     float               m_cooldown = 0.0f;
 };

@@ -61,9 +61,13 @@ add_library(${target}
     AimHelper.cpp
     AimHelper.h
     CollisionShapeTypes.h
+    Equipment.cpp
+    Equipment.h
     FlightControl.cpp
     FlightControl.h
     FlightControlConfig.h
+    Hardpoint.cpp
+    Hardpoint.h
     GameLib.cpp
     GameLib.h
     PlayerInput.cpp

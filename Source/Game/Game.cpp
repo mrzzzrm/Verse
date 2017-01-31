@@ -20,7 +20,9 @@
 
 #include "AimHelper.h"
 #include "Emitter.h"
+#include "Equipment.h"
 #include "CollisionShapeTypes.h"
+#include "Hardpoint.h"
 #include "HailstormRenderer.h"
 #include "VoxelClusterMarchingCubesTriangulation.h"
 #include "VoxelClusterMarchingCubes.h"
@@ -140,24 +142,32 @@ public:
 
         m_hailstormManager.reset(context(), m_camera, m_physicsWorld, *m_voxelWorld);
 
-        m_engineEmitter.reset(*m_hailstormManager, particleMeshIDs);
-
         auto bulletMesh = UVSphere(5, 5).generateMesh2();
         m_bulletMeshID = m_hailstormManager->renderer().addMesh(bulletMesh);
 
-        m_engineEmitter.reset(*m_hailstormManager, {m_bulletMeshID, m_bulletMeshID, m_bulletMeshID});
+        m_equipment.reset();
 
         WeaponConfig weaponConfig;
-        weaponConfig.cooldown = 1.0f / 2.0f;
+        weaponConfig.cooldown = 1.0f / 10.0f;
         weaponConfig.meshID = m_bulletMeshID;
 
-        m_weapon.reset(weaponConfig, *m_hailstormManager, m_shipObject->id().worldUID);
+        {
+            auto hardpointLeft = std::make_shared<Hardpoint>(Pose3D::atPosition({-10.0f, -2.0f, -8.0f}));
+            auto weaponLeft = std::make_shared<Weapon>(weaponConfig, *m_hailstormManager, m_shipObject->id().worldUID);
+            hardpointLeft->setWeapon(weaponLeft);
+            m_equipment->addHardpoint(hardpointLeft);
+        }
+
+        {
+            auto hardpointRight = std::make_shared<Hardpoint>(Pose3D::atPosition({10.0f, -2.0f, -8.0f}));
+            auto weaponRight = std::make_shared<Weapon>(weaponConfig, *m_hailstormManager, m_shipObject->id().worldUID);
+            hardpointRight->setWeapon(weaponRight);
+            m_equipment->addHardpoint(hardpointRight);
+        }
     }
 
     void onFrame(float seconds) override
     {
-        m_engineEmitter->update(seconds);
-
         m_playerInput->update(seconds);
         m_flightControl->update(seconds);
 
@@ -177,52 +187,18 @@ public:
 
             auto target = aimHelper.getTarget(input().mousePosition());
 
-            auto fireOrigin = m_shipObject->pose().position() + m_shipObject->pose().orientation() * glm::vec3(0, 0, -15);
-            auto fireDirection = target - fireOrigin;
-
             if (input().mouseButtonDown(InputBase::MouseButton_Right))
             {
-                m_weapon->setFireRequest(true,
-                                         fireOrigin,
-                                         fireDirection);
+                m_equipment->setFireRequest(true,
+                                            target);
             }
             else
             {
-                m_weapon->setFireRequest(false);
+                m_equipment->setFireRequest(false, {});
             }
-            m_weapon->update(seconds);
+            m_equipment->update(seconds, Pose3D(m_shipObject->body()->transform().position(),
+                                                m_shipObject->body()->transform().orientation()));
 
-            if (input().keyPressed(InputBase::Key_SPACE))
-            {
-                auto origin = m_camera.position();
-                auto direction = fireDirection * 1000.0f;
-
-                m_physicsWorld.lineCast(Ray3D(m_camera.position(), direction),
-                                        [&](const RayCastIntersection &intersection) -> bool {
-                                            if (intersection.body.shape()->type() ==
-                                                (int) ::CollisionShapeType::VoxelCluster) {
-                                                auto &voxelClusterIntersection =
-                                                    static_cast<const RayCastVoxelClusterIntersection &>(intersection);
-
-                                                if (voxelClusterIntersection.object.lock()->id().worldUID ==
-                                                    m_shipObject->id().worldUID) {
-                                                    std::cout << "Skipped because of UID" << std::endl;
-                                                    return true;
-                                                }
-
-                                                std::cout << "Hit voxel: " << voxelClusterIntersection.voxel << " of "
-                                                          << voxelClusterIntersection.object.lock()->id().worldUID
-                                                          << std::endl;
-
-                                                voxelClusterIntersection.object.lock()->removeVoxels({
-                                                                          voxelClusterIntersection.voxel});
-                                            } else {
-                                                std::cout << "Skipped because not a voxelCluster" << std::endl;
-                                            }
-
-                                            return false;
-                                        });
-            }
         }
 
         m_clear.schedule();
@@ -278,8 +254,8 @@ private:
     HailstormMeshID
                 m_bulletMeshID;
 
-    Optional<Weapon>
-                m_weapon;
+    Optional<Equipment>
+                m_equipment;
 };
 
 int main(int argc, char *argv[])
