@@ -15,6 +15,13 @@ add_library(${target}
     Hailstorm/HailstormRenderer.cpp
     Hailstorm/HailstormRenderer.h
 
+    Npc/FlyToTask.cpp
+    Npc/FlyToTask.h
+    Npc/NpcController.cpp
+    Npc/NpcController.h
+    Npc/NpcTask.cpp
+    Npc/NpcTask.h
+
     Vfx/Emitter.cpp
     Vfx/Emitter.h
     Vfx/EmitterIntensityStrategy.cpp
@@ -81,6 +88,7 @@ target_include_directories(${target}
 
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/Hailstorm
+    ${CMAKE_CURRENT_SOURCE_DIR}/Npc
     ${CMAKE_CURRENT_SOURCE_DIR}/Vfx
     ${CMAKE_CURRENT_SOURCE_DIR}/Voxel
 

@@ -29,13 +29,12 @@ class VoxelObject final:
     public std::enable_shared_from_this<VoxelObject>
 {
 public:
-    VoxelObject(const VoxelObjectVoxelData & prototype);
+    VoxelObject(const VoxelObjectVoxelData & voxelData);
     ~VoxelObject();
 
     const VoxelObjectID & id() const;
     const Pose3D & pose() const;
     const VoxelObjectVoxelData & data() const;
-    std::shared_ptr<RigidBody> & body();
 
     void setId(VoxelObjectID id);
     void setPose(const Pose3D & pose);

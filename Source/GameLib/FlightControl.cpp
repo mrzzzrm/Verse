@@ -12,6 +12,16 @@ FlightControl::FlightControl(std::shared_ptr<RigidBody> & body, const FlightCont
     m_config(config)
 {}
 
+const std::shared_ptr<RigidBody> & FlightControl::body() const
+{
+    return m_body;
+}
+
+const FlightControlConfig & FlightControl::config() const
+{
+    return m_config;
+}
+
 void FlightControl::setLinearThrust(const glm::vec3 & linearThrust)
 {
     m_linearThrust = linearThrust;

@@ -19,7 +19,7 @@ public:
     const glm::uvec3 & size() const;
     const VoxelCluster<bool> & cluster() const;
     const VoxelRenderChunkTree & renderTree() const;
-    const std::shared_ptr<VoxelShape> & shapeTree() const;
+    const std::shared_ptr<VoxelShape> & shape() const;
     const VoxelHull & hull() const;
 
     void addVoxels(std::vector<Voxel> voxels);

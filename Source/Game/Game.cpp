@@ -56,7 +56,7 @@ public:
          */
         VoxReader voxReader;
         {
-            auto models = voxReader.read(deliberation::dataPath("Data/VoxelCluster/ship.vox"));
+            auto models = voxReader.read("Data/VoxelClusters/ship.vox");
             if (!models.empty())
             {
                 m_shipData = std::make_shared<VoxelObjectVoxelData>(*m_voxelWorld, models[0].size);
@@ -64,7 +64,7 @@ public:
             }
         }
         {
-            auto models = voxReader.read(deliberation::dataPath("Data/VoxelCluster/station.vox"));
+            auto models = voxReader.read("Data/VoxelClusters/station.vox");
             if (!models.empty())
             {
                 m_stationData = std::make_shared<VoxelObjectVoxelData>(*m_voxelWorld, models[0].size);

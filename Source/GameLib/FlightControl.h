@@ -19,6 +19,9 @@ class FlightControl final
 public:
     FlightControl(std::shared_ptr<RigidBody> & body, const FlightControlConfig & config);
 
+    const std::shared_ptr<RigidBody> & body() const;
+    const FlightControlConfig & config() const;
+
     void setLinearThrust(const glm::vec3 & linearThrust);
     void setAngularThrust(const glm::vec3 & angularThrust);
 
