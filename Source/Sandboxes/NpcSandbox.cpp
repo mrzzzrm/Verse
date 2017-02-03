@@ -3,6 +3,7 @@
 #include <thread>
 
 #include <Deliberation/Core/Optional.h>
+#include <Deliberation/Core/Math/Random.h>
 
 #include <Deliberation/ECS/Entity.h>
 #include <Deliberation/ECS/World.h>
@@ -15,6 +16,8 @@
 #include <Deliberation/Scene/Camera3D.h>
 #include <Deliberation/Scene/UVSphere.h>
 #include <Deliberation/Scene/Debug/DebugCameraNavigator3D.h>
+#include <Deliberation/Scene/Debug/DebugGeometryManager.h>
+#include <Deliberation/Scene/Debug/DebugGeometryRenderer.h>
 #include <Deliberation/Scene/Debug/DebugGroundPlaneRenderer.h>
 
 #include "Components.h"
@@ -45,7 +48,7 @@ public:
     {
         m_voxelWorld.reset(context(), m_physicsWorld, m_camera);
 
-        m_camera.setPosition({0.0f, 400.0f, 500.0f});
+        m_camera.setPosition({0.0f, 200.0f, 300.0f});
         m_camera.setOrientation(glm::quat({-1.0f, 0.0f, 0.0f}));
         m_camera.setAspectRatio((float)context().backbuffer().width() / context().backbuffer().height());
 
@@ -84,22 +87,29 @@ public:
         auto voxelObject = std::make_shared<VoxelObject>(*m_voxelData);
 
         auto rigidBodyPayload = std::make_shared<VoxelRigidBodyPayload>(voxelObject);
-        auto rigidBody = std::make_shared<RigidBody>(voxelObject->data().shape());
-        rigidBody->setPayload(rigidBodyPayload);
-        rigidBody->transform().setCenter(glm::vec3(voxelObject->data().size()) / 2.0f);
+        m_rigidBody = std::make_shared<RigidBody>(voxelObject->data().shape());
+        m_rigidBody->setPayload(rigidBodyPayload);
+        m_rigidBody->transform().setCenter(glm::vec3(voxelObject->data().size()) / 2.0f);
+        m_rigidBody->transform().setPosition(glm::vec3(0.0f, 50.0f, 0.0f));
+        m_rigidBody->transform().setOrientation(glm::quat{0.385535f,-0.239666f,0.204564f,0.867236f});
 
-        auto flightControl = std::make_shared<FlightControl>(rigidBody, flightControlConfig);
+        auto flightControl = std::make_shared<FlightControl>(m_rigidBody, flightControlConfig);
 
         auto npcController = std::make_shared<NpcController>();
-        npcController->setTask(std::make_shared<FlyToTask>(flightControl, glm::vec3(100, 200, -50)));
+        m_task = std::make_shared<FlyToTask>(flightControl, glm::vec3{-63.370247,169.859543,179.064026});
+        npcController->setTask(m_task);
 
         m_npc0.addComponent<VoxelObjectComponent>(voxelObject);
-        m_npc0.addComponent<RigidBodyComponent>(rigidBody);
+        m_npc0.addComponent<RigidBodyComponent>(m_rigidBody);
         m_npc0.addComponent<FlightControlComponent2>(flightControl);
         m_npc0.addComponent<NpcControllerComponent>(npcController);
 
-        m_physicsWorld.addRigidBody(rigidBody);
+        m_physicsWorld.addRigidBody(m_rigidBody);
         m_voxelWorld->addVoxelObject(voxelObject);
+
+        m_debugGeometryManager.reset(context());
+        m_debugGeometryRenderer.reset(*m_debugGeometryManager);
+        m_debugGeometryRenderer->addArrow(m_rigidBody->transform().position(), {}, {0.8f, 0.8f, 0.8f});
     }
 
     void onFrame(float seconds) override
@@ -111,14 +121,27 @@ public:
         pose.setOrientation(body->transform().orientation());
         pose.setCenter(body->transform().center());
 
+//        auto distance = glm::length(body->transform().position() -  m_task->destination());
+//        if (distance < 10.0f)
+//        {
+//            auto destination = RandomInHemisphere({0.0f, 300.0f, 0.0f});
+//            std::cout << "New destionation: " << destination << std::endl;
+//            m_task->setDestination(destination);
+//        }
+
         m_npc0.component<VoxelObjectComponent>().voxelObject->setPose(pose);
         m_npc0.component<NpcControllerComponent>().npcController->update(seconds);
+        m_npc0.component<FlightControlComponent2>().flightControl->update(seconds);
+
+        m_debugGeometryRenderer->arrow(0).reset(m_rigidBody->transform().position(),
+                                                m_task->destination() - m_rigidBody->transform().position());
 
         m_clear.schedule();
         m_groundPlane->schedule();
         m_physicsWorld.update(seconds);
         m_navigator->update(seconds);
         m_voxelWorld->update(seconds);
+        m_debugGeometryRenderer->schedule(m_camera);
     }
 
 private:
@@ -134,6 +157,15 @@ private:
     std::shared_ptr<VoxelObjectVoxelData>
                             m_voxelData;
     Entity                  m_npc0;
+    std::shared_ptr<FlyToTask>
+                            m_task;
+    std::shared_ptr<RigidBody>
+                            m_rigidBody;
+
+    Optional<DebugGeometryManager>
+                            m_debugGeometryManager;
+    Optional<DebugGeometryRenderer>
+                            m_debugGeometryRenderer;
 };
 
 int main(int argc, char *argv[])

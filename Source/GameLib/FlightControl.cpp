@@ -2,6 +2,7 @@
 
 #include <cmath>
 
+#include <Deliberation/Core/Assert.h>
 #include <Deliberation/Core/Math/MathUtils.h>
 #include <Deliberation/Core/Math/Transform3D.h>
 
@@ -24,11 +25,15 @@ const FlightControlConfig & FlightControl::config() const
 
 void FlightControl::setLinearThrust(const glm::vec3 & linearThrust)
 {
+    Assert(glm::length2(linearThrust) <= 1.05f, "Can't set thrust > 1");
+
     m_linearThrust = linearThrust;
 }
 
 void FlightControl::setAngularThrust(const glm::vec3 & angularThrust)
 {
+    Assert(glm::length2(angularThrust) <= 1.05f, "Can't set thrust > 1");
+
     m_angularThrust = angularThrust;
 }
 

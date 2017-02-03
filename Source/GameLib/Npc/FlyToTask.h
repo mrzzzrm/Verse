@@ -11,8 +11,11 @@ class FlyToTask:
 public:
     FlyToTask(std::shared_ptr<FlightControl> flightControl, const glm::vec3 & destination);
 
+    const glm::vec3 & destination() const;
+    void setDestination(const glm::vec3 & destination);
+
     void update(float seconds) override;
 
 private:
-    glm::vec3                       m_destination;
+    glm::vec3 m_destination;
 };
