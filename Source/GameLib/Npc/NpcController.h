@@ -3,7 +3,7 @@
 #include <memory>
 
 #include "GameLib.h"
-#include "FlightControl.h"
+#include "Player/PlayerFlightControl.h"
 #include "NpcTask.h"
 
 class NpcController final

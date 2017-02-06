@@ -31,7 +31,7 @@
 #include "VoxelWorld.h"
 #include "VoxReader.h"
 #include "PlayerInput.h"
-#include "FlightControl.h"
+#include "Player/PlayerFlightControl.h"
 #include "Weapon.h"
 
 using namespace deliberation;
@@ -224,7 +224,7 @@ private:
     PhysicsWorld
                 m_physicsWorld;
 
-    Optional<FlightControl>
+    Optional<PlayerFlightControl>
                 m_flightControl;
 
     Optional<PlayerInput>

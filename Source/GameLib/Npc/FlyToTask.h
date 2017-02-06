@@ -3,13 +3,13 @@
 #include <glm/glm.hpp>
 
 #include "NpcTask.h"
-#include "FlightControl.h"
+#include "Player/PlayerFlightControl.h"
 
 class FlyToTask:
     public NpcTask
 {
 public:
-    FlyToTask(std::shared_ptr<FlightControl> flightControl, const glm::vec3 & destination);
+    FlyToTask(std::shared_ptr<NpcFlightControl> flightControl, const glm::vec3 & destination);
 
     const glm::vec3 & destination() const;
     void setDestination(const glm::vec3 & destination);

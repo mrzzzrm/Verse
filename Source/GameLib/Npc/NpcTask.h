@@ -2,15 +2,15 @@
 
 #include <memory>
 
-#include "FlightControl.h"
+#include "NpcFlightControl.h"
 
 class NpcTask
 {
 public:
-    NpcTask(std::shared_ptr<FlightControl> flightControl);
+    NpcTask(std::shared_ptr<NpcFlightControl> flightControl);
     virtual ~NpcTask() = default;
     virtual void update(float seconds) = 0;
 
 protected:
-    std::shared_ptr<FlightControl> m_flightControl;
+    std::shared_ptr<NpcFlightControl> m_flightControl;
 };

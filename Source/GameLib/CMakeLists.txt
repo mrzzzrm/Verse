@@ -19,6 +19,8 @@ add_library(${target}
     Npc/FlyToTask.h
     Npc/NpcController.cpp
     Npc/NpcController.h
+    Npc/NpcFlightControl.cpp
+    Npc/NpcFlightControl.h
     Npc/NpcTask.cpp
     Npc/NpcTask.h
 
@@ -70,8 +72,11 @@ add_library(${target}
     CollisionShapeTypes.h
     Equipment.cpp
     Equipment.h
-    FlightControl.cpp
-    FlightControl.h
+    FlightControlBase.cpp
+    FlightControlBase.h
+    Player/PlayerFlightControl.cpp
+    Player/PlayerFlightControl.h
+    FlightControlConfig.cpp
     FlightControlConfig.h
     Hardpoint.cpp
     Hardpoint.h

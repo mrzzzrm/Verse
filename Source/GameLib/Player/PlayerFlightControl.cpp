@@ -1,4 +1,4 @@
-#include "FlightControl.h"
+#include "PlayerFlightControl.h"
 
 #include <cmath>
 
@@ -8,36 +8,37 @@
 
 #include <Deliberation/Physics/RigidBody.h>
 
-FlightControl::FlightControl(std::shared_ptr<RigidBody> & body, const FlightControlConfig & config):
-    m_body(body),
-    m_config(config)
+PlayerFlightControl::PlayerFlightControl(std::shared_ptr<RigidBody> & body, const FlightControlConfig & config):
+    FlightControlBase(body, config)
 {}
 
-const std::shared_ptr<RigidBody> & FlightControl::body() const
+const glm::vec3 & PlayerFlightControl::linearThrust() const
 {
-    return m_body;
+    return m_linearThrust;
 }
 
-const FlightControlConfig & FlightControl::config() const
+const glm::vec3 & PlayerFlightControl::angularThrust() const
 {
-    return m_config;
+    return m_angularThrust;
 }
 
-void FlightControl::setLinearThrust(const glm::vec3 & linearThrust)
+void PlayerFlightControl::setLinearThrust(const glm::vec3 & linearThrust)
 {
-    Assert(glm::length2(linearThrust) <= 1.05f, "Can't set thrust > 1");
+    Assert(std::abs(linearThrust.x) <= 1.05f && std::abs(linearThrust.y) <= 1.05f && std::abs(linearThrust.z) <= 1.05f,
+           "Can't set thrust > 1");
 
     m_linearThrust = linearThrust;
 }
 
-void FlightControl::setAngularThrust(const glm::vec3 & angularThrust)
+void PlayerFlightControl::setAngularThrust(const glm::vec3 & angularThrust)
 {
-    Assert(glm::length2(angularThrust) <= 1.05f, "Can't set thrust > 1");
+    Assert(std::abs(angularThrust.x) <= 1.05f && std::abs(angularThrust.y) <= 1.05f && std::abs(angularThrust.z) <= 1.05f,
+           "Can't set thrust > 1");
 
     m_angularThrust = angularThrust;
 }
 
-void FlightControl::update(float seconds)
+void PlayerFlightControl::update(float seconds)
 {
     /**
      * Control linear velocity

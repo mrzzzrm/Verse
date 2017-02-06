@@ -5,15 +5,14 @@
 #include <Deliberation/ECS/Component.h>
 
 #include "GameLib.h"
+#include "NpcController.h"
+#include "FlightControlBase.h"
+#include "VoxelObject.h"
 
 namespace deliberation
 {
 class RigidBody;
 }
-
-class NpcController;
-class FlightControl;
-class VoxelObject;
 
 struct VoxelObjectComponent:
     public Component<VoxelObjectComponent>
@@ -34,9 +33,9 @@ struct RigidBodyComponent:
 struct FlightControlComponent2:
     public Component<FlightControlComponent2>
 {
-    FlightControlComponent2(std::shared_ptr<FlightControl> flightControl): flightControl(flightControl) {}
+    FlightControlComponent2(std::shared_ptr<FlightControlBase> flightControl): flightControl(flightControl) {}
 
-    std::shared_ptr<FlightControl> flightControl;
+    std::shared_ptr<FlightControlBase> flightControl;
 };
 
 struct NpcControllerComponent:

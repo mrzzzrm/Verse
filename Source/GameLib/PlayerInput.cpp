@@ -6,9 +6,9 @@
 
 #include <Deliberation/Scene/Camera3D.h>
 
-#include "FlightControl.h"
+#include "Player/PlayerFlightControl.h"
 
-PlayerInput::PlayerInput(InputBase & input, Camera3D & camera, FlightControl & flightControl):
+PlayerInput::PlayerInput(InputBase & input, Camera3D & camera, PlayerFlightControl & flightControl):
     m_input(input),
     m_camera(camera),
     m_flightControl(flightControl)
