@@ -2,7 +2,11 @@
 #include <memory>
 #include <thread>
 
+#include <glm/glm.hpp>
+#include <glm/gtx/vector_angle.hpp>
+
 #include <Deliberation/Core/Optional.h>
+#include <Deliberation/Core/Math/FloatUtils.h>
 #include <Deliberation/Core/Math/Random.h>
 
 #include <Deliberation/ECS/Entity.h>
@@ -14,6 +18,7 @@
 #include <Deliberation/Platform/Application.h>
 
 #include <Deliberation/Scene/Camera3D.h>
+#include <Deliberation/Scene/CameraDolly3D.h>
 #include <Deliberation/Scene/UVSphere.h>
 #include <Deliberation/Scene/Debug/DebugCameraNavigator3D.h>
 #include <Deliberation/Scene/Debug/DebugGeometryManager.h>
@@ -91,7 +96,6 @@ public:
         m_rigidBody = std::make_shared<RigidBody>(voxelObject->data().shape());
         m_rigidBody->setPayload(rigidBodyPayload);
         m_rigidBody->transform().setCenter(glm::vec3(voxelObject->data().size()) / 2.0f);
-        m_rigidBody->transform().setPosition(glm::vec3(0.0f, 50.0f, 0.0f));
        // m_rigidBody->transform().setOrientation();
 
         m_flightControl = std::make_shared<NpcFlightControl>(m_rigidBody, flightControlConfig);
@@ -113,10 +117,39 @@ public:
         m_debugGeometryRenderer->addArrow(m_rigidBody->transform().position(), {}, {0.8f, 0.8f, 0.8f});
         m_debugGeometryRenderer->addArrow(m_rigidBody->transform().position(), {}, {1.0f, 0.0f, 0.0f});
         m_debugGeometryRenderer->addArrow(m_rigidBody->transform().position(), {}, {0.0f, 1.0f, 0.0f});
+        m_debugGeometryRenderer->addSphere({0.0f, 1.0f, 0.0f}, 4.0f);
+
+        m_waypoints.push_back(glm::vec3(150.0f, 220.0f, 200.0f));
+        m_waypoints.push_back(glm::vec3(-100.0f, 60.0f, -150.0f));
+        m_waypoints.push_back(glm::vec3(200.0f, 20.0f, -200.0f));
+        m_waypoints.push_back(glm::vec3(0.0f, 20.0f, 200.0f));
+        m_waypoints.push_back(glm::vec3(-200.0f, 20.0f, 0.0f));
+        m_waypoints.push_back(glm::vec3(-200.0f, 90.0f, 0.0f));
+        m_waypoints.push_back(glm::vec3(-200.0f, -100.0f, 0.0f));
+        m_waypoints.push_back(glm::vec3(200.0f, -100.0f, 200.0f));
+        m_waypoints.push_back(glm::vec3(0.0f, 20.0f, -150.0f));
+        m_waypoints.push_back(glm::vec3(150.0f, 20.0f, -150.0f));
+        m_waypoints.push_back(glm::vec3(0.0f, 20.0f, -150.0f));
+        m_waypoints.push_back(glm::vec3(50.0f, 200.0f, -150.0f));
+        m_waypoints.push_back(glm::vec3(50.0f, 200.0f, 0.0f));
+        m_waypoints.push_back(glm::vec3(-50.0f, 100.0f, 0.0f));
+        m_rigidBody->transform().setPosition(glm::vec3(0.0f, 20.0f, 0.0f));
+        m_task->setDestination(m_waypoints[0]);
+        m_currentWaypoint = 1;
+
+
+        m_dolly.reset(m_camera);
     }
 
     void onFrame(float seconds) override
     {
+        auto physicsSimulationSeconds = m_physicsWorld.nextSimulationStep(seconds);
+        if (EpsilonEq(physicsSimulationSeconds, 0.0f))
+        {
+            m_physicsWorld.update(seconds);
+            return;
+        }
+
         Pose3D pose;
 
         auto & body = m_npc0.component<RigidBodyComponent>().rigidBody;
@@ -124,18 +157,30 @@ public:
         pose.setOrientation(body->transform().orientation());
         pose.setCenter(body->transform().center());
 
-        auto distance = glm::length(body->transform().position() -  m_task->destination());
-        if (distance < 0.01f)
+        auto delta = body->transform().directionWorldToLocal(m_task->destination() - body->transform().position());
+        auto distance = glm::length(delta);
+        auto localDirectionToDestination = glm::normalize(delta);
+        auto angularDeltaToDestination = glm::angle(localDirectionToDestination,
+                                                    glm::vec3(0.0f, 0.0f, -1.0f));
+        auto angularSpeed = glm::length(body->angularVelocity());
+
+        if (distance < 0.01f && glm::length(body->linearVelocity()) < 0.1f)
         {
-            auto destination = RandomInHemisphere({0.0f, 300.0f, 0.0f});
-            m_task->setDestination(destination);
-            //m_rigidBody->setLinearVelocity(RandomInSphere() * 160.0f);
+            m_task->setDestination(m_waypoints[m_currentWaypoint]);
+            m_currentWaypoint = (m_currentWaypoint + 1) % m_waypoints.size();
         }
 
         m_npc0.component<VoxelObjectComponent>().voxelObject->setPose(pose);
-        m_npc0.component<NpcControllerComponent>().npcController->update(seconds);
+        m_npc0.component<NpcControllerComponent>().npcController->update(physicsSimulationSeconds);
         m_physicsWorld.update(seconds);
-        m_npc0.component<FlightControlComponent2>().flightControl->update(seconds);
+        m_npc0.component<FlightControlComponent2>().flightControl->update(physicsSimulationSeconds);
+
+//        glm::vec3 offset;
+//        offset.z = m_voxelData->size().z * 1.4f;
+//        offset.y = m_voxelData->size().y * 2;
+//        m_dolly->update(m_rigidBody->transform().position() +
+//                        m_rigidBody->transform().orientation() * offset,
+//                        m_rigidBody->transform().orientation(), physicsSimulationSeconds);
 
         m_debugGeometryRenderer->arrow(0).reset(m_rigidBody->transform().position(),
                                                 m_task->destination() - m_rigidBody->transform().position());
@@ -143,15 +188,19 @@ public:
                                                 m_rigidBody->transform().directionLocalToWorld(m_flightControl->localLinearAcceleration()) * 10.0f);
         m_debugGeometryRenderer->arrow(2).reset(m_rigidBody->transform().position(),
                                                 m_rigidBody->transform().directionLocalToWorld(m_flightControl->localAngularAccelertion()) * 100.0f);
+        m_debugGeometryRenderer->sphere(0).setTransform(Transform3D::atPosition(m_task->destination()));
 
         m_clear.schedule();
         m_groundPlane->schedule();
-        m_navigator->update(seconds);
-        m_voxelWorld->update(seconds);
+        m_navigator->update(physicsSimulationSeconds);
+        m_voxelWorld->update(physicsSimulationSeconds);
         m_debugGeometryRenderer->schedule(m_camera);
     }
 
 private:
+    Optional<CameraDolly3D>
+        m_dolly;
+
     Camera3D                m_camera;
     Clear                   m_clear;
     PhysicsWorld            m_physicsWorld;
@@ -175,6 +224,10 @@ private:
                             m_debugGeometryManager;
     Optional<DebugGeometryRenderer>
                             m_debugGeometryRenderer;
+
+    std::vector<glm::vec3>
+        m_waypoints;
+    int                     m_currentWaypoint = 0;
 };
 
 int main(int argc, char *argv[])

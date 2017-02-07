@@ -43,24 +43,36 @@ void NpcFlightControl::update(float seconds)
 
     const auto correctLinearAccelerationOnAxis = [&] (
         const float currentSpeed, float & currentAcceleration,
-        const FlightControlComponent & control)
+        const float maxSpeed, const float maxAcceleration)
     {
-        if (EpsilonGt(std::abs(currentSpeed), control.maxSpeed))
+        if (EpsilonGt(std::abs(currentSpeed), maxSpeed))
         {
-            const auto requiredCorrection = std::abs(currentSpeed) - control.maxSpeed;
-            const auto feasibleCorrection = control.acceleration * seconds;
-            const auto appliedCorrectionFactor = std::max(feasibleCorrection / requiredCorrection, 1.0f);
+            const auto requiredCorrection = std::abs(currentSpeed) - maxSpeed;
+            const auto feasibleCorrection = maxAcceleration * seconds;
+            const auto appliedCorrectionFactor = std::min(requiredCorrection / feasibleCorrection, 1.0f);
 
             currentAcceleration = appliedCorrectionFactor *
-                control.acceleration *
+                maxAcceleration *
                 -Sign(currentSpeed);
         }
     };
 
-    correctLinearAccelerationOnAxis(localLinearVelocity.x, m_localLinearAcceleration.x, m_config.horizontal);
-    correctLinearAccelerationOnAxis(localLinearVelocity.y, m_localLinearAcceleration.y, m_config.vertical);
-    correctLinearAccelerationOnAxis(localLinearVelocity.z, m_localLinearAcceleration.z,
-        localLinearVelocity.z > 0.0f ? m_config.forward : m_config.backward);
+    correctLinearAccelerationOnAxis(localLinearVelocity.x, m_localLinearAcceleration.x,
+                                    m_config.horizontal.maxSpeed, m_config.horizontal.acceleration);
+
+    correctLinearAccelerationOnAxis(localLinearVelocity.y, m_localLinearAcceleration.y,
+                                    m_config.vertical.maxSpeed, m_config.vertical.acceleration);
+
+    if (localLinearVelocity.z > 0.0f)
+    {
+        correctLinearAccelerationOnAxis(localLinearVelocity.z, m_localLinearAcceleration.z,
+                                        m_config.backward.maxSpeed, m_config.forward.acceleration);
+    }
+    else
+    {
+        correctLinearAccelerationOnAxis(localLinearVelocity.z, m_localLinearAcceleration.z,
+                                        m_config.forward.maxSpeed, m_config.backward.acceleration);
+    }
 
     /**
      * Correct angular acceleration
@@ -72,7 +84,7 @@ void NpcFlightControl::update(float seconds)
     {
         const auto requiredCorrection = localAngularSpeed - m_config.angular.maxSpeed;
         const auto feasibleCorrection = m_config.angular.acceleration * seconds;
-        const auto appliedCorrectionFactor = std::max(feasibleCorrection / requiredCorrection, 1.0f);
+        const auto appliedCorrectionFactor = std::min(requiredCorrection / feasibleCorrection, 1.0f);
 
         m_localAngularAccelertion = -glm::normalize(localAngularVelocity) * appliedCorrectionFactor *
             feasibleCorrection;
