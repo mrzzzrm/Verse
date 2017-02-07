@@ -12,10 +12,13 @@ public:
     FlyToTask(std::shared_ptr<NpcFlightControl> flightControl, const glm::vec3 & destination);
 
     const glm::vec3 & destination() const;
+
     void setDestination(const glm::vec3 & destination);
+    void setStopAtDestionation(bool stopAtDestination);
 
     void update(float seconds) override;
 
 private:
     glm::vec3 m_destination;
+    bool      m_stopAtDestination = true;
 };

@@ -29,6 +29,9 @@ public:
 
     void update(float seconds) override;
 
+    glm::vec3 correctiveAcceleration(float requiredCorretion, float acceleration, float seconds,
+                                     const glm::vec3 & direction) const;
+
 private:
     glm::vec3 m_localLinearAcceleration;
     glm::vec3 m_localAngularAccelertion;

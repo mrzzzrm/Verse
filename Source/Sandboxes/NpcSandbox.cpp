@@ -135,6 +135,7 @@ public:
         m_waypoints.push_back(glm::vec3(-50.0f, 100.0f, 0.0f));
         m_rigidBody->transform().setPosition(glm::vec3(0.0f, 20.0f, 0.0f));
         m_task->setDestination(m_waypoints[0]);
+        m_task->setStopAtDestionation(false);
         m_currentWaypoint = 1;
 
 
@@ -164,7 +165,7 @@ public:
                                                     glm::vec3(0.0f, 0.0f, -1.0f));
         auto angularSpeed = glm::length(body->angularVelocity());
 
-        if (distance < 0.01f && glm::length(body->linearVelocity()) < 0.1f)
+        if (distance < 10.0f)
         {
             m_task->setDestination(m_waypoints[m_currentWaypoint]);
             m_currentWaypoint = (m_currentWaypoint + 1) % m_waypoints.size();
@@ -187,7 +188,7 @@ public:
         m_debugGeometryRenderer->arrow(1).reset(m_rigidBody->transform().position(),
                                                 m_rigidBody->transform().directionLocalToWorld(m_flightControl->localLinearAcceleration()) * 10.0f);
         m_debugGeometryRenderer->arrow(2).reset(m_rigidBody->transform().position(),
-                                                m_rigidBody->transform().directionLocalToWorld(m_flightControl->localAngularAccelertion()) * 100.0f);
+                                                m_rigidBody->transform().directionLocalToWorld(m_flightControl->localAngularAccelertion()) * 10.0f);
         m_debugGeometryRenderer->sphere(0).setTransform(Transform3D::atPosition(m_task->destination()));
 
         m_clear.schedule();
