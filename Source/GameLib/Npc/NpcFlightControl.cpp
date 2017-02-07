@@ -41,11 +41,11 @@ void NpcFlightControl::update(float seconds)
      */
     const auto localLinearVelocity = m_body->transform().directionWorldToLocal(m_body->linearVelocity());
 
-    const auto correctLinearAccelerationOnAxis = [] (
+    const auto correctLinearAccelerationOnAxis = [&] (
         const float currentSpeed, float & currentAcceleration,
         const FlightControlComponent & control)
     {
-        if (EpsilonGT(std::abs(currentSpeed) > control.maxSpeed))
+        if (EpsilonGt(std::abs(currentSpeed), control.maxSpeed))
         {
             const auto requiredCorrection = std::abs(currentSpeed) - control.maxSpeed;
             const auto feasibleCorrection = control.acceleration * seconds;
@@ -68,7 +68,7 @@ void NpcFlightControl::update(float seconds)
     const auto localAngularVelocity =  m_body->transform().directionWorldToLocal(m_body->angularVelocity());
     const auto localAngularSpeed = glm::length(localAngularVelocity);
 
-    if (EpsilonGT(localAngularSpeed, 0.0f) && EpsilonGT(localAngularSpeed, m_config.angular.maxSpeed))
+    if (EpsilonGt(localAngularSpeed, 0.0f) && EpsilonGt(localAngularSpeed, m_config.angular.maxSpeed))
     {
         const auto requiredCorrection = localAngularSpeed - m_config.angular.maxSpeed;
         const auto feasibleCorrection = m_config.angular.acceleration * seconds;
@@ -77,4 +77,10 @@ void NpcFlightControl::update(float seconds)
         m_localAngularAccelertion = -glm::normalize(localAngularVelocity) * appliedCorrectionFactor *
             feasibleCorrection;
     }
+
+    /**
+     * Apply accelerations
+     */
+    m_body->setLinearVelocity(m_body->linearVelocity() + m_body->transform().directionLocalToWorld(m_localLinearAcceleration) * seconds);
+    m_body->setAngularVelocity(m_body->angularVelocity() + m_body->transform().directionLocalToWorld(m_localAngularAccelertion) * seconds);
 }

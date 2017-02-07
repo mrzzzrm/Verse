@@ -10,13 +10,10 @@ struct FlightControlComponent
     float acceleration = 0.0f;
 };
 
-struct FlightControlFrame
+struct FlightControlDirection
 {
     float acceleration = 0.0f;
     float maxSpeed = 0.0f;
-    glm::vec3 normalized;
-    glm::vec3 velocityClamped;
-    glm::vec3 accelerationClamped;
 };
 
 struct FlightControlConfig
@@ -27,7 +24,7 @@ struct FlightControlConfig
     FlightControlComponent vertical;
     FlightControlComponent angular;
 
-    FlightControlFrame frame(const glm::vec3 & direction) const;
+    FlightControlDirection direction(const glm::vec3 & direction) const;
     glm::vec3 clampAcceleration(const glm::vec3 & acceleration) const;
     glm::vec3 clampVelocity(const glm::vec3 & velocity) const;
 };

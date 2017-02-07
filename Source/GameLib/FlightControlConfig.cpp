@@ -32,9 +32,9 @@ glm::vec3 ClampToFrame(glm::vec3 v, const glm::vec3 & frame)
 
 }
 
-FlightControlFrame FlightControlConfig::frame(const glm::vec3 & direction) const
+FlightControlDirection FlightControlConfig::direction(const glm::vec3 & direction) const
 {
-    FlightControlFrame result;
+    FlightControlDirection result;
 
     glm::vec3 mirror{
         Sign(direction.x),
@@ -58,9 +58,6 @@ FlightControlFrame FlightControlConfig::frame(const glm::vec3 & direction) const
 
     result.maxSpeed = glm::length(velocityClamped);
     result.acceleration = glm::length(accelClamped);
-    result.velocityClamped = velocityClamped * mirror;
-    result.accelerationClamped = accelClamped * mirror;
-    result.normalized = glm::normalize(result.accelerationClamped);
 
     return result;
 }

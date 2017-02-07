@@ -125,11 +125,11 @@ public:
         pose.setCenter(body->transform().center());
 
         auto distance = glm::length(body->transform().position() -  m_task->destination());
-        if (distance < 5.1f)
+        if (distance < 0.01f)
         {
             auto destination = RandomInHemisphere({0.0f, 300.0f, 0.0f});
             m_task->setDestination(destination);
-            m_rigidBody->setLinearVelocity(RandomInSphere() * 1600.0f);
+            //m_rigidBody->setLinearVelocity(RandomInSphere() * 160.0f);
         }
 
         m_npc0.component<VoxelObjectComponent>().voxelObject->setPose(pose);
@@ -140,9 +140,9 @@ public:
         m_debugGeometryRenderer->arrow(0).reset(m_rigidBody->transform().position(),
                                                 m_task->destination() - m_rigidBody->transform().position());
         m_debugGeometryRenderer->arrow(1).reset(m_rigidBody->transform().position(),
-                                                m_rigidBody->transform().directionLocalToWorld(m_flightControl->linearThrust()) * 1000.0f);
+                                                m_rigidBody->transform().directionLocalToWorld(m_flightControl->localLinearAcceleration()) * 10.0f);
         m_debugGeometryRenderer->arrow(2).reset(m_rigidBody->transform().position(),
-                                                m_rigidBody->transform().directionLocalToWorld(m_flightControl->angularThrust()) * 100.0f);
+                                                m_rigidBody->transform().directionLocalToWorld(m_flightControl->localAngularAccelertion()) * 100.0f);
 
         m_clear.schedule();
         m_groundPlane->schedule();

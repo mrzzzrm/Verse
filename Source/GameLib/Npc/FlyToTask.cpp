@@ -5,6 +5,7 @@
 
 #include <glm/gtx/vector_angle.hpp>
 
+#include <Deliberation/Core/Math/FloatUtils.h>
 #include <Deliberation/Core/Math/MathUtils.h>
 #include <Deliberation/Core/Math/Pose3D.h>
 #include <Deliberation/Core/Math/Random.h>
@@ -37,99 +38,97 @@ void FlyToTask::update(float seconds)
     body->predictTransform(seconds, predictedPose);
 
     auto linearDeltaToDestination = m_destination - predictedPose.position();
+    auto localLinearDeltaToDestination = predictedPose.directionWorldToLocal(linearDeltaToDestination);
     auto linearDistanceToDestination = glm::length(linearDeltaToDestination);
+    auto localLinearVelocity = predictedPose.directionWorldToLocal(body->linearVelocity());
 
-    if (linearDeltaToDestination == glm::vec3(0.0f))
+    if (EpsilonEq(linearDistanceToDestination, 0.0f))
     {
-        m_flightControl->setLinearThrust(glm::vec3());
-        m_flightControl->setAngularThrust(glm::vec3());
+        m_flightControl->setLocalLinearAcceleration(glm::vec3());
+        m_flightControl->setLocalAngularAccceleration(glm::vec3());
         return;
     }
 
-    auto directionToDestination = glm::normalize(linearDeltaToDestination);
-    auto localDirectionToDestination = predictedPose.directionWorldToLocal(directionToDestination);
+    auto localDirectionToDestination = glm::normalize(localLinearDeltaToDestination);
 
-//    /**
-//     * Angular
-//     */
-//    auto angularDeltaToDestination = glm::angle(directionToDestination,
-//                                                predictedPose.orientation() * glm::vec3(0.0f, 0.0f, -1.0f));
-//
-//
-//    glm::vec3 idealRotationAxis;
-//
-//    if (std::abs(angularDeltaToDestination - glm::pi<float>()) < 0.05)
+    /**
+     * Angular
+     */
+    auto angularDeltaToDestination = glm::angle(localDirectionToDestination,
+                                                glm::vec3(0.0f, 0.0f, -1.0f));
+
+
+    glm::vec3 idealRotationAxis;
+
+    if (std::abs(angularDeltaToDestination - glm::pi<float>()) < 0.05)
+    {
+        // any axis will do
+        idealRotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+    }
+    else
+    {
+        idealRotationAxis = glm::cross(glm::vec3(0.0f, 0.0f, -1.0f), localDirectionToDestination);
+    }
+
+    auto angleToDestination = std::asin(glm::length(idealRotationAxis));
+
+//    if (angleToDestination < 0.1f)
 //    {
-//        // any axis will do
-//        idealRotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+//        auto destination = RandomInHemisphere({0.0f, 300.0f, 0.0f});
+//        setDestination(destination);
 //    }
-//    else
-//    {
-//        idealRotationAxis = glm::cross(glm::vec3(0.0f, 0.0f, -1.0f), localDirectionToDestination);
-//    }
-//
-//    auto angleToDestination = std::asin(glm::length(idealRotationAxis));
-//
-////    if (angleToDestination < 0.1f)
-////    {
-////        auto destination = RandomInHemisphere({0.0f, 300.0f, 0.0f});
-////        setDestination(destination);
-////    }
-//
-//    auto idealAngularSpeed =
-//        std::min(std::sqrt(2 * m_flightControl->config().angular.acceleration * angleToDestination),
-//                 m_flightControl->config().angular.maxSpeed);
-//
-//    auto idealAngularVelocity = glm::normalize(idealRotationAxis) * idealAngularSpeed;
-//
-//    auto idealAngularVelocityCorrection = idealAngularVelocity - body->angularVelocity();
-//
-//    if (glm::length(idealAngularVelocityCorrection) > 0.001f)
-//    {
-//        m_flightControl->setAngularThrust(glm::normalize(idealAngularVelocityCorrection) * 0.3f);
-//    }
-//    else
-//    {
-//        m_flightControl->setAngularThrust(glm::vec3(0.0f));
-//    }
+
+    auto idealAngularSpeed =
+        std::min(std::sqrt(2 * m_flightControl->config().angular.acceleration * angleToDestination),
+                 m_flightControl->config().angular.maxSpeed);
+
+    auto idealAngularVelocity = glm::normalize(idealRotationAxis) * idealAngularSpeed;
+
+    auto idealAngularVelocityCorrection = idealAngularVelocity - body->angularVelocity();
+
+    if (glm::length(idealAngularVelocityCorrection) > 0.001f)
+    {
+        m_flightControl->setLocalAngularAccceleration(glm::normalize(idealAngularVelocityCorrection) * 0.3f);
+    }
+    else
+    {
+        m_flightControl->setLocalAngularAccceleration(glm::vec3(0.0f));
+    }
 
     /**
      * Linear
      */
-    auto idealFrame = m_flightControl->config().frame(localDirectionToDestination);
+    const auto directionControl = m_flightControl->config().direction(localDirectionToDestination);
 
     float idealSpeed;
-//    if (angleToDestination < 0.5f)
-//    {
-        idealSpeed = std::min(std::sqrt(2 * idealFrame.acceleration * linearDistanceToDestination),
-                              idealFrame.maxSpeed);
-//    }
-//    else
-//    {
-//        idealSpeed = 0.0f;
-//    }
-
-    auto idealVelocity = directionToDestination * idealSpeed;
-
-    auto idealVelocityCorrection = idealVelocity - body->linearVelocity();
-
-    if (glm::length(idealVelocityCorrection) > 0.001f)
+    if (angleToDestination < 0.5f)
     {
-        auto localIdealVelocityCorrection = predictedPose.directionWorldToLocal(idealVelocityCorrection);
-        auto clampedLocalIdealAcceleration =
-            m_flightControl->config().clampAcceleration(localIdealVelocityCorrection);
-
-        std::cout << clampedLocalIdealAcceleration << std::endl;
-
-        clampedLocalIdealAcceleration.x /= m_flightControl->config().horizontal.acceleration;
-        clampedLocalIdealAcceleration.y /= m_flightControl->config().vertical.acceleration;
-        clampedLocalIdealAcceleration.z /= clampedLocalIdealAcceleration.z <= 0.0f ? m_flightControl->config().forward.acceleration :
-                                           m_flightControl->config().backward.acceleration;
-
-        m_flightControl->setLinearThrust(clampedLocalIdealAcceleration);
+        idealSpeed = std::min(std::sqrt(2 * directionControl.acceleration * linearDistanceToDestination),
+                              directionControl.maxSpeed);
     }
     else
     {
-        m_flightControl->setLinearThrust(glm::vec3());
+        idealSpeed = 0.0f;
+    }
+
+    auto idealLocalVelocity = localDirectionToDestination * idealSpeed;
+
+    auto idealLocalVelocityCorrection = idealLocalVelocity - localLinearVelocity;
+    auto idealLocalSpeedCorrection = glm::length(idealLocalVelocityCorrection);
+    auto idealLocalVelocityCorrectionControl = m_flightControl->config().direction(idealLocalVelocityCorrection);
+
+    if (EpsilonGt(glm::length(idealLocalVelocityCorrection), 0.0f))
+    {
+        const auto feasibleCorrection = idealLocalVelocityCorrectionControl.acceleration * seconds;
+        const auto appliedCorrectionFactor = std::max(feasibleCorrection / idealLocalSpeedCorrection, 1.0f);
+
+        const auto appliedAcceleration = glm::normalize(idealLocalVelocityCorrection) * appliedCorrectionFactor *
+            idealLocalVelocityCorrectionControl.acceleration;
+
+        m_flightControl->setLocalLinearAcceleration(appliedAcceleration);
+    }
+    else
+    {
+        m_flightControl->setLocalLinearAcceleration(glm::vec3());
     }
 }
