@@ -15,17 +15,17 @@ class Camera3D;
 
 }
 
-class FlightControl;
+class PlayerFlightControl;
 
 class PlayerInput final
 {
 public:
-    PlayerInput(InputBase & input, Camera3D & camera, FlightControl & flightControl);
+    PlayerInput(InputBase & input, Camera3D & camera, PlayerFlightControl & flightControl);
 
     void update(float seconds);
 
 private:
     InputBase &     m_input;
     Camera3D &      m_camera;
-    FlightControl & m_flightControl;
+    PlayerFlightControl & m_flightControl;
 };

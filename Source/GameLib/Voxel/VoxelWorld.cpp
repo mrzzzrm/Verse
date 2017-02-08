@@ -46,22 +46,12 @@ void VoxelWorld::addVoxelObject(std::shared_ptr<VoxelObject> voxelObject)
     m_objects.emplace_back(voxelObject);
 
     m_objectsByUID[id.worldUID] = voxelObject;
-
-    m_physicsWorld.addRigidBody(voxelObject->body());
 }
 
 void VoxelWorld::update(float seconds)
 {
     for (auto & object : m_objects)
     {
-        Pose3D pose;
-
-        pose.setPosition(object->body()->transform().position());
-        pose.setOrientation(object->body()->transform().orientation());
-        pose.setCenter(object->body()->transform().center());
-
-        object->setPose(pose);
-
         object->schedule();
     }
 }

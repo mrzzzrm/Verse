@@ -30,7 +30,7 @@ const VoxelRenderChunkTree & VoxelObjectVoxelData::renderTree() const
     return m_renderTree;
 }
 
-const std::shared_ptr<VoxelShape>  & VoxelObjectVoxelData::shapeTree() const
+const std::shared_ptr<VoxelShape>  & VoxelObjectVoxelData::shape() const
 {
     return m_shape;
 }
