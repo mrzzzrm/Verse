@@ -89,14 +89,20 @@ public:
          * Create VoxelObjects
          */
         m_shipObject = std::make_shared<VoxelObject>(*m_shipData);
-        m_shipObject->body()->transform().setPosition({0.0f, 0.0f, 35.0f});
+        m_shipBody = std::make_shared<RigidBody>(m_shipObject->data().shape());
+        m_shipBody->transform().setCenter(glm::vec3(m_shipObject->data().size()) / 2.0f);
+        m_shipBody->transform().setPosition({0.0f, 0.0f, 35.0f});
 
         m_stationObject = std::make_shared<VoxelObject>(*m_stationData);
-        m_stationObject->body()->transform().setPosition({-16.0f, 40.0f, -200.0f});
-        m_stationObject->body()->setAngularVelocity({0.0f, 0.0f, 0.05f});
+        m_stationBody = std::make_shared<RigidBody>(m_stationObject->data().shape());
+        m_stationBody->transform().setCenter(glm::vec3(m_stationObject->data().size()) / 2.0f);
+        m_stationBody->transform().setPosition({-16.0f, 40.0f, -200.0f});
+        m_stationBody->setAngularVelocity({0.0f, 0.0f, 0.05f});
 
         m_blockObject = std::make_shared<VoxelObject>(*m_blockData);
-        m_blockObject->body()->transform().setPosition({0.0f, 0.0f, 0.0f});
+        m_blockBody = std::make_shared<RigidBody>(m_blockObject->data().shape());
+        m_blockBody->transform().setCenter(glm::vec3(m_blockObject->data().size()) / 2.0f);
+        m_blockBody->transform().setPosition({0.0f, 0.0f, 0.0f});
 
         /**
          * Add VoxelObjects to world
@@ -136,7 +142,7 @@ public:
         playerShipConfig.angular.acceleration = 3.0f;
         playerShipConfig.angular.maxSpeed = 2.0f;
 
-        m_flightControl.reset(m_shipObject->body(), playerShipConfig);
+        m_flightControl.reset(m_shipBody, playerShipConfig);
 
         m_playerInput.reset(input(), m_camera, *m_flightControl);
 
@@ -168,6 +174,13 @@ public:
 
     void onFrame(float seconds) override
     {
+        Pose3D pose;
+
+        pose.setPosition(m_shipBody->transform().position());
+        pose.setOrientation(m_shipBody->transform().orientation());
+        pose.setCenter(m_shipBody->transform().center());
+        m_shipObject->setPose(pose);
+
         m_playerInput->update(seconds);
         m_flightControl->update(seconds);
 
@@ -178,9 +191,9 @@ public:
         offset.z = m_shipObject->data().size().z * 1.4f;
         offset.y = m_shipObject->data().size().y * 2;
 
-        m_dolly->update(m_shipObject->body()->transform().position() +
-                        m_shipObject->body()->transform().orientation() * offset,
-                        m_shipObject->body()->transform().orientation(), simulatedTime);
+        m_dolly->update(m_shipBody->transform().position() +
+                        m_shipBody->transform().orientation() * offset,
+                        m_shipBody->transform().orientation(), simulatedTime);
 
         {
             AimHelper aimHelper(m_camera, m_physicsWorld);
@@ -196,8 +209,8 @@ public:
             {
                 m_equipment->setFireRequest(false, {});
             }
-            m_equipment->update(seconds, Pose3D(m_shipObject->body()->transform().position(),
-                                                m_shipObject->body()->transform().orientation()));
+            m_equipment->update(seconds, Pose3D(m_shipBody->transform().position(),
+                                                m_shipBody->transform().orientation()));
 
         }
 
@@ -232,12 +245,21 @@ private:
 
     Optional<VoxelWorld>
                 m_voxelWorld;
+    
+    std::shared_ptr<RigidBody>
+                m_shipBody;    
+    std::shared_ptr<RigidBody>
+                m_stationBody;    
+    std::shared_ptr<RigidBody>
+                m_blockBody;
+    
     std::shared_ptr<VoxelObject>
                 m_shipObject;
     std::shared_ptr<VoxelObject>
                 m_stationObject;
     std::shared_ptr<VoxelObject>
                 m_blockObject;
+    
     std::shared_ptr<VoxelObjectVoxelData>
                 m_shipData;
     std::shared_ptr<VoxelObjectVoxelData>
