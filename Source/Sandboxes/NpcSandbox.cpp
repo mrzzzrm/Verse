@@ -24,14 +24,17 @@
 #include <Deliberation/Scene/Debug/DebugGeometryManager.h>
 #include <Deliberation/Scene/Debug/DebugGeometryRenderer.h>
 #include <Deliberation/Scene/Debug/DebugGroundPlaneRenderer.h>
+#include <Systems/RigidBodyVoxelObjectSystem.h>
 
-#include "Components.h"
 #include "Emitter.h"
 #include "Player/PlayerFlightControl.h"
 #include "NpcFlightControl.h"
+#include "NpcFlightControlSystem.h"
 #include "HailstormManager.h"
 #include "NpcController.h"
+#include "NpcControllerSystem.h"
 #include "FlyToTask.h"
+#include "VoxelRigidBodyPayload.h"
 #include "VoxelRenderChunkTree.h"
 #include "VoxelWorld.h"
 #include "VoxelClusterPrimitiveTest.h"
@@ -89,6 +92,8 @@ public:
         flightControlConfig.angular.acceleration = 3.0f;
         flightControlConfig.angular.maxSpeed = 2.0f;
 
+        m_world.addSystem<RigidBodyVoxelObjectSystem>();
+
         m_npc0 = m_world.createEntity("npc0");
         auto voxelObject = std::make_shared<VoxelObject>(*m_voxelData);
 
@@ -104,10 +109,10 @@ public:
         m_task = std::make_shared<FlyToTask>(m_flightControl, glm::vec3{-63.370247,169.859543,179.064026});
         npcController->setTask(m_task);
 
-        m_npc0.addComponent<VoxelObjectComponent>(voxelObject);
-        m_npc0.addComponent<RigidBodyComponent>(m_rigidBody);
-        m_npc0.addComponent<FlightControlComponent2>(m_flightControl);
-        m_npc0.addComponent<NpcControllerComponent>(npcController);
+        m_npc0.addComponent<std::shared_ptr<VoxelObject>>(voxelObject);
+        m_npc0.addComponent<std::shared_ptr<RigidBody>>(m_rigidBody);
+        m_npc0.addComponent<std::shared_ptr<NpcFlightControl>>(m_flightControl);
+        m_npc0.addComponent<std::shared_ptr<NpcController>>(npcController);
 
         m_physicsWorld.addRigidBody(m_rigidBody);
         m_voxelWorld->addVoxelObject(voxelObject);
@@ -135,7 +140,7 @@ public:
         m_waypoints.push_back(glm::vec3(-50.0f, 100.0f, 0.0f));
         m_rigidBody->transform().setPosition(glm::vec3(0.0f, 20.0f, 0.0f));
         m_task->setDestination(m_waypoints[0]);
-        m_task->setStopAtDestionation(false);
+        m_task->setStopAtDestionation(true);
         m_currentWaypoint = 1;
 
 
@@ -144,6 +149,8 @@ public:
 
     void onFrame(float seconds) override
     {
+        m_world.update(seconds);
+
         auto physicsSimulationSeconds = m_physicsWorld.nextSimulationStep(seconds);
         if (EpsilonEq(physicsSimulationSeconds, 0.0f))
         {
@@ -151,13 +158,7 @@ public:
             return;
         }
 
-        Pose3D pose;
-
-        auto & body = m_npc0.component<RigidBodyComponent>().rigidBody;
-        pose.setPosition(body->transform().position());
-        pose.setOrientation(body->transform().orientation());
-        pose.setCenter(body->transform().center());
-
+        auto & body = m_npc0.component<std::shared_ptr<RigidBody>>();
         auto delta = body->transform().directionWorldToLocal(m_task->destination() - body->transform().position());
         auto distance = glm::length(delta);
         auto localDirectionToDestination = glm::normalize(delta);
@@ -171,17 +172,16 @@ public:
             m_currentWaypoint = (m_currentWaypoint + 1) % m_waypoints.size();
         }
 
-        m_npc0.component<VoxelObjectComponent>().voxelObject->setPose(pose);
-        m_npc0.component<NpcControllerComponent>().npcController->update(physicsSimulationSeconds);
+        m_npc0.component<std::shared_ptr<NpcController>>()->update(physicsSimulationSeconds);
+        m_npc0.component<std::shared_ptr<NpcFlightControl>>()->update(physicsSimulationSeconds);
         m_physicsWorld.update(seconds);
-        m_npc0.component<FlightControlComponent2>().flightControl->update(physicsSimulationSeconds);
 
-//        glm::vec3 offset;
-//        offset.z = m_voxelData->size().z * 1.4f;
-//        offset.y = m_voxelData->size().y * 2;
-//        m_dolly->update(m_rigidBody->transform().position() +
-//                        m_rigidBody->transform().orientation() * offset,
-//                        m_rigidBody->transform().orientation(), physicsSimulationSeconds);
+        glm::vec3 offset;
+        offset.z = m_voxelData->size().z * 1.4f;
+        offset.y = m_voxelData->size().y * 2;
+        m_dolly->update(m_rigidBody->transform().position() +
+                        m_rigidBody->transform().orientation() * offset,
+                        m_rigidBody->transform().orientation(), physicsSimulationSeconds);
 
         m_debugGeometryRenderer->arrow(0).reset(m_rigidBody->transform().position(),
                                                 m_task->destination() - m_rigidBody->transform().position());
