@@ -24,6 +24,9 @@ add_library(${target}
     Npc/NpcTask.cpp
     Npc/NpcTask.h
 
+    Systems/RigidBodyVoxelObjectSystem.cpp
+    Systems/RigidBodyVoxelObjectSystem.h
+
     Vfx/Emitter.cpp
     Vfx/Emitter.h
     Vfx/EmitterIntensityStrategy.cpp
@@ -93,6 +96,7 @@ target_include_directories(${target}
 
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/Hailstorm
+    ${CMAKE_CURRENT_SOURCE_DIR}/Systems
     ${CMAKE_CURRENT_SOURCE_DIR}/Npc
     ${CMAKE_CURRENT_SOURCE_DIR}/Vfx
     ${CMAKE_CURRENT_SOURCE_DIR}/Voxel
