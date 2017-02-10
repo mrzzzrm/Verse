@@ -16,8 +16,8 @@ public:
     {}
 
 protected:
-    void onUpdate(Entity & entity, float seconds)
+    void onPrePhysicsUpdate(Entity & entity, float seconds) override
     {
-        entity.component<std::shared_ptr<NpcFlightControlSystem>>()->update(seconds);
+        entity.component<std::shared_ptr<NpcFlightControl>>()->update(seconds);
     }
 };

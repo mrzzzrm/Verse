@@ -12,11 +12,11 @@ class NpcControllerSystem:
 {
 public:
     NpcControllerSystem(World & world):
-        Base(world, ComponentFilter::requires<std::shared_ptr<NpcControllerSystem>>())
+        Base(world, ComponentFilter::requires<std::shared_ptr<NpcController>>())
     {}
 
 protected:
-    void onUpdate(Entity & entity, float seconds)
+    void onPrePhysicsUpdate(Entity & entity, float seconds) override
     {
         entity.component<std::shared_ptr<NpcController>>()->update(seconds);
     }

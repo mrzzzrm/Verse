@@ -10,6 +10,7 @@
 #include <Deliberation/Core/Math/Random.h>
 
 #include <Deliberation/ECS/Entity.h>
+#include <Deliberation/ECS/Systems/PhysicsWorldSystem.h>
 #include <Deliberation/ECS/World.h>
 
 #include <Deliberation/Physics/PhysicsWorld.h>
@@ -24,7 +25,7 @@
 #include <Deliberation/Scene/Debug/DebugGeometryManager.h>
 #include <Deliberation/Scene/Debug/DebugGeometryRenderer.h>
 #include <Deliberation/Scene/Debug/DebugGroundPlaneRenderer.h>
-#include <Systems/RigidBodyVoxelObjectSystem.h>
+#include <Systems/VoxelObjectSystem.h>
 
 #include "Emitter.h"
 #include "Player/PlayerFlightControl.h"
@@ -80,6 +81,11 @@ public:
             }
         }
 
+        m_world.addSystem<PhysicsWorldSystem>(m_physicsWorld);
+        m_world.addSystem<VoxelObjectSystem>(m_physicsWorld, *m_voxelWorld);
+        m_world.addSystem<NpcControllerSystem>();
+        m_world.addSystem<NpcFlightControlSystem>();
+
         FlightControlConfig flightControlConfig;
         flightControlConfig.forward.acceleration = 130.0f;
         flightControlConfig.forward.maxSpeed = 400.0f;
@@ -91,8 +97,6 @@ public:
         flightControlConfig.vertical.maxSpeed = 60.0f;
         flightControlConfig.angular.acceleration = 3.0f;
         flightControlConfig.angular.maxSpeed = 2.0f;
-
-        m_world.addSystem<RigidBodyVoxelObjectSystem>();
 
         m_npc0 = m_world.createEntity("npc0");
         auto voxelObject = std::make_shared<VoxelObject>(*m_voxelData);
@@ -114,9 +118,6 @@ public:
         m_npc0.addComponent<std::shared_ptr<NpcFlightControl>>(m_flightControl);
         m_npc0.addComponent<std::shared_ptr<NpcController>>(npcController);
 
-        m_physicsWorld.addRigidBody(m_rigidBody);
-        m_voxelWorld->addVoxelObject(voxelObject);
-
         m_debugGeometryManager.reset(context());
         m_debugGeometryRenderer.reset(*m_debugGeometryManager);
         m_debugGeometryRenderer->addArrow(m_rigidBody->transform().position(), {}, {0.8f, 0.8f, 0.8f});
@@ -130,8 +131,8 @@ public:
         m_waypoints.push_back(glm::vec3(0.0f, 20.0f, 200.0f));
         m_waypoints.push_back(glm::vec3(-200.0f, 20.0f, 0.0f));
         m_waypoints.push_back(glm::vec3(-200.0f, 90.0f, 0.0f));
-        m_waypoints.push_back(glm::vec3(-200.0f, -100.0f, 0.0f));
-        m_waypoints.push_back(glm::vec3(200.0f, -100.0f, 200.0f));
+        m_waypoints.push_back(glm::vec3(-200.0f, 100.0f, 0.0f));
+        m_waypoints.push_back(glm::vec3(200.0f, 100.0f, 200.0f));
         m_waypoints.push_back(glm::vec3(0.0f, 20.0f, -150.0f));
         m_waypoints.push_back(glm::vec3(150.0f, 20.0f, -150.0f));
         m_waypoints.push_back(glm::vec3(0.0f, 20.0f, -150.0f));
@@ -166,22 +167,21 @@ public:
                                                     glm::vec3(0.0f, 0.0f, -1.0f));
         auto angularSpeed = glm::length(body->angularVelocity());
 
-        if (distance < 10.0f)
+        if (distance < 60.0f)
         {
             m_task->setDestination(m_waypoints[m_currentWaypoint]);
             m_currentWaypoint = (m_currentWaypoint + 1) % m_waypoints.size();
         }
 
-        m_npc0.component<std::shared_ptr<NpcController>>()->update(physicsSimulationSeconds);
-        m_npc0.component<std::shared_ptr<NpcFlightControl>>()->update(physicsSimulationSeconds);
+        m_world.prePhysicsUpdate(physicsSimulationSeconds);
         m_physicsWorld.update(seconds);
 
-        glm::vec3 offset;
-        offset.z = m_voxelData->size().z * 1.4f;
-        offset.y = m_voxelData->size().y * 2;
-        m_dolly->update(m_rigidBody->transform().position() +
-                        m_rigidBody->transform().orientation() * offset,
-                        m_rigidBody->transform().orientation(), physicsSimulationSeconds);
+//        glm::vec3 offset;
+//        offset.z = m_voxelData->size().z * 1.4f;
+//        offset.y = m_voxelData->size().y * 2;
+//        m_dolly->update(m_rigidBody->transform().position() +
+//                        m_rigidBody->transform().orientation() * offset,
+//                        m_rigidBody->transform().orientation(), physicsSimulationSeconds);
 
         m_debugGeometryRenderer->arrow(0).reset(m_rigidBody->transform().position(),
                                                 m_task->destination() - m_rigidBody->transform().position());

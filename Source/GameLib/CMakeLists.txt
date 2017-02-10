@@ -24,8 +24,8 @@ add_library(${target}
     Npc/NpcTask.cpp
     Npc/NpcTask.h
 
-    Systems/RigidBodyVoxelObjectSystem.cpp
-    Systems/RigidBodyVoxelObjectSystem.h
+    Systems/VoxelObjectSystem.cpp
+    Systems/VoxelObjectSystem.h
 
     Vfx/Emitter.cpp
     Vfx/Emitter.h
