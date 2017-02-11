@@ -1,16 +1,10 @@
 #pragma once
 
-#include <memory>
-
-#include "NpcFlightControl.h"
+class NpcController;
 
 class NpcTask
 {
 public:
-    NpcTask(std::shared_ptr<NpcFlightControl> flightControl);
     virtual ~NpcTask() = default;
-    virtual void update(float seconds) = 0;
-
-protected:
-    std::shared_ptr<NpcFlightControl> m_flightControl;
+    virtual void update(NpcController & controller, float seconds) = 0;
 };

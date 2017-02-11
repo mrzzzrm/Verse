@@ -11,5 +11,4 @@ public:
     VoxelClusterContact(RigidBody & bodyA, RigidBody & bodyB);
 
     void update() override;
-
 };

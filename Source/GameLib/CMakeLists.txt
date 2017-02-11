@@ -15,8 +15,10 @@ add_library(${target}
     Hailstorm/HailstormRenderer.cpp
     Hailstorm/HailstormRenderer.h
 
-    Npc/FlyToTask.cpp
-    Npc/FlyToTask.h
+    Npc/NpcAttackTask.cpp
+    Npc/NpcAttackTask.h
+    Npc/NpcSteering.cpp
+    Npc/NpcSteering.h
     Npc/NpcController.cpp
     Npc/NpcController.h
     Npc/NpcFlightControl.cpp

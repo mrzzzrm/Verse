@@ -1,4 +1,4 @@
-#include "FlyToTask.h"
+#include "NpcSteering.h"
 
 #include <algorithm>
 #include <iostream>
@@ -13,36 +13,31 @@
 
 #include <Deliberation/Physics/RigidBody.h>
 
-FlyToTask::FlyToTask(std::shared_ptr<NpcFlightControl> flightControl, const glm::vec3 & destination):
-    NpcTask(flightControl),
-    m_destination(destination)
+const glm::vec3 & NpcSteering::destination() const
 {
-
+    return *m_destination;
 }
 
-const glm::vec3 & FlyToTask::destination() const
-{
-    return m_destination;
-}
-
-void FlyToTask::setDestination(const glm::vec3 & destination)
+void NpcSteering::setDestination(const glm::vec3 & destination)
 {
     m_destination = destination;
 }
 
-void FlyToTask::setStopAtDestionation(bool stopAtDestination)
+void NpcSteering::setStopAtDestination(bool stopAtDestination)
 {
     m_stopAtDestination = stopAtDestination;
 }
 
-void FlyToTask::update(float seconds)
+void NpcSteering::update(NpcFlightControl & flightControl, float seconds)
 {
-    auto & body = m_flightControl->body();
+    auto & body = flightControl.body();
+
+    const auto destination = m_destination.value_or(body->transform().position());
 
     Transform3D predictedPose;
     body->predictTransform(seconds, predictedPose);
 
-    const auto linearDeltaToDestination = m_destination - predictedPose.position();
+    const auto linearDeltaToDestination = destination - predictedPose.position();
     const auto localLinearDeltaToDestination = predictedPose.directionWorldToLocal(linearDeltaToDestination);
     const auto distanceToDestination = glm::length(linearDeltaToDestination);
     const auto localLinearVelocity = predictedPose.directionWorldToLocal(body->linearVelocity());
@@ -50,8 +45,8 @@ void FlyToTask::update(float seconds)
 
     if (EpsilonEq(distanceToDestination, 0.0f))
     {
-        m_flightControl->setLocalLinearAcceleration(glm::vec3());
-        m_flightControl->setLocalAngularAccceleration(glm::vec3());
+        flightControl.setLocalLinearAcceleration(glm::vec3());
+        flightControl.setLocalAngularAccceleration(glm::vec3());
         return;
     }
 
@@ -73,8 +68,8 @@ void FlyToTask::update(float seconds)
 
         localAngleToDestination = std::asin(glm::length(rotationAxis));
 
-        const auto idealAngularSpeed = std::min(std::sqrt(2 * m_flightControl->config().angular.acceleration *
-            localAngleToDestination), m_flightControl->config().angular.maxSpeed);
+        const auto idealAngularSpeed = std::min(std::sqrt(2 * flightControl.config().angular.acceleration *
+            localAngleToDestination), flightControl.config().angular.maxSpeed);
 
         const auto idealAngularVelocity = glm::normalize(rotationAxis) * idealAngularSpeed;
 
@@ -83,22 +78,22 @@ void FlyToTask::update(float seconds)
 
         if (EpsilonGt(idealAngularSpeedCorrection, 0.0f))
         {
-            m_flightControl->setLocalAngularAccceleration(m_flightControl->correctiveAcceleration(
-                idealAngularSpeedCorrection, m_flightControl->config().angular.acceleration, seconds,
+            flightControl.setLocalAngularAccceleration(flightControl.correctiveAcceleration(
+                idealAngularSpeedCorrection, flightControl.config().angular.acceleration, seconds,
                 glm::normalize(idealAngularVelocityCorrection)
             ));
         }
         else
         {
-            m_flightControl->setLocalAngularAccceleration(glm::vec3(0.0f));
+            flightControl.setLocalAngularAccceleration(glm::vec3(0.0f));
         }
     }
 
     /**
      * Linear
      */
-    const auto brakeControl = m_flightControl->config().direction(-localDirectionToDestination);
-    const auto accelerationControl = m_flightControl->config().direction(localDirectionToDestination);
+    const auto brakeControl = flightControl.config().direction(-localDirectionToDestination);
+    const auto accelerationControl = flightControl.config().direction(localDirectionToDestination);
 
     float idealSpeed;
     if (m_stopAtDestination)
@@ -119,7 +114,7 @@ void FlyToTask::update(float seconds)
 
     const auto idealLocalVelocityCorrection = idealLocalVelocity - localLinearVelocity;
     const auto idealLocalSpeedCorrection = glm::length(idealLocalVelocityCorrection);
-    const auto idealLocalVelocityCorrectionControl = m_flightControl->config().direction(idealLocalVelocityCorrection);
+    const auto idealLocalVelocityCorrectionControl = flightControl.config().direction(idealLocalVelocityCorrection);
 
     if (EpsilonGt(glm::length(idealLocalVelocityCorrection), 0.0f))
     {
@@ -129,13 +124,13 @@ void FlyToTask::update(float seconds)
         const auto appliedAcceleration = glm::normalize(idealLocalVelocityCorrection) * appliedCorrectionFactor *
             idealLocalVelocityCorrectionControl.acceleration;
 
-        m_flightControl->setLocalLinearAcceleration(m_flightControl->correctiveAcceleration(
+        flightControl.setLocalLinearAcceleration(flightControl.correctiveAcceleration(
             idealLocalSpeedCorrection, idealLocalVelocityCorrectionControl.acceleration, seconds,
             glm::normalize(idealLocalVelocityCorrection)
         ));
     }
     else
     {
-        m_flightControl->setLocalLinearAcceleration(glm::vec3());
+        flightControl.setLocalLinearAcceleration(glm::vec3());
     }
 }

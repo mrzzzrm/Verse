@@ -13,6 +13,7 @@
 #include <Deliberation/ECS/Systems/PhysicsWorldSystem.h>
 #include <Deliberation/ECS/World.h>
 
+#include <Deliberation/Physics/Narrowphase.h>
 #include <Deliberation/Physics/PhysicsWorld.h>
 #include <Deliberation/Physics/RigidBody.h>
 
@@ -27,20 +28,22 @@
 #include <Deliberation/Scene/Debug/DebugGroundPlaneRenderer.h>
 #include <Systems/VoxelObjectSystem.h>
 
+#include "CollisionShapeTypes.h"
 #include "Emitter.h"
 #include "Player/PlayerFlightControl.h"
 #include "NpcFlightControl.h"
-#include "NpcFlightControlSystem.h"
 #include "HailstormManager.h"
+#include "NpcAttackTask.h"
 #include "NpcController.h"
 #include "NpcControllerSystem.h"
-#include "FlyToTask.h"
+#include "NpcSteering.h"
 #include "VoxelRigidBodyPayload.h"
 #include "VoxelRenderChunkTree.h"
 #include "VoxelWorld.h"
 #include "VoxelClusterPrimitiveTest.h"
 #include "VoxReader.h"
 #include "VoxelRigidBodyPayload.h"
+#include "VoxelClusterContact.h"
 
 using namespace deliberation;
 
@@ -56,6 +59,11 @@ public:
 
     void onStartup() override
     {
+        //m_physicsWorld.narrowphase().registerPrimitiveTest((int)::CollisionShapeType::VoxelCluster, std::make_unique<VoxelClusterPrimitiveTest>());
+
+        m_physicsWorld.narrowphase().contactDispatcher().
+            registerContactType<VoxelClusterContact>((int)::CollisionShapeType::VoxelCluster);
+
         m_voxelWorld.reset(context(), m_physicsWorld, m_camera);
 
         m_camera.setPosition({0.0f, 200.0f, 300.0f});
@@ -84,68 +92,21 @@ public:
         m_world.addSystem<PhysicsWorldSystem>(m_physicsWorld);
         m_world.addSystem<VoxelObjectSystem>(m_physicsWorld, *m_voxelWorld);
         m_world.addSystem<NpcControllerSystem>();
-        m_world.addSystem<NpcFlightControlSystem>();
 
-        FlightControlConfig flightControlConfig;
-        flightControlConfig.forward.acceleration = 130.0f;
-        flightControlConfig.forward.maxSpeed = 400.0f;
-        flightControlConfig.backward.acceleration = 20.0f;
-        flightControlConfig.backward.maxSpeed = 60.0f;
-        flightControlConfig.horizontal.acceleration = 20.0f;
-        flightControlConfig.horizontal.maxSpeed = 60.0f;
-        flightControlConfig.vertical.acceleration = 20.0f;
-        flightControlConfig.vertical.maxSpeed = 60.0f;
-        flightControlConfig.angular.acceleration = 3.0f;
-        flightControlConfig.angular.maxSpeed = 2.0f;
+        auto npc0 = spawnNpc({-300.0f, 100.0f, 0.0f});
+        auto npc1 = spawnNpc({0.0f, 150.0f, 0.0f});
+        auto npc2 = spawnNpc({500.0f, 200.0f, 0.0f});
 
-        m_npc0 = m_world.createEntity("npc0");
-        auto voxelObject = std::make_shared<VoxelObject>(*m_voxelData);
-
-        auto rigidBodyPayload = std::make_shared<VoxelRigidBodyPayload>(voxelObject);
-        m_rigidBody = std::make_shared<RigidBody>(voxelObject->data().shape());
-        m_rigidBody->setPayload(rigidBodyPayload);
-        m_rigidBody->transform().setCenter(glm::vec3(voxelObject->data().size()) / 2.0f);
-       // m_rigidBody->transform().setOrientation();
-
-        m_flightControl = std::make_shared<NpcFlightControl>(m_rigidBody, flightControlConfig);
-
-        auto npcController = std::make_shared<NpcController>();
-        m_task = std::make_shared<FlyToTask>(m_flightControl, glm::vec3{-63.370247,169.859543,179.064026});
-        npcController->setTask(m_task);
-
-        m_npc0.addComponent<std::shared_ptr<VoxelObject>>(voxelObject);
-        m_npc0.addComponent<std::shared_ptr<RigidBody>>(m_rigidBody);
-        m_npc0.addComponent<std::shared_ptr<NpcFlightControl>>(m_flightControl);
-        m_npc0.addComponent<std::shared_ptr<NpcController>>(npcController);
-
-        m_debugGeometryManager.reset(context());
-        m_debugGeometryRenderer.reset(*m_debugGeometryManager);
-        m_debugGeometryRenderer->addArrow(m_rigidBody->transform().position(), {}, {0.8f, 0.8f, 0.8f});
-        m_debugGeometryRenderer->addArrow(m_rigidBody->transform().position(), {}, {1.0f, 0.0f, 0.0f});
-        m_debugGeometryRenderer->addArrow(m_rigidBody->transform().position(), {}, {0.0f, 1.0f, 0.0f});
-        m_debugGeometryRenderer->addSphere({0.0f, 1.0f, 0.0f}, 4.0f);
-
-        m_waypoints.push_back(glm::vec3(150.0f, 220.0f, 200.0f));
-        m_waypoints.push_back(glm::vec3(-100.0f, 60.0f, -150.0f));
-        m_waypoints.push_back(glm::vec3(200.0f, 20.0f, -200.0f));
-        m_waypoints.push_back(glm::vec3(0.0f, 20.0f, 200.0f));
-        m_waypoints.push_back(glm::vec3(-200.0f, 20.0f, 0.0f));
-        m_waypoints.push_back(glm::vec3(-200.0f, 90.0f, 0.0f));
-        m_waypoints.push_back(glm::vec3(-200.0f, 100.0f, 0.0f));
-        m_waypoints.push_back(glm::vec3(200.0f, 100.0f, 200.0f));
-        m_waypoints.push_back(glm::vec3(0.0f, 20.0f, -150.0f));
-        m_waypoints.push_back(glm::vec3(150.0f, 20.0f, -150.0f));
-        m_waypoints.push_back(glm::vec3(0.0f, 20.0f, -150.0f));
-        m_waypoints.push_back(glm::vec3(50.0f, 200.0f, -150.0f));
-        m_waypoints.push_back(glm::vec3(50.0f, 200.0f, 0.0f));
-        m_waypoints.push_back(glm::vec3(-50.0f, 100.0f, 0.0f));
-        m_rigidBody->transform().setPosition(glm::vec3(0.0f, 20.0f, 0.0f));
-        m_task->setDestination(m_waypoints[0]);
-        m_task->setStopAtDestionation(true);
-        m_currentWaypoint = 1;
-
-
-        m_dolly.reset(m_camera);
+        {
+            auto task = std::make_shared<NpcAttackTask>();
+            task->setTarget(npc2);
+            npc0.component<std::shared_ptr<NpcController>>()->setTask(task);
+        }
+        {
+            auto task = std::make_shared<NpcAttackTask>();
+            task->setTarget(npc0);
+            npc2.component<std::shared_ptr<NpcController>>()->setTask(task);
+        }
     }
 
     void onFrame(float seconds) override
@@ -159,49 +120,48 @@ public:
             return;
         }
 
-        auto & body = m_npc0.component<std::shared_ptr<RigidBody>>();
-        auto delta = body->transform().directionWorldToLocal(m_task->destination() - body->transform().position());
-        auto distance = glm::length(delta);
-        auto localDirectionToDestination = glm::normalize(delta);
-        auto angularDeltaToDestination = glm::angle(localDirectionToDestination,
-                                                    glm::vec3(0.0f, 0.0f, -1.0f));
-        auto angularSpeed = glm::length(body->angularVelocity());
-
-        if (distance < 60.0f)
-        {
-            m_task->setDestination(m_waypoints[m_currentWaypoint]);
-            m_currentWaypoint = (m_currentWaypoint + 1) % m_waypoints.size();
-        }
-
         m_world.prePhysicsUpdate(physicsSimulationSeconds);
         m_physicsWorld.update(seconds);
-
-//        glm::vec3 offset;
-//        offset.z = m_voxelData->size().z * 1.4f;
-//        offset.y = m_voxelData->size().y * 2;
-//        m_dolly->update(m_rigidBody->transform().position() +
-//                        m_rigidBody->transform().orientation() * offset,
-//                        m_rigidBody->transform().orientation(), physicsSimulationSeconds);
-
-        m_debugGeometryRenderer->arrow(0).reset(m_rigidBody->transform().position(),
-                                                m_task->destination() - m_rigidBody->transform().position());
-        m_debugGeometryRenderer->arrow(1).reset(m_rigidBody->transform().position(),
-                                                m_rigidBody->transform().directionLocalToWorld(m_flightControl->localLinearAcceleration()) * 10.0f);
-        m_debugGeometryRenderer->arrow(2).reset(m_rigidBody->transform().position(),
-                                                m_rigidBody->transform().directionLocalToWorld(m_flightControl->localAngularAccelertion()) * 10.0f);
-        m_debugGeometryRenderer->sphere(0).setTransform(Transform3D::atPosition(m_task->destination()));
 
         m_clear.schedule();
         m_groundPlane->schedule();
         m_navigator->update(physicsSimulationSeconds);
         m_voxelWorld->update(physicsSimulationSeconds);
-        m_debugGeometryRenderer->schedule(m_camera);
+    }
+
+    Entity spawnNpc(const glm::vec3 & position)
+    {
+        FlightControlConfig flightControlConfig;
+        flightControlConfig.forward.acceleration = 130.0f;
+        flightControlConfig.forward.maxSpeed = 100.0f;
+        flightControlConfig.backward.acceleration = 20.0f;
+        flightControlConfig.backward.maxSpeed = 60.0f;
+        flightControlConfig.horizontal.acceleration = 20.0f;
+        flightControlConfig.horizontal.maxSpeed = 60.0f;
+        flightControlConfig.vertical.acceleration = 20.0f;
+        flightControlConfig.vertical.maxSpeed = 60.0f;
+        flightControlConfig.angular.acceleration = 3.0f;
+        flightControlConfig.angular.maxSpeed = 2.0f;
+
+        auto npc = m_world.createEntity("npc");
+        auto voxelObject = std::make_shared<VoxelObject>(*m_voxelData);
+
+        auto rigidBodyPayload = std::make_shared<VoxelRigidBodyPayload>(voxelObject);
+        auto rigidBody = std::make_shared<RigidBody>(voxelObject->data().shape());
+        rigidBody->setPayload(rigidBodyPayload);
+        rigidBody->transform().setCenter(glm::vec3(voxelObject->data().size()) / 2.0f);
+        rigidBody->transform().setPosition(position);
+
+        auto npcController = std::make_shared<NpcController>(flightControlConfig);
+
+        npc.addComponent<std::shared_ptr<VoxelObject>>(voxelObject);
+        npc.addComponent<std::shared_ptr<RigidBody>>(rigidBody);
+        npc.addComponent<std::shared_ptr<NpcController>>(npcController);
+
+        return npc;
     }
 
 private:
-    Optional<CameraDolly3D>
-        m_dolly;
-
     Camera3D                m_camera;
     Clear                   m_clear;
     PhysicsWorld            m_physicsWorld;
@@ -213,22 +173,7 @@ private:
     World                   m_world;
     std::shared_ptr<VoxelObjectVoxelData>
                             m_voxelData;
-    Entity                  m_npc0;
-    std::shared_ptr<FlyToTask>
-                            m_task;
-    std::shared_ptr<RigidBody>
-                            m_rigidBody;
-    std::shared_ptr<NpcFlightControl>
-                            m_flightControl;
 
-    Optional<DebugGeometryManager>
-                            m_debugGeometryManager;
-    Optional<DebugGeometryRenderer>
-                            m_debugGeometryRenderer;
-
-    std::vector<glm::vec3>
-        m_waypoints;
-    int                     m_currentWaypoint = 0;
 };
 
 int main(int argc, char *argv[])
