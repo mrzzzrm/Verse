@@ -15,7 +15,7 @@ class AimHelper final
 public:
     AimHelper(const Camera3D & camera, const PhysicsWorld & physicsWorld);
 
-    glm::vec3 getTarget(const glm::vec2 & mouse);
+    glm::vec3 getTarget(const glm::vec2 & mouse, bool & hit);
 
 private:
     const Camera3D &        m_camera;

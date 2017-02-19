@@ -21,6 +21,7 @@ public:
     void addParticle(HailstormParticle bullet);
 
     void update(float seconds);
+    void render();
 
 private:
     VoxelWorld &                    m_voxelWorld;

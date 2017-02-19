@@ -48,7 +48,7 @@ void VoxelWorld::addVoxelObject(std::shared_ptr<VoxelObject> voxelObject)
     m_objectsByUID[id.worldUID] = voxelObject;
 }
 
-void VoxelWorld::update(float seconds)
+void VoxelWorld::render()
 {
     for (auto & object : m_objects)
     {

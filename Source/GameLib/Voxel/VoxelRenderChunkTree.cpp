@@ -164,10 +164,7 @@ void VoxelRenderChunkTree::addVoxelToNode(u32 index, const Voxel & voxel, bool v
 
         if (chunk.chunk)
         {
-            if (chunk.chunk.use_count() > 1)
-            {
-                chunk.chunk = chunk.chunk->clone();
-            }
+            if (chunk.chunk.use_count() > 1) chunk.chunk = chunk.chunk->clone();
         }
         else
         {
@@ -207,8 +204,12 @@ void VoxelRenderChunkTree::removeVoxelFromNode(u32 index, const glm::uvec3 & vox
 
     if (node.leaf)
     {
-        Assert(!!m_chunks[node.chunk].chunk, "");
-        m_chunks[node.chunk].chunk->removeVoxel(voxel - glm::uvec3(node.llf),
+        auto & chunk = m_chunks[node.chunk];
+        Assert(!!chunk.chunk, "");
+
+        if (chunk.chunk.use_count() > 1) chunk.chunk = chunk.chunk->clone();
+
+        chunk.chunk->removeVoxel(voxel - glm::uvec3(node.llf),
                                                 visible);
     }
     else
@@ -237,7 +238,12 @@ void VoxelRenderChunkTree::updateVoxelVisibilityInNode(size_t index, const glm::
 
     if (node.leaf)
     {
-        m_chunks[node.chunk].chunk->updateVoxelVisibility(voxel - glm::uvec3(node.llf), visible);
+        auto & chunk = m_chunks[node.chunk];
+        Assert(!!chunk.chunk, "");
+
+        if (chunk.chunk.use_count() > 1) chunk.chunk = chunk.chunk->clone();
+
+        chunk.chunk->updateVoxelVisibility(voxel - glm::uvec3(node.llf), visible);
     }
     else
     {

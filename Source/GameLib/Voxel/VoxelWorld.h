@@ -35,7 +35,7 @@ public:
 
     void addVoxelObject(std::shared_ptr<VoxelObject> voxelObject);
 
-    void update(float seconds);
+    void render();
 
 private:
     Context &           m_context;

@@ -1,5 +1,15 @@
 #include "VoxelObjectVoxelData.h"
 
+VoxelObjectVoxelData::VoxelObjectVoxelData(const VoxelObjectVoxelData & prototype):
+    m_voxelWorld(prototype.m_voxelWorld),
+    m_cluster(prototype.m_cluster),
+    m_renderTree(prototype.m_renderTree),
+    m_shape(std::make_shared<VoxelShape>(*prototype.m_shape)),
+    m_hull(prototype.m_hull)
+{
+
+}
+
 VoxelObjectVoxelData::VoxelObjectVoxelData(const VoxelWorld & voxelWorld, const glm::uvec3 & size):
     m_voxelWorld(voxelWorld),
     m_cluster(size),

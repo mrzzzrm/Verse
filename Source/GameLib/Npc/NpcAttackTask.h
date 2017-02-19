@@ -1,5 +1,7 @@
 #pragma once
 
+#include <glm/glm.hpp>
+
 #include <Deliberation/ECS/Entity.h>
 
 #include "GameLib.h"
@@ -24,6 +26,11 @@ private:
     };
 
 private:
-    Entity m_target;
-    Status m_status = Status::None;
+    void startEvasion(NpcController & controller);
+    void startJoust();
+
+private:
+    Entity      m_target;
+    Status      m_status = Status::None;
+    glm::vec3   m_evasionPoint;
 };

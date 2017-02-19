@@ -24,7 +24,7 @@ public:
     void addInstance(HailstormParticle & bullet);
     void removeInstance(const HailstormParticleID & bullet);
 
-    void update();
+    void render();
 
 private:
     void addInstanceInSlot(HailstormParticle & bullet, size_t index);

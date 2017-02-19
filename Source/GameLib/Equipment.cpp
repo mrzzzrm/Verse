@@ -17,7 +17,7 @@ void Equipment::setFireRequest(bool active, const glm::vec3 & target)
     for (auto & hardpoint : m_hardpoints) hardpoint->setFireRequest(active, target);
 }
 
-void Equipment::update(float seconds, const Pose3D & referencePose)
+void Equipment::update(float seconds, const EquipmentUpdateContext & context)
 {
-    for (auto & hardpoint : m_hardpoints) hardpoint->update(seconds, referencePose);
+    for (auto & hardpoint : m_hardpoints) hardpoint->update(seconds, context);
 }

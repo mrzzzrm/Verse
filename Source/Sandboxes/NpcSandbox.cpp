@@ -27,11 +27,15 @@
 #include <Deliberation/Scene/Debug/DebugGeometryRenderer.h>
 #include <Deliberation/Scene/Debug/DebugGroundPlaneRenderer.h>
 #include <Systems/VoxelObjectSystem.h>
+#include <Npc/NpcDebugRendererSystem.h>
 
+#include "AimHelper.h"
 #include "CollisionShapeTypes.h"
+#include "Equipment.h"
 #include "Emitter.h"
-#include "Player/PlayerFlightControl.h"
+#include "PlayerFlightControl.h"
 #include "NpcFlightControl.h"
+#include "Hardpoint.h"
 #include "HailstormManager.h"
 #include "NpcAttackTask.h"
 #include "NpcController.h"
@@ -44,6 +48,7 @@
 #include "VoxReader.h"
 #include "VoxelRigidBodyPayload.h"
 #include "VoxelClusterContact.h"
+#include "Weapon.h"
 
 using namespace deliberation;
 
@@ -59,7 +64,7 @@ public:
 
     void onStartup() override
     {
-        //m_physicsWorld.narrowphase().registerPrimitiveTest((int)::CollisionShapeType::VoxelCluster, std::make_unique<VoxelClusterPrimitiveTest>());
+        m_physicsWorld.narrowphase().registerPrimitiveTest((int)::CollisionShapeType::VoxelCluster, std::make_unique<VoxelClusterPrimitiveTest>());
 
         m_physicsWorld.narrowphase().contactDispatcher().
             registerContactType<VoxelClusterContact>((int)::CollisionShapeType::VoxelCluster);
@@ -92,10 +97,16 @@ public:
         m_world.addSystem<PhysicsWorldSystem>(m_physicsWorld);
         m_world.addSystem<VoxelObjectSystem>(m_physicsWorld, *m_voxelWorld);
         m_world.addSystem<NpcControllerSystem>();
+   //     m_world.addSystem<NpcDebugRendererSystem>(context(), m_camera);
 
-        auto npc0 = spawnNpc({-300.0f, 100.0f, 0.0f});
+        m_hailstormManager.emplace(context(), m_camera, m_physicsWorld, *m_voxelWorld);
+
+        auto bulletMesh = UVSphere(5, 5).generateMesh2();
+        m_bulletMeshID = m_hailstormManager->renderer().addMesh(bulletMesh);
+
+        auto npc0 = spawnNpc({-300.0f, 400.0f, 0.0f});
         auto npc1 = spawnNpc({0.0f, 150.0f, 0.0f});
-        auto npc2 = spawnNpc({500.0f, 200.0f, 0.0f});
+        auto npc2 = spawnNpc({500.0f, 700.0f, 0.0f});
 
         {
             auto task = std::make_shared<NpcAttackTask>();
@@ -107,26 +118,43 @@ public:
             task->setTarget(npc0);
             npc2.component<std::shared_ptr<NpcController>>()->setTask(task);
         }
+
     }
 
     void onFrame(float seconds) override
     {
-        m_world.update(seconds);
-
-        auto physicsSimulationSeconds = m_physicsWorld.nextSimulationStep(seconds);
-        if (EpsilonEq(physicsSimulationSeconds, 0.0f))
+        if (input().mouseButtonPressed(InputBase::MouseButton_Right))
         {
-            m_physicsWorld.update(seconds);
-            return;
+            AimHelper aimHelper(m_camera, m_physicsWorld);
+            auto hit = false;
+            auto target = aimHelper.getTarget(input().mousePosition(), hit);
+            std::cout << "Target: " << hit << " " << target << std::endl;
         }
 
-        m_world.prePhysicsUpdate(physicsSimulationSeconds);
-        m_physicsWorld.update(seconds);
+        auto physicsSimulationSeconds = m_physicsWorld.nextSimulationStep(seconds);
 
-        m_clear.schedule();
-        m_groundPlane->schedule();
-        m_navigator->update(physicsSimulationSeconds);
-        m_voxelWorld->update(physicsSimulationSeconds);
+        if (EpsilonGt(physicsSimulationSeconds, 0.0f))
+        {
+            m_world.prePhysicsUpdate(physicsSimulationSeconds);
+
+            m_physicsWorld.update(seconds);
+
+            m_world.update(seconds);
+
+            m_hailstormManager->update(physicsSimulationSeconds);
+        }
+        else
+        {
+            m_physicsWorld.update(seconds);
+        }
+
+        m_navigator->update(seconds);
+#
+        m_clear.render();
+        m_world.render();
+        m_groundPlane->render();
+        m_voxelWorld->render();
+        m_hailstormManager->render();
     }
 
     Entity spawnNpc(const glm::vec3 & position)
@@ -158,6 +186,30 @@ public:
         npc.addComponent<std::shared_ptr<RigidBody>>(rigidBody);
         npc.addComponent<std::shared_ptr<NpcController>>(npcController);
 
+        auto equipment = std::make_shared<Equipment>();
+
+        {
+            auto maxAngle = glm::pi<float>() * 0.2f;
+
+            auto hardpoint0 = std::make_shared<Hardpoint>(Pose3D::atPosition({2.0f, 0.0f, -3.0f}), maxAngle);
+            auto hardpoint1 = std::make_shared<Hardpoint>(Pose3D::atPosition({-2.0f, 0.0f, -3.0f}), maxAngle);
+
+            WeaponConfig weaponConfig;
+            weaponConfig.cooldown = 0.2f;
+            weaponConfig.meshID = m_bulletMeshID;
+
+            auto weapon0 = std::make_shared<Weapon>(weaponConfig, *m_hailstormManager, voxelObject->id().worldUID);
+            auto weapon1 = std::make_shared<Weapon>(weaponConfig, *m_hailstormManager, voxelObject->id().worldUID);
+
+            hardpoint0->setWeapon(weapon0);
+            hardpoint1->setWeapon(weapon1);
+
+            equipment->addHardpoint(hardpoint0);
+            equipment->addHardpoint(hardpoint1);
+        }
+
+        npc.addComponent<std::shared_ptr<Equipment>>(equipment);
+
         return npc;
     }
 
@@ -173,6 +225,11 @@ private:
     World                   m_world;
     std::shared_ptr<VoxelObjectVoxelData>
                             m_voxelData;
+
+    std::experimental::optional<HailstormManager>
+                            m_hailstormManager;
+
+    HailstormMeshID         m_bulletMeshID = -1;
 
 };
 

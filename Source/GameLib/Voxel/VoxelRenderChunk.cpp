@@ -34,12 +34,18 @@ VoxelRenderChunk::VoxelRenderChunk(const VoxelRenderChunk & other):
     m_marchingCubes(m_voxelWorld.marchingCubesTriangulation(), m_cluster, 1.0f),
     m_configCluster(other.m_configCluster),
     m_voxelCount(other.m_voxelCount),
+    m_meshEmpty(other.m_meshEmpty),
     m_llfRender(other.m_llfRender),
     m_urbRender(other.m_urbRender),
     m_numVisibleVoxels(other.m_numVisibleVoxels),
     m_colorOverride(other.m_colorOverride)
 {
-
+    /**
+     * We don't deep-copy the marching cubes state, so set all of it to dirty
+     */
+    m_llfDirty = glm::uvec3(0, 0, 0);
+    auto size = m_cluster.size();
+    m_urbDirty = glm::uvec3(size - 1u);
 }
 
 void VoxelRenderChunk::addVoxel(const Voxel & voxel, bool visible)

@@ -21,6 +21,9 @@ add_library(${target}
     Npc/NpcSteering.h
     Npc/NpcController.cpp
     Npc/NpcController.h
+    Npc/NpcControllerSystem.h
+    Npc/NpcDebugRendererSystem.cpp
+    Npc/NpcDebugRendererSystem.h
     Npc/NpcFlightControl.cpp
     Npc/NpcFlightControl.h
     Npc/NpcTask.cpp
@@ -100,6 +103,7 @@ target_include_directories(${target}
     ${CMAKE_CURRENT_SOURCE_DIR}/Hailstorm
     ${CMAKE_CURRENT_SOURCE_DIR}/Systems
     ${CMAKE_CURRENT_SOURCE_DIR}/Npc
+    ${CMAKE_CURRENT_SOURCE_DIR}/Player
     ${CMAKE_CURRENT_SOURCE_DIR}/Vfx
     ${CMAKE_CURRENT_SOURCE_DIR}/Voxel
 

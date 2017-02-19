@@ -13,6 +13,7 @@ class VoxelWorld;
 class VoxelObjectVoxelData final
 {
 public:
+    VoxelObjectVoxelData(const VoxelObjectVoxelData & prototype);
     VoxelObjectVoxelData(const VoxelWorld & voxelWorld, const glm::uvec3 & size);
 
     const VoxelWorld & voxelWorld() const;

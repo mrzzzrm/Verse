@@ -68,7 +68,7 @@ void HailstormRenderBatch::removeInstance(const HailstormParticleID & bulletID)
     m_freeInstanceSlots.push(bulletID.renderBatchIndex);
 }
 
-void HailstormRenderBatch::update()
+void HailstormRenderBatch::render()
 {
     if (m_instances.empty())
     {

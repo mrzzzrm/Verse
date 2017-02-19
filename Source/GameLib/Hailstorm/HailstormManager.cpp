@@ -33,11 +33,15 @@ void HailstormManager::addParticle(HailstormParticle bullet)
 
 void HailstormManager::update(float seconds)
 {
-    m_renderer->update(seconds);
     m_physicsWorld->update(seconds);
 
     for (auto & bulletID : m_physicsWorld->destroyedBullets())
     {
         m_renderer->removeParticle(bulletID);
     }
+}
+
+void HailstormManager::render()
+{
+    m_renderer->render();
 }

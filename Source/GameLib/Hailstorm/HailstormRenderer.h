@@ -36,7 +36,7 @@ public:
     void addParticle(HailstormParticle & bullet);
     void removeParticle(const HailstormParticleID & bullet);
 
-    void update(float seconds);
+    void render();
 
 private:
     Context &           m_context;

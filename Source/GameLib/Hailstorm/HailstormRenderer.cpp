@@ -55,7 +55,7 @@ void HailstormRenderer::removeParticle(const HailstormParticleID & bullet)
     m_batches[bullet.meshID]->removeInstance(bullet);
 }
 
-void HailstormRenderer::update(float seconds)
+void HailstormRenderer::render()
 {
     m_viewProjectionGlobal[0] = m_camera.viewProjection();
     m_timeGlobal[0] = CurrentMillis();
@@ -64,6 +64,6 @@ void HailstormRenderer::update(float seconds)
 
     for (auto & batch : m_batches)
     {
-        batch->update();
+        batch->render();
     }
 }

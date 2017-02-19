@@ -22,57 +22,97 @@ void NpcAttackTask::setTarget(Entity target)
 
 void NpcAttackTask::update(NpcController & controller, float seconds)
 {
-    if (!m_target.isValid()) return;
+    if (!m_target.isValid())
+    {
+        if (controller.equipment()) controller.equipment()->setFireRequest(false, {});
+
+        return;
+    }
 
     auto & steering = controller.steering();
+
     const auto & body = controller.body();
     const auto & targetBody = m_target.component<std::shared_ptr<RigidBody>>();
 
     const auto targetPosition = targetBody->transform().position();
     const auto deltaToTarget = targetPosition - body->transform().position();
 
+    const auto flyDirection = EpsilonGt(glm::length2(body->linearVelocity()), 0.0f) ?
+                                        glm::normalize(body->linearVelocity()) : glm::vec3();
+    const auto targetFlyDirection = targetBody->linearVelocity();
+    const auto targetDirection = EpsilonGt(glm::length2(targetFlyDirection), 0.0f) ?
+                                 glm::normalize(targetFlyDirection) : glm::vec3(0, 0, 1);
     const auto distanceToTarget = glm::length(deltaToTarget);
+    const auto directionToTarget = glm::normalize(deltaToTarget);
 
     if (m_status == Status::None)
     {
-        if (distanceToTarget < 400.0f) m_status = Status::Evade;
-        else m_status = Status::Joust;
+        if (distanceToTarget < 800.0f) startEvasion(controller);
+        else startJoust();
     }
-
-    std::cout << "Status: " << (int)m_status << std::endl;
 
     if (m_status == Status::Evade)
     {
-        const auto targetFlyDirection = targetBody->linearVelocity();
-        const auto targetDirection = EpsilonGt(glm::length2(targetFlyDirection), 0.0f) ?
-                                     glm::normalize(targetFlyDirection) : glm::vec3(0, 0, 1);
+        steering.setDestination(m_evasionPoint);
 
-        glm::vec3 evasionPoint;
+        auto distanceToEvasionPoint = glm::length(m_evasionPoint - body->transform().position());
 
-        if (glm::dot(deltaToTarget, targetDirection) > 0.0f)
-        {
-            evasionPoint = targetPosition - targetDirection * 750.0f;
-        }
-        else
-        {
-            const auto planarEvasionPoint = RandomOnCircle() * 750.0f;
-
-            auto planeX = AnyPerpendicularVectorTo(targetDirection);
-            auto planeY = glm::cross(targetDirection, planeX);
-
-            evasionPoint = planeX * planarEvasionPoint.x + planeY * planarEvasionPoint.y;
-        }
-
-        steering.setDestination(evasionPoint);
-
-        if (distanceToTarget > 600.0f) m_status = Status::Joust;
+        if (distanceToEvasionPoint < 100.0f) startEvasion(controller);
+        else if (distanceToTarget > 700.0f) startJoust();
+      //  else if (glm::dot(directionToTarget, flyDirection) < 0.0f && distanceToTarget > 200.0f) startJoust();
     }
     else if (m_status == Status::Joust)
     {
         steering.setDestination(targetPosition);
 
-        if (distanceToTarget < 300.0f) m_status = Status::Evade;
+        if (distanceToTarget < 600.0f) startEvasion(controller);
     }
 
     steering.setStopAtDestination(false);
+
+
+    if (controller.equipment())
+    {
+        controller.equipment()->setFireRequest(true, targetPosition);
+    }
+}
+
+void NpcAttackTask::startEvasion(NpcController & controller)
+{
+    const auto & body = controller.body();
+    const auto & targetBody = m_target.component<std::shared_ptr<RigidBody>>();
+
+    const auto targetPosition = targetBody->transform().position();
+    const auto deltaToTarget = targetPosition - body->transform().position();
+
+    const auto targetFlyDirection = targetBody->linearVelocity();
+    const auto targetDirection = EpsilonGt(glm::length2(targetFlyDirection), 0.0f) ?
+                                 glm::normalize(targetFlyDirection) : glm::vec3(0, 0, 1);
+    const auto distanceToTarget = glm::length(deltaToTarget);
+    const auto directionToTarget = glm::normalize(deltaToTarget);
+
+//    if (glm::dot(deltaToTarget, targetDirection) > 0.0f)
+//    {
+//        std::cout << "  Evasion 1" << std::endl;
+//        m_evasionPoint = targetPosition - targetDirection * 250.0f;
+//    }
+//    else
+//    {
+   //     std::cout << "  Evasion 2" << std::endl;
+        const auto planarEvasionPoint = RandomOnCircle() * 200.0f;
+
+        auto planeX = AnyPerpendicularVectorTo(directionToTarget);
+        auto planeY = glm::cross(targetDirection, planeX);
+
+        m_evasionPoint = targetPosition + planeX * planarEvasionPoint.x + planeY * planarEvasionPoint.y +
+            directionToTarget * 300.0f;
+//    }
+
+    m_status = Status::Evade;
+}
+
+void NpcAttackTask::startJoust()
+{
+//    std::cout << "  Joust" << std::endl;
+    m_status = Status::Joust;
 }

@@ -42,6 +42,7 @@ void HailstormPhysicsWorld::update(float seconds)
         auto a = bullet.origin + bullet.velocity * t0;
         auto b = bullet.origin + bullet.velocity * t1;
 
+
         auto markedForDestruction = false;
 
         m_physicsWorld.lineCast(Ray3D::fromTo(a, b), [&](const RayCastIntersection &intersection) -> bool {
