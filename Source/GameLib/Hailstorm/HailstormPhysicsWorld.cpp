@@ -46,7 +46,9 @@ void HailstormPhysicsWorld::update(float seconds)
         auto markedForDestruction = false;
 
         m_physicsWorld.lineCast(Ray3D::fromTo(a, b), [&](const RayCastIntersection &intersection) -> bool {
-            if (intersection.body.shape()->type() == (int) ::CollisionShapeType::VoxelCluster) {
+            auto & body = intersection.body;
+
+            if (body->shape()->type() == (int) ::CollisionShapeType::VoxelCluster) {
                 auto & voxelClusterIntersection =
                     static_cast<const RayCastVoxelClusterIntersection &>(intersection);
 
@@ -54,7 +56,13 @@ void HailstormPhysicsWorld::update(float seconds)
                     return true;
                 }
 
-                voxelClusterIntersection.object.lock()->removeVoxels({voxelClusterIntersection.voxel});
+               // voxelClusterIntersection.object.lock()->removeVoxels({voxelClusterIntersection.voxel});
+
+                auto localHitPoint = glm::vec3(voxelClusterIntersection.voxel);
+                auto relativeHitPoint = body->transform().pointLocalToWorld(localHitPoint) -
+                    body->transform().position();
+
+                body->applyImpulse(relativeHitPoint, bullet.velocity * 0.1f);
             }
 
             if (!markedForDestruction) {

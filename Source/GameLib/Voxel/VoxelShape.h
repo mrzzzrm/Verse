@@ -75,4 +75,12 @@ private:
 private:
     glm::uvec3          m_size;
     Subtree<ChunkLeaf>  m_tree;
+    mutable glm::mat3   m_localInertia;
+    mutable bool        m_localInertiaDirty = true;
+    float               m_iXX = 0.0f;
+    float               m_iYY = 0.0f;
+    float               m_iZZ = 0.0f;
+    float               m_iXY = 0.0f;
+    float               m_iXZ = 0.0f;
+    float               m_iYZ = 0.0f;
 };

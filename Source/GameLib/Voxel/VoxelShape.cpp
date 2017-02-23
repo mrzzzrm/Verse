@@ -28,11 +28,42 @@ AABB VoxelShape::bounds(const Transform3D & transform) const
 
 glm::mat3 VoxelShape::localInertia() const
 {
-    return glm::mat3(1.0f);
+    if (m_localInertiaDirty)
+    {
+        m_localInertia[0][0] = m_iXX;
+        m_localInertia[1][1] = m_iYY;
+        m_localInertia[2][2] = m_iZZ;
+
+        m_localInertia[1][0] = -m_iXY;
+        m_localInertia[0][1] = -m_iXY;
+
+        m_localInertia[2][0] = -m_iXZ;
+        m_localInertia[0][2] = -m_iXZ;
+
+        m_localInertia[2][1] = -m_iYZ;
+        m_localInertia[1][2] = -m_iYZ;
+
+        m_localInertiaDirty = false;
+    }
+
+    return m_localInertia;
 }
 
 void VoxelShape::updateVoxel(const glm::uvec3 & voxel, bool set)
 {
+    if (set)
+    {
+        auto v = glm::vec3(voxel) - glm::vec3(m_size) / 2.0f;
+
+        m_iXX += v.y * v.y + v.z * v.z;
+        m_iYY += v.x * v.x + v.z * v.z;
+        m_iZZ += v.x * v.x + v.y * v.y;
+        m_iXY += v.x * v.y;
+        m_iXZ += v.x * v.z;
+        m_iYZ += v.y * v.z;
+    }
+
+    m_localInertiaDirty = true;
     m_tree.updateVoxel(0, voxel, set);
 }
 

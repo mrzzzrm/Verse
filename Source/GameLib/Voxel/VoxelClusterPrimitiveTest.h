@@ -12,7 +12,7 @@
 struct RayCastVoxelClusterIntersection:
     RayCastIntersection
 {
-    RayCastVoxelClusterIntersection(const RigidBody & body);
+    RayCastVoxelClusterIntersection(std::shared_ptr<RigidBody> body);
 
     std::weak_ptr<VoxelObject>  object;
     glm::uvec3                  voxel;
@@ -23,5 +23,5 @@ class VoxelClusterPrimitiveTest:
 {
 public:
     virtual std::unique_ptr<RayCastIntersection> lineTest(const Ray3D & ray,
-                                                          const RigidBody & body) const override;
+                                                          std::shared_ptr<RigidBody> body) const override;
 };

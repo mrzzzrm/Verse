@@ -60,6 +60,8 @@ add_library(${target}
     Voxel/VoxelModel.h
     Voxel/VoxelObject.cpp
     Voxel/VoxelObject.h
+    Voxel/VoxelObjectPrimitives.cpp
+    Voxel/VoxelObjectPrimitives.h
     Voxel/VoxelObjectVoxelData.cpp
     Voxel/VoxelObjectVoxelData.h
     Voxel/VoxelRenderChunk.cpp

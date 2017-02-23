@@ -26,6 +26,9 @@ public:
     void addVoxels(std::vector<Voxel> voxels);
     void removeVoxels(const std::vector<glm::uvec3> & voxels);
 
+    void operator=(const VoxelObjectVoxelData & prototype) = delete;
+    void operator=(VoxelObjectVoxelData && prototype) = delete;
+
 private:
     const VoxelWorld &              m_voxelWorld;
     VoxelCluster<bool>              m_cluster;
