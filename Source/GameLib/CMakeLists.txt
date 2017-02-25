@@ -54,6 +54,10 @@ add_library(${target}
     Voxel/VoxelClusterMarchingCubesTriangulation.h
     Voxel/VoxelClusterPrimitiveTest.cpp
     Voxel/VoxelClusterPrimitiveTest.h
+    Voxel/VoxelClusterSplitDetector.cpp
+    Voxel/VoxelClusterSplitDetector.h
+    Voxel/VoxelClusterSplitSystem.cpp
+    Voxel/VoxelClusterSplitSystem.h
     Voxel/VoxelHull.cpp
     Voxel/VoxelHull.h
     Voxel/VoxelModel.cpp

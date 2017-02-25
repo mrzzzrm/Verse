@@ -1,5 +1,7 @@
 #include "SandboxApplication.h"
 
+#include "VoxelClusterSplitSystem.h"
+
 SandboxApplication::SandboxApplication(const std::string & name):
     Application(name)
 {
@@ -32,6 +34,7 @@ void SandboxApplication::onStartup()
     m_world.addSystem<PhysicsWorldSystem>(m_physicsWorld);
     m_world.addSystem<VoxelObjectSystem>(m_physicsWorld, *m_voxelWorld);
     m_world.addSystem<NpcControllerSystem>();
+    m_world.addSystem<VoxelClusterSplitSystem>();
     //     m_world.addSystem<NpcDebugRendererSystem>(context(), m_camera);
 
     m_hailstormManager.emplace(context(), m_camera, m_physicsWorld, *m_voxelWorld);

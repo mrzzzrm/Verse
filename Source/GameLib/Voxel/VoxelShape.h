@@ -26,8 +26,11 @@ class VoxelShape final:
 public:
     VoxelShape(const glm::uvec3 & size);
 
-    virtual AABB bounds(const Transform3D & transform) const override;
-    virtual glm::mat3 localInertia() const override;
+    // From CollisionShape
+    AABB bounds(const Transform3D & transform) const override;
+    glm::mat3 localInertia() const override;
+    float mass() const override;
+    glm::vec3 centerOfMass() const override;
 
     void updateVoxel(const glm::uvec3 & voxel, bool set);
 
@@ -73,14 +76,20 @@ private:
     using ChunkLeaf = std::shared_ptr<Subtree<VoxelLeaf>>;
 
 private:
+    void updateMassProperties() const;
+
+private:
     glm::uvec3          m_size;
     Subtree<ChunkLeaf>  m_tree;
     mutable glm::mat3   m_localInertia;
-    mutable bool        m_localInertiaDirty = true;
-    float               m_iXX = 0.0f;
-    float               m_iYY = 0.0f;
-    float               m_iZZ = 0.0f;
-    float               m_iXY = 0.0f;
-    float               m_iXZ = 0.0f;
-    float               m_iYZ = 0.0f;
+    mutable glm::vec3   m_centerOfMass;
+    glm::uvec3          m_voxelPositionAccumulator;
+    u32                 m_numVoxels = 0;
+    mutable bool        m_massPropertiesDirty = true;
+    mutable u32         m_absIXX = 0;
+    mutable u32         m_absIYY = 0;
+    mutable u32         m_absIZZ = 0;
+    mutable u32         m_absIXY = 0;
+    mutable u32         m_absIXZ = 0;
+    mutable u32         m_absIYZ = 0;
 };

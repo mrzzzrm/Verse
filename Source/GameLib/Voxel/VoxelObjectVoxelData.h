@@ -4,6 +4,7 @@
 
 #include "GameLib.h"
 #include "Voxel.h"
+#include "VoxelClusterSplitDetector.h"
 #include "VoxelHull.h"
 #include "VoxelRenderChunkTree.h"
 #include "VoxelShape.h"
@@ -18,10 +19,13 @@ public:
 
     const VoxelWorld & voxelWorld() const;
     const glm::uvec3 & size() const;
-    const VoxelCluster<bool> & cluster() const;
+    const VoxelCluster<Voxel> & cluster() const;
     const VoxelRenderChunkTree & renderTree() const;
     const std::shared_ptr<VoxelShape> & shape() const;
     const VoxelHull & hull() const;
+    const VoxelClusterSplitDetector & splitDetector() const;
+
+    const Voxel & voxel(const glm::uvec3 & cell) const;
 
     void addVoxels(std::vector<Voxel> voxels);
     void removeVoxels(const std::vector<glm::uvec3> & voxels);
@@ -31,8 +35,9 @@ public:
 
 private:
     const VoxelWorld &              m_voxelWorld;
-    VoxelCluster<bool>              m_cluster;
+    VoxelCluster<Voxel>             m_cluster;
     VoxelRenderChunkTree            m_renderTree;
     std::shared_ptr<VoxelShape>     m_shape;
     VoxelHull                       m_hull;
+    VoxelClusterSplitDetector       m_splitDetector;
 };
