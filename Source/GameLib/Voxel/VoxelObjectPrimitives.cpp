@@ -13,7 +13,7 @@ VoxelObjectVoxelData BuildVoxelBlock(const VoxelWorld & voxelWorld, const glm::u
         {
             for (size_t x = 0; x < size.x; x++)
             {
-                voxels.emplace_back(glm::uvec3{x, y, z}, color);
+                voxels.emplace_back(glm::uvec3{x, y, z}, color, 150.0f);
             }
         }
     }

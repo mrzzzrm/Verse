@@ -2,7 +2,8 @@
 
 VoxelObjectVoxelData::VoxelObjectVoxelData(const VoxelObjectVoxelData & prototype):
     m_voxelWorld(prototype.m_voxelWorld),
-    m_cluster(prototype.m_cluster),
+    m_colors(prototype.m_colors),
+    m_healthPoints(prototype.m_healthPoints),
     m_renderTree(prototype.m_renderTree),
     m_shape(std::make_shared<VoxelShape>(*prototype.m_shape)),
     m_hull(prototype.m_hull),
@@ -13,7 +14,8 @@ VoxelObjectVoxelData::VoxelObjectVoxelData(const VoxelObjectVoxelData & prototyp
 
 VoxelObjectVoxelData::VoxelObjectVoxelData(const VoxelWorld & voxelWorld, const glm::uvec3 & size):
     m_voxelWorld(voxelWorld),
-    m_cluster(size),
+    m_colors(size),
+    m_healthPoints(size),
     m_renderTree(voxelWorld, size),
     m_shape(std::make_shared<VoxelShape>(size)),
     m_hull(size),
@@ -29,12 +31,7 @@ const VoxelWorld & VoxelObjectVoxelData::voxelWorld() const
 
 const glm::uvec3 & VoxelObjectVoxelData::size() const
 {
-    return m_cluster.size();
-}
-
-const VoxelCluster<Voxel> & VoxelObjectVoxelData::cluster() const
-{
-    return m_cluster;
+    return m_colors.size();
 }
 
 const VoxelRenderChunkTree & VoxelObjectVoxelData::renderTree() const
@@ -57,9 +54,24 @@ const VoxelClusterSplitDetector & VoxelObjectVoxelData::splitDetector() const
     return m_splitDetector;
 }
 
-const Voxel & VoxelObjectVoxelData::voxel(const glm::uvec3 & cell) const
+bool VoxelObjectVoxelData::hasVoxel(const glm::ivec3 & voxel) const
 {
-    return m_cluster.getRef(cell);
+    return m_colors.contains(voxel) && m_colors.test(voxel);
+}
+
+const glm::vec3 & VoxelObjectVoxelData::voxelColor(const glm::uvec3 & voxel) const
+{
+    return m_colors.getRef(voxel);
+}
+
+float VoxelObjectVoxelData::voxelHealthPoints(const glm::uvec3 & voxel) const
+{
+    return m_healthPoints.getRef(voxel);
+}
+
+void VoxelObjectVoxelData::setVoxelHealthPoints(const glm::uvec3 & voxel, float healthPoints)
+{
+    m_healthPoints.set(voxel, healthPoints);
 }
 
 void VoxelObjectVoxelData::addVoxels(std::vector<Voxel> voxels)
@@ -68,7 +80,8 @@ void VoxelObjectVoxelData::addVoxels(std::vector<Voxel> voxels)
 
     for (auto & voxel : voxels)
     {
-        m_cluster.set(voxel.cell, voxel);
+        m_colors.set(voxel.cell, voxel.color);
+        m_healthPoints.set(voxel.cell, voxel.healthPoints);
         m_renderTree.addVoxel(voxel, m_hull.isHullVoxel(voxel.cell));
     }
 
@@ -90,7 +103,9 @@ void VoxelObjectVoxelData::removeVoxels(const std::vector<glm::uvec3> & voxels)
 {
     for (auto & voxel : voxels)
     {
-        m_cluster.set(voxel, VoxelCluster<Voxel>::EMPTY_VOXEL);
+        m_colors.set(voxel, VoxelCluster<glm::vec3>::EMPTY_VOXEL);
+        m_healthPoints.set(voxel, VoxelCluster<float>::EMPTY_VOXEL);
+
         if (m_hull.isHullVoxel(voxel)) m_shape->updateVoxel(voxel, false);
         m_renderTree.removeVoxel(voxel, m_hull.isHullVoxel(voxel));
     }

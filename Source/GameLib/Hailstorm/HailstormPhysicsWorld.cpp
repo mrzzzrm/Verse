@@ -56,13 +56,15 @@ void HailstormPhysicsWorld::update(float seconds)
                     return true;
                 }
 
-                voxelClusterIntersection.object.lock()->removeVoxels({voxelClusterIntersection.voxel});
+                auto voxelObject = voxelClusterIntersection.object.lock();
+
+                m_impactSystem.process(*voxelObject, voxelClusterIntersection.voxel, 100, 2);
 
                 auto localHitPoint = glm::vec3(voxelClusterIntersection.voxel);
                 auto relativeHitPoint = body->transform().pointLocalToWorld(localHitPoint) -
                     body->transform().position();
 
-                //body->applyImpulse(relativeHitPoint, bullet.velocity * 0.1f);
+                body->applyImpulse(relativeHitPoint, bullet.velocity * 0.1f);
             }
 
             if (!markedForDestruction) {

@@ -154,7 +154,7 @@ std::vector<VoxReader::VoxelModel> VoxReader::read(const std::string & path)
             colorv.y = (float)((color >> 8) & 0xFF) / 255.0f;
             colorv.z = (float)((color >> 16) & 0xFF) / 255.0f;
 
-            voxelModel.voxels.emplace_back(voxel.position, colorv);
+            voxelModel.voxels.emplace_back(voxel.position, colorv, 50.0f);
         }
     }
 

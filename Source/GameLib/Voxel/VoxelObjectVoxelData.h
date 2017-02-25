@@ -19,13 +19,17 @@ public:
 
     const VoxelWorld & voxelWorld() const;
     const glm::uvec3 & size() const;
-    const VoxelCluster<Voxel> & cluster() const;
     const VoxelRenderChunkTree & renderTree() const;
     const std::shared_ptr<VoxelShape> & shape() const;
     const VoxelHull & hull() const;
     const VoxelClusterSplitDetector & splitDetector() const;
 
-    const Voxel & voxel(const glm::uvec3 & cell) const;
+    bool hasVoxel(const glm::ivec3 & voxel) const;
+
+    const glm::vec3 & voxelColor(const glm::uvec3 & voxel) const;
+    float voxelHealthPoints(const glm::uvec3 & voxel) const;
+
+    void setVoxelHealthPoints(const glm::uvec3 & voxel, float healthPoints);
 
     void addVoxels(std::vector<Voxel> voxels);
     void removeVoxels(const std::vector<glm::uvec3> & voxels);
@@ -35,7 +39,8 @@ public:
 
 private:
     const VoxelWorld &              m_voxelWorld;
-    VoxelCluster<Voxel>             m_cluster;
+    VoxelCluster<glm::vec3>         m_colors;
+    VoxelCluster<float>             m_healthPoints;
     VoxelRenderChunkTree            m_renderTree;
     std::shared_ptr<VoxelShape>     m_shape;
     VoxelHull                       m_hull;

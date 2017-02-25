@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "HailstormParticle.h"
+#include "VoxelImpactSystem.h"
 
 class VoxelWorld;
 
@@ -22,9 +23,11 @@ public:
     void update(float seconds);
 
 private:
-    VoxelWorld &                    m_voxelWorld;
-    PhysicsWorld &                  m_physicsWorld;
+    VoxelWorld &                        m_voxelWorld;
+    PhysicsWorld &                      m_physicsWorld;
 
-    SparseVector<HailstormParticle>   m_bullets;
-    std::vector<HailstormParticleID>  m_destroyedBullets;
+    VoxelImpactSystem                   m_impactSystem;
+
+    SparseVector<HailstormParticle>     m_bullets;
+    std::vector<HailstormParticleID>    m_destroyedBullets;
 };

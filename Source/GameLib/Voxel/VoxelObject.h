@@ -7,7 +7,6 @@
 
 #include "GameLib.h"
 #include "VoxelDefines.h"
-#include "VoxelModel.h"
 #include "VoxelObjectVoxelData.h"
 
 namespace deliberation
@@ -34,6 +33,7 @@ public:
 
     const VoxelObjectID & id() const;
     const Pose3D & pose() const;
+    VoxelObjectVoxelData & data();
     const VoxelObjectVoxelData & data() const;
 
     void setId(VoxelObjectID id);

@@ -68,7 +68,7 @@ public:
     void onSandboxStartup() override
     {
         {
-            auto data = BuildVoxelBlock(*m_voxelWorld, {150, 1, 1}, {0.8f, 0.9f, 0.0f});
+            auto data = BuildVoxelBlock(*m_voxelWorld, {20, 20, 20}, {0.8f, 0.9f, 0.0f});
 
             for (i32 i = 0; i < 1; i++) {
                 m_entity = m_world.createEntity("Block");
@@ -80,7 +80,7 @@ public:
                 rigidBody->setPayload(rigidBodyPayload);
                 rigidBody->transform().setPosition({i * 50, 30.0f, 0.0f});
                 rigidBody->transform().setOrientation(glm::quat({0.0f, glm::pi<float>() * 0.3f, 0.0f}));
-                rigidBody->setAngularVelocity({0.0f, 0.2f, 0.0f});
+               // rigidBody->setAngularVelocity({0.0f, 0.2f, 0.0f});
 
                 m_entity.addComponent<std::shared_ptr<VoxelObject>>(voxelObject);
                 m_entity.addComponent<std::shared_ptr<RigidBody>>(rigidBody);

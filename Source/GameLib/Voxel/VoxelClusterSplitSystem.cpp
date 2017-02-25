@@ -39,9 +39,9 @@ void VoxelClusterSplitSystem::onUpdate(Entity & entity, float seconds)
 
         for (const auto & voxel : split.voxels)
         {
-            auto splitVoxel = originalVoxelData.voxel(voxel);
-            splitVoxel.cell -= split.llf;
-            splitVoxel.color = color;
+           // const auto color = originalVoxelData.voxelColor(voxel);
+            const auto healthPoints = originalVoxelData.voxelHealthPoints(voxel);
+            Voxel splitVoxel(voxel - split.llf, color, healthPoints);
 
             splitVoxels.emplace_back(splitVoxel);
         }

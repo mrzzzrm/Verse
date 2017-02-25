@@ -60,8 +60,8 @@ add_library(${target}
     Voxel/VoxelClusterSplitSystem.h
     Voxel/VoxelHull.cpp
     Voxel/VoxelHull.h
-    Voxel/VoxelModel.cpp
-    Voxel/VoxelModel.h
+    Voxel/VoxelImpactSystem.cpp
+    Voxel/VoxelImpactSystem.h
     Voxel/VoxelObject.cpp
     Voxel/VoxelObject.h
     Voxel/VoxelObjectPrimitives.cpp
