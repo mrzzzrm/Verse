@@ -1,10 +1,11 @@
-#include "HailstormManager.h"
+#include "HailstormPhysicsWorld.h"
 
 #include <Deliberation/Core/Chrono.h>
 #include <Deliberation/Core/Math/Ray3D.h>
 
 #include <Deliberation/Physics/NarrowphasePrimitiveTest.h>
 #include <Deliberation/Physics/RigidBody.h>
+#include <Deliberation/Physics/PhysicsWorld.h>
 
 #include "CollisionShapeTypes.h"
 #include "VoxelClusterPrimitiveTest.h"
@@ -17,15 +18,15 @@ HailstormPhysicsWorld::HailstormPhysicsWorld(PhysicsWorld & physicsWorld, VoxelW
 
 }
 
-const std::vector<HailstormParticleID> & HailstormPhysicsWorld::destroyedBullets() const
+const std::vector<HailstormBulletId> & HailstormPhysicsWorld::destroyedBullets() const
 {
     return m_destroyedBullets;
 }
 
-void HailstormPhysicsWorld::addBullet(const HailstormParticle & bullet)
+void HailstormPhysicsWorld::addBullet(const HailstormBullet & bullet)
 {
     auto index = m_bullets.insert(bullet);
-    m_bullets[index].id.physicsWorldIndex = index;
+    m_bullets[index].id.physicsIndex = index;
 }
 
 void HailstormPhysicsWorld::update(float seconds)
@@ -36,12 +37,11 @@ void HailstormPhysicsWorld::update(float seconds)
 
     for (auto & bullet : m_bullets)
     {
-        float t0 = ((float)(currentMillis - bullet.birth)) / 1000.0f;
+        float t0 = ((float)(currentMillis - bullet.particle.birth)) / 1000.0f;
         float t1 = t0 + seconds;
 
-        auto a = bullet.origin + bullet.velocity * t0;
-        auto b = bullet.origin + bullet.velocity * t1;
-
+        auto a = bullet.particle.origin + bullet.particle.velocity * t0;
+        auto b = bullet.particle.origin + bullet.particle.velocity * t1;
 
         auto markedForDestruction = false;
 
@@ -52,9 +52,9 @@ void HailstormPhysicsWorld::update(float seconds)
                 auto & voxelClusterIntersection =
                     static_cast<const RayCastVoxelClusterIntersection &>(intersection);
 
-                if (voxelClusterIntersection.object.lock()->id().worldUID == bullet.creator) {
-                    return true;
-                }
+//                if (voxelClusterIntersection.object.lock()->id().worldUID == bullet.creator) {
+//                    return true;
+//                }
 
                 auto voxelObject = voxelClusterIntersection.object.lock();
 
@@ -64,7 +64,7 @@ void HailstormPhysicsWorld::update(float seconds)
                 auto relativeHitPoint = body->transform().pointLocalToWorld(localHitPoint) -
                     body->transform().position();
 
-                body->applyImpulse(relativeHitPoint, bullet.velocity * 0.1f);
+                body->applyImpulse(relativeHitPoint, bullet.particle.velocity * 0.1f);
             }
 
             if (!markedForDestruction) {
@@ -75,8 +75,8 @@ void HailstormPhysicsWorld::update(float seconds)
         });
     }
 
-    for (auto & bulletID : m_destroyedBullets)
+    for (const auto & bullet : m_destroyedBullets)
     {
-        m_bullets.erase(bulletID.physicsWorldIndex);
+        m_bullets.erase(bullet.physicsIndex);
     }
 }

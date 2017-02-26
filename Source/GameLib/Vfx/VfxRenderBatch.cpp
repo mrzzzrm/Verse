@@ -1,12 +1,12 @@
-#include "HailstormRenderBatch.h"
+#include "VfxRenderBatch.h"
 
 #include <Deliberation/Core/LayoutedBlobElement.h>
 
 #include <Deliberation/Draw/Context.h>
 
-#include "HailstormRenderer.h"
+#include "VfxRenderer.h"
 
-HailstormRenderBatch::HailstormRenderBatch(HailstormRenderer & renderer, const Mesh2 & mesh):
+VfxRenderBatch::VfxRenderBatch(VfxRenderer & renderer, const Mesh2 & mesh):
     m_renderer(renderer)
 {
     auto instanceDataLayout = DataLayout({
@@ -24,7 +24,7 @@ HailstormRenderBatch::HailstormRenderBatch(HailstormRenderer & renderer, const M
 
     m_instanceBuffer = m_renderer.context().createBuffer(instanceDataLayout);
 
-    m_draw = m_renderer.context().createDraw(renderer.program(), gl::GL_TRIANGLES);
+    m_draw = m_renderer.context().createDraw(m_renderer.program(), gl::GL_TRIANGLES);
     m_draw.addVertices(mesh.vertices());
     m_draw.setIndices(mesh.indices());
     m_draw.addInstanceBuffer(m_instanceBuffer, mesh.indices().count());
@@ -32,7 +32,7 @@ HailstormRenderBatch::HailstormRenderBatch(HailstormRenderer & renderer, const M
     m_draw.uniform("Color").set(glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
-void HailstormRenderBatch::addInstance(HailstormParticle & bullet)
+size_t VfxRenderBatch::addInstance(const VfxParticle & particle)
 {
     if (m_freeInstanceSlots.empty())
     {
@@ -54,21 +54,23 @@ void HailstormRenderBatch::addInstance(HailstormParticle & bullet)
     auto index = m_freeInstanceSlots.top();
     m_freeInstanceSlots.pop();
 
-    addInstanceInSlot(bullet, index);
+    addInstanceInSlot(particle, index);
+
+    return index;
 }
 
-void HailstormRenderBatch::removeInstance(const HailstormParticleID & bulletID)
+void VfxRenderBatch::removeInstance(size_t index)
 {
-    Assert(bulletID.renderBatchIndex < m_instances.count(), "");
+    Assert(index < m_instances.count(), "");
 
-    m_lifetimes[bulletID.renderBatchIndex] = 0;
-    m_births[bulletID.renderBatchIndex] = 0;
+    m_lifetimes[index] = 0;
+    m_births[index] = 0;
     m_instanceBuffer.scheduleUpload(m_instances);
 
-    m_freeInstanceSlots.push(bulletID.renderBatchIndex);
+    m_freeInstanceSlots.push(index);
 }
 
-void HailstormRenderBatch::render()
+void VfxRenderBatch::render()
 {
     if (m_instances.empty())
     {
@@ -78,10 +80,8 @@ void HailstormRenderBatch::render()
     m_draw.schedule();
 }
 
-void HailstormRenderBatch::addInstanceInSlot(HailstormParticle & bullet, size_t index)
+void VfxRenderBatch::addInstanceInSlot(const VfxParticle & bullet, size_t index)
 {
-    bullet.id.renderBatchIndex = index;
-
     m_origins[index] = bullet.origin;
     m_velocities[index] = bullet.velocity;
     m_births[index] = bullet.birth;

@@ -2,4 +2,4 @@
 
 #include "GameLib.h"
 
-using HailstormMeshID = u32;
+using VfxMeshId = u32;

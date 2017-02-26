@@ -36,7 +36,7 @@
 #include "PlayerFlightControl.h"
 #include "NpcFlightControl.h"
 #include "Hardpoint.h"
-#include "HailstormManager.h"
+#include "VfxManager.h"
 #include "NpcAttackTask.h"
 #include "NpcController.h"
 #include "NpcControllerSystem.h"
@@ -145,7 +145,7 @@ public:
 
 private:
     std::shared_ptr<Hardpoint>  m_hardpoint;
-    HailstormMeshID             m_bulletMeshID;
+    VfxMeshId             m_bulletMeshID;
 
     std::experimental::optional<DebugGeometryManager> m_debugGeometryManager;
     std::experimental::optional<DebugGeometryRenderer> m_debugGeometryRenderer;

@@ -35,8 +35,9 @@
 #include "Emitter.h"
 #include "PlayerFlightControl.h"
 #include "NpcFlightControl.h"
-#include "Hardpoint.h"
 #include "HailstormManager.h"
+#include "Hardpoint.h"
+#include "VfxManager.h"
 #include "GameLib.h"
 #include "NpcAttackTask.h"
 #include "NpcController.h"
@@ -51,7 +52,6 @@
 #include "VoxelClusterContact.h"
 #include "Weapon.h"
 
-using namespace deliberation;
 
 class SandboxApplication:
     public Application
@@ -59,8 +59,8 @@ class SandboxApplication:
 public:
     SandboxApplication(const std::string & name);
 
-    void onStartup() override;
-    void onFrame(float seconds) override;
+    void onStartup() final override;
+    void onFrame(float seconds) final override;
 
 protected:
     virtual void onSandboxStartup() {};
@@ -81,5 +81,7 @@ protected:
 
     std::experimental::optional<HailstormManager>
                             m_hailstormManager;
+    std::experimental::optional<VfxManager>
+                            m_vfxManager;
 
 };

@@ -38,6 +38,7 @@ void SandboxApplication::onStartup()
     //     m_world.addSystem<NpcDebugRendererSystem>(context(), m_camera);
 
     m_hailstormManager.emplace(context(), m_camera, m_physicsWorld, *m_voxelWorld);
+    m_vfxManager.emplace(context(), m_camera, *m_voxelWorld);
 
     onSandboxStartup();
 }
@@ -52,6 +53,7 @@ void SandboxApplication::onFrame(float seconds)
         m_physicsWorld.update(seconds);
         m_world.update(seconds);
         m_hailstormManager->update(physicsSimulationSeconds);
+        m_vfxManager->update(physicsSimulationSeconds);
 
         onSandboxPhysicsUpdate(physicsSimulationSeconds);
     }
@@ -69,6 +71,7 @@ void SandboxApplication::onFrame(float seconds)
     m_groundPlane->render();
     m_voxelWorld->render();
     m_hailstormManager->render();
+    m_vfxManager->render();
 
     onSandboxRender();
 }

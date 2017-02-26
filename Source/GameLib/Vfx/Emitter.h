@@ -11,15 +11,15 @@
 #include "EmitterPlacementStrategy.h"
 #include "EmitterVelocityStrategy.h"
 #include "GameLib.h"
-#include "HailstormDefines.h"
+#include "VfxDefines.h"
 
-class HailstormManager;
+class VfxManager;
 
 class Emitter final
 {
 public:
-    Emitter(HailstormManager & hailstormManager,
-            HailstormMeshID meshID,
+    Emitter(VfxManager & vfxManager,
+            VfxMeshId meshID,
             std::shared_ptr<EmitterVelocityStrategy> velocity,
             std::shared_ptr<EmitterPlacementStrategy> placement,
             std::shared_ptr<EmitterIntensityStrategy> intensity,
@@ -31,8 +31,8 @@ public:
     void update(float seconds, const Pose3D & pose);
 
 private:
-    HailstormManager &  m_hailstormManager;
-    HailstormMeshID     m_meshID;
+    VfxManager &        m_vfxManager;
+    VfxMeshId           m_meshID;
     std::shared_ptr<EmitterVelocityStrategy>
                         m_velocity;
     std::shared_ptr<EmitterPlacementStrategy>

@@ -5,11 +5,13 @@
 #include <Deliberation/Core/LinearMap.h>
 
 #include <Deliberation/Draw/Buffer.h>
+#include <Deliberation/Draw/Program.h>
 
 #include <Deliberation/Scene/Mesh2.h>
 
-#include "Hailstorm/HailstormParticle.h"
-#include "Hailstorm/HailstormRenderBatch.h"
+#include "VfxDefines.h"
+#include "VfxParticle.h"
+#include "VfxRenderBatch.h"
 
 #include "GameLib.h"
 
@@ -21,20 +23,20 @@ class Context;
 
 }
 
-class HailstormRenderer final
+class VfxRenderer final
 {
 public:
-    HailstormRenderer(Context & context, const Camera3D & camera);
+    VfxRenderer(Context & context, const Camera3D & camera);
 
     Context & context() const;
 
     const Program & program();
     const Buffer & globalsBuffer() const;
 
-    HailstormMeshID addMesh(const Mesh2 & mesh);
+    VfxMeshId addMesh(const Mesh2 & mesh);
 
-    void addParticle(HailstormParticle & bullet);
-    void removeParticle(const HailstormParticleID & bullet);
+    VfxParticleId addParticle(const VfxParticle & particle);
+    void removeParticle(const VfxParticleId & particle);
 
     void render();
 
@@ -42,7 +44,7 @@ private:
     Context &           m_context;
     const Camera3D &    m_camera;
 
-    std::vector<std::unique_ptr<HailstormRenderBatch>>
+    std::vector<std::unique_ptr<VfxRenderBatch>>
                         m_batches;
 
     LayoutedBlob        m_globals;

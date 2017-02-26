@@ -5,6 +5,8 @@
 #include <Deliberation/Core/Math/Trajetory.h>
 
 #include "Equipment.h"
+#include "HailstormBullet.h"
+#include "HailstormManager.h"
 
 Weapon::Weapon(const WeaponConfig & config, HailstormManager & hailstormManager, VoxelObjectWorldUID creatorUID):
     m_config(config),
@@ -55,13 +57,16 @@ void Weapon::update(float seconds, const EquipmentUpdateContext & context, const
 
         if (success && angle <= maxAngle)
         {
-            auto bullet = HailstormParticle(origin,
-                                            trajectory + context.linearVelocity,
-                                            100,
-                                            baseMillis + ((TimestampMillis)(timeAccumulator * 1000.0f)),
-                                            2000,
-                                            m_config.meshID,
-                                            m_creatorUID);
+            HailstormBullet bullet(
+                VfxParticle(
+                    m_config.meshID,
+                    origin,
+                    trajectory + context.linearVelocity,
+                    baseMillis + ((TimestampMillis)(timeAccumulator * 1000.0f)),
+                    2000),
+                50.0f,
+                3
+            );
 
             m_hailstormManager.addBullet(bullet);
             m_cooldown = m_config.cooldown;

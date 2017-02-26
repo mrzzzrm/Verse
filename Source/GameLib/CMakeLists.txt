@@ -3,17 +3,11 @@ set(target GameLib)
 add_library(${target}
     STATIC
 
-    Hailstorm/HailstormParticle.h
-    Hailstorm/HailstormBullet.inl
-    Hailstorm/HailstormDefines.h
+    Hailstorm/HailstormBullet.h
     Hailstorm/HailstormManager.cpp
     Hailstorm/HailstormManager.h
     Hailstorm/HailstormPhysicsWorld.cpp
     Hailstorm/HailstormPhysicsWorld.h
-    Hailstorm/HailstormRenderBatch.cpp
-    Hailstorm/HailstormRenderBatch.h
-    Hailstorm/HailstormRenderer.cpp
-    Hailstorm/HailstormRenderer.h
 
     Npc/NpcAttackTask.cpp
     Npc/NpcAttackTask.h
@@ -42,6 +36,17 @@ add_library(${target}
     Vfx/EmitterPlacementStrategy.h
     Vfx/EmitterVelocityStrategy.cpp
     Vfx/EmitterVelocityStrategy.h
+    Vfx/VfxDefines.h
+    Vfx/VfxEffect.cpp
+    Vfx/VfxEffect.h
+    Vfx/VfxManager.cpp
+    Vfx/VfxManager.h
+    Vfx/VfxParticle.h
+    Vfx/VfxParticle.inl
+    Vfx/VfxRenderBatch.cpp
+    Vfx/VfxRenderBatch.h
+    Vfx/VfxRenderer.cpp
+    Vfx/VfxRenderer.h
 
     Voxel/VoxelCluster.cpp
     Voxel/VoxelCluster.h

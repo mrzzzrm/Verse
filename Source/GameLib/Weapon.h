@@ -5,15 +5,16 @@
 #include <Deliberation/Core/Math/Pose3D.h>
 
 #include "GameLib.h"
-#include "HailstormManager.h"
+#include "VfxManager.h"
 #include "VoxelDefines.h"
 
 struct EquipmentUpdateContext;
+class HailstormManager;
 
 struct WeaponConfig
 {
-    float             cooldown = 0.0f;
-    HailstormMeshID   meshID = 0;
+    float       cooldown = 0.0f;
+    VfxMeshId   meshID = 0;
 };
 
 class Weapon final

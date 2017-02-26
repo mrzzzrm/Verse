@@ -7,30 +7,31 @@
 
 #include <Deliberation/Draw/Buffer.h>
 #include <Deliberation/Draw/Draw.h>
+#include <Deliberation/Draw/Program.h>
 
 #include <Deliberation/Scene/Mesh2.h>
 
-#include "HailstormParticle.h"
+#include "VfxParticle.h"
 
 #include "GameLib.h"
 
-class HailstormRenderer;
+class VfxRenderer;
 
-class HailstormRenderBatch
+class VfxRenderBatch
 {
 public:
-    HailstormRenderBatch(HailstormRenderer & renderer, const Mesh2 & mesh);
+    VfxRenderBatch(VfxRenderer & renderer, const Mesh2 & mesh);
 
-    void addInstance(HailstormParticle & bullet);
-    void removeInstance(const HailstormParticleID & bullet);
+    size_t addInstance(const VfxParticle & particle);
+    void removeInstance(size_t index);
 
     void render();
 
 private:
-    void addInstanceInSlot(HailstormParticle & bullet, size_t index);
+    void addInstanceInSlot(const VfxParticle & bullet, size_t index);
 
 private:
-    HailstormRenderer & m_renderer;
+    VfxRenderer &       m_renderer;
 
     Draw                m_draw;
     Buffer              m_instanceBuffer;
