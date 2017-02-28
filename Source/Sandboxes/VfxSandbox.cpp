@@ -52,18 +52,61 @@ public:
 //        }
 
         {
-            auto lifetime = std::make_shared<EmitterRandomLifetime>(1.0f, 1.5f);
-            auto placement = std::make_shared<EmitterFixedPlacement>();
-            auto velocity = std::make_shared<EmitterConeStrategy>(glm::pi<float>() / 8.0f, 10.0f, 150.0f);
-            auto intensity = std::make_shared<EmitterNoisyIntensity>(100, 0.4f);
+//            auto lifetime = std::make_shared<EmitterRandomLifetime>(0.2f, 1.0f);
+//            auto placement = std::make_shared<EmitterFixedPlacement>();
+//            auto velocity = std::make_shared<EmitterAnyDirection>(300.0f, 400.0f);
+//            auto intensity = std::make_shared<EmitterBurstIntensity>(100, 0.5f);
+//            auto rotation = std::make_shared<EmitterViewBillboardStrategy>();
+//            auto color = std::make_shared<EmitterConstColor>(glm::vec4{1.0f, 1.0f, 1.0f, 1.0f});
+//            auto size = std::make_shared<EmitterSizeOverLifetime>(3.0f, 0.0f);
+//
+//            m_emitterCenter.reset(
+//                *m_vfxManager,
+//                m_vfxManager->baseParticleMeshId(),
+//                velocity,
+//                rotation,
+//                placement,
+//                intensity,
+//                lifetime,
+//                color,
+//                size);
+        }
 
-            m_emitterCenter.reset(*m_vfxManager, particleMeshID, velocity, placement, intensity, lifetime);
+
+        {
+            auto lifetime = std::make_shared<EmitterRandomLifetime>(3.0f, 5.0f);
+            auto placement = std::make_shared<EmitterGaussianSphericalPlacement>(10.0f, 0.3f);
+            auto velocity = std::make_shared<EmitterAnyDirection>(0.8f, 4.3f);
+            auto intensity = std::make_shared<EmitterNoisyIntensity>(100, 0.5f);
+            auto rotation = std::make_shared<EmitterViewBillboardStrategy>();
+            auto color = std::make_shared<EmitterColorOverLifetime>(glm::vec4{0.9f, 0.4f, 0.0f, 0.5f},
+                                                                    glm::vec4{0.8f, 0.8f, 0.8f, 1.0f});
+            auto size = std::make_shared<EmitterSizeOverLifetime>(10.0f, 0.0f);
+
+            m_emitterSmoke.reset(
+                *m_vfxManager,
+                m_vfxManager->baseParticleMeshId(),
+                velocity,
+                rotation,
+                placement,
+                intensity,
+                lifetime,
+                color,
+                size);
         }
     }
 
     void onSandboxUpdate(float seconds) override
     {
-        m_emitterCenter->update(seconds, Pose3D::atOrientation(glm::quat(glm::vec3{glm::half_pi<float>(), 0.0f, 0.0f})));
+        auto pose = Pose3D::atOrientation(glm::quat(glm::vec3{glm::half_pi<float>(), 0.0f, 0.0f}));
+        pose.setPosition({0.0f, 10.0f, 0.0f});
+//        m_emitterCenter->setPose(pose);
+//        m_emitterCenter->update(seconds, pose);
+
+        m_emitterSmoke->setPose(pose);
+        m_emitterSmoke->update(seconds, pose);
+
+
 //        m_angle -= seconds;
 //        auto radius = 140.0f;
 //        auto x = std::cos(m_angle) * radius;
@@ -80,7 +123,7 @@ public:
 
 private:
     Optional<Emitter>       m_emitterCenter;
-    Optional<Emitter>       m_emitter0;
+    Optional<Emitter>       m_emitterSmoke;
     Optional<Emitter>       m_emitter1;
     float                   m_angle = 0.0f;
 };

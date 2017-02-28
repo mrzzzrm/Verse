@@ -18,6 +18,8 @@ public:
     VfxRenderer & renderer();
     const VfxRenderer & renderer() const;
 
+    VfxMeshId baseParticleMeshId() const;
+
     VfxParticleId addParticle(VfxParticle particle);
     void removeParticle(VfxParticleId particle);
 
@@ -27,4 +29,6 @@ public:
 private:
     VoxelWorld &  m_voxelWorld;
     VfxRenderer   m_renderer;
+
+    VfxMeshId     m_baseParticleMeshId = 0;
 };

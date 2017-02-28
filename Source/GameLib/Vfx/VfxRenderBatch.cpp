@@ -1,35 +1,101 @@
 #include "VfxRenderBatch.h"
 
+#include <Deliberation/Core/Math/Pose3D.h>
 #include <Deliberation/Core/LayoutedBlobElement.h>
 
 #include <Deliberation/Draw/Context.h>
+#include <Deliberation/Draw/TextureLoader.h>
+
+#include <Deliberation/Scene/Camera3D.h>
 
 #include "VfxRenderer.h"
 
-VfxRenderBatch::VfxRenderBatch(VfxRenderer & renderer, const Mesh2 & mesh):
-    m_renderer(renderer)
+VfxRenderBatch::VfxRenderBatch(VfxRenderer & renderer, const Mesh2 & mesh, VfxParticleOrientationType orientationType):
+    m_renderer(renderer),
+    m_orientationType(orientationType)
 {
     auto instanceDataLayout = DataLayout({
                                              {"Origin", Type_Vec3},
                                              {"Velocity", Type_Vec3},
                                              {"Birth", Type_U32},
-                                             {"Lifetime", Type_U32}
+                                             {"Lifetime", Type_U32},
+                                             {"BirthRGBA", Type_Vec4},
+                                             {"DeathRGBA", Type_Vec4},
+                                             {"BirthScale", Type_Float},
+                                             {"DeathScale", Type_Float}
                                          });
+    if (orientationType == VfxParticleOrientationType::World)
+    {
+        instanceDataLayout.addField("BirthOrientation", Type_Vec4);
+    }
+
     m_instances = LayoutedBlob(instanceDataLayout, 0);
 
     m_origins = m_instances.field<glm::vec3>("Origin");
     m_velocities = m_instances.field<glm::vec3>("Velocity");
     m_births = m_instances.field<u32>("Birth");
     m_lifetimes = m_instances.field<u32>("Lifetime");
+    m_birthRGBAs = m_instances.field<glm::vec4>("BirthRGBA");
+    m_deathRGBAs = m_instances.field<glm::vec4>("DeathRGBA");
+    m_birthScales = m_instances.field<float>("BirthScale");
+    m_deathScales = m_instances.field<float>("DeathScale");
+
+    if (orientationType == VfxParticleOrientationType::World)
+    {
+        m_birthOrientations = m_instances.field<glm::vec4>("BirthOrientation");
+    }
 
     m_instanceBuffer = m_renderer.context().createBuffer(instanceDataLayout);
 
     m_draw = m_renderer.context().createDraw(m_renderer.program(), gl::GL_TRIANGLES);
+
+    const auto & vertexLayout = mesh.vertices().layout();
+    Assert(vertexLayout.hasField("UV") == !mesh.textures().empty(), "");
+
+    /**
+     * Texturing setup
+     */
+    if (!vertexLayout.hasField("UV"))
+    {
+        m_draw.setAttribute("UV", glm::vec2(0.0f, 0.0f));
+
+        const auto dummyTextureBinary = TextureLoader({1, 1}, glm::vec3(1.0f, 1.0f, 1.0f)).load();
+        const auto dummyTexture = m_renderer.context().createTexture(dummyTextureBinary);
+
+        m_draw.sampler("Texture").setTexture(dummyTexture);
+    }
+    else
+    {
+        m_draw.sampler("Texture").setTexture(mesh.textures()[0]);
+    }
+
+    /**
+     * Orientation setup
+     */
+    m_viewBillboardRotation = m_draw.uniform("ViewBillboardRotation");
+    auto orientationTypeUniform = m_draw.uniform("OrientationType");
+    switch (orientationType)
+    {
+        case VfxParticleOrientationType::World:
+            orientationTypeUniform.set((int)VfxParticleOrientationType::World);
+            m_viewBillboardRotation.set(glm::mat3(1.0f)); // Dummy
+            break;
+
+        case VfxParticleOrientationType::ViewBillboard:
+            orientationTypeUniform.set((int)VfxParticleOrientationType::ViewBillboard);
+            m_draw.setAttribute("BirthOrientation", glm::vec4(0.0f));
+            break;
+
+        default:
+            Fail("");
+    }
+
     m_draw.addVertices(mesh.vertices());
     m_draw.setIndices(mesh.indices());
-    m_draw.addInstanceBuffer(m_instanceBuffer, mesh.indices().count());
+    m_draw.addInstanceBuffer(m_instanceBuffer, (u32)mesh.indices().count());
     m_draw.setUniformBuffer("Globals", m_renderer.globalsBuffer());
-    m_draw.uniform("Color").set(glm::vec3(0.0f, 1.0f, 0.0f));
+    m_draw.state().setBlendState({gl::GL_FUNC_ADD, gl::GL_SRC_ALPHA, gl::GL_ONE_MINUS_SRC_ALPHA});
+    m_draw.state().setDepthState({true, false});
 }
 
 size_t VfxRenderBatch::addInstance(const VfxParticle & particle)
@@ -77,15 +143,40 @@ void VfxRenderBatch::render()
         return;
     }
 
+    if (m_orientationType == VfxParticleOrientationType::ViewBillboard)
+    {
+        auto cameraBasis = m_renderer.camera().pose().basis();
+        //cameraBasis[1] = -cameraBasis[1];
+
+        m_viewBillboardRotation.set(cameraBasis);
+    }
+
+
     m_draw.schedule();
 }
 
-void VfxRenderBatch::addInstanceInSlot(const VfxParticle & bullet, size_t index)
+void VfxRenderBatch::addInstanceInSlot(const VfxParticle & particle, size_t index)
 {
-    m_origins[index] = bullet.origin;
-    m_velocities[index] = bullet.velocity;
-    m_births[index] = bullet.birth;
-    m_lifetimes[index] = bullet.lifetime;
+    m_origins[index] = particle.origin;
+    m_velocities[index] = particle.velocity;
+    m_births[index] = particle.birth;
+    m_lifetimes[index] = particle.lifetime;
+    m_birthRGBAs[index] = particle.birthRGBA;
+    m_deathRGBAs[index] = particle.deathRGBA;
+    m_birthScales[index] = particle.birthScale;
+    m_deathScales[index] = particle.deathScale;
+
+    if (m_orientationType == VfxParticleOrientationType::World)
+    {
+        glm::vec4 birthOrientation(
+            particle.birthOrientation.x,
+            particle.birthOrientation.y,
+            particle.birthOrientation.z,
+            particle.birthOrientation.w
+        );
+
+        m_birthOrientations[index] = birthOrientation;
+    }
 
     m_instanceBuffer.scheduleUpload(m_instances);
 }

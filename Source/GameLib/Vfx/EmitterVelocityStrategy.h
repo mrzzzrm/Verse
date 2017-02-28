@@ -1,8 +1,12 @@
 #pragma once
 
+#include <random>
+
 #include <glm/glm.hpp>
 
-#include <random>
+#include <Deliberation/Core/Math/Random.h>
+
+#include "GameLib.h"
 
 class EmitterVelocityStrategy
 {
@@ -27,4 +31,17 @@ private:
                                 m_engine;
     mutable std::uniform_real_distribution<float>
                                 m_dist;
+};
+
+class EmitterAnyDirection final:
+    public EmitterVelocityStrategy
+{
+public:
+    EmitterAnyDirection(float minSpeed, float maxSpeed);
+
+    glm::vec3 generateVelocity() const override;
+
+private:
+    float                       m_minSpeed;
+    float                       m_maxSpeed;
 };

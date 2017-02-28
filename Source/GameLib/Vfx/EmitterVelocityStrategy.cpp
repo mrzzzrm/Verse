@@ -27,3 +27,15 @@ glm::vec3 EmitterConeStrategy::generateVelocity() const
 
     return velocity;
 }
+
+EmitterAnyDirection::EmitterAnyDirection(float minSpeed, float maxSpeed):
+    m_minSpeed(minSpeed),
+    m_maxSpeed(maxSpeed)
+{
+
+}
+
+glm::vec3 EmitterAnyDirection::generateVelocity() const
+{
+    return RandomUnitVec3() * RandomFloat(m_minSpeed, m_maxSpeed);
+}

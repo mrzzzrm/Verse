@@ -20,7 +20,7 @@ class VfxRenderer;
 class VfxRenderBatch
 {
 public:
-    VfxRenderBatch(VfxRenderer & renderer, const Mesh2 & mesh);
+    VfxRenderBatch(VfxRenderer & renderer, const Mesh2 & mesh, VfxParticleOrientationType orientationType);
 
     size_t addInstance(const VfxParticle & particle);
     void removeInstance(size_t index);
@@ -33,20 +33,25 @@ private:
 private:
     VfxRenderer &       m_renderer;
 
+    VfxParticleOrientationType m_orientationType;
+
     Draw                m_draw;
     Buffer              m_instanceBuffer;
     Buffer              m_vertexBuffer;
     Buffer              m_indexBuffer;
 
-    LayoutedBlob        m_instances;
-    TypedBlobValueAccessor<glm::vec3>
-                        m_origins;
-    TypedBlobValueAccessor<glm::vec3>
-                        m_velocities;
-    TypedBlobValueAccessor<u32>
-                        m_lifetimes;
-    TypedBlobValueAccessor<u32>
-                        m_births;
+    Uniform             m_viewBillboardRotation;
+
+    LayoutedBlob                        m_instances;
+    TypedBlobValueAccessor<glm::vec3>   m_origins;
+    TypedBlobValueAccessor<glm::vec3>   m_velocities;
+    TypedBlobValueAccessor<u32>         m_lifetimes;
+    TypedBlobValueAccessor<u32>         m_births;
+    TypedBlobValueAccessor<glm::vec4>   m_birthRGBAs;
+    TypedBlobValueAccessor<glm::vec4>   m_deathRGBAs;
+    TypedBlobValueAccessor<glm::vec4>   m_birthOrientations;
+    TypedBlobValueAccessor<float>       m_birthScales;
+    TypedBlobValueAccessor<float>       m_deathScales;
 
     std::stack<size_t>  m_freeInstanceSlots;
 

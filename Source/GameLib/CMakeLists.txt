@@ -28,12 +28,18 @@ add_library(${target}
 
     Vfx/Emitter.cpp
     Vfx/Emitter.h
+    Vfx/EmitterColorStrategy.cpp
+    Vfx/EmitterColorStrategy.h
     Vfx/EmitterIntensityStrategy.cpp
     Vfx/EmitterIntensityStrategy.h
     Vfx/EmitterLifetimeStrategy.cpp
     Vfx/EmitterLifetimeStrategy.h
     Vfx/EmitterPlacementStrategy.cpp
     Vfx/EmitterPlacementStrategy.h
+    Vfx/EmitterRotationStrategy.cpp
+    Vfx/EmitterRotationStrategy.h
+    Vfx/EmitterSizeStrategy.cpp
+    Vfx/EmitterSizeStrategy.h
     Vfx/EmitterVelocityStrategy.cpp
     Vfx/EmitterVelocityStrategy.h
     Vfx/VfxDefines.h

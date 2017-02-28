@@ -3,6 +3,7 @@
 #include <memory>
 
 #include <Deliberation/Core/LinearMap.h>
+#include <Deliberation/Core/SparseVector.h>
 
 #include <Deliberation/Draw/Buffer.h>
 #include <Deliberation/Draw/Program.h>
@@ -29,6 +30,7 @@ public:
     VfxRenderer(Context & context, const Camera3D & camera);
 
     Context & context() const;
+    const Camera3D & camera() const;
 
     const Program & program();
     const Buffer & globalsBuffer() const;
@@ -41,11 +43,15 @@ public:
     void render();
 
 private:
+    size_t batchIndex(VfxMeshId meshId, VfxParticleOrientationType orientationType) const;
+
+private:
     Context &           m_context;
     const Camera3D &    m_camera;
 
-    std::vector<std::unique_ptr<VfxRenderBatch>>
+    LinearMap<std::unique_ptr<VfxRenderBatch>>
                         m_batches;
+    size_t              m_meshIdCounter = 0;
 
     LayoutedBlob        m_globals;
     TypedBlobValueAccessor<glm::mat4>
