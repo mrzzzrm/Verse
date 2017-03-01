@@ -28,12 +28,12 @@ glm::vec3 AimHelper::getTarget(const glm::vec2 & mouse, bool & hit)
     hit = false;
 
     m_physicsWorld.lineCast(Ray3D(origin, direction), [&](const RayCastIntersection &intersection) -> bool {
-        if (intersection.body.shape()->type() == (int)::CollisionShapeType::VoxelCluster)
+        if (intersection.body->shape()->type() == (int)::CollisionShapeType::VoxelCluster)
         {
             auto & voxelClusterIntersection =
                 static_cast<const RayCastVoxelClusterIntersection &>(intersection);
 
-            auto & transform = intersection.body.transform();
+            auto & transform = intersection.body->transform();
 
             target = transform.pointLocalToWorld(voxelClusterIntersection.voxel);
             hit = true;

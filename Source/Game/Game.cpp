@@ -23,7 +23,7 @@
 #include "Equipment.h"
 #include "CollisionShapeTypes.h"
 #include "Hardpoint.h"
-#include "HailstormRenderer.h"
+#include "VfxRenderer.h"
 #include "VoxelClusterMarchingCubesTriangulation.h"
 #include "VoxelClusterMarchingCubes.h"
 #include "VoxelClusterContact.h"
@@ -267,13 +267,13 @@ private:
     std::shared_ptr<VoxelObjectVoxelData>
                 m_blockData;
 
-    Optional<HailstormManager>
+    Optional<VfxManager>
                 m_hailstormManager;
 
     Optional<Emitter>
                 m_emitter;
 
-    HailstormMeshID
+    VfxMeshId
                 m_bulletMeshID;
 
     Optional<Equipment>

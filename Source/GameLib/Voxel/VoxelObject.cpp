@@ -22,6 +22,11 @@ const Pose3D & VoxelObject::pose() const
     return m_pose;
 };
 
+VoxelObjectVoxelData & VoxelObject::data()
+{
+    return m_voxelData;
+}
+
 const VoxelObjectVoxelData & VoxelObject::data() const
 {
     return m_voxelData;

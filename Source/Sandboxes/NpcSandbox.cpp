@@ -36,7 +36,7 @@
 #include "PlayerFlightControl.h"
 #include "NpcFlightControl.h"
 #include "Hardpoint.h"
-#include "HailstormManager.h"
+#include "VfxManager.h"
 #include "NpcAttackTask.h"
 #include "NpcController.h"
 #include "NpcControllerSystem.h"
@@ -226,10 +226,10 @@ private:
     std::shared_ptr<VoxelObjectVoxelData>
                             m_voxelData;
 
-    std::experimental::optional<HailstormManager>
+    std::experimental::optional<VfxManager>
                             m_hailstormManager;
 
-    HailstormMeshID         m_bulletMeshID = -1;
+    VfxMeshId         m_bulletMeshID = -1;
 
 };
 

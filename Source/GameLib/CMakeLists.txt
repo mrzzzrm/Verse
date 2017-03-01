@@ -3,17 +3,11 @@ set(target GameLib)
 add_library(${target}
     STATIC
 
-    Hailstorm/HailstormParticle.h
-    Hailstorm/HailstormBullet.inl
-    Hailstorm/HailstormDefines.h
+    Hailstorm/HailstormBullet.h
     Hailstorm/HailstormManager.cpp
     Hailstorm/HailstormManager.h
     Hailstorm/HailstormPhysicsWorld.cpp
     Hailstorm/HailstormPhysicsWorld.h
-    Hailstorm/HailstormRenderBatch.cpp
-    Hailstorm/HailstormRenderBatch.h
-    Hailstorm/HailstormRenderer.cpp
-    Hailstorm/HailstormRenderer.h
 
     Npc/NpcAttackTask.cpp
     Npc/NpcAttackTask.h
@@ -34,14 +28,31 @@ add_library(${target}
 
     Vfx/Emitter.cpp
     Vfx/Emitter.h
+    Vfx/EmitterColorStrategy.cpp
+    Vfx/EmitterColorStrategy.h
     Vfx/EmitterIntensityStrategy.cpp
     Vfx/EmitterIntensityStrategy.h
     Vfx/EmitterLifetimeStrategy.cpp
     Vfx/EmitterLifetimeStrategy.h
     Vfx/EmitterPlacementStrategy.cpp
     Vfx/EmitterPlacementStrategy.h
+    Vfx/EmitterRotationStrategy.cpp
+    Vfx/EmitterRotationStrategy.h
+    Vfx/EmitterSizeStrategy.cpp
+    Vfx/EmitterSizeStrategy.h
     Vfx/EmitterVelocityStrategy.cpp
     Vfx/EmitterVelocityStrategy.h
+    Vfx/VfxDefines.h
+    Vfx/VfxEffect.cpp
+    Vfx/VfxEffect.h
+    Vfx/VfxManager.cpp
+    Vfx/VfxManager.h
+    Vfx/VfxParticle.h
+    Vfx/VfxParticle.inl
+    Vfx/VfxRenderBatch.cpp
+    Vfx/VfxRenderBatch.h
+    Vfx/VfxRenderer.cpp
+    Vfx/VfxRenderer.h
 
     Voxel/VoxelCluster.cpp
     Voxel/VoxelCluster.h
@@ -54,12 +65,18 @@ add_library(${target}
     Voxel/VoxelClusterMarchingCubesTriangulation.h
     Voxel/VoxelClusterPrimitiveTest.cpp
     Voxel/VoxelClusterPrimitiveTest.h
+    Voxel/VoxelClusterSplitDetector.cpp
+    Voxel/VoxelClusterSplitDetector.h
+    Voxel/VoxelClusterSplitSystem.cpp
+    Voxel/VoxelClusterSplitSystem.h
     Voxel/VoxelHull.cpp
     Voxel/VoxelHull.h
-    Voxel/VoxelModel.cpp
-    Voxel/VoxelModel.h
+    Voxel/VoxelImpactSystem.cpp
+    Voxel/VoxelImpactSystem.h
     Voxel/VoxelObject.cpp
     Voxel/VoxelObject.h
+    Voxel/VoxelObjectPrimitives.cpp
+    Voxel/VoxelObjectPrimitives.h
     Voxel/VoxelObjectVoxelData.cpp
     Voxel/VoxelObjectVoxelData.h
     Voxel/VoxelRenderChunk.cpp

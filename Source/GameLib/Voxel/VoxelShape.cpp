@@ -28,11 +28,65 @@ AABB VoxelShape::bounds(const Transform3D & transform) const
 
 glm::mat3 VoxelShape::localInertia() const
 {
-    return glm::mat3(1.0f);
+    if (m_massPropertiesDirty) updateMassProperties();
+
+    return m_localInertia;
+}
+
+float VoxelShape::mass() const
+{
+    return m_numVoxels;
+}
+
+glm::vec3 VoxelShape::centerOfMass() const
+{
+    if (m_massPropertiesDirty) updateMassProperties();
+
+    return m_centerOfMass;
 }
 
 void VoxelShape::updateVoxel(const glm::uvec3 & voxel, bool set)
 {
+    if (set)
+    {
+        m_numVoxels++;
+        m_voxelPositionAccumulator += voxel;
+
+        auto v = voxel;
+
+        /**
+         * HACK: Offset by one to avoid zeros on diagonal
+         */
+        m_absIXX += v.y * v.y + v.z * v.z + 1;
+        m_absIYY += v.x * v.x + v.z * v.z + 1;
+        m_absIZZ += v.x * v.x + v.y * v.y + 1;
+
+        m_absIXY += v.x * v.y;
+        m_absIXZ += v.x * v.z;
+        m_absIYZ += v.y * v.z;
+    }
+    else
+    {
+        Assert(m_numVoxels > 0, "No voxels to remove");
+        m_numVoxels--;
+        m_voxelPositionAccumulator -= voxel;
+
+        auto v = voxel;
+
+        /**
+         * HACK: Offset by one to avoid zeros on diagonal
+         */
+        m_absIXX -= v.y * v.y + v.z * v.z + 1;
+        m_absIYY -= v.x * v.x + v.z * v.z + 1;
+        m_absIZZ -= v.x * v.x + v.y * v.y + 1;
+
+        m_absIXY -= v.x * v.y;
+        m_absIXZ -= v.x * v.z;
+        m_absIYZ -= v.y * v.z;
+    }
+
+    m_massPropertiesDirty = true;
+
     m_tree.updateVoxel(0, voxel, set);
 }
 
@@ -316,4 +370,64 @@ template<typename T>
 std::shared_ptr<VoxelShape::Subtree<T>> VoxelShape::Subtree<T>::clone() const
 {
     return std::make_shared<Subtree<T>>(*this);
+}
+
+void VoxelShape::updateMassProperties() const
+{
+    if (m_numVoxels == 0)
+    {
+        m_centerOfMass = glm::vec3(0.0f);
+        m_localInertia = glm::mat3(1.0f);
+        return;
+    }
+
+    const auto intCenterOfMass = m_voxelPositionAccumulator / m_numVoxels;
+    const auto centerOfMassRemainder = glm::vec3(m_voxelPositionAccumulator - intCenterOfMass * m_numVoxels);
+
+    m_centerOfMass = glm::vec3(intCenterOfMass) + centerOfMassRemainder / (float)m_numVoxels;
+
+    const auto iXX = m_absIXX
+                     - 2 * m_centerOfMass.y * m_voxelPositionAccumulator.y
+                     - 2 * m_centerOfMass.z * m_voxelPositionAccumulator.z
+                     + m_numVoxels * (m_centerOfMass.y * m_centerOfMass.y + m_centerOfMass.z * m_centerOfMass.z);
+
+    const auto iYY = m_absIYY
+                     - 2 * m_centerOfMass.x * m_voxelPositionAccumulator.x
+                     - 2 * m_centerOfMass.z * m_voxelPositionAccumulator.z
+                     + m_numVoxels * (m_centerOfMass.x * m_centerOfMass.x + m_centerOfMass.z * m_centerOfMass.z);
+
+    const auto iZZ = m_absIZZ
+                     - 2 * m_centerOfMass.x * m_voxelPositionAccumulator.x
+                     - 2 * m_centerOfMass.y * m_voxelPositionAccumulator.y
+                     + m_numVoxels * (m_centerOfMass.x * m_centerOfMass.x + m_centerOfMass.y * m_centerOfMass.y);
+
+    const auto iXY = m_absIXY
+                     - m_centerOfMass.y * m_voxelPositionAccumulator.x
+                     - m_centerOfMass.x * m_voxelPositionAccumulator.y
+                     + m_numVoxels * m_centerOfMass.x * m_centerOfMass.y;
+
+    const auto iXZ = m_absIXZ
+                     - m_centerOfMass.z * m_voxelPositionAccumulator.x
+                     - m_centerOfMass.x * m_voxelPositionAccumulator.z
+                     + m_numVoxels * m_centerOfMass.x * m_centerOfMass.z;
+
+    const auto iYZ = m_absIYZ
+                     - m_centerOfMass.z * m_voxelPositionAccumulator.y
+                     - m_centerOfMass.y * m_voxelPositionAccumulator.z
+                     + m_numVoxels * m_centerOfMass.y * m_centerOfMass.z;
+
+    m_localInertia[0][0] = iXX;
+    m_localInertia[1][1] = iYY;
+    m_localInertia[2][2] = iZZ;
+
+    m_localInertia[1][0] = -iXY;
+    m_localInertia[0][1] = -iXY;
+
+    m_localInertia[2][0] = -iXZ;
+    m_localInertia[0][2] = -iXZ;
+
+    m_localInertia[2][1] = -iYZ;
+    m_localInertia[1][2] = -iYZ;
+
+    m_massPropertiesDirty = false;
 }
