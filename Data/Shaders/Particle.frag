@@ -22,6 +22,6 @@ void main()
     vec4 tex = texture2D(Texture, f_UV);
 
     o_Color.rgb = tex.rgb * f_RGBA.rgb;
-    o_Color.a = tex.a * f_RGBA.a;
+    o_Color.a = tex.a * f_RGBA.a * f_RGBA.a * tex.a;
 }
 

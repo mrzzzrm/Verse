@@ -94,6 +94,28 @@ public:
                 color,
                 size);
         }
+
+        {
+            auto lifetime = std::make_shared<EmitterRandomLifetime>(0.2f, 0.4f);
+            auto placement = std::make_shared<EmitterGaussianCircularPlacement>(1.0f, 0.3f);
+            auto velocity = std::make_shared<EmitterConeStrategy>(0.02f, 250.0f, 350.0f);
+            auto intensity = std::make_shared<EmitterNoisyIntensity>(100, 0.0f);
+            auto rotation = std::make_shared<EmitterViewBillboardStrategy>();
+            auto color = std::make_shared<EmitterColorOverLifetime>(glm::vec4{0.2f, 0.2f, 0.9f, 1.0f},
+                                                                    glm::vec4{0.8f, 0.8f, 0.8f, 0.0f});
+            auto size = std::make_shared<EmitterSizeOverLifetime>(5.0f, 15.0f);
+
+            m_emitterAfterburner.reset(
+                *m_vfxManager,
+                m_vfxManager->baseParticleMeshId(),
+                velocity,
+                rotation,
+                placement,
+                intensity,
+                lifetime,
+                color,
+                size);
+        }
     }
 
     void onSandboxUpdate(float seconds) override
@@ -103,8 +125,11 @@ public:
 //        m_emitterCenter->setPose(pose);
 //        m_emitterCenter->update(seconds, pose);
 
-        m_emitterSmoke->setPose(pose);
-        m_emitterSmoke->update(seconds, pose);
+//        m_emitterSmoke->setPose(pose);
+//        m_emitterSmoke->update(seconds, pose);
+
+        m_emitterAfterburner->setPose(pose);
+        m_emitterAfterburner->update(seconds, pose);
 
 
 //        m_angle -= seconds;
@@ -124,7 +149,7 @@ public:
 private:
     Optional<Emitter>       m_emitterCenter;
     Optional<Emitter>       m_emitterSmoke;
-    Optional<Emitter>       m_emitter1;
+    Optional<Emitter>       m_emitterAfterburner;
     float                   m_angle = 0.0f;
 };
 

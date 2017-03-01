@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stack>
+#include <queue>
 
 #include <Deliberation/Core/LayoutedBlob.h>
 #include <Deliberation/Core/LinearMap.h>
@@ -25,7 +26,19 @@ public:
     size_t addInstance(const VfxParticle & particle);
     void removeInstance(size_t index);
 
+    void update(float seconds);
+
     void render();
+
+private:
+    struct DeathEntry
+    {
+        u32 timeOfDeath;
+        size_t slot;
+
+        DeathEntry(u32 timeOfDeath, size_t slot);
+        bool operator<(const DeathEntry & rhs) const;
+    };
 
 private:
     void addInstanceInSlot(const VfxParticle & bullet, size_t index);
@@ -56,4 +69,6 @@ private:
     std::stack<size_t>  m_freeInstanceSlots;
 
     LinearMap<size_t>   m_instanceIndexByBulletID;
+
+    std::priority_queue<DeathEntry> m_deathQueue;
 };

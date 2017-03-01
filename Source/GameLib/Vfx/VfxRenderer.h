@@ -40,6 +40,7 @@ public:
     VfxParticleId addParticle(const VfxParticle & particle);
     void removeParticle(const VfxParticleId & particle);
 
+    void update(float seconds);
     void render();
 
 private:

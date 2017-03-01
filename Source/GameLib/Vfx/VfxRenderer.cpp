@@ -69,6 +69,10 @@ void VfxRenderer::removeParticle(const VfxParticleId & particle)
     m_batches[particle.renderBatchIndex]->removeInstance(particle.index);
 }
 
+void VfxRenderer::update(float seconds)
+{
+}
+
 void VfxRenderer::render()
 {
     m_viewProjectionGlobal[0] = m_camera.viewProjection();
@@ -76,10 +80,7 @@ void VfxRenderer::render()
 
     m_globalsBuffer.scheduleUpload(m_globals);
 
-    for (auto & batch : m_batches)
-    {
-        batch.second->render();
-    }
+    for (auto & batch : m_batches) batch.second->render();
 }
 
 size_t VfxRenderer::batchIndex(VfxMeshId meshId, VfxParticleOrientationType orientationType) const

@@ -100,20 +100,38 @@ VfxRenderBatch::VfxRenderBatch(VfxRenderer & renderer, const Mesh2 & mesh, VfxPa
 
 size_t VfxRenderBatch::addInstance(const VfxParticle & particle)
 {
+    std::cout << "Slots: " << m_instanceBuffer.count() << std::endl;
+
     if (m_freeInstanceSlots.empty())
     {
-        const auto NUM_NEW_INSTANCES = 50;
+        /**
+         * Try to fetch from deathQueue
+         */
+        const auto & nextDeath = m_deathQueue.top();
 
-        auto oldNumInstances = m_instances.count();
-
-        m_instances.resize(oldNumInstances + NUM_NEW_INSTANCES);
-
-        for (size_t i = oldNumInstances; i < m_instances.count(); i++)
+        if (nextDeath.timeOfDeath > CurrentMillis())
         {
-            m_freeInstanceSlots.push(i);
+            m_deathQueue.pop();
+            m_freeInstanceSlots.push(nextDeath.slot);
+        }
+        else
+        {
+            /**
+             * Create new instances
+             */
+            const auto NUM_NEW_INSTANCES = 50;
 
-            m_lifetimes[i] = 0;
-            m_births[i] = 0;
+            auto oldNumInstances = m_instances.count();
+
+            m_instances.resize(oldNumInstances + NUM_NEW_INSTANCES);
+
+            for (size_t i = oldNumInstances; i < m_instances.count(); i++)
+            {
+                m_freeInstanceSlots.push(i);
+
+                m_lifetimes[i] = 0;
+                m_births[i] = 0;
+            }
         }
     }
 
@@ -136,6 +154,17 @@ void VfxRenderBatch::removeInstance(size_t index)
     m_freeInstanceSlots.push(index);
 }
 
+void VfxRenderBatch::update(float seconds)
+{
+    const auto & nextDeath = m_deathQueue.top();
+
+    if (nextDeath.timeOfDeath > CurrentMillis())
+    {
+        m_deathQueue.pop();
+        removeInstance(nextDeath.slot);
+    }
+}
+
 void VfxRenderBatch::render()
 {
     if (m_instances.empty())
@@ -146,11 +175,8 @@ void VfxRenderBatch::render()
     if (m_orientationType == VfxParticleOrientationType::ViewBillboard)
     {
         auto cameraBasis = m_renderer.camera().pose().basis();
-        //cameraBasis[1] = -cameraBasis[1];
-
         m_viewBillboardRotation.set(cameraBasis);
     }
-
 
     m_draw.schedule();
 }
@@ -179,4 +205,17 @@ void VfxRenderBatch::addInstanceInSlot(const VfxParticle & particle, size_t inde
     }
 
     m_instanceBuffer.scheduleUpload(m_instances);
+
+    m_deathQueue.emplace(particle.birth + particle.lifetime, index);
+}
+
+VfxRenderBatch::DeathEntry::DeathEntry(u32 timeOfDeath, size_t slot):
+    timeOfDeath(timeOfDeath),
+    slot(slot)
+{
+}
+
+bool VfxRenderBatch::DeathEntry::operator<(const VfxRenderBatch::DeathEntry & rhs) const
+{
+    return timeOfDeath > rhs.timeOfDeath;
 }

@@ -81,7 +81,6 @@ void VfxManager::removeParticle(VfxParticleId particle)
 
 void VfxManager::update(float seconds)
 {
-
 }
 
 void VfxManager::render()
