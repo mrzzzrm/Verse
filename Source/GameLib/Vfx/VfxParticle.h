@@ -49,7 +49,7 @@ struct VfxParticle
     float               deathScale = 1.0f;
 
     VfxParticleOrientationType
-                        orientationType;
+                        orientationType = VfxParticleOrientationType::World;
     glm::quat           birthOrientation;
 };
 

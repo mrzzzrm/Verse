@@ -168,7 +168,6 @@ public:
     }
 
 private:
-    World                   m_world;
     std::shared_ptr<VoxelObjectVoxelData>
                             m_voxelData;
 
