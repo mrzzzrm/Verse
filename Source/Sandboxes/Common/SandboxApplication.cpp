@@ -40,6 +40,8 @@ void SandboxApplication::onStartup()
     m_hailstormManager.emplace(context(), m_camera, m_physicsWorld, *m_voxelWorld);
     m_vfxManager.emplace(context(), m_camera, *m_voxelWorld);
 
+    m_debugGeometryManager.emplace(context());
+
     onSandboxStartup();
 }
 

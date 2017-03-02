@@ -31,6 +31,11 @@ const Pose3D & EmitterInstance::targetPose() const
     return m_targetPose;
 }
 
+const EmitterInstanceId & EmitterInstance::id() const
+{
+    return m_id;
+}
+
 void EmitterInstance::setBasePose(const Pose3D & pose)
 {
     m_basePose = pose;
@@ -39,6 +44,11 @@ void EmitterInstance::setBasePose(const Pose3D & pose)
 void EmitterInstance::setTargetPose(const Pose3D & pose)
 {
     m_targetPose = pose;
+}
+
+void EmitterInstance::setId(const EmitterInstanceId & id)
+{
+    m_id = id;
 }
 
 void EmitterInstance::update(float seconds)

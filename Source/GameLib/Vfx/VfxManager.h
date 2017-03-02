@@ -26,6 +26,7 @@ public:
     void removeParticle(VfxParticleId particle);
 
     void addEmitterInstance(std::shared_ptr<EmitterInstance> emitterInstance);
+    void removeEmitterInstance(std::shared_ptr<EmitterInstance> emitterInstance);
 
     void update(float seconds);
     void render();

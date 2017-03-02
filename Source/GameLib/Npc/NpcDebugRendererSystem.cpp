@@ -15,10 +15,10 @@ NpcDebugRendererSystem::NpcDebugRendererSystem(World & world, Context & context,
 
 void NpcDebugRendererSystem::onEntityAdded(Entity & entity)
 {
-    m_entities.emplace_back(entity);
-    if (m_entities.size() > m_geometryRenderer.numArrows()) {
-        m_geometryRenderer.addArrow({}, {}, m_randomColorGenerator.generate());
-    }
+//    m_entities.emplace_back(entity);
+//    if (m_entities.size() > m_geometryRenderer.numArrows()) {
+//        m_geometryRenderer.addArrow({}, {}, m_randomColorGenerator.generate());
+//    }
 }
 
 void NpcDebugRendererSystem::onEntityRemoved(Entity & entity)

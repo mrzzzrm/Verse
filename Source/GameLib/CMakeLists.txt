@@ -97,6 +97,10 @@ add_library(${target}
     AimHelper.cpp
     AimHelper.h
     CollisionShapeTypes.h
+    Engine.cpp
+    Engine.h
+    EngineSlot.cpp
+    EngineSlot.h
     Equipment.cpp
     Equipment.h
     FlightControlBase.cpp
@@ -107,6 +111,8 @@ add_library(${target}
     FlightControlConfig.h
     Hardpoint.cpp
     Hardpoint.h
+    ItemSlot.cpp
+    ItemSlot.h
     GameLib.cpp
     GameLib.h
     PlayerInput.cpp

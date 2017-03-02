@@ -52,7 +52,6 @@
 #include "VoxelClusterContact.h"
 #include "Weapon.h"
 
-
 class SandboxApplication:
     public Application
 {
@@ -84,4 +83,6 @@ protected:
     std::experimental::optional<VfxManager>
                             m_vfxManager;
 
+    std::experimental::optional<DebugGeometryManager>
+                            m_debugGeometryManager;
 };

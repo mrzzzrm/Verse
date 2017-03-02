@@ -66,6 +66,76 @@ public:
 
     void onSandboxStartup() override
     {
+        {
+            auto lifetime = std::make_shared<EmitterRandomLifetime>(0.9f, 1.2f);
+            auto placement = std::make_shared<EmitterFixedPlacement>();
+            auto velocity = std::make_shared<EmitterFixedDirection>(80.0f, 89.0f);
+            auto intensity = std::make_shared<EmitterNoisyIntensity>(120, 0.0f);
+            auto rotation = std::make_shared<EmitterViewBillboardStrategy>();
+            auto color = std::make_shared<EmitterColorOverLifetime>(glm::vec4{0.4f, 0.4f, 0.9f, 0.6f},
+                                                                    glm::vec4{0.8f, 0.8f, 0.0f, 0.5f});
+            auto size = std::make_shared<EmitterSizeOverLifetime>(7.0f, 1.0f);
+
+            m_emitterAfterburner = std::make_shared<Emitter>(
+                *m_vfxManager,
+                m_vfxManager->baseParticleMeshId(),
+                velocity,
+                rotation,
+                placement,
+                intensity,
+                lifetime,
+                color,
+                size);
+        }
+
+        {
+            auto lifetime = std::make_shared<EmitterRandomLifetime>(2.5f, 5.0f);
+            auto placement = std::make_shared<EmitterGaussianSphericalPlacement>(3.0f, 1.0f);
+            auto velocity = std::make_shared<EmitterFixedDirection>(40.0f, 89.0f);
+            auto intensity = std::make_shared<EmitterNoisyIntensity>(50, 0.0f);
+            auto rotation = std::make_shared<EmitterViewBillboardStrategy>();
+            auto color = std::make_shared<EmitterColorOverLifetime>(glm::vec4{0.4f, 0.4f, 0.9f, 0.2f},
+                                                                    glm::vec4{0.4f, 0.4f, 0.9f, 0.0f});
+            auto size = std::make_shared<EmitterSizeOverLifetime>(16.0f, 15.0f);
+
+            auto emitter = std::make_shared<Emitter>(
+                *m_vfxManager,
+                m_vfxManager->baseParticleMeshId(),
+                velocity,
+                rotation,
+                placement,
+                intensity,
+                lifetime,
+                color,
+                size);
+
+            m_emitterAfterburner->addChild(emitter);
+        }
+
+        {
+            auto lifetime = std::make_shared<EmitterRandomLifetime>(0.9f, 1.2f);
+            auto placement = std::make_shared<EmitterFixedPlacement>();
+            auto velocity = std::make_shared<EmitterConeStrategy>(0.1f, 280.0f, 289.0f);
+            auto intensity = std::make_shared<EmitterNoisyIntensity>(7, 0.0f);
+            auto rotation = std::make_shared<EmitterViewBillboardStrategy>();
+            auto color = std::make_shared<EmitterColorOverLifetime>(glm::vec4{1.0f, 0.8f, 0.0f, 0.8f},
+                                                                    glm::vec4{0.8f, 0.8f, 0.0f, 0.5f});
+            auto size = std::make_shared<EmitterSizeOverLifetime>(2.5f, 2.0f);
+
+            auto emitter = std::make_shared<Emitter>(
+                *m_vfxManager,
+                m_vfxManager->baseParticleMeshId(),
+                velocity,
+                rotation,
+                placement,
+                intensity,
+                lifetime,
+                color,
+                size);
+
+            m_emitterAfterburner->addChild(emitter);
+        }
+
         VoxReader voxReader;
         {
             auto models = voxReader.read("Data/VoxelClusters/drone.vox");
@@ -140,7 +210,17 @@ public:
         npc.addComponent<std::shared_ptr<RigidBody>>(rigidBody);
         npc.addComponent<std::shared_ptr<NpcController>>(npcController);
 
-        auto equipment = std::make_shared<Equipment>();
+        auto equipment = std::make_shared<Equipment>(*m_vfxManager);
+
+        equipment->addEngineSlot(std::make_shared<EngineSlot>(glm::vec3{1, 5, 16}, Pose3D::atOrientation(glm::quat(glm::vec3{0.0f, glm::pi<float>(), 0.0f}))));
+        equipment->addEngineSlot(std::make_shared<EngineSlot>(glm::vec3{6, 5, 16}, Pose3D::atOrientation(glm::quat(glm::vec3{0.0f, glm::pi<float>(), 0.0f}))));
+        equipment->addEngineSlot(std::make_shared<EngineSlot>(glm::vec3{6, 1, 16}, Pose3D::atOrientation(glm::quat(glm::vec3{0.0f, glm::pi<float>(), 0.0f}))));
+        equipment->addEngineSlot(std::make_shared<EngineSlot>(glm::vec3{1, 1, 16}, Pose3D::atOrientation(glm::quat(glm::vec3{0.0f, glm::pi<float>(), 0.0f}))));
+
+        equipment->setEngine(0, std::make_shared<Engine>(m_emitterAfterburner));
+        equipment->setEngine(1, std::make_shared<Engine>(m_emitterAfterburner));
+        equipment->setEngine(2, std::make_shared<Engine>(m_emitterAfterburner));
+        equipment->setEngine(3, std::make_shared<Engine>(m_emitterAfterburner));
 
         {
             auto maxAngle = glm::pi<float>() * 0.2f;
@@ -169,9 +249,10 @@ public:
 
 private:
     std::shared_ptr<VoxelObjectVoxelData>
-                            m_voxelData;
+                                m_voxelData;
 
-    VfxMeshId         m_bulletMeshID = -1;
+    VfxMeshId                   m_bulletMeshID = -1;
+    std::shared_ptr<Emitter>    m_emitterAfterburner;
 
 };
 

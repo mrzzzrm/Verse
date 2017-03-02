@@ -118,6 +118,8 @@ public:
 
             m_vfxManager->addEmitterInstance(emitterInstance);
         }
+
+        m_debugGeometryRenderer.emplace(*m_debugGeometryManager);
     }
 
     void onSandboxUpdate(float seconds) override
@@ -132,17 +134,28 @@ public:
             pose.setOrientation(glm::quat(glm::vec3{0.0f, -m_angle, 0.0f}));
 
             instance->setTargetPose(pose);
+
+            m_debugGeometryRenderer->pose(i).setPose(pose);
         }
 
         //m_angle += seconds;
     }
 
-private:
-    std::shared_ptr<Emitter>       m_emitterSmoke;
-    std::shared_ptr<Emitter>       m_emitterAfterburner;
-    std::shared_ptr<Emitter>       m_emitterBursts;
+    void onSandboxRender() override
+    {
+        m_debugGeometryRenderer->schedule(m_camera);
+    }
 
-    std::vector<std::shared_ptr<EmitterInstance>> m_instances;
+private:
+    std::shared_ptr<Emitter>        m_emitterSmoke;
+    std::shared_ptr<Emitter>        m_emitterAfterburner;
+    std::shared_ptr<Emitter>        m_emitterBursts;
+
+    std::vector<std::shared_ptr<EmitterInstance>>
+                                    m_instances;
+
+    std::experimental::optional<DebugGeometryRenderer>
+                                    m_debugGeometryRenderer;
 
     float m_angle = 0.0f;
 };

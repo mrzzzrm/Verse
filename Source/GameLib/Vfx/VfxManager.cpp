@@ -81,7 +81,13 @@ void VfxManager::removeParticle(VfxParticleId particle)
 
 void VfxManager::addEmitterInstance(std::shared_ptr<EmitterInstance> emitterInstance)
 {
-    m_emitterInstances.emplace(emitterInstance);
+    const auto index = m_emitterInstances.emplace(emitterInstance);
+    emitterInstance->setId({index});
+}
+
+void VfxManager::removeEmitterInstance(std::shared_ptr<EmitterInstance> emitterInstance)
+{
+    m_emitterInstances.erase(emitterInstance->id().index);
 }
 
 void VfxManager::update(float seconds)
