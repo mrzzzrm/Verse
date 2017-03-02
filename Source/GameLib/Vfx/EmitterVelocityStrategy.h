@@ -45,3 +45,16 @@ private:
     float                       m_minSpeed;
     float                       m_maxSpeed;
 };
+
+class EmitterFixedDirection final:
+    public EmitterVelocityStrategy
+{
+public:
+    EmitterFixedDirection(float minSpeed, float maxSpeed);
+
+    glm::vec3 generateVelocity() const override;
+
+private:
+    float                       m_minSpeed;
+    float                       m_maxSpeed;
+};

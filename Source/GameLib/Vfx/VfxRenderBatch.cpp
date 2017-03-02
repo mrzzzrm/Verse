@@ -100,21 +100,22 @@ VfxRenderBatch::VfxRenderBatch(VfxRenderer & renderer, const Mesh2 & mesh, VfxPa
 
 size_t VfxRenderBatch::addInstance(const VfxParticle & particle)
 {
-    std::cout << "Slots: " << m_instanceBuffer.count() << std::endl;
-
     if (m_freeInstanceSlots.empty())
     {
         /**
          * Try to fetch from deathQueue
          */
-        const auto & nextDeath = m_deathQueue.top();
-
-        if (nextDeath.timeOfDeath > CurrentMillis())
+        if (!m_deathQueue.empty())
         {
-            m_deathQueue.pop();
-            m_freeInstanceSlots.push(nextDeath.slot);
+            const auto & nextDeath = m_deathQueue.top();
+            if (nextDeath.timeOfDeath < CurrentMillis())
+            {
+                m_deathQueue.pop();
+                m_freeInstanceSlots.push(nextDeath.slot);
+            }
         }
-        else
+
+        if (m_freeInstanceSlots.empty())
         {
             /**
              * Create new instances
@@ -209,7 +210,7 @@ void VfxRenderBatch::addInstanceInSlot(const VfxParticle & particle, size_t inde
     m_deathQueue.emplace(particle.birth + particle.lifetime, index);
 }
 
-VfxRenderBatch::DeathEntry::DeathEntry(u32 timeOfDeath, size_t slot):
+VfxRenderBatch::DeathEntry::DeathEntry(TimestampMillis timeOfDeath, size_t slot):
     timeOfDeath(timeOfDeath),
     slot(slot)
 {

@@ -12,6 +12,11 @@ HailstormManager::HailstormManager(
 
 }
 
+VfxManager & HailstormManager::vfxManager()
+{
+    return m_vfxManager;
+}
+
 void HailstormManager::addBullet(HailstormBullet bullet)
 {
     bullet.id.particleId = m_vfxManager.addParticle(bullet.particle);

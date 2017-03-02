@@ -33,10 +33,10 @@ public:
 private:
     struct DeathEntry
     {
-        u32 timeOfDeath;
+        TimestampMillis timeOfDeath;
         size_t slot;
 
-        DeathEntry(u32 timeOfDeath, size_t slot);
+        DeathEntry(TimestampMillis timeOfDeath, size_t slot);
         bool operator<(const DeathEntry & rhs) const;
     };
 

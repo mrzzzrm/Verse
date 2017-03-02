@@ -1,11 +1,13 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 
 #include <glm/glm.hpp>
 
 #include <Deliberation/Core/Math/Pose3D.h>
 
+#include "EmitterInstance.h"
 #include "EmitterColorStrategy.h"
 #include "EmitterIntensityStrategy.h"
 #include "EmitterLifetimeStrategy.h"
@@ -33,10 +35,13 @@ public:
             const Pose3D & pose = Pose3D());
 
     Pose3D & pose();
-
     void setPose(const Pose3D & pose);
 
-    void update(float seconds, const Pose3D & pose);
+    const std::vector<std::shared_ptr<Emitter>> & children() const;
+
+    void addChild(std::shared_ptr<Emitter> child);
+
+    void updateInstance(EmitterInstance & emitterInstance, EmitterInstanceContext & context, float seconds);
 
 private:
     VfxManager &        m_vfxManager;
@@ -57,5 +62,6 @@ private:
                         m_size;
 
     Pose3D              m_pose;
-    float               m_countdown = 0.0f;
+
+    std::vector<std::shared_ptr<Emitter>> m_children;
 };

@@ -23,7 +23,6 @@ Emitter::Emitter(VfxManager & vfxManager,
     m_color(color),
     m_size(size)
 {
-    m_countdown = m_intensity->generateInterval();
 }
 
 Pose3D & Emitter::pose()
@@ -36,7 +35,17 @@ void Emitter::setPose(const Pose3D & pose)
     m_pose = pose;
 }
 
-void Emitter::update(float seconds, const Pose3D & pose)
+const std::vector<std::shared_ptr<Emitter>> & Emitter::children() const
+{
+    return m_children;
+}
+
+void Emitter::addChild(std::shared_ptr<Emitter> child)
+{
+    m_children.emplace_back(std::move(child));
+}
+
+void Emitter::updateInstance(EmitterInstance & emitterInstance, EmitterInstanceContext & context, float seconds)
 {
     auto timeAccumulator = 0.0f;
 
@@ -44,13 +53,16 @@ void Emitter::update(float seconds, const Pose3D & pose)
 
     while (true)
     {
-        const auto timeStep = std::min(seconds - timeAccumulator, m_countdown);
+        const auto timeStep = std::min(seconds - timeAccumulator, context.countdown);
         timeAccumulator += timeStep;
-        m_countdown -= timeStep;
+        context.countdown -= timeStep;
 
-        if (m_countdown > 0.0f) break;
+        if (context.countdown > 0.0f) break;
 
-        intermediatePose = m_pose.interpolated(pose, timeAccumulator / seconds);
+        intermediatePose = emitterInstance.m_basePose.interpolated(emitterInstance.m_targetPose,
+                                                                   timeAccumulator / seconds);
+
+        intermediatePose = intermediatePose.poseLocalToWorld(m_pose);
 
         const auto position = intermediatePose.position() + m_placement->generatePosition();
         const auto birth = CurrentMillis() + (TimestampMillis)(timeAccumulator * 1000);
@@ -76,8 +88,11 @@ void Emitter::update(float seconds, const Pose3D & pose)
 
         m_vfxManager.addParticle(particle);
 
-        m_countdown += m_intensity->generateInterval();
+        context.countdown += m_intensity->generateInterval();
     }
 
-    m_pose = pose;
+    for (size_t c = 0; c < m_children.size(); c++)
+    {
+        m_children[c]->updateInstance(emitterInstance, context.children[c], seconds);
+    }
 }

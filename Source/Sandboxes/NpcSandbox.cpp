@@ -50,40 +50,22 @@
 #include "VoxelClusterContact.h"
 #include "Weapon.h"
 
+#include "SandboxApplication.h"
+
 using namespace deliberation;
 
 class NpcSandbox:
-    public Application
+    public SandboxApplication
 {
 public:
     NpcSandbox():
-        Application("NpcSandbox")
+        SandboxApplication("NpcSandbox")
     {
 
     }
 
-    void onStartup() override
+    void onSandboxStartup() override
     {
-        m_physicsWorld.narrowphase().registerPrimitiveTest((int)::CollisionShapeType::VoxelCluster, std::make_unique<VoxelClusterPrimitiveTest>());
-
-        m_physicsWorld.narrowphase().contactDispatcher().
-            registerContactType<VoxelClusterContact>((int)::CollisionShapeType::VoxelCluster);
-
-        m_voxelWorld.reset(context(), m_physicsWorld, m_camera);
-
-        m_camera.setPosition({0.0f, 200.0f, 300.0f});
-        m_camera.setOrientation(glm::quat({-1.0f, 0.0f, 0.0f}));
-        m_camera.setAspectRatio((float)context().backbuffer().width() / context().backbuffer().height());
-
-        m_navigator.reset(m_camera, input(), 150.0f);
-
-        m_clear = context().createClear();
-
-        m_groundPlane.reset(context(), m_camera);
-        m_groundPlane->setSize(1000.0f);
-        m_groundPlane->setQuadSize(100.0f);
-        m_groundPlane->setRadius(750.0f);
-
         VoxReader voxReader;
         {
             auto models = voxReader.read("Data/VoxelClusters/drone.vox");
@@ -94,15 +76,8 @@ public:
             }
         }
 
-        m_world.addSystem<PhysicsWorldSystem>(m_physicsWorld);
-        m_world.addSystem<VoxelObjectSystem>(m_physicsWorld, *m_voxelWorld);
-        m_world.addSystem<NpcControllerSystem>();
-   //     m_world.addSystem<NpcDebugRendererSystem>(context(), m_camera);
-
-        m_hailstormManager.emplace(context(), m_camera, m_physicsWorld, *m_voxelWorld);
-
         auto bulletMesh = UVSphere(5, 5).generateMesh2();
-        m_bulletMeshID = m_hailstormManager->renderer().addMesh(bulletMesh);
+        m_bulletMeshID = m_hailstormManager->vfxManager().renderer().addMesh(bulletMesh);
 
         auto npc0 = spawnNpc({-300.0f, 400.0f, 0.0f});
         auto npc1 = spawnNpc({0.0f, 150.0f, 0.0f});
@@ -121,7 +96,7 @@ public:
 
     }
 
-    void onFrame(float seconds) override
+    void onSandboxUpdate(float seconds) override
     {
         if (input().mouseButtonPressed(InputBase::MouseButton_Right))
         {
@@ -130,31 +105,10 @@ public:
             auto target = aimHelper.getTarget(input().mousePosition(), hit);
             std::cout << "Target: " << hit << " " << target << std::endl;
         }
+    }
 
-        auto physicsSimulationSeconds = m_physicsWorld.nextSimulationStep(seconds);
-
-        if (EpsilonGt(physicsSimulationSeconds, 0.0f))
-        {
-            m_world.prePhysicsUpdate(physicsSimulationSeconds);
-
-            m_physicsWorld.update(seconds);
-
-            m_world.update(seconds);
-
-            m_hailstormManager->update(physicsSimulationSeconds);
-        }
-        else
-        {
-            m_physicsWorld.update(seconds);
-        }
-
-        m_navigator->update(seconds);
-#
-        m_clear.render();
-        m_world.render();
-        m_groundPlane->render();
-        m_voxelWorld->render();
-        m_hailstormManager->render();
+    void onSandboxRender() override
+    {
     }
 
     Entity spawnNpc(const glm::vec3 & position)
@@ -214,20 +168,9 @@ public:
     }
 
 private:
-    Camera3D                m_camera;
-    Clear                   m_clear;
-    PhysicsWorld            m_physicsWorld;
-    Optional<DebugCameraNavigator3D>
-                            m_navigator;
-    Optional<VoxelWorld>    m_voxelWorld;
-    Optional<DebugGroundPlaneRenderer>
-                            m_groundPlane;
     World                   m_world;
     std::shared_ptr<VoxelObjectVoxelData>
                             m_voxelData;
-
-    std::experimental::optional<VfxManager>
-                            m_hailstormManager;
 
     VfxMeshId         m_bulletMeshID = -1;
 

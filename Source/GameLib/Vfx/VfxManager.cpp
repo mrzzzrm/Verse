@@ -79,8 +79,18 @@ void VfxManager::removeParticle(VfxParticleId particle)
     m_renderer.removeParticle(particle);
 }
 
+void VfxManager::addEmitterInstance(std::shared_ptr<EmitterInstance> emitterInstance)
+{
+    m_emitterInstances.emplace(emitterInstance);
+}
+
 void VfxManager::update(float seconds)
 {
+    for (auto & emitterInstance : m_emitterInstances)
+    {
+        emitterInstance->update(seconds);
+        emitterInstance->setBasePose(emitterInstance->targetPose());
+    }
 }
 
 void VfxManager::render()

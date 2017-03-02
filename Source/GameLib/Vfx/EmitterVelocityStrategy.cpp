@@ -39,3 +39,13 @@ glm::vec3 EmitterAnyDirection::generateVelocity() const
 {
     return RandomUnitVec3() * RandomFloat(m_minSpeed, m_maxSpeed);
 }
+
+EmitterFixedDirection::EmitterFixedDirection(float minSpeed, float maxSpeed):
+    m_minSpeed(minSpeed),
+    m_maxSpeed(maxSpeed)
+{}
+
+glm::vec3 EmitterFixedDirection::generateVelocity() const
+{
+    return glm::vec3(0, 0, -1) * RandomFloat(m_minSpeed, m_maxSpeed);
+}

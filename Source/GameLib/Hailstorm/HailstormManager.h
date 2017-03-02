@@ -19,6 +19,8 @@ public:
         PhysicsWorld & physicsWorld,
         VoxelWorld & voxelWorld);
 
+    VfxManager & vfxManager();
+
     void addBullet(HailstormBullet bullet);
 
     void update(float seconds);
