@@ -19,7 +19,6 @@ void EngineSlot::setTargetPose(const Pose3D & pose)
     if (m_engine)
     {
         auto voxelPose = pose.poseLocalToWorld(Pose3D::atPosition(glm::vec3(m_voxel)));
-
         m_engine->emitterInstance()->setTargetPose(voxelPose.poseLocalToWorld(m_pose));
     }
 }

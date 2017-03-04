@@ -38,7 +38,8 @@ protected:
 
         EquipmentUpdateContext equipmentUpdateContext;
         equipmentUpdateContext.targetPose = Pose3D(body->transform().position(),
-                                                   body->transform().orientation());
+                                                   body->transform().orientation(),
+                                                   body->transform().center());
         equipmentUpdateContext.linearVelocity = body->linearVelocity();
         equipmentUpdateContext.angularVelocity = body->angularVelocity();
 
