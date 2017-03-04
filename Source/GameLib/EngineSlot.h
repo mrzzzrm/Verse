@@ -17,6 +17,8 @@ public:
 
     void setTargetPose(const Pose3D & pose);
 
+    void disable();
+
 private:
     std::shared_ptr<Engine> m_engine;
 };

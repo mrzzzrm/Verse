@@ -42,8 +42,8 @@ struct VfxParticle
     DurationMillis      lifetime = 0;
     TimestampMillis     birth = 0;
 
-    glm::vec4           birthRGBA;
-    glm::vec4           deathRGBA;
+    glm::vec4           birthRGBA = glm::vec4(1.0f, 0.0f, 0.5f, 1.0f);
+    glm::vec4           deathRGBA = glm::vec4(1.0f, 0.0f, 0.5f, 1.0f);
 
     float               birthScale = 1.0f;
     float               deathScale = 1.0f;

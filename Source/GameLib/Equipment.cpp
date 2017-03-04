@@ -30,6 +30,7 @@ size_t Equipment::numEngineSlots() const
 void Equipment::addEngineSlot(std::shared_ptr<EngineSlot> engineSlot)
 {
     m_engineSlots.emplace_back(engineSlot);
+    m_enabledEngineSlots.emplace(engineSlot->voxel(), engineSlot);
 }
 
 void Equipment::setEngine(size_t slot, std::shared_ptr<Engine> engine)
@@ -54,9 +55,25 @@ void Equipment::setEngine(size_t slot, std::shared_ptr<Engine> engine)
 void Equipment::update(float seconds, const EquipmentUpdateContext & context)
 {
     for (auto & hardpoint : m_hardpoints) hardpoint->update(seconds, context);
+    for (auto & engineSlot : m_engineSlots) engineSlot->setTargetPose(context.targetPose);
+}
 
-    for (auto & engineSlot : m_engineSlots)
+void Equipment::receive(const VoxelObjectModification & modification)
+{
+
+    for (const auto & voxel : modification.additions)
     {
-        engineSlot->setTargetPose(context.targetPose);
+
+    }
+
+    for (const auto & voxel : modification.removals)
+    {
+        auto it = m_enabledEngineSlots.find(voxel);
+        if (it == m_enabledEngineSlots.end()) continue;
+
+        if (it->second->engine()) m_vfxManager.removeEmitterInstance(it->second->engine()->emitterInstance());
+
+        m_disabledEngineSlots.emplace(*it);
+        m_enabledEngineSlots.erase(it);
     }
 }

@@ -15,7 +15,7 @@ public:
 
     void setTarget(Entity target);
 
-    void update(NpcController & controller, float seconds) override;
+    void update(NpcController & controller, Equipment & equipment, float seconds) override;
 
 private:
     enum class Status

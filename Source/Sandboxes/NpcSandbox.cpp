@@ -30,6 +30,7 @@
 #include <Npc/NpcDebugRendererSystem.h>
 
 #include "AimHelper.h"
+#include "Components.h"
 #include "CollisionShapeTypes.h"
 #include "Equipment.h"
 #include "Emitter.h"
@@ -156,25 +157,43 @@ public:
         {
             auto task = std::make_shared<NpcAttackTask>();
             task->setTarget(npc2);
-            npc0.component<std::shared_ptr<NpcController>>()->setTask(task);
+            npc0.component<NpcController>().setTask(task);
         }
         {
             auto task = std::make_shared<NpcAttackTask>();
             task->setTarget(npc0);
-            npc2.component<std::shared_ptr<NpcController>>()->setTask(task);
+            npc2.component<NpcController>().setTask(task);
         }
 
+
+        WeaponConfig weaponConfig;
+        weaponConfig.cooldown = 0.1f;
+        weaponConfig.meshID = m_bulletMeshID;
+        m_hardpoint = std::make_shared<Hardpoint>(Pose3D(), glm::pi<float>());
+        m_hardpoint->setWeapon(std::make_shared<Weapon>(weaponConfig,
+                                                        *m_hailstormManager,
+                                                        INVALID_VOXEL_OBJECT_WORLD_UID));
     }
 
     void onSandboxUpdate(float seconds) override
     {
-        if (input().mouseButtonPressed(InputBase::MouseButton_Right))
+        if (input().mouseButtonDown(InputBase::MouseButton_Right))
         {
             AimHelper aimHelper(m_camera, m_physicsWorld);
             auto hit = false;
             auto target = aimHelper.getTarget(input().mousePosition(), hit);
-            std::cout << "Target: " << hit << " " << target << std::endl;
+
+            m_hardpoint->setFireRequest(true, target);
         }
+        else
+        {
+            m_hardpoint->setFireRequest(false, {});
+        }
+
+        EquipmentUpdateContext context;
+        context.targetPose = m_camera.pose().localTranslated({5.0f, 0.0f, -15.0f});
+
+        m_hardpoint->update(seconds, context);
     }
 
     void onSandboxRender() override
@@ -196,31 +215,30 @@ public:
         flightControlConfig.angular.maxSpeed = 2.0f;
 
         auto npc = m_world.createEntity("npc");
-        auto voxelObject = std::make_shared<VoxelObject>(*m_voxelData);
+        auto & voxelObject = npc.addComponent<VoxelObject>(*m_voxelData);
 
-        auto rigidBodyPayload = std::make_shared<VoxelRigidBodyPayload>(voxelObject);
-        auto rigidBody = std::make_shared<RigidBody>(voxelObject->data().shape());
+        auto rigidBodyPayload = std::make_shared<VoxelRigidBodyPayload>(voxelObject.shared_from_this());
+
+        auto rigidBody = std::make_shared<RigidBody>(voxelObject.data().shape());
         rigidBody->setPayload(rigidBodyPayload);
-        rigidBody->transform().setCenter(glm::vec3(voxelObject->data().size()) / 2.0f);
+        rigidBody->transform().setCenter(glm::vec3(voxelObject.data().size()) / 2.0f);
         rigidBody->transform().setPosition(position);
 
-        auto npcController = std::make_shared<NpcController>(flightControlConfig);
+        auto & npcController = npc.addComponent<NpcController>(flightControlConfig);
 
-        npc.addComponent<std::shared_ptr<VoxelObject>>(voxelObject);
-        npc.addComponent<std::shared_ptr<RigidBody>>(rigidBody);
-        npc.addComponent<std::shared_ptr<NpcController>>(npcController);
+        npc.addComponent<RigidBodyComponent>(rigidBody);
 
-        auto equipment = std::make_shared<Equipment>(*m_vfxManager);
+        auto & equipment = npc.addComponent<Equipment>(*m_vfxManager);
 
-        equipment->addEngineSlot(std::make_shared<EngineSlot>(glm::vec3{1, 5, 16}, Pose3D::atOrientation(glm::quat(glm::vec3{0.0f, glm::pi<float>(), 0.0f}))));
-        equipment->addEngineSlot(std::make_shared<EngineSlot>(glm::vec3{6, 5, 16}, Pose3D::atOrientation(glm::quat(glm::vec3{0.0f, glm::pi<float>(), 0.0f}))));
-        equipment->addEngineSlot(std::make_shared<EngineSlot>(glm::vec3{6, 1, 16}, Pose3D::atOrientation(glm::quat(glm::vec3{0.0f, glm::pi<float>(), 0.0f}))));
-        equipment->addEngineSlot(std::make_shared<EngineSlot>(glm::vec3{1, 1, 16}, Pose3D::atOrientation(glm::quat(glm::vec3{0.0f, glm::pi<float>(), 0.0f}))));
+        equipment.addEngineSlot(std::make_shared<EngineSlot>(glm::vec3{1, 5, 16}, Pose3D::atOrientation(glm::quat(glm::vec3{0.0f, glm::pi<float>(), 0.0f}))));
+        equipment.addEngineSlot(std::make_shared<EngineSlot>(glm::vec3{6, 5, 16}, Pose3D::atOrientation(glm::quat(glm::vec3{0.0f, glm::pi<float>(), 0.0f}))));
+        equipment.addEngineSlot(std::make_shared<EngineSlot>(glm::vec3{6, 1, 16}, Pose3D::atOrientation(glm::quat(glm::vec3{0.0f, glm::pi<float>(), 0.0f}))));
+        equipment.addEngineSlot(std::make_shared<EngineSlot>(glm::vec3{1, 1, 16}, Pose3D::atOrientation(glm::quat(glm::vec3{0.0f, glm::pi<float>(), 0.0f}))));
 
-        equipment->setEngine(0, std::make_shared<Engine>(m_emitterAfterburner));
-        equipment->setEngine(1, std::make_shared<Engine>(m_emitterAfterburner));
-        equipment->setEngine(2, std::make_shared<Engine>(m_emitterAfterburner));
-        equipment->setEngine(3, std::make_shared<Engine>(m_emitterAfterburner));
+        equipment.setEngine(0, std::make_shared<Engine>(m_emitterAfterburner));
+        equipment.setEngine(1, std::make_shared<Engine>(m_emitterAfterburner));
+        equipment.setEngine(2, std::make_shared<Engine>(m_emitterAfterburner));
+        equipment.setEngine(3, std::make_shared<Engine>(m_emitterAfterburner));
 
         {
             auto maxAngle = glm::pi<float>() * 0.2f;
@@ -232,22 +250,23 @@ public:
             weaponConfig.cooldown = 0.2f;
             weaponConfig.meshID = m_bulletMeshID;
 
-            auto weapon0 = std::make_shared<Weapon>(weaponConfig, *m_hailstormManager, voxelObject->id().worldUID);
-            auto weapon1 = std::make_shared<Weapon>(weaponConfig, *m_hailstormManager, voxelObject->id().worldUID);
+            auto weapon0 = std::make_shared<Weapon>(weaponConfig, *m_hailstormManager, voxelObject.id().worldUID);
+            auto weapon1 = std::make_shared<Weapon>(weaponConfig, *m_hailstormManager, voxelObject.id().worldUID);
 
             hardpoint0->setWeapon(weapon0);
             hardpoint1->setWeapon(weapon1);
 
-            equipment->addHardpoint(hardpoint0);
-            equipment->addHardpoint(hardpoint1);
+            equipment.addHardpoint(hardpoint0);
+            equipment.addHardpoint(hardpoint1);
         }
 
-        npc.addComponent<std::shared_ptr<Equipment>>(equipment);
 
         return npc;
     }
 
 private:
+    std::shared_ptr<Hardpoint>  m_hardpoint;
+
     std::shared_ptr<VoxelObjectVoxelData>
                                 m_voxelData;
 

@@ -4,26 +4,28 @@
 
 #include <Deliberation/Core/Math/Transform3D.h>
 
+#include <Deliberation/ECS/Components.h>
 #include <Deliberation/ECS/World.h>
 
 #include <Deliberation/Physics/RigidBody.h>
 
+#include "Components.h"
 #include "VoxelObjectVoxelData.h"
 #include "VoxelObject.h"
 #include "VoxelRigidBodyPayload.h"
 
 VoxelClusterSplitSystem::VoxelClusterSplitSystem(World & world):
-    Base(world, ComponentFilter::requires<std::shared_ptr<VoxelObject>, std::shared_ptr<RigidBody>>())
+    Base(world, ComponentFilter::requires<VoxelObject, RigidBodyComponent>())
 {
 
 }
 
 void VoxelClusterSplitSystem::onUpdate(Entity & entity, float seconds)
 {
-    auto & originalVoxelObject = entity.component<std::shared_ptr<VoxelObject>>();
-    auto & originalBody = entity.component<std::shared_ptr<RigidBody>>();
-    auto & originalVoxelData = originalVoxelObject->data();
-    const auto & splitDetector = originalVoxelObject->data().splitDetector();
+    auto & originalVoxelObject = entity.component<VoxelObject>();
+    auto & originalBody = entity.component<RigidBodyComponent>().value();
+    auto & originalVoxelData = originalVoxelObject.data();
+    const auto & splitDetector = originalVoxelObject.data().splitDetector();
     const auto & splits = splitDetector.splits();
 
     if (splits.size() <= 1) return;
@@ -47,13 +49,14 @@ void VoxelClusterSplitSystem::onUpdate(Entity & entity, float seconds)
         }
 
         const auto splitSize = split.urb - split.llf + 1u;
-        VoxelObjectVoxelData splitVoxelData(originalVoxelObject->data().voxelWorld(), splitSize);
+        VoxelObjectVoxelData splitVoxelData(originalVoxelObject.data().voxelWorld(), splitSize);
         splitVoxelData.addVoxels(std::move(splitVoxels));
 
-        auto splitVoxelObject = std::make_shared<VoxelObject>(splitVoxelData);
+        auto splitEntity = world().createEntity("Split");
+        auto & splitVoxelObject = splitEntity.addComponent<VoxelObject>(splitVoxelData);
 
-        auto rigidBodyPayload = std::make_shared<VoxelRigidBodyPayload>(splitVoxelObject);
-        auto splitBody = std::make_shared<RigidBody>(splitVoxelObject->data().shape());
+        auto rigidBodyPayload = std::make_shared<VoxelRigidBodyPayload>(splitVoxelObject.shared_from_this());
+        auto splitBody = std::make_shared<RigidBody>(splitVoxelObject.data().shape());
         splitBody->setPayload(rigidBodyPayload);
         splitBody->adjustCenterOfMass();
 
@@ -70,10 +73,8 @@ void VoxelClusterSplitSystem::onUpdate(Entity & entity, float seconds)
             originalBody->transform().position()));
         splitBody->setAngularVelocity(originalBody->angularVelocity());
 
-        auto splitEntity = world().createEntity("Split");
-        splitEntity.addComponent<std::shared_ptr<VoxelObject>>(splitVoxelObject);
-        splitEntity.addComponent<std::shared_ptr<RigidBody>>(splitBody);
+        splitEntity.addComponent<RigidBodyComponent>(splitBody);
 
-        originalVoxelObject->removeVoxels(split.voxels);
+        originalVoxelObject.removeVoxels(split.voxels);
     }
 }

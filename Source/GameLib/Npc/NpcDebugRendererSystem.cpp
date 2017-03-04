@@ -5,7 +5,7 @@
 #include "NpcController.h"
 
 NpcDebugRendererSystem::NpcDebugRendererSystem(World & world, Context & context, const Camera3D & camera):
-    Base(world, ComponentFilter::requires<std::shared_ptr<NpcController>>()),
+    Base(world, ComponentFilter::requires<NpcController>()),
     m_geometryManager(context),
     m_geometryRenderer(m_geometryManager),
     m_camera(camera)
@@ -30,11 +30,11 @@ void NpcDebugRendererSystem::onRender()
 {
     for (size_t e = 0; e < m_entities.size(); e++)
     {
-        auto & npcController = m_entities[e].component<std::shared_ptr<NpcController>>();
-        auto position = npcController->body()->transform().position();
+        auto & npcController = m_entities[e].component<NpcController>();
+        auto position = npcController.body()->transform().position();
 
         m_geometryRenderer.arrow(e).setOrigin(position);
-        m_geometryRenderer.arrow(e).setDelta(npcController->steering().destination() - position);
+        m_geometryRenderer.arrow(e).setDelta(npcController.steering().destination() - position);
     }
 
     m_geometryRenderer.schedule(m_camera);

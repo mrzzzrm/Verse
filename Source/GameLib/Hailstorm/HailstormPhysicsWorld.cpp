@@ -57,8 +57,10 @@ void HailstormPhysicsWorld::update(float seconds)
 //                }
 
                 auto voxelObject = voxelClusterIntersection.object.lock();
-
-                m_impactSystem.process(*voxelObject, voxelClusterIntersection.voxel, 100, 2);
+                if (voxelObject)
+                {
+                    m_impactSystem.process(*voxelObject, voxelClusterIntersection.voxel, 100, 2);
+                }
 
                 auto localHitPoint = glm::vec3(voxelClusterIntersection.voxel);
                 auto relativeHitPoint = body->transform().pointLocalToWorld(localHitPoint) -

@@ -8,6 +8,8 @@
 #include <Deliberation/Core/Math/MathUtils.h>
 #include <Deliberation/Core/Math/Random.h>
 
+#include <Deliberation/ECS/Components.h>
+
 #include "NpcController.h"
 
 NpcAttackTask::NpcAttackTask()
@@ -20,19 +22,18 @@ void NpcAttackTask::setTarget(Entity target)
     m_target = target;
 }
 
-void NpcAttackTask::update(NpcController & controller, float seconds)
+void NpcAttackTask::update(NpcController & controller, Equipment & equipment, float seconds)
 {
     if (!m_target.isValid())
     {
-        if (controller.equipment()) controller.equipment()->setFireRequest(false, {});
-
+        equipment.setFireRequest(false, {});
         return;
     }
 
     auto & steering = controller.steering();
 
     const auto & body = controller.body();
-    const auto & targetBody = m_target.component<std::shared_ptr<RigidBody>>();
+    const auto & targetBody = m_target.component<RigidBodyComponent>().value();
 
     const auto targetPosition = targetBody->transform().position();
     const auto deltaToTarget = targetPosition - body->transform().position();
@@ -70,17 +71,13 @@ void NpcAttackTask::update(NpcController & controller, float seconds)
 
     steering.setStopAtDestination(false);
 
-
-    if (controller.equipment())
-    {
-        controller.equipment()->setFireRequest(true, targetPosition);
-    }
+    equipment.setFireRequest(true, targetPosition);
 }
 
 void NpcAttackTask::startEvasion(NpcController & controller)
 {
     const auto & body = controller.body();
-    const auto & targetBody = m_target.component<std::shared_ptr<RigidBody>>();
+    const auto & targetBody = m_target.component<RigidBodyComponent>().value();
 
     const auto targetPosition = targetBody->transform().position();
     const auto deltaToTarget = targetPosition - body->transform().position();

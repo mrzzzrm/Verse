@@ -31,11 +31,6 @@ std::shared_ptr<const NpcFlightControl> NpcController::flightControl() const
     return m_flightControl;
 }
 
-const std::shared_ptr<Equipment> & NpcController::equipment() const
-{
-    return m_equipment;
-}
-
 void NpcController::setBody(std::shared_ptr<RigidBody> body)
 {
     m_flightControl = std::make_shared<NpcFlightControl>(body, m_flightControlConfig);
@@ -46,15 +41,10 @@ void NpcController::setTask(std::shared_ptr<NpcTask> task)
     m_task = task;
 }
 
-void NpcController::setEquipment(std::shared_ptr<Equipment> equipment)
-{
-    m_equipment = equipment;
-}
-
-void NpcController::update(float seconds)
+void NpcController::update(float seconds, Equipment & equipment)
 {
     Assert(!m_task || m_flightControl, "Have Task but no flight control");
-    if (m_task) m_task->update(*this, seconds);
+    if (m_task) m_task->update(*this, equipment, seconds);
 
     if (m_flightControl)
     {

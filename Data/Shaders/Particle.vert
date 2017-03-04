@@ -46,7 +46,7 @@ void main()
 
     if (OrientationType == 0) // World
     {
-        vertexPosition = BirthOrientation.xyz * 0.01f + scaledPosition + particleCenter;
+        vertexPosition = BirthOrientation.xyz * 0.0001f  + scaledPosition + particleCenter;
     }
     else if (OrientationType == 1) // ViewBillboard
     {

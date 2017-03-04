@@ -4,14 +4,14 @@ uniform sampler2D Texture;
 
 in vec3 f_Normal;
 in vec2 f_UV;
-in float f_NormaliseAge;
+in float f_NormalisedAge;
 in vec4 f_RGBA;
 
 out vec4 o_Color;
 
 void main()
 {
-    if (f_NormaliseAge >= 1.0f) discard;
+    if (f_NormalisedAge >= 1.0f) discard;
 
 //    vec3 light = normalize(vec3(0.1f, 1.0f, 0.2f));
 //	o_Color = Color * 0.6 + Color * dot(f_Normal, light) * 0.4f;

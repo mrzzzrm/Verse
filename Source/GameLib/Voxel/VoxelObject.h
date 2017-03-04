@@ -3,6 +3,9 @@
 #include <memory>
 
 #include <Deliberation/Core/Math/Pose3D.h>
+
+#include <Deliberation/ECS/Component.h>
+
 #include <Deliberation/Physics/RigidBody.h>
 
 #include "GameLib.h"
@@ -25,7 +28,7 @@ struct VoxelObjectID
 };
 
 class VoxelObject final:
-    public std::enable_shared_from_this<VoxelObject>
+    public Component<VoxelObject>
 {
 public:
     VoxelObject(const VoxelObjectVoxelData & voxelData);

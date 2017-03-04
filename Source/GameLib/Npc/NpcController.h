@@ -2,13 +2,16 @@
 
 #include <memory>
 
+#include <Deliberation/ECS/Component.h>
+
 #include "Equipment.h"
 #include "GameLib.h"
 #include "NpcTask.h"
 #include "NpcSteering.h"
 #include "NpcFlightControl.h"
 
-class NpcController final
+class NpcController final:
+    public Component<NpcController>
 {
 public:
     NpcController(FlightControlConfig config);
@@ -18,13 +21,11 @@ public:
     const NpcSteering & steering() const;
     const std::shared_ptr<NpcFlightControl> & flightControl();
     std::shared_ptr<const NpcFlightControl> flightControl() const;
-    const std::shared_ptr<Equipment> & equipment() const;
 
     void setBody(std::shared_ptr<RigidBody> body);
     void setTask(std::shared_ptr<NpcTask> task);
-    void setEquipment(std::shared_ptr<Equipment> equipment);
 
-    void update(float seconds);
+    void update(float seconds, Equipment & equipment);
 
 private:
     FlightControlConfig                 m_flightControlConfig;

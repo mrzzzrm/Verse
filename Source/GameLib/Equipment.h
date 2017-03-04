@@ -4,11 +4,15 @@
 #include <vector>
 
 #include <glm/glm.hpp>
+#include <glm/gtx/hash.hpp>
 
 #include <Deliberation/Core/Math/Pose3D.h>
 
+#include <Deliberation/ECS/Component.h>
+
 #include "EngineSlot.h"
 #include "GameLib.h"
+#include "VoxelObjectModification.h"
 
 namespace deliberation
 {
@@ -25,7 +29,8 @@ struct EquipmentUpdateContext
     glm::vec3   linearVelocity;
 };
 
-class Equipment final
+class Equipment final:
+    public Component<Equipment, ComponentSubscriptions<Equipment, VoxelObjectModification>>
 {
 public:
     Equipment(VfxManager & vfxManager);
@@ -40,10 +45,15 @@ public:
 
     void update(float seconds, const EquipmentUpdateContext & context);
 
+    void receive(const VoxelObjectModification & modification);
+
 private:
-    VfxManager &            m_vfxManager;
-    std::vector<std::shared_ptr<Hardpoint>>
-                            m_hardpoints;
-    std::vector<std::shared_ptr<EngineSlot>>
-                            m_engineSlots;
+    VfxManager &                                m_vfxManager;
+    std::vector<std::shared_ptr<Hardpoint>>     m_hardpoints;
+    std::vector<std::shared_ptr<EngineSlot>>    m_engineSlots;
+
+    std::unordered_map<glm::uvec3, std::shared_ptr<EngineSlot>>
+                                                m_enabledEngineSlots;
+    std::unordered_map<glm::uvec3, std::shared_ptr<EngineSlot>>
+                                                m_disabledEngineSlots;
 };

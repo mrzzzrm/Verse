@@ -57,13 +57,17 @@ void Weapon::update(float seconds, const EquipmentUpdateContext & context, const
 
         if (success && angle <= maxAngle)
         {
+            VfxParticle particle(
+                m_config.meshID,
+                origin,
+                trajectory + context.linearVelocity,
+                baseMillis + ((TimestampMillis)(timeAccumulator * 1000.0f)),
+                2000);
+
+            particle.orientationType = VfxParticleOrientationType::World;
+
             HailstormBullet bullet(
-                VfxParticle(
-                    m_config.meshID,
-                    origin,
-                    trajectory + context.linearVelocity,
-                    baseMillis + ((TimestampMillis)(timeAccumulator * 1000.0f)),
-                    2000),
+                particle,
                 50.0f,
                 3
             );

@@ -22,3 +22,8 @@ void EngineSlot::setTargetPose(const Pose3D & pose)
         m_engine->emitterInstance()->setTargetPose(voxelPose.poseLocalToWorld(m_pose));
     }
 }
+
+void EngineSlot::disable()
+{
+
+}

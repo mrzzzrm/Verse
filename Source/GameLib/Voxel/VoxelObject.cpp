@@ -1,6 +1,7 @@
 #include "VoxelObject.h"
 
 #include "VoxelRigidBodyPayload.h"
+#include "VoxelObjectModification.h"
 
 VoxelObject::VoxelObject(const VoxelObjectVoxelData & voxelData):
     m_voxelWorld(voxelData.voxelWorld()),
@@ -45,11 +46,21 @@ void VoxelObject::setPose(const Pose3D & pose)
 void VoxelObject::addVoxels(const std::vector<Voxel> & voxels)
 {
     m_voxelData.addVoxels(voxels);
+
+    VoxelObjectModification modification;
+    modification.additions = voxels;
+
+    emit(modification);
 }
 
 void VoxelObject::removeVoxels(const std::vector<glm::uvec3> & voxels)
 {
     m_voxelData.removeVoxels(voxels);
+
+    VoxelObjectModification modification;
+    modification.removals = voxels;
+
+    emit(modification);
 }
 
 void VoxelObject::schedule()

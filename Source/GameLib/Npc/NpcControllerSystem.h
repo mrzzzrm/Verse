@@ -14,27 +14,26 @@ class NpcControllerSystem:
 public:
     NpcControllerSystem(World & world):
         Base(world, ComponentFilter::requires<
-            std::shared_ptr<NpcController>,
-            std::shared_ptr<RigidBody>,
-            std::shared_ptr<Equipment>>())
+            NpcController,
+            RigidBodyComponent,
+            Equipment>())
     {}
 
 protected:
     void onEntityAdded(Entity & entity) override
     {
-        auto body = entity.component<std::shared_ptr<RigidBody>>();
-        auto npcController = entity.component<std::shared_ptr<NpcController>>();
+        auto body = entity.component<RigidBodyComponent>().value();
+        auto & npcController = entity.component<NpcController>();
 
-        npcController->setBody(body);
-
-        npcController->setEquipment(entity.component<std::shared_ptr<Equipment>>());
+        npcController.setBody(body);
     }
 
     void onPrePhysicsUpdate(Entity & entity, float seconds) override
     {
-        auto body = entity.component<std::shared_ptr<RigidBody>>();
+        auto body = entity.component<RigidBodyComponent>().value();
+        auto & equipment = entity.component<Equipment>();
 
-        entity.component<std::shared_ptr<NpcController>>()->update(seconds);
+        entity.component<NpcController>().update(seconds, equipment);
 
         EquipmentUpdateContext equipmentUpdateContext;
         equipmentUpdateContext.targetPose = Pose3D(body->transform().position(),
@@ -43,6 +42,6 @@ protected:
         equipmentUpdateContext.linearVelocity = body->linearVelocity();
         equipmentUpdateContext.angularVelocity = body->angularVelocity();
 
-        entity.component<std::shared_ptr<Equipment>>()->update(seconds, equipmentUpdateContext);
+        equipment.update(seconds, equipmentUpdateContext);
     }
 };

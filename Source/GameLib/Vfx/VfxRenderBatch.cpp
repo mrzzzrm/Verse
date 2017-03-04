@@ -206,7 +206,6 @@ void VfxRenderBatch::addInstanceInSlot(const VfxParticle & particle, size_t inde
     }
 
     m_instanceBuffer.scheduleUpload(m_instances);
-
     m_deathQueue.emplace(particle.birth + particle.lifetime, index);
 }
 
