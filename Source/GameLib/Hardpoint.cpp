@@ -1,8 +1,12 @@
 #include "Hardpoint.h"
 
-#include "Weapon.h"
+#include <Deliberation/Core/StreamUtils.h>
 
-Hardpoint::Hardpoint(const Pose3D & pose, float maxAngle):
+#include "Weapon.h"
+#include "Equipment.h"
+
+Hardpoint::Hardpoint(const glm::uvec3 & voxel, const Pose3D & pose, float maxAngle):
+    m_voxel(voxel),
     m_pose(pose),
     m_maxAngle(maxAngle)
 {}
@@ -26,5 +30,9 @@ void Hardpoint::update(float seconds, const EquipmentUpdateContext & context)
 {
     if (!m_weapon) return;
 
-    m_weapon->update(seconds, context, m_pose, m_maxAngle);
+    auto voxelPose = context.targetPose.poseLocalToWorld(Pose3D::atPosition(glm::vec3(m_voxel)));
+    auto hardpointTargetPose = voxelPose.poseLocalToWorld(m_pose);
+
+
+    m_weapon->update(seconds, context, voxelPose, m_maxAngle);
 }

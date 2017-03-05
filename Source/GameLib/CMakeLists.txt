@@ -15,6 +15,8 @@ add_library(${target}
     Npc/NpcSteering.h
     Npc/NpcController.cpp
     Npc/NpcController.h
+    Npc/NpcDebugTask.cpp
+    Npc/NpcDebugTask.h
     Npc/NpcControllerSystem.h
     Npc/NpcDebugRendererSystem.cpp
     Npc/NpcDebugRendererSystem.h
@@ -22,6 +24,9 @@ add_library(${target}
     Npc/NpcFlightControl.h
     Npc/NpcTask.cpp
     Npc/NpcTask.h
+
+    Resource/EquipmentPrototype.cpp
+    Resource/EquipmentPrototype.h
 
     Systems/VoxelObjectSystem.cpp
     Systems/VoxelObjectSystem.h
@@ -129,6 +134,7 @@ target_include_directories(${target}
     ${CMAKE_CURRENT_SOURCE_DIR}/Systems
     ${CMAKE_CURRENT_SOURCE_DIR}/Npc
     ${CMAKE_CURRENT_SOURCE_DIR}/Player
+    ${CMAKE_CURRENT_SOURCE_DIR}/Resource
     ${CMAKE_CURRENT_SOURCE_DIR}/Vfx
     ${CMAKE_CURRENT_SOURCE_DIR}/Voxel
 

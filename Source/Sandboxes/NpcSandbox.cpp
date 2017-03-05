@@ -2,6 +2,8 @@
 #include <memory>
 #include <thread>
 
+#include <json.hpp>
+
 #include <glm/glm.hpp>
 #include <glm/gtx/vector_angle.hpp>
 
@@ -33,6 +35,7 @@
 #include "Components.h"
 #include "CollisionShapeTypes.h"
 #include "Equipment.h"
+#include "EquipmentPrototype.h"
 #include "Emitter.h"
 #include "PlayerFlightControl.h"
 #include "NpcFlightControl.h"
@@ -41,6 +44,7 @@
 #include "NpcAttackTask.h"
 #include "NpcController.h"
 #include "NpcControllerSystem.h"
+#include "NpcDebugTask.h"
 #include "NpcSteering.h"
 #include "VoxelRigidBodyPayload.h"
 #include "VoxelRenderChunkTree.h"
@@ -67,6 +71,16 @@ public:
 
     void onSandboxStartup() override
     {
+        {
+            std::ifstream equipmentPrototypeFile("Data/Prototypes/Ship.json");
+
+            nlohmann::json obj;
+            equipmentPrototypeFile >> obj;
+
+            m_npcEquipmentPrototype = std::make_shared<EquipmentPrototype>(obj["Equipment"]);
+        }
+
+
         {
             auto lifetime = std::make_shared<EmitterRandomLifetime>(0.9f, 1.2f);
             auto placement = std::make_shared<EmitterFixedPlacement>();
@@ -139,7 +153,7 @@ public:
 
         VoxReader voxReader;
         {
-            auto models = voxReader.read("Data/VoxelClusters/drone.vox");
+            auto models = voxReader.read("Data/VoxelClusters/ship.vox");
             if (!models.empty())
             {
                 m_voxelData = std::make_shared<VoxelObjectVoxelData>(*m_voxelWorld, models[0].size);
@@ -164,12 +178,17 @@ public:
             task->setTarget(npc0);
             npc2.component<NpcController>().setTask(task);
         }
+        {
+            auto task = std::make_shared<NpcDebugTask>();
+            task->setFireRequest(true, glm::vec3(40.0f, 150.0f, -200.0f));
+            npc1.component<NpcController>().setTask(task);
+        }
 
 
         WeaponConfig weaponConfig;
         weaponConfig.cooldown = 0.1f;
         weaponConfig.meshID = m_bulletMeshID;
-        m_hardpoint = std::make_shared<Hardpoint>(Pose3D(), glm::pi<float>());
+        m_hardpoint = std::make_shared<Hardpoint>(glm::uvec3(), Pose3D(), glm::pi<float>());
         m_hardpoint->setWeapon(std::make_shared<Weapon>(weaponConfig,
                                                         *m_hailstormManager,
                                                         INVALID_VOXEL_OBJECT_WORLD_UID));
@@ -228,24 +247,16 @@ public:
 
         npc.addComponent<RigidBodyComponent>(rigidBody);
 
-        auto & equipment = npc.addComponent<Equipment>(*m_vfxManager);
+        m_npcEquipmentPrototype->applyToEntity(npc, *m_vfxManager);
 
-        equipment.addEngineSlot(std::make_shared<EngineSlot>(glm::vec3{1, 5, 16}, Pose3D::atOrientation(glm::quat(glm::vec3{0.0f, glm::pi<float>(), 0.0f}))));
-        equipment.addEngineSlot(std::make_shared<EngineSlot>(glm::vec3{6, 5, 16}, Pose3D::atOrientation(glm::quat(glm::vec3{0.0f, glm::pi<float>(), 0.0f}))));
-        equipment.addEngineSlot(std::make_shared<EngineSlot>(glm::vec3{6, 1, 16}, Pose3D::atOrientation(glm::quat(glm::vec3{0.0f, glm::pi<float>(), 0.0f}))));
-        equipment.addEngineSlot(std::make_shared<EngineSlot>(glm::vec3{1, 1, 16}, Pose3D::atOrientation(glm::quat(glm::vec3{0.0f, glm::pi<float>(), 0.0f}))));
+        auto & equipment = npc.component<Equipment>();
 
         equipment.setEngine(0, std::make_shared<Engine>(m_emitterAfterburner));
         equipment.setEngine(1, std::make_shared<Engine>(m_emitterAfterburner));
-        equipment.setEngine(2, std::make_shared<Engine>(m_emitterAfterburner));
-        equipment.setEngine(3, std::make_shared<Engine>(m_emitterAfterburner));
+//        equipment.setEngine(2, std::make_shared<Engine>(m_emitterAfterburner));
+//        equipment.setEngine(3, std::make_shared<Engine>(m_emitterAfterburner));
 
         {
-            auto maxAngle = glm::pi<float>() * 0.2f;
-
-            auto hardpoint0 = std::make_shared<Hardpoint>(Pose3D::atPosition({2.0f, 0.0f, -3.0f}), maxAngle);
-            auto hardpoint1 = std::make_shared<Hardpoint>(Pose3D::atPosition({-2.0f, 0.0f, -3.0f}), maxAngle);
-
             WeaponConfig weaponConfig;
             weaponConfig.cooldown = 0.2f;
             weaponConfig.meshID = m_bulletMeshID;
@@ -253,11 +264,8 @@ public:
             auto weapon0 = std::make_shared<Weapon>(weaponConfig, *m_hailstormManager, voxelObject.id().worldUID);
             auto weapon1 = std::make_shared<Weapon>(weaponConfig, *m_hailstormManager, voxelObject.id().worldUID);
 
-            hardpoint0->setWeapon(weapon0);
-            hardpoint1->setWeapon(weapon1);
-
-            equipment.addHardpoint(hardpoint0);
-            equipment.addHardpoint(hardpoint1);
+            equipment.setWeapon(0, weapon0);
+            equipment.setWeapon(1, weapon1);
         }
 
 
@@ -265,6 +273,8 @@ public:
     }
 
 private:
+    std::shared_ptr<EquipmentPrototype> m_npcEquipmentPrototype;
+
     std::shared_ptr<Hardpoint>  m_hardpoint;
 
     std::shared_ptr<VoxelObjectVoxelData>

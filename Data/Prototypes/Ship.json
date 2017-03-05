@@ -1,0 +1,17 @@
+{
+    "VoxelObject" : {
+        "VoxelCluster": "ship"
+    },
+    
+    "Equipment": {
+        "Engines": [
+            {"Voxel": [14, 34, 3], "Orientation": [0, "PI", 0]},
+            {"Voxel": [9, 34, 3], "Orientation": [0, "PI", 0]}
+        ],
+        
+        "Hardpoints": [        
+            {"Voxel": [3, 6, 4], "Orientation": [0, 0, 0], "MaxAngle": 0.6 },
+            {"Voxel": [20, 6, 4], "Orientation": [0, 0, 0], "MaxAngle": 0.6 } 
+        ]
+    }
+}

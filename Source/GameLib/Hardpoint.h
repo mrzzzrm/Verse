@@ -12,7 +12,7 @@ class Weapon;
 class Hardpoint final
 {
 public:
-    Hardpoint(const Pose3D & pose, float maxAngle);
+    Hardpoint(const glm::uvec3 & voxel, const Pose3D & pose, float maxAngle);
 
     void setFireRequest(bool active, const glm::vec3 & target);
 
@@ -26,6 +26,7 @@ public:
     void update(float seconds, const EquipmentUpdateContext & context);
 
 private:
+    glm::uvec3              m_voxel;
     Pose3D                  m_pose;
     float                   m_maxAngle = glm::half_pi<float>();
     Pose3D                  m_referencePose;

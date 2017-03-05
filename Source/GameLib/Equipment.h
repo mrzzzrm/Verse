@@ -21,6 +21,7 @@ class Pose3D;
 
 class Hardpoint;
 class VfxManager;
+class Weapon;
 
 struct EquipmentUpdateContext
 {
@@ -35,9 +36,9 @@ class Equipment final:
 public:
     Equipment(VfxManager & vfxManager);
 
-    const std::vector<std::shared_ptr<Hardpoint>> & hardpoints() const;
     void addHardpoint(std::shared_ptr<Hardpoint> hardpoint);
     void setFireRequest(bool active, const glm::vec3 & target);
+    void setWeapon(size_t slot, std::shared_ptr<Weapon> weapon);
 
     size_t numEngineSlots() const;
     void addEngineSlot(std::shared_ptr<EngineSlot> engineSlot);

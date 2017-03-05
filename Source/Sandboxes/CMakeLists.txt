@@ -14,5 +14,8 @@ target_link_libraries(VfxSandbox SandboxCommon)
 add_executable(NpcSandbox NpcSandbox.cpp)
 target_link_libraries(NpcSandbox SandboxCommon)
 
+add_executable(ResourceSandbox ResourceSandbox.cpp)
+target_link_libraries(ResourceSandbox SandboxCommon)
+
 add_executable(ShootingRangeSandbox ShootingRangeSandbox.cpp)
 target_link_libraries(ShootingRangeSandbox SandboxCommon)

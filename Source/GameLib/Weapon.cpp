@@ -31,7 +31,7 @@ void Weapon::update(float seconds, const EquipmentUpdateContext & context, const
 {
     if (!m_fireRequestActive)
     {
-        m_pose = context.targetPose;
+        m_pose = weaponPose;
         m_cooldown = std::max(0.0f, m_cooldown - seconds);
         return;
     }
@@ -45,9 +45,9 @@ void Weapon::update(float seconds, const EquipmentUpdateContext & context, const
         seconds -= m_cooldown;
         timeAccumulator += m_cooldown;
 
-        auto intermediatePose = m_pose.interpolated(context.targetPose, timeAccumulator / (seconds + timeAccumulator));
+        auto intermediatePose = m_pose.interpolated(weaponPose, timeAccumulator / (seconds + timeAccumulator));
 
-        const auto origin = intermediatePose.poseLocalToWorld(weaponPose).position();
+        const auto origin = intermediatePose.position();
 
         auto success = false;
         auto trajectory = CalculateTrajectory(origin, context.linearVelocity, 400.0f, m_fireRequestTarget, {}, success);
@@ -81,6 +81,6 @@ void Weapon::update(float seconds, const EquipmentUpdateContext & context, const
         }
     }
 
-    m_pose = context.targetPose;
+    m_pose = weaponPose;
     m_cooldown -= seconds;
 }

@@ -7,11 +7,6 @@ Equipment::Equipment(VfxManager & vfxManager):
     m_vfxManager(vfxManager)
 {}
 
-const std::vector<std::shared_ptr<Hardpoint>> & Equipment::hardpoints() const
-{
-    return m_hardpoints;
-}
-
 void Equipment::addHardpoint(std::shared_ptr<Hardpoint> hardpoint)
 {
     m_hardpoints.emplace_back(hardpoint);
@@ -20,6 +15,12 @@ void Equipment::addHardpoint(std::shared_ptr<Hardpoint> hardpoint)
 void Equipment::setFireRequest(bool active, const glm::vec3 & target)
 {
     for (auto & hardpoint : m_hardpoints) hardpoint->setFireRequest(active, target);
+}
+
+void Equipment::setWeapon(size_t slot, std::shared_ptr<Weapon> weapon)
+{
+    Assert(slot < m_hardpoints.size(), "");
+    m_hardpoints[slot]->setWeapon(weapon);
 }
 
 size_t Equipment::numEngineSlots() const
