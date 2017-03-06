@@ -36,11 +36,12 @@ public:
 
     const VoxelObjectID & id() const;
     const Pose3D & pose() const;
-    VoxelObjectVoxelData & data();
     const VoxelObjectVoxelData & data() const;
 
     void setId(VoxelObjectID id);
     void setPose(const Pose3D & pose);
+
+    void setVoxelHealthPoints(const glm::uvec3 & voxel, float healthPoints);
 
     void addVoxels(const std::vector<Voxel> & voxels);
     void removeVoxels(const std::vector<glm::uvec3> & voxels);

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Deliberation/ECS/System.h>
+
 #include "GameLib.h"
 #include "HailstormBullet.h"
 #include "HailstormPhysicsWorld.h"
@@ -10,10 +12,12 @@ namespace deliberation
 class PhysicsWorld;
 }
 
-class HailstormManager final
+class HailstormManager final:
+    public System<HailstormManager>
 {
 public:
     HailstormManager(
+        World & world,
         Context & context,
         const Camera3D & camera,
         PhysicsWorld & physicsWorld,
@@ -23,9 +27,9 @@ public:
 
     void addBullet(HailstormBullet bullet);
 
-    void update(float seconds);
-
-    void render();
+protected:
+    void onUpdate(float seconds) override;
+    void onRender() override;
 
 private:
     VfxManager              m_vfxManager;

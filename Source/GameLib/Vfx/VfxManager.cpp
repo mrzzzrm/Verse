@@ -92,11 +92,23 @@ void VfxManager::removeEmitterInstance(std::shared_ptr<EmitterInstance> emitterI
 
 void VfxManager::update(float seconds)
 {
-    for (auto & emitterInstance : m_emitterInstances)
+    for (size_t e = 0; e < m_emitterInstances.capacity(); e++)
     {
+        if (!m_emitterInstances.contains(e)) continue;
+
+        auto & emitterInstance = m_emitterInstances[e];
+
         emitterInstance->update(seconds);
         emitterInstance->setBasePose(emitterInstance->targetPose());
+
+        if (emitterInstance->isDead()) m_deadEmitterInstances.emplace_back(e);
     }
+
+    for (const auto & index : m_deadEmitterInstances)
+    {
+        m_emitterInstances.erase(index);
+    }
+    m_deadEmitterInstances.clear();
 }
 
 void VfxManager::render()

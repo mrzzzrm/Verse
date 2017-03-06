@@ -60,6 +60,8 @@ add_library(${target}
     Vfx/VfxRenderBatch.h
     Vfx/VfxRenderer.cpp
     Vfx/VfxRenderer.h
+    Vfx/VfxSystem.cpp
+    Vfx/VfxSystem.h
 
     Voxel/VoxelCluster.cpp
     Voxel/VoxelCluster.h

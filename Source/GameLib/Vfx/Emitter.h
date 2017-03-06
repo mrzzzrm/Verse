@@ -34,6 +34,8 @@ public:
             std::shared_ptr<EmitterSizeStrategy> size,
             const Pose3D & pose = Pose3D());
 
+    const std::shared_ptr<EmitterIntensityStrategy> & intensity() const;
+
     Pose3D & pose();
     void setPose(const Pose3D & pose);
 

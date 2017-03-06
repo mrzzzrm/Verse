@@ -20,7 +20,7 @@ VoxelClusterSplitSystem::VoxelClusterSplitSystem(World & world):
 
 }
 
-void VoxelClusterSplitSystem::onUpdate(Entity & entity, float seconds)
+void VoxelClusterSplitSystem::onEntityUpdate(Entity & entity, float seconds)
 {
     auto & originalVoxelObject = entity.component<VoxelObject>();
     auto & originalBody = entity.component<RigidBodyComponent>().value();
@@ -30,8 +30,10 @@ void VoxelClusterSplitSystem::onUpdate(Entity & entity, float seconds)
 
     if (splits.size() <= 1) return;
 
-    for (size_t s = 1; s < splits.size(); s++)
+    for (size_t s = 0; s < splits.size(); s++)
     {
+        if (s == splitDetector.splitContainingCrucialVoxel()) continue;
+
         const auto & split = splits[s];
 
         std::vector<Voxel> splitVoxels;

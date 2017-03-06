@@ -9,6 +9,7 @@ EmitterInstance::EmitterInstance(std::shared_ptr<Emitter> emitter):
 {
     std::function<void(EmitterInstanceContext & context, Emitter & emitter)> buildContextTree =
         [&](EmitterInstanceContext & context, Emitter & emitter) {
+            m_numActiveEmitters++;
             context.children.resize(emitter.children().size());
             for (size_t c = 0; c < emitter.children().size(); c++)
             {
@@ -17,6 +18,8 @@ EmitterInstance::EmitterInstance(std::shared_ptr<Emitter> emitter):
         };
 
     buildContextTree(m_rootContext, *m_emitter);
+
+    m_intensityContext = emitter->intensity()->createContext();
 }
 
 EmitterInstance::~EmitterInstance() = default;
@@ -34,6 +37,16 @@ const Pose3D & EmitterInstance::targetPose() const
 const EmitterInstanceId & EmitterInstance::id() const
 {
     return m_id;
+}
+
+bool EmitterInstance::isDead() const
+{
+    return m_numActiveEmitters == 0;
+}
+
+const std::shared_ptr<EmitterIntensityContext> & EmitterInstance::intensityContext() const
+{
+    return m_intensityContext;
 }
 
 void EmitterInstance::setBasePose(const Pose3D & pose)
@@ -54,4 +67,10 @@ void EmitterInstance::setId(const EmitterInstanceId & id)
 void EmitterInstance::update(float seconds)
 {
     m_emitter->updateInstance(*this, m_rootContext, seconds);
+}
+
+void EmitterInstance::onEmitterDied()
+{
+    Assert(m_numActiveEmitters > 0, "");
+    m_numActiveEmitters--;
 }

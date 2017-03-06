@@ -22,7 +22,7 @@ public:
 protected:
     void onEntityAdded(Entity & entity) override;
     void onEntityRemoved(Entity & entity) override;
-    void onUpdate(Entity & entity, float seconds) override;
+    void onEntityUpdate(Entity & entity, float seconds) override;
 
 private:
     VoxelWorld &    m_voxelWorld;

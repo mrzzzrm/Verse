@@ -1,5 +1,6 @@
 #pragma once
 
+#include <experimental/optional>
 #include <stack>
 #include <vector>
 
@@ -21,6 +22,10 @@ public:
 
     const std::vector<VoxelClusterSplit> splits() const;
 
+    size_t splitContainingCrucialVoxel() const;
+
+    void setCrucialVoxel(const glm::uvec3 & crucialVoxel);
+
     void addVoxels(const std::vector<Voxel> & voxels);
     void removeVoxels(const std::vector<glm::uvec3> & voxels);
 
@@ -35,6 +40,9 @@ private:
     VoxelCluster<u32>               m_cluster;
     std::vector<VoxelClusterSplit>  m_splits;
     std::stack<glm::uvec3>          m_floodStack;
+    size_t                          m_splitContainingCrucialVoxel = 0;
+    std::experimental::optional<glm::uvec3>
+                                    m_crucialVoxel;
 };
 
 

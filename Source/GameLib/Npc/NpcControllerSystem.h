@@ -28,7 +28,7 @@ protected:
         npcController.setBody(body);
     }
 
-    void onPrePhysicsUpdate(Entity & entity, float seconds) override
+    void onEntityPrePhysicsUpdate(Entity & entity, float seconds) override
     {
         auto body = entity.component<RigidBodyComponent>().value();
         auto & equipment = entity.component<Equipment>();

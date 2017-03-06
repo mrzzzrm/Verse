@@ -5,11 +5,13 @@
 #include <Deliberation/Core/Math/Pose3D.h>
 
 #include "GameLib.h"
+#include "ItemSlot.h"
 
 class EquipmentUpdateContext;
 class Weapon;
 
-class Hardpoint final
+class Hardpoint final:
+    public ItemSlot
 {
 public:
     Hardpoint(const glm::uvec3 & voxel, const Pose3D & pose, float maxAngle);
@@ -25,9 +27,10 @@ public:
 
     void update(float seconds, const EquipmentUpdateContext & context);
 
+protected:
+    void onDisabled() override;
+
 private:
-    glm::uvec3              m_voxel;
-    Pose3D                  m_pose;
     float                   m_maxAngle = glm::half_pi<float>();
     Pose3D                  m_referencePose;
     std::shared_ptr<Weapon> m_weapon;

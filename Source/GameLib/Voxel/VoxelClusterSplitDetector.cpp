@@ -11,6 +11,16 @@ const std::vector<VoxelClusterSplit> VoxelClusterSplitDetector::splits() const
     return m_splits;
 }
 
+size_t VoxelClusterSplitDetector::splitContainingCrucialVoxel() const
+{
+    return m_splitContainingCrucialVoxel;
+}
+
+void VoxelClusterSplitDetector::setCrucialVoxel(const glm::uvec3 & crucialVoxel)
+{
+    m_crucialVoxel = crucialVoxel;
+}
+
 void VoxelClusterSplitDetector::addVoxels(const std::vector<Voxel> & voxels)
 {
     for (const auto & voxel : voxels)
@@ -48,6 +58,14 @@ void VoxelClusterSplitDetector::performSplitDetection()
                 if (value == VoxelCluster<u32>::EMPTY_VOXEL) continue;
                 if (value < m_currentFloodBeginId) flood({x, y, z});
             }
+        }
+    }
+
+    if (m_crucialVoxel)
+    {
+        if (m_cluster.test(*m_crucialVoxel))
+        {
+            m_splitContainingCrucialVoxel = m_cluster.get(*m_crucialVoxel) - m_currentFloodBeginId;
         }
     }
 }

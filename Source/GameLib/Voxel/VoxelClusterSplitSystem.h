@@ -11,5 +11,5 @@ public:
     VoxelClusterSplitSystem(World & world);
 
 protected:
-    virtual void onUpdate(Entity & entity, float seconds);
+    virtual void onEntityUpdate(Entity & entity, float seconds);
 };

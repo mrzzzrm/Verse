@@ -1,14 +1,27 @@
 #pragma once
 
+#include <memory>
 #include <random>
 
 #include "GameLib.h"
 
+class EmitterInstance;
+
+class EmitterIntensityContext
+{
+public:
+    virtual ~EmitterIntensityContext() = default;
+};
+
 class EmitterIntensityStrategy
 {
 public:
+    static constexpr float NO_FURTHER_EMISSIONS = std::numeric_limits<float>::max();
+
+public:
     virtual ~EmitterIntensityStrategy() = default;
-    virtual float generateInterval() const = 0;
+    virtual float generateInterval(EmitterInstance & instance) const = 0;
+    virtual std::shared_ptr<EmitterIntensityContext> createContext() const;
 };
 
 class EmitterNoisyIntensity:
@@ -17,7 +30,7 @@ class EmitterNoisyIntensity:
 public:
     EmitterNoisyIntensity(float frequency, float standardDeviation);
 
-    float generateInterval() const override;
+    float generateInterval(EmitterInstance & instance) const override;
 
 private:
     mutable std::default_random_engine  m_engine;
@@ -29,24 +42,20 @@ class EmitterBurstIntensity:
     public EmitterIntensityStrategy
 {
 public:
+    struct Context:
+        public EmitterIntensityContext
+    {
+        u32 countdown = 0;
+    };
+
+public:
     EmitterBurstIntensity(float mean, float standardDeviation);
 
-    float generateInterval() const override;
+    float generateInterval(EmitterInstance & instance) const override;
+
+    std::shared_ptr<EmitterIntensityContext> createContext() const override;
 
 private:
-    mutable u32 m_countdown = 0;
-};
-
-class EmitterFalloffIntensity:
-    public EmitterIntensityStrategy
-{
-public:
-    EmitterFalloffIntensity(float intercept, float standardDeviation);
-
-    float generateInterval() const override;
-
-private:
-    mutable std::default_random_engine  m_engine;
-    mutable std::normal_distribution<float>
-                                m_dist;
+    mutable std::default_random_engine      m_engine;
+    mutable std::normal_distribution<float> m_dist;
 };

@@ -6,6 +6,8 @@
 
 #include "GameLib.h"
 
+class Equipment;
+
 class ItemSlot
 {
 public:
@@ -14,8 +16,19 @@ public:
 
     const glm::uvec3 & voxel() const;
     const Pose3D & pose() const;
+    size_t index() const;
+    bool enabled() const;
+
+    void setIndex(size_t index);
+    void setEnabled(bool enabled);
 
 protected:
-    glm::uvec3              m_voxel;
-    Pose3D                  m_pose;
+    virtual void onEnabled();
+    virtual void onDisabled();
+
+protected:
+    glm::uvec3  m_voxel;
+    Pose3D      m_pose;
+    size_t      m_index = 0;
+    bool        m_enabled = true;
 };

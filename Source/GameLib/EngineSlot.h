@@ -17,8 +17,12 @@ public:
 
     void setTargetPose(const Pose3D & pose);
 
-    void disable();
+    void setVfxManager(VfxManager & vfxManager);
+
+private:
+    void onDisabled() override;
 
 private:
     std::shared_ptr<Engine> m_engine;
+    VfxManager *            m_vfxManager = nullptr;
 };

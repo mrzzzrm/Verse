@@ -158,6 +158,7 @@ public:
             {
                 m_voxelData = std::make_shared<VoxelObjectVoxelData>(*m_voxelWorld, models[0].size);
                 m_voxelData->addVoxels(models[0].voxels);
+                m_voxelData->setCrucialVoxel({11, 12, 6});
             }
         }
 

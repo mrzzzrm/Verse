@@ -10,6 +10,7 @@ Equipment::Equipment(VfxManager & vfxManager):
 void Equipment::addHardpoint(std::shared_ptr<Hardpoint> hardpoint)
 {
     m_hardpoints.emplace_back(hardpoint);
+    m_itemSlotByVoxel.emplace(hardpoint->voxel(), hardpoint);
 }
 
 void Equipment::setFireRequest(bool active, const glm::vec3 & target)
@@ -30,8 +31,9 @@ size_t Equipment::numEngineSlots() const
 
 void Equipment::addEngineSlot(std::shared_ptr<EngineSlot> engineSlot)
 {
+    engineSlot->setVfxManager(m_vfxManager);
     m_engineSlots.emplace_back(engineSlot);
-    m_enabledEngineSlots.emplace(engineSlot->voxel(), engineSlot);
+    m_itemSlotByVoxel.emplace(engineSlot->voxel(), engineSlot);
 }
 
 void Equipment::setEngine(size_t slot, std::shared_ptr<Engine> engine)
@@ -61,20 +63,11 @@ void Equipment::update(float seconds, const EquipmentUpdateContext & context)
 
 void Equipment::receive(const VoxelObjectModification & modification)
 {
-
-    for (const auto & voxel : modification.additions)
-    {
-
-    }
-
     for (const auto & voxel : modification.removals)
     {
-        auto it = m_enabledEngineSlots.find(voxel);
-        if (it == m_enabledEngineSlots.end()) continue;
+        auto it = m_itemSlotByVoxel.find(voxel);
+        if (it == m_itemSlotByVoxel.end()) continue;
 
-        if (it->second->engine()) m_vfxManager.removeEmitterInstance(it->second->engine()->emitterInstance());
-
-        m_disabledEngineSlots.emplace(*it);
-        m_enabledEngineSlots.erase(it);
+        it->second->setEnabled(false);
     }
 }

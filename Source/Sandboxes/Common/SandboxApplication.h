@@ -78,7 +78,7 @@ protected:
                             m_groundPlane;
     World                   m_world;
 
-    std::experimental::optional<HailstormManager>
+    std::shared_ptr<HailstormManager>
                             m_hailstormManager;
     std::experimental::optional<VfxManager>
                             m_vfxManager;

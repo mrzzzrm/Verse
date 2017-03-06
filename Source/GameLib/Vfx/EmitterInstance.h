@@ -5,11 +5,13 @@
 #include <Deliberation/Core/Math/Pose3D.h>
 
 #include "GameLib.h"
+#include "EmitterIntensityStrategy.h"
 
 class Emitter;
 
 struct EmitterInstanceContext
 {
+    bool                                dead = false;
     float                               countdown = 0.0f;
     std::vector<EmitterInstanceContext> children;
 };
@@ -28,12 +30,17 @@ public:
     const Pose3D & basePose() const;
     const Pose3D & targetPose() const;
     const EmitterInstanceId & id() const;
+    bool isDead() const;
+
+    const std::shared_ptr<EmitterIntensityContext> & intensityContext() const;
 
     void setBasePose(const Pose3D & pose);
     void setTargetPose(const Pose3D & pose);
     void setId(const EmitterInstanceId & id);
 
     void update(float seconds);
+
+    void onEmitterDied();
 
 private:
     friend class Emitter;
@@ -44,4 +51,8 @@ private:
     Pose3D                      m_targetPose;
     EmitterInstanceContext      m_rootContext;
     EmitterInstanceId           m_id;
+    size_t                      m_numActiveEmitters = 0;
+
+    std::shared_ptr<EmitterIntensityContext>
+                                m_intensityContext;
 };

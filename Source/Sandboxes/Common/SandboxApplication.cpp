@@ -2,6 +2,8 @@
 
 #include "VoxelClusterSplitSystem.h"
 
+#include "VfxSystem.h"
+
 SandboxApplication::SandboxApplication(const std::string & name):
     Application(name)
 {
@@ -31,14 +33,16 @@ void SandboxApplication::onStartup()
     m_groundPlane->setQuadSize(100.0f);
     m_groundPlane->setRadius(750.0f);
 
+    m_vfxManager.emplace(context(), m_camera, *m_voxelWorld);
+
     m_world.addSystem<PhysicsWorldSystem>(m_physicsWorld);
     m_world.addSystem<VoxelObjectSystem>(m_physicsWorld, *m_voxelWorld);
     m_world.addSystem<NpcControllerSystem>();
+    m_hailstormManager = m_world.addSystem<HailstormManager>(context(), m_camera, m_physicsWorld, *m_voxelWorld);
     m_world.addSystem<VoxelClusterSplitSystem>();
+    m_world.addSystem<VfxSystem>(*m_vfxManager);
     //     m_world.addSystem<NpcDebugRendererSystem>(context(), m_camera);
 
-    m_hailstormManager.emplace(context(), m_camera, m_physicsWorld, *m_voxelWorld);
-    m_vfxManager.emplace(context(), m_camera, *m_voxelWorld);
 
     m_debugGeometryManager.emplace(context());
 

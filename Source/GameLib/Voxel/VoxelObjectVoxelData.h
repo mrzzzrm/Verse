@@ -1,5 +1,7 @@
 #pragma once
 
+#include <experimental/optional>
+
 #include <glm/glm.hpp>
 
 #include "GameLib.h"
@@ -23,6 +25,8 @@ public:
     const std::shared_ptr<VoxelShape> & shape() const;
     const VoxelHull & hull() const;
     const VoxelClusterSplitDetector & splitDetector() const;
+
+    void setCrucialVoxel(const glm::uvec3 & voxel);
 
     bool hasVoxel(const glm::ivec3 & voxel) const;
 

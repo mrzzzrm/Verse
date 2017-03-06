@@ -33,7 +33,7 @@ void VoxelObjectSystem::onEntityRemoved(Entity & entity)
     //m_voxelWorld.removeVoxelObject(voxelObject);
 }
 
-void VoxelObjectSystem::onUpdate(Entity & entity, float seconds)
+void VoxelObjectSystem::onEntityUpdate(Entity & entity, float seconds)
 {
     if (entity.hasComponent<RigidBodyComponent>())
     {

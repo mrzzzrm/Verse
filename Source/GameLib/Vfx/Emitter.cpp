@@ -25,6 +25,11 @@ Emitter::Emitter(VfxManager & vfxManager,
 {
 }
 
+const std::shared_ptr<EmitterIntensityStrategy> & Emitter::intensity() const
+{
+    return m_intensity;
+}
+
 Pose3D & Emitter::pose()
 {
     return m_pose;
@@ -47,11 +52,16 @@ void Emitter::addChild(std::shared_ptr<Emitter> child)
 
 void Emitter::updateInstance(EmitterInstance & emitterInstance, EmitterInstanceContext & context, float seconds)
 {
+    for (size_t c = 0; c < m_children.size(); c++)
+    {
+        m_children[c]->updateInstance(emitterInstance, context.children[c], seconds);
+    }
+
     auto timeAccumulator = 0.0f;
 
     Pose3D intermediatePose;
 
-    while (true)
+    while (!context.dead)
     {
         const auto timeStep = std::min(seconds - timeAccumulator, context.countdown);
         timeAccumulator += timeStep;
@@ -88,11 +98,15 @@ void Emitter::updateInstance(EmitterInstance & emitterInstance, EmitterInstanceC
 
         m_vfxManager.addParticle(particle);
 
-        context.countdown += m_intensity->generateInterval();
-    }
-
-    for (size_t c = 0; c < m_children.size(); c++)
-    {
-        m_children[c]->updateInstance(emitterInstance, context.children[c], seconds);
+        const auto nextInterval = m_intensity->generateInterval(emitterInstance);
+        if (nextInterval == EmitterIntensityStrategy::NO_FURTHER_EMISSIONS)
+        {
+            emitterInstance.onEmitterDied();
+            context.dead = true;
+        }
+        else
+        {
+            context.countdown += nextInterval;
+        }
     }
 }

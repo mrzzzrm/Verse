@@ -1,5 +1,8 @@
 #include "EngineSlot.h"
 
+#include "Equipment.h"
+#include "VfxManager.h"
+
 EngineSlot::EngineSlot(const glm::uvec3 & voxel, const Pose3D & pose):
     ItemSlot(voxel, pose)
 {}
@@ -23,7 +26,14 @@ void EngineSlot::setTargetPose(const Pose3D & pose)
     }
 }
 
-void EngineSlot::disable()
+void EngineSlot::onDisabled()
 {
+    if (!m_engine) return;
 
+    m_vfxManager->removeEmitterInstance(m_engine->emitterInstance());
+}
+
+void EngineSlot::setVfxManager(VfxManager & vfxManager)
+{
+    m_vfxManager = &vfxManager;
 }

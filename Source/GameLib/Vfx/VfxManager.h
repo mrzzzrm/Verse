@@ -39,4 +39,6 @@ private:
 
     SparseVector<std::shared_ptr<EmitterInstance>>
                                     m_emitterInstances;
+
+    std::vector<size_t>             m_deadEmitterInstances;
 };

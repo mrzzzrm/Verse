@@ -53,8 +53,6 @@ private:
     std::vector<std::shared_ptr<Hardpoint>>     m_hardpoints;
     std::vector<std::shared_ptr<EngineSlot>>    m_engineSlots;
 
-    std::unordered_map<glm::uvec3, std::shared_ptr<EngineSlot>>
-                                                m_enabledEngineSlots;
-    std::unordered_map<glm::uvec3, std::shared_ptr<EngineSlot>>
-                                                m_disabledEngineSlots;
+    std::unordered_map<glm::uvec3, std::shared_ptr<ItemSlot>>
+                                                m_itemSlotByVoxel;
 };

@@ -54,6 +54,11 @@ const VoxelClusterSplitDetector & VoxelObjectVoxelData::splitDetector() const
     return m_splitDetector;
 }
 
+void VoxelObjectVoxelData::setCrucialVoxel(const glm::uvec3 & voxel)
+{
+    m_splitDetector.setCrucialVoxel(voxel);
+}
+
 bool VoxelObjectVoxelData::hasVoxel(const glm::ivec3 & voxel) const
 {
     return m_colors.contains(voxel) && m_colors.test(voxel);

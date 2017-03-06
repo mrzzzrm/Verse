@@ -6,6 +6,8 @@
 
 #include "HailstormBullet.h"
 #include "VoxelImpactSystem.h"
+#include "VoxelObjectBulletHit.h"
+#include "VoxelObjectModification.h"
 
 namespace deliberation
 {
@@ -24,6 +26,8 @@ public:
      * @return
      */
     const std::vector<HailstormBulletId> & destroyedBullets() const;
+    const std::vector<VoxelObjectModification> & voxelObjectModifications() const;
+    const std::vector<VoxelObjectBulletHit> & voxelObjectBulletHits() const;
 
     void addBullet(const HailstormBullet & bullet);
 
@@ -37,4 +41,9 @@ private:
 
     SparseVector<HailstormBullet>   m_bullets;
     std::vector<HailstormBulletId>  m_destroyedBullets;
+
+    std::vector<VoxelObjectModification>
+                                    m_voxelObjectModifications;
+    std::vector<VoxelObjectBulletHit>
+                                    m_voxelObjectBulletHits;
 };
