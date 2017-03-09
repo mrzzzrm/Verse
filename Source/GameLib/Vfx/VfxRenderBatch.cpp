@@ -95,7 +95,7 @@ VfxRenderBatch::VfxRenderBatch(VfxRenderer & renderer, const Mesh2 & mesh, VfxPa
     m_draw.addInstanceBuffer(m_instanceBuffer, (u32)mesh.indices().count());
     m_draw.setUniformBuffer("Globals", m_renderer.globalsBuffer());
     m_draw.state().setBlendState({gl::GL_FUNC_ADD, gl::GL_SRC_ALPHA, gl::GL_ONE_MINUS_SRC_ALPHA});
-    m_draw.state().setDepthState({true, false});
+    m_draw.state().setDepthState(DepthState::disabledW());
 }
 
 size_t VfxRenderBatch::addInstance(const VfxParticle & particle)
