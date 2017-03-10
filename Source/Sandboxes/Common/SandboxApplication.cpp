@@ -1,5 +1,7 @@
 #include "SandboxApplication.h"
 
+#include <Deliberation/Draw/TextureLoader.h>
+
 #include "VoxelClusterSplitSystem.h"
 
 #include "VfxSystem.h"
@@ -18,13 +20,30 @@ void SandboxApplication::onStartup()
     m_physicsWorld.narrowphase().contactDispatcher().
         registerContactType<VoxelClusterContact>((int)::CollisionShapeType::VoxelCluster);
 
-    m_voxelWorld.reset(context(), m_physicsWorld, m_camera);
-
     m_camera.setPosition({0.0f, 200.0f, 300.0f});
     m_camera.setOrientation(glm::quat({-1.0f, 0.0f, 0.0f}));
     m_camera.setAspectRatio((float)context().backbuffer().width() / context().backbuffer().height());
 
     m_navigator.reset(m_camera, input(), 150.0f);
+
+    auto skyboxPaths = std::array<std::string, 6> {
+        deliberation::dataPath("Data/Skybox/Cloudy/Right.png"),
+        deliberation::dataPath("Data/Skybox/Cloudy/Left.png"),
+        deliberation::dataPath("Data/Skybox/Cloudy/Top.png"),
+        deliberation::dataPath("Data/Skybox/Cloudy/Bottom.png"),
+        deliberation::dataPath("Data/Skybox/Cloudy/Back.png"),
+        deliberation::dataPath("Data/Skybox/Cloudy/Front.png")
+    };
+
+    auto faceTexture = context().createTexture(
+        TextureLoader(deliberation::dataPath("Data/Skybox/Debug/Right.png")).load());
+
+    auto skyboxCubemapBinary = TextureLoader(skyboxPaths).load();
+    auto skyboxCubemap = context().createTexture(skyboxCubemapBinary);
+
+    m_skyboxRenderer = std::make_shared<SkyboxRenderer>(context(), m_camera, skyboxCubemap);
+
+    m_voxelWorld.reset(context(), m_physicsWorld, m_camera, skyboxCubemap);
 
     m_clear = context().createClear();
 
@@ -41,10 +60,10 @@ void SandboxApplication::onStartup()
     m_hailstormManager = m_world.addSystem<HailstormManager>(context(), m_camera, m_physicsWorld, *m_voxelWorld);
     m_world.addSystem<VoxelClusterSplitSystem>();
     m_world.addSystem<VfxSystem>(*m_vfxManager);
-    //     m_world.addSystem<NpcDebugRendererSystem>(context(), m_camera);
-
+    //m_world.addSystem<NpcDebugRendererSystem>(context(), m_camera);
 
     m_debugGeometryManager.emplace(context());
+
 
     onSandboxStartup();
 }
@@ -76,8 +95,10 @@ void SandboxApplication::onFrame(float seconds)
     m_world.render();
     m_groundPlane->render();
     m_voxelWorld->render();
-    m_hailstormManager->render();
-    m_vfxManager->render();
+    m_skyboxRenderer->render();
 
     onSandboxRender();
+
+    m_hailstormManager->render();
+    m_vfxManager->render();
 }

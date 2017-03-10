@@ -49,6 +49,7 @@ private:
     mutable Draw        m_draw;
     mutable Uniform     m_transformUniform;
     mutable Uniform     m_viewProjectionUniform;
+    mutable Uniform     m_cameraPositionUniform;
     size_t              m_numVisibleVoxels = 0;
     Optional<glm::vec3> m_colorOverride;
 };

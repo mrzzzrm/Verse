@@ -126,6 +126,9 @@ void VoxelRenderChunk::schedule(const Pose3D & pose) const
             m_draw.addVertices(std::move(vertices));
             //     m_draw.state().setCullState(CullState::disabled());
 
+            m_draw.sampler("Environment").setTexture(m_voxelWorld.envMap());
+
+            m_cameraPositionUniform = m_draw.uniform("CameraPosition");
             m_transformUniform = m_draw.uniform("Transform");
             m_viewProjectionUniform = m_draw.uniform("ViewProjection");
 
@@ -139,5 +142,6 @@ void VoxelRenderChunk::schedule(const Pose3D & pose) const
 
     m_viewProjectionUniform.set(m_voxelWorld.camera().viewProjection());
     m_transformUniform.set(pose.matrix());
+    m_cameraPositionUniform.set(m_voxelWorld.camera().position());
     m_draw.schedule();
 }

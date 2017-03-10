@@ -26,7 +26,10 @@
 #include <Deliberation/Scene/Debug/DebugGeometryManager.h>
 #include <Deliberation/Scene/Debug/DebugGeometryRenderer.h>
 #include <Deliberation/Scene/Debug/DebugGroundPlaneRenderer.h>
+#include <Deliberation/Scene/SkyboxRenderer.h>
+
 #include <Systems/VoxelObjectSystem.h>
+
 #include <Npc/NpcDebugRendererSystem.h>
 
 #include "AimHelper.h"
@@ -85,4 +88,7 @@ protected:
 
     std::experimental::optional<DebugGeometryManager>
                             m_debugGeometryManager;
+
+    std::shared_ptr<SkyboxRenderer>
+                            m_skyboxRenderer;
 };

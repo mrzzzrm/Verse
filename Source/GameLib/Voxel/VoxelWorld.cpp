@@ -6,13 +6,14 @@
 
 #include <Deliberation/Physics/PhysicsWorld.h>
 
-VoxelWorld::VoxelWorld(Context & context, PhysicsWorld & physicsWorld, const Camera3D & camera):
+VoxelWorld::VoxelWorld(Context & context, PhysicsWorld & physicsWorld, const Camera3D & camera, const Texture & envMap):
     m_context(context),
     m_physicsWorld(physicsWorld),
-    m_camera(camera)
+    m_camera(camera),
+    m_envMap(envMap)
 {
-    m_program = m_context.createProgram({deliberation::dataPath("Data/Shaders/VoxelExample.vert"),
-                                         deliberation::dataPath("Data/Shaders/VoxelExample.frag")});
+    m_program = m_context.createProgram({"Data/Shaders/Voxel.vert",
+                                         "Data/Shaders/Voxel.frag"});
 }
 
 Context & VoxelWorld::context() const
@@ -33,6 +34,11 @@ const VoxelClusterMarchingCubesTriangulation & VoxelWorld::marchingCubesTriangul
 const Program & VoxelWorld::program() const
 {
     return m_program;
+}
+
+const Texture & VoxelWorld::envMap() const
+{
+    return m_envMap;
 }
 
 void VoxelWorld::addVoxelObject(std::shared_ptr<VoxelObject> voxelObject)

@@ -26,12 +26,13 @@ class VoxelObjectID;
 class VoxelWorld final
 {
 public:
-    VoxelWorld(Context & context, PhysicsWorld & physicsWorld, const Camera3D & camera);
+    VoxelWorld(Context & context, PhysicsWorld & physicsWorld, const Camera3D & camera, const Texture & envMap);
 
     Context & context() const;
     const Camera3D & camera() const;
     const VoxelClusterMarchingCubesTriangulation & marchingCubesTriangulation() const;
     const Program & program() const;
+    const Texture & envMap() const;
 
     void addVoxelObject(std::shared_ptr<VoxelObject> voxelObject);
 
@@ -41,6 +42,7 @@ private:
     Context &           m_context;
     PhysicsWorld &      m_physicsWorld;
     const Camera3D &    m_camera;
+    Texture             m_envMap;
     VoxelClusterMarchingCubesTriangulation
                         m_marchingCubesTriangulation;
     Program             m_program;

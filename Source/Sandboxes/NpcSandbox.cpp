@@ -11,6 +11,8 @@
 #include <Deliberation/Core/Math/FloatUtils.h>
 #include <Deliberation/Core/Math/Random.h>
 
+#include <Deliberation/Draw/TextureLoader.h>
+
 #include <Deliberation/ECS/Entity.h>
 #include <Deliberation/ECS/Systems/PhysicsWorldSystem.h>
 #include <Deliberation/ECS/World.h>
@@ -193,6 +195,7 @@ public:
         m_hardpoint->setWeapon(std::make_shared<Weapon>(weaponConfig,
                                                         *m_hailstormManager,
                                                         INVALID_VOXEL_OBJECT_WORLD_UID));
+
     }
 
     void onSandboxUpdate(float seconds) override
@@ -283,7 +286,6 @@ private:
 
     VfxMeshId                   m_bulletMeshID = -1;
     std::shared_ptr<Emitter>    m_emitterAfterburner;
-
 };
 
 int main(int argc, char *argv[])
