@@ -32,12 +32,12 @@ void PlayerInput::update(float seconds)
 
     if (m_input.keyDown(InputBase::Key_D))
     {
-        linearThrust += glm::vec3(3.0f, 0.0f, 0.0f);
+        linearThrust += glm::vec3(1.0f, 0.0f, 0.0f);
     }
 
     if (m_input.keyDown(InputBase::Key_A))
     {
-        linearThrust += glm::vec3(-3.0f, 0.0f, 0.0f);
+        linearThrust += glm::vec3(-1.0f, 0.0f, 0.0f);
     }
 
     m_flightControl.setLinearThrust(linearThrust);

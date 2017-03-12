@@ -6,11 +6,12 @@
 
 #include <Deliberation/Physics/PhysicsWorld.h>
 
-VoxelWorld::VoxelWorld(Context & context, PhysicsWorld & physicsWorld, const Camera3D & camera, const Texture & envMap):
+VoxelWorld::VoxelWorld(World & world, Context & context, PhysicsWorld & physicsWorld, const Camera3D & camera, const Texture & envMap):
     m_context(context),
     m_physicsWorld(physicsWorld),
     m_camera(camera),
-    m_envMap(envMap)
+    m_envMap(envMap),
+    Base(world)
 {
     m_program = m_context.createProgram({"Data/Shaders/Voxel.vert",
                                          "Data/Shaders/Voxel.frag"});
@@ -54,10 +55,7 @@ void VoxelWorld::addVoxelObject(std::shared_ptr<VoxelObject> voxelObject)
     m_objectsByUID[id.worldUID] = voxelObject;
 }
 
-void VoxelWorld::render()
+void VoxelWorld::onRender()
 {
-    for (auto & object : m_objects)
-    {
-        object->schedule();
-    }
+    for (auto & object : m_objects) object->schedule();
 }

@@ -6,6 +6,9 @@
 #include <glm/glm.hpp>
 
 #include <Deliberation/Draw/Program.h>
+#include <Deliberation/Draw/Texture.h>
+
+#include <Deliberation/ECS/System.h>
 
 #include "VoxelClusterMarchingCubesTriangulation.h"
 #include "VoxelDefines.h"
@@ -23,10 +26,16 @@ class PhysicsWorld;
 class VoxelObject;
 class VoxelObjectID;
 
-class VoxelWorld final
+class VoxelWorld final:
+    public System<VoxelWorld>,
+    public std::enable_shared_from_this<VoxelWorld>
 {
 public:
-    VoxelWorld(Context & context, PhysicsWorld & physicsWorld, const Camera3D & camera, const Texture & envMap);
+    VoxelWorld(World & world,
+               Context & context,
+               PhysicsWorld & physicsWorld,
+               const Camera3D & camera,
+               const Texture & envMap);
 
     Context & context() const;
     const Camera3D & camera() const;
@@ -36,7 +45,8 @@ public:
 
     void addVoxelObject(std::shared_ptr<VoxelObject> voxelObject);
 
-    void render();
+protected:
+    void onRender() override;
 
 private:
     Context &           m_context;

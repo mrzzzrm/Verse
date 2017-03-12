@@ -25,7 +25,7 @@ public:
     void update(float seconds);
 
 private:
-    InputBase &     m_input;
-    Camera3D &      m_camera;
-    PlayerFlightControl & m_flightControl;
+    InputBase &             m_input;
+    Camera3D &              m_camera;
+    PlayerFlightControl &   m_flightControl;
 };

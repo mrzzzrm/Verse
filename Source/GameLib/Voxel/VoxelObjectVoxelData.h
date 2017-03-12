@@ -12,9 +12,15 @@
 #include "VoxelShape.h"
 
 class VoxelWorld;
+class VoxReader;
 
 class VoxelObjectVoxelData final
 {
+public:
+    static std::shared_ptr<VoxelObjectVoxelData> fromFile(VoxReader & voxReader,
+                                                          VoxelWorld & voxelWorld,
+                                                          const std::string & path);
+
 public:
     VoxelObjectVoxelData(const VoxelObjectVoxelData & prototype);
     VoxelObjectVoxelData(const VoxelWorld & voxelWorld, const glm::uvec3 & size);

@@ -10,7 +10,7 @@
 #include <Deliberation/Physics/RigidBody.h>
 
 #include "Components.h"
-#include "VoxelObjectVoxelData.h"
+#include "VoxelObjectPrototype.h"
 #include "VoxelObject.h"
 #include "VoxelRigidBodyPayload.h"
 

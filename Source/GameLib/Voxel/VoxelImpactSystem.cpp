@@ -9,7 +9,7 @@
 #include <Deliberation/Core/StreamUtils.h>
 
 #include "VoxelObject.h"
-#include "VoxelObjectVoxelData.h"
+#include "VoxelObjectPrototype.h"
 
 std::vector<glm::uvec3> VoxelImpactSystem::process(
     VoxelObject & voxelObject,

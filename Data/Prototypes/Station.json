@@ -1,0 +1,11 @@
+[
+    {
+        "Component": "VoxelObject",
+        "VoxelCluster": "Station",
+        "Scale": 15
+    },
+    {
+        "Component": "RigidBody"
+    }
+]
+

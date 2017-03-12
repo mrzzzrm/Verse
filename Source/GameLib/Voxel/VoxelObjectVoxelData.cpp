@@ -1,4 +1,21 @@
-#include "VoxelObjectVoxelData.h"
+#include "VoxelObjectPrototype.h"
+
+#include "VoxReader.h"
+
+std::shared_ptr<VoxelObjectVoxelData> VoxelObjectVoxelData::fromFile(VoxReader & voxReader,
+                                                                     VoxelWorld & voxelWorld,
+                                                                     const std::string & path)
+{
+    auto models = voxReader.read(path);
+    if (!models.empty())
+    {
+        auto voxelData = std::make_shared<VoxelObjectVoxelData>(voxelWorld, models[0].size);
+        voxelData->addVoxels(models[0].voxels);
+        return voxelData;
+    }
+
+    return {};
+}
 
 VoxelObjectVoxelData::VoxelObjectVoxelData(const VoxelObjectVoxelData & prototype):
     m_voxelWorld(prototype.m_voxelWorld),

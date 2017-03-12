@@ -3,6 +3,9 @@ set(target GameLib)
 add_library(${target}
     STATIC
 
+    Debug/DebugOverlay.cpp
+    Debug/DebugOverlay.h
+
     Hailstorm/HailstormBullet.h
     Hailstorm/HailstormManager.cpp
     Hailstorm/HailstormManager.h
@@ -25,8 +28,17 @@ add_library(${target}
     Npc/NpcTask.cpp
     Npc/NpcTask.h
 
+    Resource/ComponentPrototype.h
+    Resource/EntityPrototype.cpp
+    Resource/EntityPrototype.h
+    Resource/EntityPrototypeManager.cpp
+    Resource/EntityPrototypeManager.h
     Resource/EquipmentPrototype.cpp
     Resource/EquipmentPrototype.h
+    Resource/RigidBodyPrototype.cpp
+    Resource/RigidBodyPrototype.h
+    Resource/VoxelObjectPrototype.cpp
+    Resource/VoxelObjectPrototype.h
 
     Systems/VoxelObjectSystem.cpp
     Systems/VoxelObjectSystem.h
@@ -124,6 +136,8 @@ add_library(${target}
     GameLib.h
     PlayerInput.cpp
     PlayerInput.h
+    VerseApplication.cpp
+    VerseApplication.h
     Weapon.cpp
     Weapon.h
     )
@@ -132,6 +146,7 @@ target_include_directories(${target}
     PUBLIC
 
     ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/Debug
     ${CMAKE_CURRENT_SOURCE_DIR}/Hailstorm
     ${CMAKE_CURRENT_SOURCE_DIR}/Systems
     ${CMAKE_CURRENT_SOURCE_DIR}/Npc
