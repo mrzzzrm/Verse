@@ -109,7 +109,7 @@ void VoxelRenderChunkTree::updateVoxelVisibility(const glm::uvec3 & voxel, bool 
     updateVoxelVisibilityInNode(0, voxel, visible);
 }
 
-void VoxelRenderChunkTree::schedule(const Pose3D & pose) const
+void VoxelRenderChunkTree::schedule(const Transform3D & transform) const
 {
     //ScopeProfiler scopeProfiler("VoxelRenderChunkTree::schedule()");
 
@@ -117,10 +117,10 @@ void VoxelRenderChunkTree::schedule(const Pose3D & pose) const
     {
         if (!chunk.chunk) continue;
 
-        Pose3D chunkPose(pose);
-        chunkPose.setPosition(pose.position() + pose.orientation() * chunk.position);
+        Transform3D chunkTransform(transform);
+        chunkTransform.setPosition(transform.position() + transform.orientation() * chunk.position);
 
-        chunk.chunk->schedule(chunkPose);
+        chunk.chunk->schedule(chunkTransform);
     }
 }
 

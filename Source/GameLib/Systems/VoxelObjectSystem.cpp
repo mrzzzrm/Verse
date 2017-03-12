@@ -40,11 +40,6 @@ void VoxelObjectSystem::onEntityUpdate(Entity & entity, float seconds)
         auto & body = entity.component<RigidBodyComponent>().value();
         auto & object = entity.component<VoxelObject>();
 
-        Pose3D pose;
-        pose.setPosition(body->transform().position());
-        pose.setOrientation(body->transform().orientation());
-        pose.setCenter(body->transform().center());
-
-        object.setPose(pose);
+        object.setTransform(body->transform());
     }
 }

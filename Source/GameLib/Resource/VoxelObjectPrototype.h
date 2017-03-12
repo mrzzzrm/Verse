@@ -25,5 +25,6 @@ public:
     void applyToEntity(Entity & entity) const override;
 
 private:
+    float                                   m_scale = 1.0f;
     std::shared_ptr<VoxelObjectVoxelData>   m_voxelDataPrototype;
 };

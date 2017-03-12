@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include <Deliberation/Core/Math/Pose3D.h>
+#include <Deliberation/Core/Math/Transform3D.h>
 
 #include <Deliberation/Draw/Draw.h>
 #include <Deliberation/Draw/Uniform.h>
@@ -28,7 +28,7 @@ public:
 
     std::shared_ptr<VoxelRenderChunk> clone();
 
-    void schedule(const Pose3D & pose) const;
+    void schedule(const Transform3D & transform) const;
 
 private:
     VoxelCluster<glm::vec3>

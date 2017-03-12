@@ -105,7 +105,7 @@ std::shared_ptr<VoxelRenderChunk> VoxelRenderChunk::clone()
     return std::make_shared<VoxelRenderChunk>(*this);
 }
 
-void VoxelRenderChunk::schedule(const Pose3D & pose) const
+void VoxelRenderChunk::schedule(const Transform3D & transform) const
 {
     if (m_voxelCount == 0) return;
     if (m_numVisibleVoxels == 0) return;
@@ -141,7 +141,8 @@ void VoxelRenderChunk::schedule(const Pose3D & pose) const
     if (m_meshEmpty) return;
 
     m_viewProjectionUniform.set(m_voxelWorld.camera().viewProjection());
-    m_transformUniform.set(pose.matrix());
+    std::cout << transform.scale() << std::endl;
+    m_transformUniform.set(transform.matrix());
     m_cameraPositionUniform.set(m_voxelWorld.camera().position());
     m_draw.schedule();
 }

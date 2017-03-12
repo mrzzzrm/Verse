@@ -35,11 +35,11 @@ public:
     ~VoxelObject();
 
     const VoxelObjectID & id() const;
-    const Pose3D & pose() const;
+    const Transform3D & transform() const;
     const VoxelObjectVoxelData & data() const;
 
     void setId(VoxelObjectID id);
-    void setPose(const Pose3D & pose);
+    void setTransform(const Transform3D & transform);
 
     void setVoxelHealthPoints(const glm::uvec3 & voxel, float healthPoints);
 
@@ -54,7 +54,7 @@ private:
     std::shared_ptr<VoxelRigidBodyPayload>
                             m_rigidBodyPayload;
     VoxelObjectID           m_id;
-    Pose3D                  m_pose;
+    Transform3D             m_transform;
     std::shared_ptr<RigidBody>
                             m_body;
 };

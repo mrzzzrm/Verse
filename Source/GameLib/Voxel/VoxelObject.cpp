@@ -18,9 +18,9 @@ const VoxelObjectID & VoxelObject::id() const
     return m_id;
 }
 
-const Pose3D & VoxelObject::pose() const
+const Transform3D & VoxelObject::transform() const
 {
-    return m_pose;
+    return m_transform;
 };
 
 const VoxelObjectVoxelData & VoxelObject::data() const
@@ -33,9 +33,9 @@ void VoxelObject::setId(VoxelObjectID id)
     m_id = id;
 }
 
-void VoxelObject::setPose(const Pose3D & pose)
+void VoxelObject::setTransform(const Transform3D & transform)
 {
-    m_pose = pose;
+    m_transform = transform;
 }
 
 void VoxelObject::setVoxelHealthPoints(const glm::uvec3 & voxel, float healthPoints)
@@ -65,5 +65,5 @@ void VoxelObject::removeVoxels(const std::vector<glm::uvec3> & voxels)
 
 void VoxelObject::schedule()
 {
-    m_voxelData.renderTree().schedule(m_pose);
+    m_voxelData.renderTree().schedule(m_transform);
 }

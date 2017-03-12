@@ -6,6 +6,7 @@
 
 #include <glm/glm.hpp>
 
+#include <Deliberation/Core/Math/Transform3D.h>
 #include <Deliberation/Core/RandomColorGenerator.h>
 
 #include "GameLib.h"
@@ -29,7 +30,7 @@ public:
     void removeVoxel(const glm::uvec3 & voxel, bool visible);
     void updateVoxelVisibility(const glm::uvec3 & voxel, bool visible);
 
-    void schedule(const Pose3D & pose) const;
+    void schedule(const Transform3D & transform) const;
 
     std::string toString() const;
 

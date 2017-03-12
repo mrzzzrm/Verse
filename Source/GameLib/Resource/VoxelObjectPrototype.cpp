@@ -18,9 +18,12 @@ VoxelObjectPrototype::VoxelObjectPrototype(const nlohmann::json & json, VoxelWor
             m_voxelDataPrototype->setCrucialVoxel({11, 12, 6}); // TODO
         }
     }
+
+    m_scale = json["Scale"];
 }
 
 void VoxelObjectPrototype::applyToEntity(Entity & entity) const
 {
-    entity.addComponent<VoxelObject>(*m_voxelDataPrototype);
+    auto & voxelObject = entity.addComponent<VoxelObject>(*m_voxelDataPrototype);
+    voxelObject.setTransform(Transform3D::withScale(m_scale));
 }
