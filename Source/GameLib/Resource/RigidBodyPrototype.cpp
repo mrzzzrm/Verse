@@ -6,7 +6,7 @@
 
 #include "VoxelRigidBodyPayload.h"
 
-RigidBodyPrototype::RigidBodyPrototype(const nlohmann::json & json)
+RigidBodyPrototype::RigidBodyPrototype(const Json & json)
 {
 
 }
@@ -19,7 +19,7 @@ void RigidBodyPrototype::applyToEntity(Entity & entity) const
 
     auto rigidBody = std::make_shared<RigidBody>(voxelObject.data().shape());
     rigidBody->setPayload(rigidBodyPayload);
-    rigidBody->transform().setScale(voxelObject.transform().scale());
+//    rigidBody->transform().setScale(voxelObject.pose().scale());
     rigidBody->transform().setCenter(glm::vec3(voxelObject.data().size()) / 2.0f);
 
     entity.addComponent<RigidBodyComponent>(rigidBody);

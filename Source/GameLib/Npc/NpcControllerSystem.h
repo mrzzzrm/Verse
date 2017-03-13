@@ -30,18 +30,7 @@ protected:
 
     void onEntityPrePhysicsUpdate(Entity & entity, float seconds) override
     {
-        auto body = entity.component<RigidBodyComponent>().value();
         auto & equipment = entity.component<Equipment>();
-
         entity.component<NpcController>().update(seconds, equipment);
-
-        EquipmentUpdateContext equipmentUpdateContext;
-        equipmentUpdateContext.targetPose = Pose3D(body->transform().position(),
-                                                   body->transform().orientation(),
-                                                   body->transform().center());
-        equipmentUpdateContext.linearVelocity = body->linearVelocity();
-        equipmentUpdateContext.angularVelocity = body->angularVelocity();
-
-        equipment.update(seconds, equipmentUpdateContext);
     }
 };

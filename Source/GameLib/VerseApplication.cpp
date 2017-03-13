@@ -5,6 +5,8 @@
 #include "VoxelClusterSplitSystem.h"
 
 #include "EntityPrototypeManager.h"
+#include "EquipmentSystem.h"
+#include "CoriolisSystem.h"
 #include "VfxSystem.h"
 
 VerseApplication::VerseApplication(const std::string & name):
@@ -51,13 +53,14 @@ void VerseApplication::onStartup()
     m_world.addSystem<PhysicsWorldSystem>(m_physicsWorld);
     m_world.addSystem<VoxelClusterSplitSystem>();
     m_voxelWorld = m_world.addSystem<VoxelWorld>(context(), m_physicsWorld, m_camera, skyboxCubemap);
-    m_world.addSystem<VoxelObjectSystem>(m_physicsWorld, *m_voxelWorld);
     m_world.addSystem<NpcControllerSystem>();
     m_hailstormManager = m_world.addSystem<HailstormManager>(context(), m_camera, m_physicsWorld, *m_voxelWorld);
     m_vfxManager.emplace(context(), m_camera, *m_voxelWorld);
     m_world.addSystem<VfxSystem>(*m_vfxManager);
     //m_world.addSystem<NpcDebugRendererSystem>(context(), m_camera);
     m_debugOverlay = m_world.addSystem<DebugOverlay>();
+    m_world.addSystem<CoriolisSystem>();
+    m_world.addSystem<EquipmentSystem>();
 
     m_debugGeometryManager.emplace(context());
 

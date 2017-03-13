@@ -46,8 +46,7 @@ void PlayerFlightControl::update(float seconds)
     auto localLinearVelocity = m_body->transform().directionWorldToLocal(m_body->linearVelocity());
 
     auto targetLocalLinearVelocity = glm::vec3({
-                                                  m_linearThrust.x *
-                                                  m_config.horizontal.maxSpeed,
+                                                  m_linearThrust.x * m_config.horizontal.maxSpeed,
                                                   m_linearThrust.y * m_config.vertical.maxSpeed,
                                                   m_linearThrust.z * (m_linearThrust.z > 0
                                                                       ? m_config.backward.maxSpeed

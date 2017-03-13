@@ -7,7 +7,7 @@
 #include "Equipment.h"
 #include "Hardpoint.h"
 
-EquipmentPrototype::EquipmentPrototype(nlohmann::json & json)
+EquipmentPrototype::EquipmentPrototype(Json & json)
 {
     for (const auto & obj : json["Engines"])
     {
@@ -56,7 +56,7 @@ void EquipmentPrototype::applyToEntity(Entity & entity, VfxManager & vfxManager)
     }
 }
 
-void EquipmentPrototype::loadSlotPrototype(const nlohmann::json & obj, SlotPrototype & slot) const
+void EquipmentPrototype::loadSlotPrototype(const Json & obj, SlotPrototype & slot) const
 {
     slot.voxel = obj["Voxel"];
     std::swap(slot.voxel.y, slot.voxel.z);

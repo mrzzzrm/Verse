@@ -1,6 +1,7 @@
 #version 330
 
 uniform mat4 ViewProjection;
+uniform float Scale;
 uniform mat4 Transform;
 
 in vec3 Position;
@@ -13,7 +14,7 @@ out vec3 f_Color;
 
 void main()
 {
-    vec4 positionWS = Transform * vec4(Position, 1.0f);
+    vec4 positionWS = Transform * vec4(Scale * Position, 1.0f);
 
     gl_Position = ViewProjection * positionWS;
 

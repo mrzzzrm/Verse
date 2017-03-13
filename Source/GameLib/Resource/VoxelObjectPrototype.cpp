@@ -4,7 +4,7 @@
 #include "VoxelObject.h"
 #include "VoxelObjectVoxelData.h"
 
-VoxelObjectPrototype::VoxelObjectPrototype(const nlohmann::json & json, VoxelWorld & voxelWorld)
+VoxelObjectPrototype::VoxelObjectPrototype(const Json & json, VoxelWorld & voxelWorld)
 {
     const auto & voxelClusterName = json["VoxelCluster"].get<std::string>();
 
@@ -25,5 +25,5 @@ VoxelObjectPrototype::VoxelObjectPrototype(const nlohmann::json & json, VoxelWor
 void VoxelObjectPrototype::applyToEntity(Entity & entity) const
 {
     auto & voxelObject = entity.addComponent<VoxelObject>(*m_voxelDataPrototype);
-    voxelObject.setTransform(Transform3D::withScale(m_scale));
+    voxelObject.setScale(m_scale);
 }

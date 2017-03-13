@@ -1,15 +1,15 @@
 [
     {
         "Component": "VoxelObject",
-        "VoxelCluster": "Station",
-        "Scale": 10
+        "VoxelCluster": "Asteroid00",
+        "Scale": 5
     },
     {
         "Component": "RigidBody"
     },
     {
         "Component": "Coriolis",
-        "AngularVelocity": [0, 0, 0.04]
+        "AngularVelocity": [-0.03, 0.02, 0.04]
     }
 ]
 

@@ -4,6 +4,8 @@
 
 #include <Deliberation/Draw/Context.h>
 
+#include <Deliberation/ECS/Components.h>
+
 #include <Deliberation/Physics/PhysicsWorld.h>
 
 VoxelWorld::VoxelWorld(World & world, Context & context, PhysicsWorld & physicsWorld, const Camera3D & camera, const Texture & envMap):
@@ -11,7 +13,7 @@ VoxelWorld::VoxelWorld(World & world, Context & context, PhysicsWorld & physicsW
     m_physicsWorld(physicsWorld),
     m_camera(camera),
     m_envMap(envMap),
-    Base(world)
+    Base(world, ComponentFilter::requires<VoxelObject>())
 {
     m_program = m_context.createProgram({"Data/Shaders/Voxel.vert",
                                          "Data/Shaders/Voxel.frag"});
@@ -55,7 +57,34 @@ void VoxelWorld::addVoxelObject(std::shared_ptr<VoxelObject> voxelObject)
     m_objectsByUID[id.worldUID] = voxelObject;
 }
 
+void VoxelWorld::onEntityAdded(Entity & entity)
+{
+    auto & voxelObject = entity.component<VoxelObject>();
+    addVoxelObject(voxelObject.shared_from_this());
+}
+
+void VoxelWorld::onEntityRemoved(Entity & entity)
+{
+
+}
+
 void VoxelWorld::onRender()
 {
     for (auto & object : m_objects) object->schedule();
+}
+
+void VoxelWorld::onEntityUpdate(Entity & entity, float seconds)
+{
+    if (entity.hasComponent<RigidBodyComponent>())
+    {
+        auto & body = entity.component<RigidBodyComponent>().value();
+        auto & object = entity.component<VoxelObject>();
+
+        Pose3D pose;
+        pose.setOrientation(body->transform().orientation());
+        pose.setPosition(body->transform().position());
+        pose.setCenter(body->transform().center());
+
+        object.setPose(pose);
+    }
 }

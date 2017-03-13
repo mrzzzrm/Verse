@@ -91,17 +91,17 @@ public:
         FlightControlConfig playerShipConfig;
         playerShipConfig.forward.acceleration = 30.0f;
         playerShipConfig.forward.maxSpeed = 100.0f;
-        playerShipConfig.backward.acceleration = 20.0f;
+        playerShipConfig.backward.acceleration = 60.0f;
         playerShipConfig.backward.maxSpeed = 60.0f;
-        playerShipConfig.horizontal.acceleration = 20.0f;
+        playerShipConfig.horizontal.acceleration = 60.0f;
         playerShipConfig.horizontal.maxSpeed = 60.0f;
         playerShipConfig.vertical.acceleration = 20.0f;
         playerShipConfig.vertical.maxSpeed = 60.0f;
         playerShipConfig.angular.acceleration = 3.0f;
         playerShipConfig.angular.maxSpeed = 2.0f;
-    
+
         std::ifstream playerEquipmentPrototypeFile("Data/Prototypes/Ship.json");
-        nlohmann::json obj;
+        Json obj;
         playerEquipmentPrototypeFile >> obj;
 
         auto playerEquipmentPrototype = std::make_shared<EquipmentPrototype>(obj["Equipment"]);
@@ -149,7 +149,23 @@ public:
          */
         m_station = m_entityPrototypeManager->createEntity("Station", "MyStation");
         auto stationBody = m_station.component<RigidBodyComponent>().value();
-        stationBody->setTransform(Transform3D::atPosition({0.0f, 40.0f, -100.0f}));
+        stationBody->transform().setPosition({0.0f, 40.0f, -100.0f});
+
+        /**
+         * Create asteroids
+         */
+        for (auto i = 0; i < 5; i++)
+        {
+            auto asteroid = m_entityPrototypeManager->createEntity("Asteroid00", "MyAsteroid");
+            auto asteroidBody = asteroid.component<RigidBodyComponent>().value();
+            asteroidBody->transform().setPosition(RandomUnitVec3() * 250.0f);
+        }
+        for (auto i = 0; i < 5; i++)
+        {
+            auto asteroid = m_entityPrototypeManager->createEntity("Asteroid01", "MyAsteroid");
+            auto asteroidBody = asteroid.component<RigidBodyComponent>().value();
+            asteroidBody->transform().setPosition(RandomUnitVec3() * 250.0f);
+        }
     }
 
     void onApplicationUpdate(float seconds) override
@@ -165,8 +181,14 @@ public:
             bool hit;
             auto target = aimHelper.getTarget(input().mousePosition(), hit);
 
-            if (input().mouseButtonDown(InputBase::MouseButton_Right)) equipment.setFireRequest(true, target);
-            else equipment.setFireRequest(false, {});
+            if (input().mouseButtonDown(InputBase::MouseButton_Right))
+            {
+                equipment.setFireRequest(true, target);
+            }
+            else
+            {
+                equipment.setFireRequest(false, {});
+            }
         }
     }
 
@@ -179,10 +201,13 @@ public:
         Pose3D targetPose(m_playerBody->transform().position() +
                           m_playerBody->transform().orientation() * offset,
                           m_playerBody->transform().orientation());
+//        Pose3D targetPose(m_playerBody->transform().position(),
+//                          m_playerBody->transform().orientation());
 
-        //auto targetPose = m_player.component<VoxelObject>().pose();
+//        auto targetPose = m_player.component<VoxelObject>().pose();
 
-        auto position = targetPose.pointLocalToWorld(offset);
+        //auto position = targetPose.pointLocalToWorld(offset);
+        auto position = targetPose.pointLocalToWorld({});
 
 //        m_camera.setPosition(position);
 //        m_camera.setOrientation(targetPose.orientation());

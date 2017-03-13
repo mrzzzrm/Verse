@@ -25,6 +25,6 @@ private:
     World &                         m_world;
     std::unordered_map<std::string, std::shared_ptr<EntityPrototype>>
                                     m_entityPrototypeByName;
-    std::unordered_map<std::string, std::function<std::shared_ptr<ComponentPrototype>(const nlohmann::json & json)>>
+    std::unordered_map<std::string, std::function<std::shared_ptr<ComponentPrototype>(const Json & json)>>
                                     m_componentPrototypeLoaderByType;
 };

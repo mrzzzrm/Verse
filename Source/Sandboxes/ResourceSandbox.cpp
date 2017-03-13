@@ -20,7 +20,7 @@ public:
     void onSandboxStartup() override
     {
         std::ifstream i("Data/Prototypes/Drone.json");
-        nlohmann::json j;
+        Json j;
         i >> j;
         
         EquipmentPrototype equipmentPrototype(j["Equipment"]);

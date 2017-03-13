@@ -4,6 +4,7 @@
 
 #include <Deliberation/Core/Assert.h>
 
+#include "CoriolisPrototype.h"
 #include "EntityPrototype.h"
 #include "RigidBodyPrototype.h"
 #include "VoxelObjectPrototype.h"
@@ -15,6 +16,7 @@ EntityPrototypeManager::EntityPrototypeManager(World & world):
 
     registerComponentLoader<VoxelObjectPrototype>("VoxelObject", voxelWorld);
     registerComponentLoader<RigidBodyPrototype>("RigidBody");
+    registerComponentLoader<CoriolisPrototype>("Coriolis");
 }
 
 Entity EntityPrototypeManager::createEntity(const std::string & prototypeName, const std::string & entityName)
@@ -31,7 +33,7 @@ Entity EntityPrototypeManager::createEntity(const std::string & prototypeName, c
     auto entityPrototype = std::make_shared<EntityPrototype>(m_world, prototypeName);
 
     std::ifstream prototypeFile("Data/Prototypes/" + prototypeName + ".json");
-    nlohmann::json entityPrototypeJson;
+    Json entityPrototypeJson;
     prototypeFile >> entityPrototypeJson;
 
     std::cout << "Loading EntityPrototype '" << prototypeName << "'" << std::endl;
@@ -62,5 +64,5 @@ template<typename T, typename ... Args>
 void EntityPrototypeManager::registerComponentLoader(const std::string & name, Args &&... args)
 {
     m_componentPrototypeLoaderByType[name] =
-        [&] (const nlohmann::json & jsonObj) { return std::make_shared<T>(jsonObj, std::forward<Args>(args)...); };
+        [&] (const Json & jsonObj) { return std::make_shared<T>(jsonObj, std::forward<Args>(args)...); };
 }

@@ -4,8 +4,7 @@
 
 #include <glm/glm.hpp>
 
-#include <json.hpp>
-
+#include <Deliberation/Core/Json.h>
 #include <Deliberation/Core/Math/Pose3D.h>
 
 #include <Deliberation/ECS/Entity.h>
@@ -33,7 +32,7 @@ struct HardpointPrototype:
 class EquipmentPrototype final
 {
 public:
-    EquipmentPrototype(nlohmann::json & json);
+    EquipmentPrototype(Json & json);
 
     const std::vector<EnginePrototype> & engines() const;
     const std::vector<HardpointPrototype> & hardpoints() const;
@@ -41,7 +40,7 @@ public:
     void applyToEntity(Entity & entity, VfxManager & vfxManager) const;
 
 private:
-    void loadSlotPrototype(const nlohmann::json & obj, SlotPrototype & slot) const;
+    void loadSlotPrototype(const Json & obj, SlotPrototype & slot) const;
 
 private:
     std::vector<EnginePrototype>    m_engines;

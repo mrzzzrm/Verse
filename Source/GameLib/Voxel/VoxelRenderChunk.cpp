@@ -105,7 +105,7 @@ std::shared_ptr<VoxelRenderChunk> VoxelRenderChunk::clone()
     return std::make_shared<VoxelRenderChunk>(*this);
 }
 
-void VoxelRenderChunk::schedule(const Transform3D & transform) const
+void VoxelRenderChunk::schedule(const Pose3D & pose, float scale) const
 {
     if (m_voxelCount == 0) return;
     if (m_numVisibleVoxels == 0) return;
@@ -131,6 +131,7 @@ void VoxelRenderChunk::schedule(const Transform3D & transform) const
             m_cameraPositionUniform = m_draw.uniform("CameraPosition");
             m_transformUniform = m_draw.uniform("Transform");
             m_viewProjectionUniform = m_draw.uniform("ViewProjection");
+            m_scaleUniform = m_draw.uniform("Scale");
 
             m_drawDirty = false;
             m_llfDirty = glm::uvec3(std::numeric_limits<uint32_t>::max());
@@ -141,8 +142,8 @@ void VoxelRenderChunk::schedule(const Transform3D & transform) const
     if (m_meshEmpty) return;
 
     m_viewProjectionUniform.set(m_voxelWorld.camera().viewProjection());
-    std::cout << transform.scale() << std::endl;
-    m_transformUniform.set(transform.matrix());
+    m_transformUniform.set(pose.matrix());
+    m_scaleUniform.set(scale);
     m_cameraPositionUniform.set(m_voxelWorld.camera().position());
     m_draw.schedule();
 }

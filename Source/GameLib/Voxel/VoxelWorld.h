@@ -46,6 +46,9 @@ public:
     void addVoxelObject(std::shared_ptr<VoxelObject> voxelObject);
 
 protected:
+    void onEntityAdded(Entity & entity) override;
+    void onEntityRemoved(Entity & entity) override;
+    void onEntityUpdate(Entity & entity, float seconds) override;
     void onRender() override;
 
 private:

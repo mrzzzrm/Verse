@@ -26,11 +26,13 @@ public:
 
     const glm::uvec3 & size() const { return m_size; }
 
+    void setScale(float scale);
+
     void addVoxel(const Voxel & voxel, bool visible);
     void removeVoxel(const glm::uvec3 & voxel, bool visible);
     void updateVoxelVisibility(const glm::uvec3 & voxel, bool visible);
 
-    void schedule(const Transform3D & transform) const;
+    void schedule(const Pose3D & pose) const;
 
     std::string toString() const;
 
@@ -66,11 +68,10 @@ private:
     bool isVoxelRenderedByNode(size_t index, const glm::uvec3 & voxel);
 
 protected:
-    const VoxelWorld &  m_voxelWorld;
-    glm::uvec3          m_size;
-    std::vector<Node>   m_nodes;
-    std::vector<ChunkWrapper>
-                        m_chunks;
-    RandomColorGenerator
-                        m_colorGenerator;
+    const VoxelWorld &          m_voxelWorld;
+    glm::uvec3                  m_size;
+    std::vector<Node>           m_nodes;
+    std::vector<ChunkWrapper>   m_chunks;
+    RandomColorGenerator        m_colorGenerator;
+    float                       m_scale = 1.0f;
 };

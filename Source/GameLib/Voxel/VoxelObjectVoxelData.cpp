@@ -71,6 +71,11 @@ const VoxelClusterSplitDetector & VoxelObjectVoxelData::splitDetector() const
     return m_splitDetector;
 }
 
+float VoxelObjectVoxelData::scale() const
+{
+    return m_scale;
+}
+
 void VoxelObjectVoxelData::setCrucialVoxel(const glm::uvec3 & voxel)
 {
     m_splitDetector.setCrucialVoxel(voxel);
@@ -94,6 +99,13 @@ float VoxelObjectVoxelData::voxelHealthPoints(const glm::uvec3 & voxel) const
 void VoxelObjectVoxelData::setVoxelHealthPoints(const glm::uvec3 & voxel, float healthPoints)
 {
     m_healthPoints.set(voxel, healthPoints);
+}
+
+void VoxelObjectVoxelData::setScale(float scale)
+{
+    m_scale = scale;
+    m_renderTree.setScale(scale);
+    m_shape->setScale(scale);
 }
 
 void VoxelObjectVoxelData::addVoxels(std::vector<Voxel> voxels)

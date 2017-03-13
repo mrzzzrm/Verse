@@ -20,7 +20,7 @@ class VoxelObjectPrototype final:
     public ComponentPrototype
 {
 public:
-    VoxelObjectPrototype(const nlohmann::json & json, VoxelWorld & voxelWorld);
+    VoxelObjectPrototype(const Json & json, VoxelWorld & voxelWorld);
 
     void applyToEntity(Entity & entity) const override;
 

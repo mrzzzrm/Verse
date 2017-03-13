@@ -31,6 +31,7 @@ public:
     const std::shared_ptr<VoxelShape> & shape() const;
     const VoxelHull & hull() const;
     const VoxelClusterSplitDetector & splitDetector() const;
+    float scale() const;
 
     void setCrucialVoxel(const glm::uvec3 & voxel);
 
@@ -40,6 +41,7 @@ public:
     float voxelHealthPoints(const glm::uvec3 & voxel) const;
 
     void setVoxelHealthPoints(const glm::uvec3 & voxel, float healthPoints);
+    void setScale(float scale);
 
     void addVoxels(std::vector<Voxel> voxels);
     void removeVoxels(const std::vector<glm::uvec3> & voxels);
@@ -55,4 +57,5 @@ private:
     std::shared_ptr<VoxelShape>     m_shape;
     VoxelHull                       m_hull;
     VoxelClusterSplitDetector       m_splitDetector;
+    float                           m_scale = 1.0f;
 };

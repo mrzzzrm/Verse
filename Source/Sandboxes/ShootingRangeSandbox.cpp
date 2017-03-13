@@ -26,7 +26,6 @@
 #include <Deliberation/Scene/Debug/DebugGeometryManager.h>
 #include <Deliberation/Scene/Debug/DebugGeometryRenderer.h>
 #include <Deliberation/Scene/Debug/DebugGroundPlaneRenderer.h>
-#include <Systems/VoxelObjectSystem.h>
 #include <Npc/NpcDebugRendererSystem.h>
 
 #include "AimHelper.h"

@@ -17,7 +17,7 @@ class RigidBodyPrototype final:
     public ComponentPrototype
 {
 public:
-    RigidBodyPrototype(const nlohmann::json & json);
+    RigidBodyPrototype(const Json & json);
 
     void applyToEntity(Entity & entity) const override;
 };

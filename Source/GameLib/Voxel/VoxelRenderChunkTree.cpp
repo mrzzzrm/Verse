@@ -3,6 +3,7 @@
 #include <sstream>
 
 #include <Deliberation/Core/Assert.h>
+#include <Deliberation/Core/Math/Pose3D.h>
 #include <Deliberation/Core/StreamUtils.h>
 #include <Deliberation/Core/ScopeProfiler.h>
 
@@ -93,6 +94,10 @@ VoxelRenderChunkTree::VoxelRenderChunkTree(const VoxelWorld & voxelWorld, const 
     m_chunks.resize(numChunks);
 }
 
+void VoxelRenderChunkTree::setScale(float scale)
+{
+    m_scale = scale;
+}
 
 void VoxelRenderChunkTree::addVoxel(const Voxel & voxel, bool visible)
 {
@@ -109,7 +114,7 @@ void VoxelRenderChunkTree::updateVoxelVisibility(const glm::uvec3 & voxel, bool 
     updateVoxelVisibilityInNode(0, voxel, visible);
 }
 
-void VoxelRenderChunkTree::schedule(const Transform3D & transform) const
+void VoxelRenderChunkTree::schedule(const Pose3D & pose) const
 {
     //ScopeProfiler scopeProfiler("VoxelRenderChunkTree::schedule()");
 
@@ -117,10 +122,11 @@ void VoxelRenderChunkTree::schedule(const Transform3D & transform) const
     {
         if (!chunk.chunk) continue;
 
-        Transform3D chunkTransform(transform);
-        chunkTransform.setPosition(transform.position() + transform.orientation() * chunk.position);
+        Pose3D chunkPose(pose);
 
-        chunk.chunk->schedule(chunkTransform);
+        chunkPose.setPosition(chunkPose.position() + pose.directionLocalToWorld(chunk.position) * m_scale);
+
+        chunk.chunk->schedule(chunkPose, m_scale);
     }
 }
 

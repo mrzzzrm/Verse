@@ -56,6 +56,7 @@ void VoxelClusterSplitSystem::onEntityUpdate(Entity & entity, float seconds)
 
         auto splitEntity = world().createEntity("Split");
         auto & splitVoxelObject = splitEntity.addComponent<VoxelObject>(splitVoxelData);
+        splitVoxelObject.setScale(originalVoxelObject.scale());
 
         auto rigidBodyPayload = std::make_shared<VoxelRigidBodyPayload>(splitVoxelObject.shared_from_this());
         auto splitBody = std::make_shared<RigidBody>(splitVoxelObject.data().shape());

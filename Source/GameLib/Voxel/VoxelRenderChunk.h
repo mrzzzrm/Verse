@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include <Deliberation/Core/Math/Transform3D.h>
+#include <Deliberation/Core/Math/Pose3D.h>
 
 #include <Deliberation/Draw/Draw.h>
 #include <Deliberation/Draw/Uniform.h>
@@ -28,7 +28,7 @@ public:
 
     std::shared_ptr<VoxelRenderChunk> clone();
 
-    void schedule(const Transform3D & transform) const;
+    void schedule(const Pose3D & pose, float scale) const;
 
 private:
     VoxelCluster<glm::vec3>
@@ -50,6 +50,7 @@ private:
     mutable Uniform     m_transformUniform;
     mutable Uniform     m_viewProjectionUniform;
     mutable Uniform     m_cameraPositionUniform;
+    mutable Uniform     m_scaleUniform;
     size_t              m_numVisibleVoxels = 0;
     Optional<glm::vec3> m_colorOverride;
 };

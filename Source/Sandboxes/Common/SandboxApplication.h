@@ -28,8 +28,6 @@
 #include <Deliberation/Scene/Debug/DebugGroundPlaneRenderer.h>
 #include <Deliberation/Scene/SkyboxRenderer.h>
 
-#include <Systems/VoxelObjectSystem.h>
-
 #include <Npc/NpcDebugRendererSystem.h>
 
 #include "AimHelper.h"

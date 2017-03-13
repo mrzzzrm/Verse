@@ -29,6 +29,8 @@ add_library(${target}
     Npc/NpcTask.h
 
     Resource/ComponentPrototype.h
+    Resource/CoriolisPrototype.cpp
+    Resource/CoriolisPrototype.h
     Resource/EntityPrototype.cpp
     Resource/EntityPrototype.h
     Resource/EntityPrototypeManager.cpp
@@ -39,9 +41,6 @@ add_library(${target}
     Resource/RigidBodyPrototype.h
     Resource/VoxelObjectPrototype.cpp
     Resource/VoxelObjectPrototype.h
-
-    Systems/VoxelObjectSystem.cpp
-    Systems/VoxelObjectSystem.h
 
     Vfx/Emitter.cpp
     Vfx/Emitter.h
@@ -115,6 +114,9 @@ add_library(${target}
 
     AimHelper.cpp
     AimHelper.h
+    CoriolisComponent.h
+    CoriolisSystem.cpp
+    CoriolisSystem.h
     CollisionShapeTypes.h
     Engine.cpp
     Engine.h
@@ -122,6 +124,8 @@ add_library(${target}
     EngineSlot.h
     Equipment.cpp
     Equipment.h
+    EquipmentSystem.cpp
+    EquipmentSystem.h
     FlightControlBase.cpp
     FlightControlBase.h
     Player/PlayerFlightControl.cpp

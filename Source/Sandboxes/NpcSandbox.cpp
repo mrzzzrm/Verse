@@ -30,7 +30,6 @@
 #include <Deliberation/Scene/Debug/DebugGeometryManager.h>
 #include <Deliberation/Scene/Debug/DebugGeometryRenderer.h>
 #include <Deliberation/Scene/Debug/DebugGroundPlaneRenderer.h>
-#include <Systems/VoxelObjectSystem.h>
 #include <Npc/NpcDebugRendererSystem.h>
 
 #include "AimHelper.h"
@@ -76,7 +75,7 @@ public:
         {
             std::ifstream equipmentPrototypeFile("Data/Prototypes/Ship.json");
 
-            nlohmann::json obj;
+            Json obj;
             equipmentPrototypeFile >> obj;
 
             m_npcEquipmentPrototype = std::make_shared<EquipmentPrototype>(obj["Equipment"]);

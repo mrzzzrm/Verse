@@ -22,7 +22,7 @@ AABB VoxelShape::bounds(const Transform3D & transform) const
 {
     const auto halfSize = glm::vec3(m_size) / 2.0f;
     const auto center = transform.pointLocalToWorld(halfSize);
-    const auto radius = glm::length(halfSize);
+    const auto radius = glm::vec3(glm::length(halfSize)) * m_scale;
     return AABB(center - glm::vec3(radius), center + glm::vec3(radius));
 }
 
@@ -43,6 +43,12 @@ glm::vec3 VoxelShape::centerOfMass() const
     if (m_massPropertiesDirty) updateMassProperties();
 
     return m_centerOfMass;
+}
+
+void VoxelShape::setScale(float scale)
+{
+    m_scale = scale;
+    m_massPropertiesDirty = true;
 }
 
 void VoxelShape::updateVoxel(const glm::uvec3 & voxel, bool set)
@@ -94,8 +100,8 @@ bool VoxelShape::lineCast(const Transform3D & transform, const Ray3D & ray, glm:
 {
     std::vector<glm::uvec3> voxels;
 
-    auto localOrigin = transform.pointWorldToLocal(ray.origin());
-    auto localDirection = transform.directionWorldToLocal(ray.direction());
+    auto localOrigin = transform.pointWorldToLocal(ray.origin()) / m_scale;
+    auto localDirection = transform.directionWorldToLocal(ray.direction()) / m_scale;
 
     m_tree.lineCast(0, Ray3D(localOrigin, localDirection), voxels);
 
@@ -385,6 +391,7 @@ void VoxelShape::updateMassProperties() const
     const auto centerOfMassRemainder = glm::vec3(m_voxelPositionAccumulator - intCenterOfMass * m_numVoxels);
 
     m_centerOfMass = glm::vec3(intCenterOfMass) + centerOfMassRemainder / (float)m_numVoxels;
+    m_centerOfMass *= m_scale;
 
     const auto iXX = m_absIXX
                      - 2 * m_centerOfMass.y * m_voxelPositionAccumulator.y
