@@ -22,7 +22,7 @@ void NpcAttackTask::setTarget(Entity target)
     m_target = target;
 }
 
-void NpcAttackTask::update(NpcController & controller, Equipment & equipment, float seconds)
+void NpcAttackTask::update(NpcController & controller, RigidBody & body, Equipment & equipment, float seconds)
 {
     if (!m_target.isValid())
     {
@@ -32,14 +32,13 @@ void NpcAttackTask::update(NpcController & controller, Equipment & equipment, fl
 
     auto & steering = controller.steering();
 
-    const auto & body = controller.body();
     const auto & targetBody = m_target.component<RigidBodyComponent>().value();
 
     const auto targetPosition = targetBody->transform().position();
-    const auto deltaToTarget = targetPosition - body->transform().position();
+    const auto deltaToTarget = targetPosition - body.transform().position();
 
-    const auto flyDirection = EpsilonGt(glm::length2(body->linearVelocity()), 0.0f) ?
-                                        glm::normalize(body->linearVelocity()) : glm::vec3();
+    const auto flyDirection = EpsilonGt(glm::length2(body.linearVelocity()), 0.0f) ?
+                                        glm::normalize(body.linearVelocity()) : glm::vec3();
     const auto targetFlyDirection = targetBody->linearVelocity();
     const auto targetDirection = EpsilonGt(glm::length2(targetFlyDirection), 0.0f) ?
                                  glm::normalize(targetFlyDirection) : glm::vec3(0, 0, 1);
@@ -48,7 +47,7 @@ void NpcAttackTask::update(NpcController & controller, Equipment & equipment, fl
 
     if (m_status == Status::None)
     {
-        if (distanceToTarget < 800.0f) startEvasion(controller);
+        if (distanceToTarget < 800.0f) startEvasion(body, controller);
         else startJoust();
     }
 
@@ -56,9 +55,9 @@ void NpcAttackTask::update(NpcController & controller, Equipment & equipment, fl
     {
         steering.setDestination(m_evasionPoint);
 
-        auto distanceToEvasionPoint = glm::length(m_evasionPoint - body->transform().position());
+        auto distanceToEvasionPoint = glm::length(m_evasionPoint - body.transform().position());
 
-        if (distanceToEvasionPoint < 100.0f) startEvasion(controller);
+        if (distanceToEvasionPoint < 100.0f) startEvasion(body, controller);
         else if (distanceToTarget > 700.0f) startJoust();
       //  else if (glm::dot(directionToTarget, flyDirection) < 0.0f && distanceToTarget > 200.0f) startJoust();
     }
@@ -66,7 +65,7 @@ void NpcAttackTask::update(NpcController & controller, Equipment & equipment, fl
     {
         steering.setDestination(targetPosition);
 
-        if (distanceToTarget < 600.0f) startEvasion(controller);
+        if (distanceToTarget < 600.0f) startEvasion(body, controller);
     }
 
     steering.setStopAtDestination(false);
@@ -74,13 +73,12 @@ void NpcAttackTask::update(NpcController & controller, Equipment & equipment, fl
     equipment.setFireRequest(true, targetPosition);
 }
 
-void NpcAttackTask::startEvasion(NpcController & controller)
+void NpcAttackTask::startEvasion(RigidBody & body, NpcController & controller)
 {
-    const auto & body = controller.body();
     const auto & targetBody = m_target.component<RigidBodyComponent>().value();
 
     const auto targetPosition = targetBody->transform().position();
-    const auto deltaToTarget = targetPosition - body->transform().position();
+    const auto deltaToTarget = targetPosition - body.transform().position();
 
     const auto targetFlyDirection = targetBody->linearVelocity();
     const auto targetDirection = EpsilonGt(glm::length2(targetFlyDirection), 0.0f) ?

@@ -7,7 +7,8 @@
 #include "Equipment.h"
 #include "Hardpoint.h"
 
-EquipmentPrototype::EquipmentPrototype(Json & json)
+EquipmentPrototype::EquipmentPrototype(const Json & json, VfxManager & vfxManager):
+    m_vfxManager(vfxManager)
 {
     for (const auto & obj : json["Engines"])
     {
@@ -38,9 +39,9 @@ const std::vector<HardpointPrototype> & EquipmentPrototype::hardpoints() const
     return m_hardpoints;
 }
 
-void EquipmentPrototype::applyToEntity(Entity & entity, VfxManager & vfxManager) const
+void EquipmentPrototype::applyToEntity(Entity & entity) const
 {
-    auto & equipment = entity.addComponent<Equipment>(vfxManager);
+    auto & equipment = entity.addComponent<Equipment>(m_vfxManager);
 
     for (const auto & enginePrototype : m_engines)
     {

@@ -3,14 +3,11 @@
 #include <cmath>
 
 #include <Deliberation/Core/Assert.h>
+#include <Deliberation/Core/StreamUtils.h>
 #include <Deliberation/Core/Math/MathUtils.h>
 #include <Deliberation/Core/Math/Transform3D.h>
 
 #include <Deliberation/Physics/RigidBody.h>
-
-PlayerFlightControl::PlayerFlightControl(std::shared_ptr<RigidBody> & body, const FlightControlConfig & config):
-    FlightControlBase(body, config)
-{}
 
 const glm::vec3 & PlayerFlightControl::linearThrust() const
 {
@@ -38,36 +35,36 @@ void PlayerFlightControl::setAngularThrust(const glm::vec3 & angularThrust)
     m_angularThrust = angularThrust;
 }
 
-void PlayerFlightControl::update(float seconds)
+void PlayerFlightControl::update(RigidBody & body, FlightControlConfig & config, float seconds)
 {
     /**
      * Control linear velocity
      */
-    auto localLinearVelocity = m_body->transform().directionWorldToLocal(m_body->linearVelocity());
+    auto localLinearVelocity = body.transform().directionWorldToLocal(body.linearVelocity());
 
     auto targetLocalLinearVelocity = glm::vec3({
-                                                  m_linearThrust.x * m_config.horizontal.maxSpeed,
-                                                  m_linearThrust.y * m_config.vertical.maxSpeed,
+                                                  m_linearThrust.x * config.horizontal.maxSpeed,
+                                                  m_linearThrust.y * config.vertical.maxSpeed,
                                                   m_linearThrust.z * (m_linearThrust.z > 0
-                                                                      ? m_config.backward.maxSpeed
-                                                                      : m_config.forward.maxSpeed)
+                                                                      ? config.backward.maxSpeed
+                                                                      : config.forward.maxSpeed)
                                               });
 
     auto deltaLocalLinearVelocity = targetLocalLinearVelocity - localLinearVelocity;
 
     glm::vec3 localLinearAcceleration;
-    if (std::fabs(deltaLocalLinearVelocity.x) > m_config.horizontal.acceleration * seconds)
+    if (std::fabs(deltaLocalLinearVelocity.x) > config.horizontal.acceleration * seconds)
     {
-        localLinearAcceleration.x = m_config.horizontal.acceleration * seconds * SigNum(deltaLocalLinearVelocity.x);
+        localLinearAcceleration.x = config.horizontal.acceleration * seconds * SigNum(deltaLocalLinearVelocity.x);
     }
     else
     {
         localLinearAcceleration.x = deltaLocalLinearVelocity.x;
     }
 
-    if (std::fabs(deltaLocalLinearVelocity.y) > m_config.vertical.acceleration * seconds)
+    if (std::fabs(deltaLocalLinearVelocity.y) > config.vertical.acceleration * seconds)
     {
-        localLinearAcceleration.y = m_config.vertical.acceleration * seconds * SigNum(deltaLocalLinearVelocity.y);
+        localLinearAcceleration.y = config.vertical.acceleration * seconds * SigNum(deltaLocalLinearVelocity.y);
     }
     else
     {
@@ -76,9 +73,9 @@ void PlayerFlightControl::update(float seconds)
 
     if (deltaLocalLinearVelocity.z > 0)
     {
-        if (deltaLocalLinearVelocity.z > m_config.backward.acceleration * seconds)
+        if (deltaLocalLinearVelocity.z > config.backward.acceleration * seconds)
         {
-            localLinearAcceleration.z = m_config.backward.acceleration * seconds;
+            localLinearAcceleration.z = config.backward.acceleration * seconds;
         }
         else
         {
@@ -87,9 +84,9 @@ void PlayerFlightControl::update(float seconds)
     }
     else
     {
-        if (-deltaLocalLinearVelocity.z > m_config.forward.acceleration * seconds)
+        if (-deltaLocalLinearVelocity.z > config.forward.acceleration * seconds)
         {
-            localLinearAcceleration.z = -m_config.forward.acceleration * seconds;
+            localLinearAcceleration.z = -config.forward.acceleration * seconds;
         }
         else
         {
@@ -97,26 +94,28 @@ void PlayerFlightControl::update(float seconds)
         }
     }
 
-    m_body->setLinearVelocity(m_body->linearVelocity() + m_body->transform().directionLocalToWorld(localLinearAcceleration));
+    body.setLinearVelocity(body.linearVelocity() + body.transform().directionLocalToWorld(localLinearAcceleration));
 
     /**
      * Control angular velocity
      */
-    auto localAngularVelocity = m_body->transform().directionWorldToLocal(m_body->angularVelocity());
+    auto localAngularVelocity = body.transform().directionWorldToLocal(body.angularVelocity());
 
-    auto targetLocalAngularVelocity = m_angularThrust * m_config.angular.maxSpeed;
+    auto targetLocalAngularVelocity = m_angularThrust * config.angular.maxSpeed;
 
     auto deltaLocalAngularVelocity = targetLocalAngularVelocity - localAngularVelocity;
 
     glm::vec3 localAngularAcceleration;
-    if (glm::length(deltaLocalAngularVelocity) > m_config.angular.acceleration * seconds)
+    if (glm::length(deltaLocalAngularVelocity) > config.angular.acceleration * seconds)
     {
-        localAngularAcceleration = glm::normalize(deltaLocalAngularVelocity) * m_config.angular.acceleration * seconds;
+        localAngularAcceleration = glm::normalize(deltaLocalAngularVelocity) * config.angular.acceleration * seconds;
     }
     else
     {
         localAngularAcceleration = deltaLocalAngularVelocity;
     }
 
-    m_body->setAngularVelocity(m_body->angularVelocity() + m_body->transform().directionLocalToWorld(localAngularAcceleration));
+    std::cout << "Angular " << localAngularAcceleration << " " << m_angularThrust << " " << seconds << " " << config.angular.maxSpeed  << std::endl;
+
+    body.setAngularVelocity(body.angularVelocity() + body.transform().directionLocalToWorld(localAngularAcceleration));
 }

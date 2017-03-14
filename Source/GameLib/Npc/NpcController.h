@@ -10,27 +10,24 @@
 #include "NpcSteering.h"
 #include "NpcFlightControl.h"
 
+class NpcFlightControl;
+
 class NpcController final:
     public Component<NpcController>
 {
 public:
-    NpcController(FlightControlConfig config);
-
-    const std::shared_ptr<RigidBody> & body() const;
     NpcSteering & steering();
     const NpcSteering & steering() const;
-    const std::shared_ptr<NpcFlightControl> & flightControl();
-    std::shared_ptr<const NpcFlightControl> flightControl() const;
+    const std::shared_ptr<NpcTask> & task() const;
 
-    void setBody(std::shared_ptr<RigidBody> body);
     void setTask(std::shared_ptr<NpcTask> task);
 
-    void update(float seconds, Equipment & equipment);
+    void update(RigidBody & body,
+                NpcFlightControl & flightControl,
+                const FlightControlConfig & config,
+                float seconds);
 
 private:
-    FlightControlConfig                 m_flightControlConfig;
-    std::shared_ptr<NpcFlightControl>   m_flightControl;
     NpcSteering                         m_steering;
     std::shared_ptr<NpcTask>            m_task;
-    std::shared_ptr<Equipment>          m_equipment;
 };

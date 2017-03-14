@@ -6,6 +6,7 @@
 
 #include "EntityPrototypeManager.h"
 #include "EquipmentSystem.h"
+#include "PlayerSystem.h"
 #include "CoriolisSystem.h"
 #include "VfxSystem.h"
 
@@ -61,6 +62,7 @@ void VerseApplication::onStartup()
     m_debugOverlay = m_world.addSystem<DebugOverlay>();
     m_world.addSystem<CoriolisSystem>();
     m_world.addSystem<EquipmentSystem>();
+    m_world.addSystem<PlayerSystem>(input(), m_camera, m_physicsWorld);
 
     m_debugGeometryManager.emplace(context());
 

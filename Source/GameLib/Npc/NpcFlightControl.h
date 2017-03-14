@@ -4,8 +4,9 @@
 
 #include <glm/glm.hpp>
 
+#include <Deliberation/ECS/Component.h>
+
 #include "GameLib.h"
-#include "FlightControlBase.h"
 #include "FlightControlConfig.h"
 
 namespace deliberation
@@ -16,18 +17,16 @@ class RigidBody;
 }
 
 class NpcFlightControl final:
-    public FlightControlBase
+    public Component<NpcFlightControl>
 {
 public:
-    NpcFlightControl(std::shared_ptr<RigidBody> & body, const FlightControlConfig & config);
-
     const glm::vec3 & localLinearAcceleration() const;
     const glm::vec3 & localAngularAccelertion() const;
 
     void setLocalLinearAcceleration(const glm::vec3 & localLinearAcceleration);
     void setLocalAngularAccceleration(const glm::vec3 & localAngularAccelertion);
 
-    void update(float seconds) override;
+    void update(RigidBody & body, const FlightControlConfig & config, float seconds);
 
     glm::vec3 correctiveAcceleration(float requiredCorretion, float acceleration, float seconds,
                                      const glm::vec3 & direction) const;

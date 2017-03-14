@@ -24,7 +24,7 @@ void NpcDebugTask::setFireRequest(bool enabled, const glm::vec3 & target)
     m_fireRequestTarget = target;
 }
 
-void NpcDebugTask::update(NpcController & controller, Equipment & equipment, float seconds)
+void NpcDebugTask::update(NpcController & controller, RigidBody & body, Equipment & equipment, float seconds)
 {
     equipment.setFireRequest(m_fireRequestEnabled, m_fireRequestTarget);
 }

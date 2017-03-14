@@ -37,7 +37,6 @@
 #include "VoxelObject.h"
 #include "VoxelWorld.h"
 #include "VoxReader.h"
-#include "PlayerInput.h"
 #include "Player/PlayerFlightControl.h"
 #include "VerseApplication.h"
 #include "Weapon.h"
@@ -54,81 +53,27 @@ public:
 
     }
 
-    void onApplicationStartup() override
-    {
-       // deliberation::EnableGLErrorChecksAndLogging();
-
-        /**
-         * Create Prototypes
-         */
-        VoxReader voxReader;
-
-        m_shipData = VoxelObjectVoxelData::fromFile(voxReader, *m_voxelWorld, "Data/VoxelClusters/ship.vox");
-
-        {
-            m_blockData = std::make_shared<VoxelObjectVoxelData>(*m_voxelWorld, glm::uvec3(3,3,3));
-            for (size_t z = 0; z < m_blockData->size().z; z++)
-            {
-                for (size_t y = 0; y < m_blockData->size().y; y++)
-                {
-                    for (size_t x = 0; x < m_blockData->size().x; x++)
-                    {
-                        m_blockData->addVoxels({Voxel({x, y, z}, glm::vec3(0.5f, 0.4f, 0.8f), 200.0f)});
-                    }
-                }
-            }
-        }
+    void onApplicationStartup() override {
+        // deliberation::EnableGLErrorChecksAndLogging();
 
         /**
          *
          */
         auto bulletMesh = UVSphere(5, 5).generateMesh2();
-        m_bulletMeshID = m_hailstormManager->vfxManager().renderer().addMesh(bulletMesh);
+        auto bulletMeshID = m_hailstormManager->vfxManager().renderer().addMesh(bulletMesh);
 
         /**
-         * Setup player
+         * Create player
          */
-        FlightControlConfig playerShipConfig;
-        playerShipConfig.forward.acceleration = 30.0f;
-        playerShipConfig.forward.maxSpeed = 100.0f;
-        playerShipConfig.backward.acceleration = 60.0f;
-        playerShipConfig.backward.maxSpeed = 60.0f;
-        playerShipConfig.horizontal.acceleration = 60.0f;
-        playerShipConfig.horizontal.maxSpeed = 60.0f;
-        playerShipConfig.vertical.acceleration = 20.0f;
-        playerShipConfig.vertical.maxSpeed = 60.0f;
-        playerShipConfig.angular.acceleration = 3.0f;
-        playerShipConfig.angular.maxSpeed = 2.0f;
-
-        std::ifstream playerEquipmentPrototypeFile("Data/Prototypes/Ship.json");
-        Json obj;
-        playerEquipmentPrototypeFile >> obj;
-
-        auto playerEquipmentPrototype = std::make_shared<EquipmentPrototype>(obj["Equipment"]);
-
-        m_player = m_world.createEntity("npc");
-        auto & voxelObject = m_player.addComponent<VoxelObject>(*m_shipData);
-
-        auto rigidBodyPayload = std::make_shared<VoxelRigidBodyPayload>(voxelObject.shared_from_this());
-
-        m_playerBody = std::make_shared<RigidBody>(voxelObject.data().shape());
-        m_playerBody->setPayload(rigidBodyPayload);
-        m_playerBody->transform().setCenter(glm::vec3(voxelObject.data().size()) / 2.0f);
-        m_playerBody->transform().setPosition({0.0f, 20.0f, 50.0f});
-
-        m_player.addComponent<RigidBodyComponent>(m_playerBody);
-
-        playerEquipmentPrototype->applyToEntity(m_player, *m_vfxManager);
-
-        auto & equipment = m_player.component<Equipment>();
-//
-//        equipment.setEngine(0, std::make_shared<Engine>(m_emitterAfterburner));
-//        equipment.setEngine(1, std::make_shared<Engine>(m_emitterAfterburner));
+        auto player = m_entityPrototypeManager->createEntity({"Ship", "Player"}, "PlayerShip");
 
         {
+            auto &equipment = player.component<Equipment>();
+            auto &voxelObject = player.component<VoxelObject>();
+
             WeaponConfig weaponConfig;
             weaponConfig.cooldown = 0.2f;
-            weaponConfig.meshID = m_bulletMeshID;
+            weaponConfig.meshID = bulletMeshID;
 
             auto weapon0 = std::make_shared<Weapon>(weaponConfig, *m_hailstormManager, voxelObject.id().worldUID);
             auto weapon1 = std::make_shared<Weapon>(weaponConfig, *m_hailstormManager, voxelObject.id().worldUID);
@@ -136,98 +81,42 @@ public:
             equipment.setWeapon(0, weapon0);
             equipment.setWeapon(1, weapon1);
         }
+        {
+            auto &playerBody = player.component<RigidBodyComponent>().value();
+            playerBody->transform().setPosition({0.0f, 20.0f, 50.0f});
+        }
 
-        /**
-         * Create other objects
-         */
-        m_flightControl.reset(m_playerBody, playerShipConfig);
-        m_playerInput.reset(input(), m_camera, *m_flightControl);
-        m_dolly.reset(m_camera);
 
         /**
          * Create station
          */
-        m_station = m_entityPrototypeManager->createEntity("Station", "MyStation");
-        auto stationBody = m_station.component<RigidBodyComponent>().value();
+        auto station = m_entityPrototypeManager->createEntity({"Station"}, "MyStation");
+        auto stationBody = station.component<RigidBodyComponent>().value();
         stationBody->transform().setPosition({0.0f, 40.0f, -100.0f});
 
         /**
          * Create asteroids
          */
-        for (auto i = 0; i < 5; i++)
-        {
-            auto asteroid = m_entityPrototypeManager->createEntity("Asteroid00", "MyAsteroid");
+        for (auto i = 0; i < 15; i++) {
+            auto asteroid = m_entityPrototypeManager->createEntity({"Asteroid00"}, "MyAsteroid");
             auto asteroidBody = asteroid.component<RigidBodyComponent>().value();
-            asteroidBody->transform().setPosition(RandomUnitVec3() * 250.0f);
+            asteroidBody->transform().setPosition(RandomUnitVec3() * 1250.0f);
         }
-        for (auto i = 0; i < 5; i++)
-        {
-            auto asteroid = m_entityPrototypeManager->createEntity("Asteroid01", "MyAsteroid");
+        for (auto i = 0; i < 15; i++) {
+            auto asteroid = m_entityPrototypeManager->createEntity({"Asteroid01"}, "MyAsteroid");
             auto asteroidBody = asteroid.component<RigidBodyComponent>().value();
-            asteroidBody->transform().setPosition(RandomUnitVec3() * 250.0f);
+            asteroidBody->transform().setPosition(RandomUnitVec3() * 1250.0f);
+        }
+
+        /**
+         * Create enemies
+         */
+        for (auto i = 0; i < 4; i++) {
+            auto npc = m_entityPrototypeManager->createEntity({"Drone", "Npc"}, "MyNPC");
+            auto npcBody = npc.component<RigidBodyComponent>().value();
+            npcBody->transform().setPosition(glm::vec3(300.0f, 0.0f, 0.0f) + RandomUnitVec3() * 1000.0f);
         }
     }
-
-    void onApplicationUpdate(float seconds) override
-    {
-        m_playerInput->update(seconds);
-        m_flightControl->update(seconds);
-
-        {
-            AimHelper aimHelper(m_camera, m_physicsWorld);
-
-            auto & equipment = m_player.component<Equipment>();
-
-            bool hit;
-            auto target = aimHelper.getTarget(input().mousePosition(), hit);
-
-            if (input().mouseButtonDown(InputBase::MouseButton_Right))
-            {
-                equipment.setFireRequest(true, target);
-            }
-            else
-            {
-                equipment.setFireRequest(false, {});
-            }
-        }
-    }
-
-    void onApplicationPhysicsUpdate(float seconds) override
-    {
-        glm::vec3 offset;
-        offset.z = m_shipData->size().z * 1.4f;
-        offset.y = m_shipData->size().y * 2;
-
-        Pose3D targetPose(m_playerBody->transform().position() +
-                          m_playerBody->transform().orientation() * offset,
-                          m_playerBody->transform().orientation());
-//        Pose3D targetPose(m_playerBody->transform().position(),
-//                          m_playerBody->transform().orientation());
-
-//        auto targetPose = m_player.component<VoxelObject>().pose();
-
-        //auto position = targetPose.pointLocalToWorld(offset);
-        auto position = targetPose.pointLocalToWorld({});
-
-//        m_camera.setPosition(position);
-//        m_camera.setOrientation(targetPose.orientation());
-        m_dolly->update(position, targetPose.orientation(), seconds);
-    }
-
-private:
-    Optional<CameraDolly3D>                 m_dolly;
-    Optional<PlayerFlightControl>           m_flightControl;
-    Optional<PlayerInput>                   m_playerInput;
-
-    Entity                                  m_player;
-    Entity                                  m_station;
-    std::shared_ptr<RigidBody>              m_playerBody;
-
-    VfxMeshId                               m_bulletMeshID;
-
-    std::shared_ptr<VoxelObjectVoxelData>   m_shipData;
-    std::shared_ptr<VoxelObjectVoxelData>   m_stationData;
-    std::shared_ptr<VoxelObjectVoxelData>   m_blockData;
 };
 
 int main(int argc, char *argv[])

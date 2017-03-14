@@ -15,7 +15,7 @@ class EntityPrototypeManager final
 public:
     EntityPrototypeManager(World & world);
 
-    Entity createEntity(const std::string & prototypeName, const std::string & entityName);
+    Entity createEntity(const std::vector<std::string> & prototypeNames, const std::string & entityName);
 
 private:
     template<typename T, typename ... Args>

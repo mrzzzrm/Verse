@@ -28,6 +28,11 @@ add_library(${target}
     Npc/NpcTask.cpp
     Npc/NpcTask.h
 
+    Player/PlayerFlightControl.cpp
+    Player/PlayerFlightControl.h
+    Player/PlayerSystem.cpp
+    Player/PlayerSystem.h
+
     Resource/ComponentPrototype.h
     Resource/CoriolisPrototype.cpp
     Resource/CoriolisPrototype.h
@@ -37,6 +42,12 @@ add_library(${target}
     Resource/EntityPrototypeManager.h
     Resource/EquipmentPrototype.cpp
     Resource/EquipmentPrototype.h
+    Resource/FlightControlConfigPrototype.cpp
+    Resource/FlightControlConfigPrototype.h
+    Resource/NpcControllerPrototype.cpp
+    Resource/NpcControllerPrototype.h
+    Resource/PlayerFlightControlPrototype.cpp
+    Resource/PlayerFlightControlPrototype.h
     Resource/RigidBodyPrototype.cpp
     Resource/RigidBodyPrototype.h
     Resource/VoxelObjectPrototype.cpp
@@ -126,10 +137,6 @@ add_library(${target}
     Equipment.h
     EquipmentSystem.cpp
     EquipmentSystem.h
-    FlightControlBase.cpp
-    FlightControlBase.h
-    Player/PlayerFlightControl.cpp
-    Player/PlayerFlightControl.h
     FlightControlConfig.cpp
     FlightControlConfig.h
     Hardpoint.cpp
@@ -138,8 +145,6 @@ add_library(${target}
     ItemSlot.h
     GameLib.cpp
     GameLib.h
-    PlayerInput.cpp
-    PlayerInput.h
     VerseApplication.cpp
     VerseApplication.h
     Weapon.cpp

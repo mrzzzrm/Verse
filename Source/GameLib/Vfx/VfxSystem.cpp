@@ -66,6 +66,11 @@ VfxSystem::VfxSystem(World & world, VfxManager & vfxManager):
     world.eventManager().subscribe<VoxelObjectBulletHit>(*this);
 }
 
+VfxManager & VfxSystem::manager() const
+{
+    return m_vfxManager;
+}
+
 void VfxSystem::receive(const VoxelObjectModification & modification)
 {
     for (const auto & voxel : modification.removals)

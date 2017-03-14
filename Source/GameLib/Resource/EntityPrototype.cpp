@@ -12,14 +12,10 @@ void EntityPrototype::addComponentPrototype(const std::shared_ptr<ComponentProto
     m_componentPrototypes.emplace_back(componentPrototype);
 }
 
-Entity EntityPrototype::createEntity(const std::string & name)
+void EntityPrototype::applyToEntity(Entity & entity)
 {
-    auto entity = m_world.createEntity(name);
-
     for (const auto & componentPrototype : m_componentPrototypes)
     {
         componentPrototype->applyToEntity(entity);
     }
-
-    return entity;
 }

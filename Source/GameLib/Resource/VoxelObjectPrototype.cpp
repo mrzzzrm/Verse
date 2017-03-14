@@ -15,11 +15,19 @@ VoxelObjectPrototype::VoxelObjectPrototype(const Json & json, VoxelWorld & voxel
         {
             m_voxelDataPrototype = std::make_shared<VoxelObjectVoxelData>(voxelWorld, models[0].size);
             m_voxelDataPrototype->addVoxels(models[0].voxels);
-            m_voxelDataPrototype->setCrucialVoxel({11, 12, 6}); // TODO
+
+            const auto iter = json.find("CrucialVoxel");
+            if (iter != json.end())
+            {
+                m_voxelDataPrototype->setCrucialVoxel(*iter);
+            }
         }
     }
 
-    m_scale = json["Scale"];
+    {
+        auto iter = json.find("Scale");
+        if (iter != json.end()) m_scale = *iter;
+    }
 }
 
 void VoxelObjectPrototype::applyToEntity(Entity & entity) const

@@ -2,6 +2,8 @@
 
 #include <glm/glm.hpp>
 
+#include <Deliberation/ECS/Component.h>
+
 #include "GameLib.h"
 
 struct FlightControlComponent
@@ -16,8 +18,10 @@ struct FlightControlDirection
     float maxSpeed = 0.0f;
 };
 
-struct FlightControlConfig
+class FlightControlConfig:
+    public Component<FlightControlConfig>
 {
+public:
     FlightControlComponent forward;
     FlightControlComponent backward;
     FlightControlComponent horizontal;

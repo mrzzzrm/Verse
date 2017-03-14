@@ -10,10 +10,6 @@
 
 #include <Deliberation/Physics/RigidBody.h>
 
-NpcFlightControl::NpcFlightControl(std::shared_ptr<RigidBody> & body, const FlightControlConfig & config):
-    FlightControlBase(body, config)
-{}
-
 const glm::vec3 & NpcFlightControl::localLinearAcceleration() const
 {
     return m_localLinearAcceleration;
@@ -34,12 +30,12 @@ void NpcFlightControl::setLocalAngularAccceleration(const glm::vec3 & localAngul
     m_localAngularAccelertion = localAngularAccelertion;
 }
 
-void NpcFlightControl::update(float seconds)
+void NpcFlightControl::update(RigidBody & body, const FlightControlConfig & config, float seconds)
 {
     /**
      * Correct linear acceleration
      */
-    const auto localLinearVelocity = m_body->transform().directionWorldToLocal(m_body->linearVelocity());
+    const auto localLinearVelocity = body.transform().directionWorldToLocal(body.linearVelocity());
 
     const auto correctLinearAccelerationOnAxis = [&] (
         const float currentSpeed, float & currentAcceleration,
@@ -58,40 +54,40 @@ void NpcFlightControl::update(float seconds)
     };
 
     correctLinearAccelerationOnAxis(localLinearVelocity.x, m_localLinearAcceleration.x,
-                                    m_config.horizontal.maxSpeed, m_config.horizontal.acceleration);
+                                    config.horizontal.maxSpeed, config.horizontal.acceleration);
 
     correctLinearAccelerationOnAxis(localLinearVelocity.y, m_localLinearAcceleration.y,
-                                    m_config.vertical.maxSpeed, m_config.vertical.acceleration);
+                                    config.vertical.maxSpeed, config.vertical.acceleration);
 
     if (localLinearVelocity.z > 0.0f)
     {
         correctLinearAccelerationOnAxis(localLinearVelocity.z, m_localLinearAcceleration.z,
-                                        m_config.backward.maxSpeed, m_config.forward.acceleration);
+                                        config.backward.maxSpeed, config.forward.acceleration);
     }
     else
     {
         correctLinearAccelerationOnAxis(localLinearVelocity.z, m_localLinearAcceleration.z,
-                                        m_config.forward.maxSpeed, m_config.backward.acceleration);
+                                        config.forward.maxSpeed, config.backward.acceleration);
     }
 
     /**
      * Correct angular acceleration
      */
-    const auto localAngularVelocity =  m_body->transform().directionWorldToLocal(m_body->angularVelocity());
+    const auto localAngularVelocity =  body.transform().directionWorldToLocal(body.angularVelocity());
     const auto localAngularSpeed = glm::length(localAngularVelocity);
 
-    if (EpsilonGt(localAngularSpeed, 0.0f) && EpsilonGt(localAngularSpeed, m_config.angular.maxSpeed))
+    if (EpsilonGt(localAngularSpeed, 0.0f) && EpsilonGt(localAngularSpeed, config.angular.maxSpeed))
     {
-        m_localAngularAccelertion = correctiveAcceleration(localAngularSpeed - m_config.angular.maxSpeed,
-                                                           m_config.angular.acceleration, seconds,
+        m_localAngularAccelertion = correctiveAcceleration(localAngularSpeed - config.angular.maxSpeed,
+                                                           config.angular.acceleration, seconds,
                                                            -glm::normalize(localAngularVelocity));
     }
 
     /**
      * Apply accelerations
      */
-    m_body->setLinearVelocity(m_body->linearVelocity() + m_body->transform().directionLocalToWorld(m_localLinearAcceleration) * seconds);
-    m_body->setAngularVelocity(m_body->angularVelocity() + m_body->transform().directionLocalToWorld(m_localAngularAccelertion) * seconds);
+    body.setLinearVelocity(body.linearVelocity() + body.transform().directionLocalToWorld(m_localLinearAcceleration) * seconds);
+    body.setAngularVelocity(body.angularVelocity() + body.transform().directionLocalToWorld(m_localAngularAccelertion) * seconds);
 }
 
 glm::vec3 NpcFlightControl::correctiveAcceleration(float requiredCorrection, float acceleration, float seconds,

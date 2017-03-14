@@ -15,7 +15,7 @@ public:
 
     void setTarget(Entity target);
 
-    void update(NpcController & controller, Equipment & equipment, float seconds) override;
+    void update(NpcController & controller, RigidBody & body, Equipment & equipment, float seconds) override;
 
 private:
     enum class Status
@@ -26,7 +26,7 @@ private:
     };
 
 private:
-    void startEvasion(NpcController & controller);
+    void startEvasion(RigidBody & body, NpcController & controller);
     void startJoust();
 
 private:

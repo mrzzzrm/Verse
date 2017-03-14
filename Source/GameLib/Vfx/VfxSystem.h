@@ -17,6 +17,8 @@ class VfxSystem final:
 public:
     VfxSystem(World & world, VfxManager & vfxManager);
 
+    VfxManager & manager() const;
+
     void receive(const VoxelObjectModification & modification);
     void receive(const VoxelObjectBulletHit & hit);
 

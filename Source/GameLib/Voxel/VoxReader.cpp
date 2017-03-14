@@ -89,8 +89,6 @@ std::vector<VoxReader::VoxelModel> VoxReader::read(const std::string & path)
         file.read((char*)&voxelModels[m].size.z, sizeof(voxelModels[m].size.z));
         file.read((char*)&voxelModels[m].size.y, sizeof(voxelModels[m].size.y));
 
-        std::cout << "Model " << m << ": " << voxelModels[m].size << std::endl;
-
         auto xyziChunk = readChunkHeader(file);
         Assert(xyziChunk.type == XYZI_CHUNK, "No xyzi chunk");
         Assert(xyziChunk.numBytes % 4 == 0, "Invalid number of bytes");

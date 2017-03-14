@@ -13,7 +13,7 @@ public:
     void setDestination(const glm::vec3 & destination);
     void setStopAtDestination(bool stopAtDestination);
 
-    void update(NpcFlightControl & flightControl, float seconds);
+    void update(RigidBody & body, NpcFlightControl & flightControl, const FlightControlConfig & config, float seconds);
 
 private:
     std::experimental::optional<glm::vec3>

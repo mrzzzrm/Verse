@@ -16,7 +16,7 @@ public:
 
     void addComponentPrototype(const std::shared_ptr<ComponentPrototype> & componentPrototype);
 
-    Entity createEntity(const std::string & name);
+    void applyToEntity(Entity & entity);
 
 private:
     World &                                             m_world;

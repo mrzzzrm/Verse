@@ -2,6 +2,11 @@
 
 #include "GameLib.h"
 
+namespace deliberation
+{
+class Entity;
+}
+
 class ComponentPrototype
 {
 public:

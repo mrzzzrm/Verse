@@ -11,8 +11,6 @@ VoxelRenderChunkTree::VoxelRenderChunkTree(const VoxelWorld & voxelWorld, const 
     m_voxelWorld(voxelWorld),
     m_size(size)
 {
-    ScopeProfiler scopeProfiler("VoxelRenderChunkTree::VoxelRenderChunkTree()");
-
     Assert(m_size.x >= 0 && m_size.y >= 0 && m_size.z >= 0, "");
 
     size_t numChunks = 0;

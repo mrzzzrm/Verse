@@ -2,9 +2,11 @@
 
 #include <memory>
 
+#include <Deliberation/ECS/Components.h>
 #include <Deliberation/ECS/System.h>
 
 #include "Equipment.h"
+#include "FlightControlConfig.h"
 #include "GameLib.h"
 #include "NpcController.h"
 
@@ -16,21 +18,30 @@ public:
         Base(world, ComponentFilter::requires<
             NpcController,
             RigidBodyComponent,
-            Equipment>())
+            Equipment,
+            NpcFlightControl,
+            FlightControlConfig>())
     {}
 
 protected:
     void onEntityAdded(Entity & entity) override
     {
-        auto body = entity.component<RigidBodyComponent>().value();
-        auto & npcController = entity.component<NpcController>();
-
-        npcController.setBody(body);
+        entity.addComponent<NpcFlightControl>();
     }
 
     void onEntityPrePhysicsUpdate(Entity & entity, float seconds) override
     {
+        auto & body = *entity.component<RigidBodyComponent>().value();
         auto & equipment = entity.component<Equipment>();
-        entity.component<NpcController>().update(seconds, equipment);
+        auto & npcController = entity.component<NpcController>();
+        auto & flightControl = entity.component<NpcFlightControl>();
+        auto & flightControlConfig = entity.component<FlightControlConfig>();
+
+        auto & task = npcController.task();
+
+        if (task) task->update(npcController, body, equipment, seconds);
+
+        npcController.update(body, flightControl, flightControlConfig, seconds);
+        flightControl.update(body, flightControlConfig, seconds);
     }
 };

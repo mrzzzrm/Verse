@@ -3,61 +3,81 @@
 #include <fstream>
 
 #include <Deliberation/Core/Assert.h>
+#include <Player/PlayerFlightControl.h>
 
 #include "CoriolisPrototype.h"
 #include "EntityPrototype.h"
+#include "EquipmentPrototype.h"
+#include "FlightControlConfigPrototype.h"
+#include "NpcControllerPrototype.h"
+#include "PlayerFlightControlPrototype.h"
 #include "RigidBodyPrototype.h"
+#include "VfxSystem.h"
 #include "VoxelObjectPrototype.h"
 
 EntityPrototypeManager::EntityPrototypeManager(World & world):
     m_world(world)
 {
     auto & voxelWorld = m_world.system<VoxelWorld>();
+    auto & vfxManager = m_world.system<VfxSystem>().manager();
 
     registerComponentLoader<VoxelObjectPrototype>("VoxelObject", voxelWorld);
     registerComponentLoader<RigidBodyPrototype>("RigidBody");
     registerComponentLoader<CoriolisPrototype>("Coriolis");
+    registerComponentLoader<EquipmentPrototype>("Equipment", vfxManager);
+    registerComponentLoader<FlightControlConfigPrototype>("FlightControlConfig");
+    registerComponentLoader<NpcControllerPrototype>("NpcController");
+    registerComponentLoader<PlayerFlightControlPrototype>("PlayerFlightControl");
 }
 
-Entity EntityPrototypeManager::createEntity(const std::string & prototypeName, const std::string & entityName)
+Entity EntityPrototypeManager::createEntity(const std::vector<std::string> & prototypeNames,
+                                            const std::string & entityName)
 {
+    auto entity = m_world.createEntity(entityName);
+
+    for (const auto & prototypeName : prototypeNames)
     {
-        const auto iter = m_entityPrototypeByName.find(prototypeName);
-        if (iter != m_entityPrototypeByName.end())
         {
-            const auto & entityPrototype = iter->second;
-            entityPrototype->createEntity(entityName);
+            const auto iter = m_entityPrototypeByName.find(prototypeName);
+            if (iter != m_entityPrototypeByName.end())
+            {
+                const auto & entityPrototype = iter->second;
+                entityPrototype->applyToEntity(entity);
+
+                continue;
+            }
         }
+
+        std::cout << "Loading EntityPrototype '" << prototypeName << "'" << std::endl;
+
+        auto entityPrototype = std::make_shared<EntityPrototype>(m_world, prototypeName);
+
+        std::ifstream prototypeFile("Data/Prototypes/" + prototypeName + ".json");
+        Json entityPrototypeJson;
+        prototypeFile >> entityPrototypeJson;
+
+        for (const auto & prototypeJson : entityPrototypeJson)
+        {
+            const auto & componentPrototypeType = prototypeJson["Component"].get<std::string>();
+
+            std::cout << "  Component: '" << componentPrototypeType << "'" << std::endl;
+
+            const auto iter = m_componentPrototypeLoaderByType.find(componentPrototypeType);
+            Assert(iter != m_componentPrototypeLoaderByType.end(),
+                   "Can't load component type '" + componentPrototypeType + "'");
+
+            const auto & componentPrototypeLoader = iter->second;
+
+            auto componentPrototype = componentPrototypeLoader(prototypeJson);
+
+            entityPrototype->addComponentPrototype(componentPrototype);
+        }
+
+        m_entityPrototypeByName.emplace(prototypeName, entityPrototype);
+        entityPrototype->applyToEntity(entity);
     }
 
-    auto entityPrototype = std::make_shared<EntityPrototype>(m_world, prototypeName);
-
-    std::ifstream prototypeFile("Data/Prototypes/" + prototypeName + ".json");
-    Json entityPrototypeJson;
-    prototypeFile >> entityPrototypeJson;
-
-    std::cout << "Loading EntityPrototype '" << prototypeName << "'" << std::endl;
-
-    for (const auto & prototypeJson : entityPrototypeJson)
-    {
-        const auto & componentPrototypeType = prototypeJson["Component"].get<std::string>();
-
-        std::cout << "  Component: '" << componentPrototypeType << "'" << std::endl;
-
-        const auto iter = m_componentPrototypeLoaderByType.find(componentPrototypeType);
-        Assert(iter != m_componentPrototypeLoaderByType.end(),
-               "Can't load component type '" + componentPrototypeType + "'");
-
-        const auto & componentPrototypeLoader = iter->second;
-
-        auto componentPrototype = componentPrototypeLoader(prototypeJson);
-
-        entityPrototype->addComponentPrototype(componentPrototype);
-    }
-
-    m_entityPrototypeByName.emplace(prototypeName, entityPrototype);
-
-    return entityPrototype->createEntity(entityName);
+    return entity;
 }
 
 template<typename T, typename ... Args>

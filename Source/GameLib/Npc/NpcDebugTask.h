@@ -15,7 +15,7 @@ public:
 
     void setFireRequest(bool enabled, const glm::vec3 & target);
 
-    void update(NpcController & controller, Equipment & equipment, float seconds) override;
+    void update(NpcController & controller, RigidBody & body, Equipment & equipment, float seconds) override;
 
 private:
     bool        m_fireRequestEnabled = false;
