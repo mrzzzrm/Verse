@@ -23,6 +23,8 @@ public:
         PhysicsWorld & physicsWorld,
         VoxelWorld & voxelWorld);
 
+    DurationMicros updateDuration() const;
+
     VfxManager & vfxManager();
 
     void addBullet(HailstormBullet bullet);
@@ -34,4 +36,5 @@ protected:
 private:
     VfxManager              m_vfxManager;
     HailstormPhysicsWorld   m_hailstormPhysicsWorld;
+    DurationMicros          m_updateDuration = 0;
 };

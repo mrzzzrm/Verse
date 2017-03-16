@@ -5,6 +5,7 @@
 
 #include <Deliberation/Font/Label.h>
 #include <Deliberation/Font/LabelRenderer.h>
+#include <Deliberation/Font/MultilineLabel.h>
 #include <Deliberation/Font/Font.h>
 
 #include "GameLib.h"
@@ -24,5 +25,5 @@ private:
     Font            m_font;
     LabelRenderer   m_renderer;
 
-    Label           m_fpsLabel;
+    MultilineLabel  m_labels;
 };

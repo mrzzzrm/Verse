@@ -22,7 +22,9 @@ class Hardpoint final:
 public:
     Hardpoint(const HardpointDesc & desc);
 
-    void setFireRequest(bool active, const glm::vec3 & target);
+    const std::shared_ptr<Weapon> & weapon() const;
+
+    void setFireRequest(bool active, const glm::vec3 & direction);
 
     /**
      * Only used for warping the Hardpoint, otherwise use update()'s referencePose

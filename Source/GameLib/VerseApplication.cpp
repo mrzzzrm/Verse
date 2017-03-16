@@ -10,6 +10,7 @@
 #include "FactionManager.h"
 #include "NpcBehaviourSystem.h"
 #include "PlayerSystem.h"
+#include "ResourceManager.h"
 #include "CoriolisSystem.h"
 #include "VfxSystem.h"
 
@@ -54,6 +55,7 @@ void VerseApplication::onStartup()
     m_groundPlane->setQuadSize(100.0f);
     m_groundPlane->setRadius(750.0f);
 
+    m_world.addSystem<ResourceManager>(context());
     m_world.addSystem<PhysicsWorldSystem>(m_physicsWorld);
     m_world.addSystem<VoxelClusterSplitSystem>();
     m_voxelWorld = m_world.addSystem<VoxelWorld>(context(), m_physicsWorld, m_camera, skyboxCubemap);
@@ -61,11 +63,10 @@ void VerseApplication::onStartup()
     m_hailstormManager = m_world.addSystem<HailstormManager>(context(), m_camera, m_physicsWorld, *m_voxelWorld);
     m_vfxManager.emplace(context(), m_camera, *m_voxelWorld);
     m_world.addSystem<VfxSystem>(*m_vfxManager);
-    //m_world.addSystem<NpcDebugRendererSystem>(context(), m_camera);
     m_debugOverlay = m_world.addSystem<DebugOverlay>(context());
     m_world.addSystem<CoriolisSystem>();
     m_world.addSystem<EquipmentSystem>();
-    m_world.addSystem<PlayerSystem>(input(), m_camera, m_physicsWorld);
+    m_world.addSystem<PlayerSystem>(input(), context(), m_camera, m_physicsWorld);
     m_world.addSystem<FactionManager>();
     m_world.addSystem<NpcBehaviourSystem>();
 
@@ -110,4 +111,6 @@ void VerseApplication::onFrame(float seconds)
 
     m_hailstormManager->render();
     m_vfxManager->render();
+
+    m_world.frameComplete();
 }

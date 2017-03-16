@@ -1,5 +1,6 @@
 #include "HailstormManager.h"
 
+#include <Deliberation/Core/ScopeProfiler.h>
 #include <Deliberation/ECS/World.h>
 
 HailstormManager::HailstormManager(
@@ -16,6 +17,11 @@ HailstormManager::HailstormManager(
 
 }
 
+DurationMicros HailstormManager::updateDuration() const
+{
+    return m_updateDuration;
+}
+
 VfxManager & HailstormManager::vfxManager()
 {
     return m_vfxManager;
@@ -29,6 +35,8 @@ void HailstormManager::addBullet(HailstormBullet bullet)
 
 void HailstormManager::onUpdate(float seconds)
 {
+    ScopeProfiler profiler;
+
     m_vfxManager.update(seconds);
     m_hailstormPhysicsWorld.update(seconds);
 
@@ -46,6 +54,8 @@ void HailstormManager::onUpdate(float seconds)
     {
         m_vfxManager.removeParticle(bullet.particleId);
     }
+
+    m_updateDuration = profiler.stop();
 }
 
 void HailstormManager::onRender()

@@ -22,14 +22,14 @@ Equipment::Equipment(VfxManager & vfxManager, const EquipmentDesc & desc):
     }
 }
 
-size_t Equipment::numHardpoints() const
+const std::vector<std::shared_ptr<Hardpoint>> & Equipment::hardpoints() const
 {
-    return m_hardpoints.size();
+    return m_hardpoints;
 }
 
-void Equipment::setFireRequest(bool active, const glm::vec3 & target)
+void Equipment::setFireRequest(bool active, const glm::vec3 & direction)
 {
-    for (auto & hardpoint : m_hardpoints) hardpoint->setFireRequest(active, target);
+    for (auto & hardpoint : m_hardpoints) hardpoint->setFireRequest(active, direction);
 }
 
 void Equipment::setWeapon(size_t slot, std::shared_ptr<Weapon> weapon)
@@ -38,9 +38,9 @@ void Equipment::setWeapon(size_t slot, std::shared_ptr<Weapon> weapon)
     m_hardpoints[slot]->setWeapon(weapon);
 }
 
-size_t Equipment::numEngineSlots() const
+const std::vector<std::shared_ptr<EngineSlot>> & Equipment::engineSlots() const
 {
-    return m_engineSlots.size();
+    return m_engineSlots;
 }
 
 void Equipment::setEngine(size_t slot, std::shared_ptr<Engine> engine)

@@ -18,13 +18,13 @@ NpcDebugTask::NpcDebugTask()
 
 }
 
-void NpcDebugTask::setFireRequest(bool enabled, const glm::vec3 & target)
+void NpcDebugTask::setFireRequest(bool enabled, const glm::vec3 & direction)
 {
     m_fireRequestEnabled = enabled;
-    m_fireRequestTarget = target;
+    m_fireRequestDirection = direction;
 }
 
 void NpcDebugTask::update(NpcController & controller, RigidBody & body, Equipment & equipment, float seconds)
 {
-    equipment.setFireRequest(m_fireRequestEnabled, m_fireRequestTarget);
+    equipment.setFireRequest(m_fireRequestEnabled, m_fireRequestDirection);
 }

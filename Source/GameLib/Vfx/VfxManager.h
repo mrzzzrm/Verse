@@ -1,9 +1,12 @@
 #pragma once
 
+#include <unordered_map>
+
 #include <Deliberation/Core/Optional.h>
 #include <Deliberation/Core/SparseVector.h>
 
 #include "EmitterInstance.h"
+#include "R.h"
 #include "VfxParticle.h"
 #include "VfxRenderer.h"
 
@@ -20,7 +23,7 @@ public:
     VfxRenderer & renderer();
     const VfxRenderer & renderer() const;
 
-    VfxMeshId baseParticleMeshId() const;
+    VfxMeshId getOrCreateMeshId(ResourceId resourceId);
 
     VfxParticleId addParticle(VfxParticle particle);
     void removeParticle(VfxParticleId particle);
@@ -35,7 +38,8 @@ private:
     VoxelWorld &                    m_voxelWorld;
     VfxRenderer                     m_renderer;
 
-    VfxMeshId                       m_baseParticleMeshId = 0;
+    std::unordered_map<size_t, VfxMeshId>
+                                    m_meshIdByResourceId;
 
     SparseVector<std::shared_ptr<EmitterInstance>>
                                     m_emitterInstances;

@@ -61,6 +61,9 @@ add_library(${target}
     Resource/NpcControllerPrototype.h
     Resource/PlayerFlightControlPrototype.cpp
     Resource/PlayerFlightControlPrototype.h
+    Resource/ResourceManager.cpp
+    Resource/ResourceManager.h
+    Resource/R.h
     Resource/RigidBodyPrototype.cpp
     Resource/RigidBodyPrototype.h
     Resource/VoxelObjectPrototype.cpp

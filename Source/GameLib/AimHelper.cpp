@@ -15,8 +15,10 @@ AimHelper::AimHelper(const Camera3D & camera, const PhysicsWorld & physicsWorld)
 
 }
 
-glm::vec3 AimHelper::getTarget(const glm::vec2 & mouse, bool & hit)
+AimHelperResult AimHelper::getTarget(const glm::vec2 & mouse)
 {
+    AimHelperResult result;
+
     auto mouseNearPlane = (mouse + 1.0f) / 2.0f;
     auto nearPlane = m_camera.nearPlane();
     auto mouseWorld = nearPlane.origin() + mouseNearPlane.x * nearPlane.right() + mouseNearPlane.y * nearPlane.up();
@@ -25,7 +27,7 @@ glm::vec3 AimHelper::getTarget(const glm::vec2 & mouse, bool & hit)
 
     glm::vec3 target = origin + direction;
 
-    hit = false;
+    result.hit = false;
 
     m_physicsWorld.lineCast(Ray3D(origin, direction), [&](const RayCastIntersection &intersection) -> bool {
         if (intersection.body->shape()->type() == (int)::CollisionShapeType::VoxelCluster)
@@ -35,8 +37,9 @@ glm::vec3 AimHelper::getTarget(const glm::vec2 & mouse, bool & hit)
 
             auto & transform = intersection.body->transform();
 
-            target = transform.pointLocalToWorld(voxelClusterIntersection.voxel);
-            hit = true;
+            result.pointOfImpact = transform.pointLocalToWorld(voxelClusterIntersection.voxel);
+            result.hit = true;
+            result.body = intersection.body;
 
             return true;
         }
@@ -44,5 +47,5 @@ glm::vec3 AimHelper::getTarget(const glm::vec2 & mouse, bool & hit)
         return false;
     });
 
-    return target;
+    return result;
 }

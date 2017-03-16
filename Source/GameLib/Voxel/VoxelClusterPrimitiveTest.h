@@ -14,7 +14,6 @@ struct RayCastVoxelClusterIntersection:
 {
     RayCastVoxelClusterIntersection(std::shared_ptr<RigidBody> body);
 
-    std::weak_ptr<VoxelObject>  object;
     glm::uvec3                  voxel;
 };
 

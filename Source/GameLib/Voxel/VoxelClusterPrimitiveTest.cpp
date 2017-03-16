@@ -18,12 +18,10 @@ std::unique_ptr<RayCastIntersection> VoxelClusterPrimitiveTest::lineTest(const R
     glm::uvec3 voxel;
     if (voxelClusterShape->lineCast(body->transform(), ray, voxel))
     {
-        auto & payload = body->payload();
-        auto & voxelPayload = dynamic_cast<VoxelRigidBodyPayload&>(*payload);
+        auto & entity = body->entity();
 
         auto intersection = std::make_unique<RayCastVoxelClusterIntersection>(body);
         intersection->voxel = voxel;
-        intersection->object = voxelPayload.object;
 
         return std::unique_ptr<RayCastIntersection>(std::move(intersection));
     }

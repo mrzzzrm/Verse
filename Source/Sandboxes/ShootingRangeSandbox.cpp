@@ -77,7 +77,6 @@ public:
 
                 auto rigidBodyPayload = std::make_shared<VoxelRigidBodyPayload>(voxelObject);
                 auto rigidBody = std::make_shared<RigidBody>(voxelObject.data().shape());
-                rigidBody->setPayload(rigidBodyPayload);
                 rigidBody->transform().setPosition({i * 50, 30.0f, 0.0f});
                 rigidBody->transform().setOrientation(glm::quat({0.0f, glm::pi<float>() * 0.3f, 0.0f}));
                // rigidBody->setAngularVelocity({0.0f, 0.2f, 0.0f});

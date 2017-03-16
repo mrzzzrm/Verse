@@ -57,6 +57,11 @@ void HailstormPhysicsWorld::update(float seconds)
 
         auto markedForDestruction = false;
 
+        if (currentMillis > bullet.particle.birth + bullet.particle.lifetime) {
+            m_destroyedBullets.emplace_back(bullet.id);
+            continue;
+        }
+
         m_physicsWorld.lineCast(Ray3D::fromTo(a, b), [&](const RayCastIntersection &intersection) -> bool {
             auto & body = intersection.body;
 
@@ -64,25 +69,23 @@ void HailstormPhysicsWorld::update(float seconds)
                 auto & voxelClusterIntersection =
                     static_cast<const RayCastVoxelClusterIntersection &>(intersection);
 
-//                if (voxelClusterIntersection.object.lock()->id().worldUID == bullet.creator) {
-//                    return true;
-//                }
-
-                auto voxelObject = voxelClusterIntersection.object.lock();
-                if (voxelObject)
-                {
-                    auto voxels = m_impactSystem.process(*voxelObject, voxelClusterIntersection.voxel, 100, 2);
-
-                    if (!voxels.empty())
-                    {
-                        VoxelObjectModification modification(voxelObject);
-                        modification.removals = std::move(voxels);
-
-                        m_voxelObjectModifications.emplace_back(std::move(modification));
-                    }
-
-                    m_voxelObjectBulletHits.emplace_back(voxelObject, voxelClusterIntersection.voxel);
+                auto & entity = body->entity();
+                if (entity.id() == bullet.creator && bullet.creator != ECS_INVALID_ENTITY_ID) {
+                    return true;
                 }
+
+                auto & voxelObject = entity.component<VoxelObject>();
+                auto voxels = m_impactSystem.process(voxelObject, voxelClusterIntersection.voxel, 100, 2);
+
+                if (!voxels.empty())
+                {
+                    VoxelObjectModification modification(voxelObject.shared_from_this());
+                    modification.removals = std::move(voxels);
+
+                    m_voxelObjectModifications.emplace_back(std::move(modification));
+                }
+
+                m_voxelObjectBulletHits.emplace_back(voxelObject.shared_from_this(), voxelClusterIntersection.voxel);
 
                 auto localHitPoint = glm::vec3(voxelClusterIntersection.voxel);
                 auto relativeHitPoint = body->transform().pointLocalToWorld(localHitPoint) -

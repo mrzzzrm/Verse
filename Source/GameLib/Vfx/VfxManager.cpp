@@ -3,9 +3,14 @@
 #include <Deliberation/Core/DataLayout.h>
 #include <Deliberation/Core/LayoutedBlob.h>
 
+#include <Deliberation/ECS/World.h>
+
 #include <Deliberation/Draw/Context.h>
 #include <Deliberation/Draw/Texture.h>
 #include <Deliberation/Draw/TextureLoader.h>
+
+#include "VoxelWorld.h"
+#include "ResourceManager.h"
 
 VfxManager::VfxManager(
     Context & context,
@@ -15,43 +20,7 @@ VfxManager::VfxManager(
     m_voxelWorld(voxelWorld),
     m_renderer(context, camera)
 {
-    /**
-     * Init base particle got nowhere else to put this right now
-     */
-    const auto layout = DataLayout{{
-        {"Position", Type_Vec3},
-        {"UV", Type_Vec2}
-    }};
 
-    LayoutedBlob vertices(layout, 4);
-    auto positions = vertices.field<glm::vec3>("Position");
-    auto uvs = vertices.field<glm::vec2>("UV");
-
-    positions.assign({
-         glm::vec3(-0.5f, -0.5f, 0.0f),
-         glm::vec3(0.5f, -0.5f, 0.0f),
-         glm::vec3(0.5f, 0.5f, 0.0f),
-         glm::vec3(-0.5f, 0.5f, 0.0f)
-    });
-
-    uvs.assign({
-        glm::vec2(0.0f, 0.0f),
-        glm::vec2(1.0f, 0.0f),
-        glm::vec2(1.0f, 1.0f),
-        glm::vec2(0.0f, 1.0f)
-    });
-
-    LayoutedBlob indicesBlob(DataLayout("Index", Type_U32), 6);
-    auto indices = indicesBlob.field<u32>("Index");
-
-    indices.assign({0, 1, 3, 1, 2, 3});
-
-    const auto textureBinary = TextureLoader(GameDataPath("Data/Particles/BaseParticle.png")).load();
-    const auto texture = context.createTexture(textureBinary);
-
-    Mesh2 mesh(std::move(vertices), std::move(indicesBlob), {texture});
-
-    m_baseParticleMeshId = m_renderer.addMesh(std::move(mesh));
 }
 
 VfxRenderer & VfxManager::renderer()
@@ -64,9 +33,22 @@ const VfxRenderer & VfxManager::renderer() const
     return m_renderer;
 }
 
-VfxMeshId VfxManager::baseParticleMeshId() const
+VfxMeshId VfxManager::getOrCreateMeshId(ResourceId resourceId)
 {
-    return m_baseParticleMeshId;
+    auto iter = m_meshIdByResourceId.find((size_t)resourceId);
+    if (iter == m_meshIdByResourceId.end())
+    {
+        auto & resourceManager = m_voxelWorld.world().system<ResourceManager>();
+
+        const auto & mesh = resourceManager.mesh(resourceId);
+        const auto meshId = m_renderer.addMesh(mesh);
+
+        bool success;
+        std::tie(iter, success) = m_meshIdByResourceId.emplace((size_t)resourceId, meshId);
+        Assert(success, "");
+    }
+
+    return iter->second;
 }
 
 VfxParticleId VfxManager::addParticle(VfxParticle particle)

@@ -9,6 +9,7 @@
 #include <Deliberation/Core/Math/Pose3D.h>
 
 #include <Deliberation/ECS/Component.h>
+#include <Deliberation/ECS/Entity.h>
 
 #include "Hardpoint.h"
 #include "EngineSlot.h"
@@ -28,6 +29,7 @@ struct EquipmentUpdateContext
     Pose3D      targetPose;
     glm::vec3   angularVelocity;
     glm::vec3   linearVelocity;
+    Entity      entity;
 };
 
 struct EquipmentDesc
@@ -42,11 +44,11 @@ class Equipment final:
 public:
     Equipment(VfxManager & vfxManager, const EquipmentDesc & desc);
 
-    size_t numHardpoints() const;
-    void setFireRequest(bool active, const glm::vec3 & target);
+    const std::vector<std::shared_ptr<Hardpoint>> & hardpoints() const;
+    void setFireRequest(bool active, const glm::vec3 & direction);
     void setWeapon(size_t slot, std::shared_ptr<Weapon> weapon);
 
-    size_t numEngineSlots() const;
+    const std::vector<std::shared_ptr<EngineSlot>> & engineSlots() const;
     void setEngine(size_t slot, std::shared_ptr<Engine> engine);
 
     void update(float seconds, const EquipmentUpdateContext & context);

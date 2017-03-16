@@ -5,6 +5,7 @@
 #include <Deliberation/Core/Math/Pose3D.h>
 
 #include "GameLib.h"
+#include "R.h"
 #include "VfxManager.h"
 #include "VoxelDefines.h"
 
@@ -15,6 +16,8 @@ struct WeaponConfig
 {
     float       cooldown = 0.0f;
     VfxMeshId   meshID = 0;
+    float       bulletSpeed = 1.0f;
+    float       bulletLifetime = 1.0f;
 };
 
 class Weapon final
@@ -24,8 +27,10 @@ public:
            HailstormManager & hailstormManager,
            VoxelObjectWorldUID creatorUID);
 
+    const WeaponConfig & config() const;
+
     void setFireRequest(bool active,
-                        const glm::vec3 & target);
+                        const glm::vec3 & direction);
 
     void setPose(const Pose3D & pose);
 
@@ -39,7 +44,7 @@ private:
     Pose3D              m_pose;
 
     bool                m_fireRequestActive = false;
-    glm::vec3           m_fireRequestTarget;
+    glm::vec3           m_fireRequestDirection;
 
     float               m_cooldown = 0.0f;
 };

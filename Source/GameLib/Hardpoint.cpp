@@ -10,9 +10,14 @@ Hardpoint::Hardpoint(const HardpointDesc & desc):
     m_maxAngle(desc.maxAngle)
 {}
 
-void Hardpoint::setFireRequest(bool active, const glm::vec3 & target)
+const std::shared_ptr<Weapon> & Hardpoint::weapon() const
 {
-    if (m_weapon) m_weapon->setFireRequest(active, target);
+    return m_weapon;
+}
+
+void Hardpoint::setFireRequest(bool active, const glm::vec3 & direction)
+{
+    if (m_weapon) m_weapon->setFireRequest(active, direction);
 }
 
 void Hardpoint::setReferencePose(const Pose3D & referencePose)

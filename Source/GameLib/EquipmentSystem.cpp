@@ -5,6 +5,7 @@
 
 #include "Equipment.h"
 #include "HailstormManager.h"
+#include "R.h"
 #include "VoxelObject.h"
 #include "Weapon.h"
 
@@ -20,11 +21,11 @@ void EquipmentSystem::onEntityAdded(Entity & entity)
 
     WeaponConfig weaponConfig;
     weaponConfig.cooldown = 0.2f;
-    weaponConfig.meshID = 0;
+    weaponConfig.meshID = hailstorm.vfxManager().getOrCreateMeshId(R::BulletMesh);
+    weaponConfig.bulletSpeed = 400.0f;
+    weaponConfig.bulletLifetime = 2.0f;
 
-    std::cout << "Num Hardpoints: " << equipment.numHardpoints() << std::endl;
-
-    for (size_t h = 0; h < equipment.numHardpoints(); h++)
+    for (size_t h = 0; h < equipment.hardpoints().size(); h++)
     {
         auto weapon = std::make_shared<Weapon>(weaponConfig, hailstorm, voxelObject.id().worldUID);
         equipment.setWeapon(h, weapon);
@@ -42,6 +43,7 @@ void EquipmentSystem::onEntityUpdate(Entity & entity, float seconds)
                                                body->transform().center());
     equipmentUpdateContext.linearVelocity = body->linearVelocity();
     equipmentUpdateContext.angularVelocity = body->angularVelocity();
+    equipmentUpdateContext.entity = entity;
 
     equipment.update(seconds, equipmentUpdateContext);
 }

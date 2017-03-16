@@ -19,5 +19,5 @@ public:
 
 private:
     bool        m_fireRequestEnabled = false;
-    glm::vec3   m_fireRequestTarget;
+    glm::vec3   m_fireRequestDirection;
 };

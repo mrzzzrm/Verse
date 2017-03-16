@@ -242,7 +242,6 @@ public:
         auto rigidBodyPayload = std::make_shared<VoxelRigidBodyPayload>(voxelObject.shared_from_this());
 
         auto rigidBody = std::make_shared<RigidBody>(voxelObject.data().shape());
-        rigidBody->setPayload(rigidBodyPayload);
         rigidBody->transform().setCenter(glm::vec3(voxelObject.data().size()) / 2.0f);
         rigidBody->transform().setPosition(position);
 

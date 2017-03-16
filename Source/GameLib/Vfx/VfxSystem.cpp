@@ -28,7 +28,7 @@ VfxSystem::VfxSystem(World & world, VfxManager & vfxManager):
 
         m_blastEmitter = std::make_shared<Emitter>(
             m_vfxManager,
-            m_vfxManager.baseParticleMeshId(),
+            m_vfxManager.getOrCreateMeshId(R::ParticleMesh),
             velocity,
             rotation,
             placement,
@@ -50,7 +50,7 @@ VfxSystem::VfxSystem(World & world, VfxManager & vfxManager):
 
         m_smokeEmitter = std::make_shared<Emitter>(
             m_vfxManager,
-            m_vfxManager.baseParticleMeshId(),
+            m_vfxManager.getOrCreateMeshId(R::ParticleMesh),
             velocity,
             rotation,
             placement,

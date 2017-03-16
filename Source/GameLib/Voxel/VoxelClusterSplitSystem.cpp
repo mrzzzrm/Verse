@@ -60,7 +60,7 @@ void VoxelClusterSplitSystem::onEntityUpdate(Entity & entity, float seconds)
 
         auto rigidBodyPayload = std::make_shared<VoxelRigidBodyPayload>(splitVoxelObject.shared_from_this());
         auto splitBody = std::make_shared<RigidBody>(splitVoxelObject.data().shape());
-        splitBody->setPayload(rigidBodyPayload);
+        splitBody->setEntity(splitEntity);
         splitBody->adjustCenterOfMass();
 
         const auto relativeCenterOfMass = splitBody->shape()->centerOfMass() + glm::vec3(split.llf) /*+ glm::vec3(0.5f) */-

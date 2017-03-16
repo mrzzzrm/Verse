@@ -4,6 +4,7 @@
 
 #include <glm/glm.hpp>
 
+#include <Deliberation/Core/Math/Trajetory.h>
 #include <Deliberation/Core/Math/FloatUtils.h>
 #include <Deliberation/Core/Math/MathUtils.h>
 #include <Deliberation/Core/Math/Random.h>
@@ -11,6 +12,7 @@
 #include <Deliberation/ECS/Components.h>
 
 #include "NpcController.h"
+#include "Weapon.h"
 
 NpcAttackTask::NpcAttackTask()
 {
@@ -75,7 +77,35 @@ void NpcAttackTask::update(NpcController & controller, RigidBody & body, Equipme
 
     steering.setStopAtDestination(false);
 
-    equipment.setFireRequest(true, targetPosition);
+    /**
+     * Setup fire request
+     */
+    if (!equipment.hardpoints().empty())
+    {
+        auto bulletSpeed = 0.0f;
+
+        for (size_t h = 0; h < equipment.hardpoints().size(); h++)
+        {
+            const auto & weapon = equipment.hardpoints()[h]->weapon();
+            if (!weapon) continue;
+
+            bulletSpeed = weapon->config().bulletSpeed;
+        }
+
+        if (bulletSpeed != 0.0f)
+        {
+            const auto & bodyPosition = body.transform().position();
+            const auto & bodyVelocity = body.linearVelocity();
+            const auto & targetVelocity = targetBody->linearVelocity();
+
+            auto success = false;
+            const auto trajectory = CalculateTrajectory(bodyPosition, bodyVelocity,
+                                                        bulletSpeed, targetPosition, targetVelocity, success);
+
+            if (success) equipment.setFireRequest(true, glm::normalize(trajectory));
+            else equipment.setFireRequest(false, {});
+        }
+    }
 }
 
 void NpcAttackTask::startEvasion(RigidBody & body, NpcController & controller)
