@@ -6,11 +6,15 @@
 #include "GameLib.h"
 #include "ItemSlot.h"
 
+struct EngineSlotDesc:
+    ItemSlotDesc
+{};
+
 class EngineSlot:
     public ItemSlot
 {
 public:
-    EngineSlot(const glm::uvec3 & voxel, const Pose3D & pose);
+    EngineSlot(const EngineSlotDesc & desc);
 
     const std::shared_ptr<Engine> & engine() const;
     void setEngine(const std::shared_ptr<Engine> & engine);

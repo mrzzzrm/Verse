@@ -3,14 +3,28 @@
 #include "Hardpoint.h"
 #include "VfxManager.h"
 
-Equipment::Equipment(VfxManager & vfxManager):
+Equipment::Equipment(VfxManager & vfxManager, const EquipmentDesc & desc):
     m_vfxManager(vfxManager)
-{}
-
-void Equipment::addHardpoint(std::shared_ptr<Hardpoint> hardpoint)
 {
-    m_hardpoints.emplace_back(hardpoint);
-    m_itemSlotByVoxel.emplace(hardpoint->voxel(), hardpoint);
+    for (const auto & hardpointDesc : desc.hardpointDescs)
+    {
+        auto hardpoint = std::make_shared<Hardpoint>(hardpointDesc);
+        m_hardpoints.emplace_back(hardpoint);
+        m_itemSlotByVoxel.emplace(hardpoint->voxel(), hardpoint);
+    }
+
+    for (const auto & engineSlotDesc : desc.engineSlotDescs)
+    {
+        auto engineSlot = std::make_shared<EngineSlot>(engineSlotDesc);
+        engineSlot->setVfxManager(m_vfxManager);
+        m_engineSlots.emplace_back(engineSlot);
+        m_itemSlotByVoxel.emplace(engineSlot->voxel(), engineSlot);
+    }
+}
+
+size_t Equipment::numHardpoints() const
+{
+    return m_hardpoints.size();
 }
 
 void Equipment::setFireRequest(bool active, const glm::vec3 & target)
@@ -27,13 +41,6 @@ void Equipment::setWeapon(size_t slot, std::shared_ptr<Weapon> weapon)
 size_t Equipment::numEngineSlots() const
 {
     return m_engineSlots.size();
-}
-
-void Equipment::addEngineSlot(std::shared_ptr<EngineSlot> engineSlot)
-{
-    engineSlot->setVfxManager(m_vfxManager);
-    m_engineSlots.emplace_back(engineSlot);
-    m_itemSlotByVoxel.emplace(engineSlot->voxel(), engineSlot);
 }
 
 void Equipment::setEngine(size_t slot, std::shared_ptr<Engine> engine)

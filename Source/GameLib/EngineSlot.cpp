@@ -3,8 +3,8 @@
 #include "Equipment.h"
 #include "VfxManager.h"
 
-EngineSlot::EngineSlot(const glm::uvec3 & voxel, const Pose3D & pose):
-    ItemSlot(voxel, pose)
+EngineSlot::EngineSlot(const EngineSlotDesc & desc):
+    ItemSlot(desc)
 {}
 
 const std::shared_ptr<Engine> & EngineSlot::engine() const
@@ -21,8 +21,8 @@ void EngineSlot::setTargetPose(const Pose3D & pose)
 {
     if (m_engine)
     {
-        auto voxelPose = pose.poseLocalToWorld(Pose3D::atPosition(glm::vec3(m_voxel)));
-        m_engine->emitterInstance()->setTargetPose(voxelPose.poseLocalToWorld(m_pose));
+        auto voxelPose = pose.poseLocalToWorld(Pose3D::atPosition(glm::vec3(m_desc.voxel)));
+        m_engine->emitterInstance()->setTargetPose(voxelPose.poseLocalToWorld(m_desc.pose));
     }
 }
 

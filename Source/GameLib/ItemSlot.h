@@ -8,10 +8,16 @@
 
 class Equipment;
 
+struct ItemSlotDesc
+{
+    glm::uvec3  voxel;
+    Pose3D      pose;
+};
+
 class ItemSlot
 {
 public:
-    ItemSlot(const glm::uvec3 & voxel, const Pose3D & pose);
+    ItemSlot(const ItemSlotDesc & desc);
     virtual ~ItemSlot() = default;
 
     const glm::uvec3 & voxel() const;
@@ -27,8 +33,7 @@ protected:
     virtual void onDisabled();
 
 protected:
-    glm::uvec3  m_voxel;
-    Pose3D      m_pose;
-    size_t      m_index = 0;
-    bool        m_enabled = true;
+    ItemSlotDesc    m_desc;
+    size_t          m_index = 0;
+    bool            m_enabled = true;
 };

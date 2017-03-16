@@ -1,0 +1,10 @@
+[
+    {
+        "Component": "Allegiance",
+        "Faction": "Pirate"
+    },
+    {
+        "Component": "NpcBehaviour"
+    }    
+]
+

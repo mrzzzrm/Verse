@@ -15,8 +15,8 @@ VoxelWorld::VoxelWorld(World & world, Context & context, PhysicsWorld & physicsW
     m_envMap(envMap),
     Base(world, ComponentFilter::requires<VoxelObject>())
 {
-    m_program = m_context.createProgram({"Data/Shaders/Voxel.vert",
-                                         "Data/Shaders/Voxel.frag"});
+    m_program = m_context.createProgram({GameDataPath("Data/Shaders/Voxel.vert"),
+                                         GameDataPath("Data/Shaders/Voxel.frag")});
 }
 
 Context & VoxelWorld::context() const

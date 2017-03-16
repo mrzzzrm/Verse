@@ -6,7 +6,6 @@
 #include "EmitterInstance.h"
 #include "GameLib.h"
 
-
 class Engine final
 {
 public:

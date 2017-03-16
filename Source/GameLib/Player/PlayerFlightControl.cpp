@@ -115,7 +115,5 @@ void PlayerFlightControl::update(RigidBody & body, FlightControlConfig & config,
         localAngularAcceleration = deltaLocalAngularVelocity;
     }
 
-    std::cout << "Angular " << localAngularAcceleration << " " << m_angularThrust << " " << seconds << " " << config.angular.maxSpeed  << std::endl;
-
     body.setAngularVelocity(body.angularVelocity() + body.transform().directionLocalToWorld(localAngularAcceleration));
 }

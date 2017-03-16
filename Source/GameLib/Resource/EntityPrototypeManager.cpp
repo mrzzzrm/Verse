@@ -5,6 +5,7 @@
 #include <Deliberation/Core/Assert.h>
 #include <Player/PlayerFlightControl.h>
 
+#include "AllegiancePrototype.h"
 #include "CoriolisPrototype.h"
 #include "EntityPrototype.h"
 #include "EquipmentPrototype.h"
@@ -14,6 +15,7 @@
 #include "RigidBodyPrototype.h"
 #include "VfxSystem.h"
 #include "VoxelObjectPrototype.h"
+#include "NpcBehaviourPrototype.h"
 
 EntityPrototypeManager::EntityPrototypeManager(World & world):
     m_world(world)
@@ -28,6 +30,8 @@ EntityPrototypeManager::EntityPrototypeManager(World & world):
     registerComponentLoader<FlightControlConfigPrototype>("FlightControlConfig");
     registerComponentLoader<NpcControllerPrototype>("NpcController");
     registerComponentLoader<PlayerFlightControlPrototype>("PlayerFlightControl");
+    registerComponentLoader<AllegiancePrototype>("Allegiance");
+    registerComponentLoader<NpcBehaviourPrototype>("NpcBehaviour");
 }
 
 Entity EntityPrototypeManager::createEntity(const std::vector<std::string> & prototypeNames,
@@ -52,7 +56,7 @@ Entity EntityPrototypeManager::createEntity(const std::vector<std::string> & pro
 
         auto entityPrototype = std::make_shared<EntityPrototype>(m_world, prototypeName);
 
-        std::ifstream prototypeFile("Data/Prototypes/" + prototypeName + ".json");
+        std::ifstream prototypeFile(GameDataPath("Data/Prototypes/" + prototypeName + ".json"));
         Json entityPrototypeJson;
         prototypeFile >> entityPrototypeJson;
 

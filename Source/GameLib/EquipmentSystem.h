@@ -11,5 +11,6 @@ public:
     EquipmentSystem(World & world);
 
 protected:
-    void onEntityUpdate(Entity & entity, float seconds);
+    void onEntityAdded(Entity & entity) override;
+    void onEntityUpdate(Entity & entity, float seconds) override;
 };

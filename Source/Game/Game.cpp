@@ -68,20 +68,6 @@ public:
         auto player = m_entityPrototypeManager->createEntity({"Ship", "Player"}, "PlayerShip");
 
         {
-            auto &equipment = player.component<Equipment>();
-            auto &voxelObject = player.component<VoxelObject>();
-
-            WeaponConfig weaponConfig;
-            weaponConfig.cooldown = 0.2f;
-            weaponConfig.meshID = bulletMeshID;
-
-            auto weapon0 = std::make_shared<Weapon>(weaponConfig, *m_hailstormManager, voxelObject.id().worldUID);
-            auto weapon1 = std::make_shared<Weapon>(weaponConfig, *m_hailstormManager, voxelObject.id().worldUID);
-
-            equipment.setWeapon(0, weapon0);
-            equipment.setWeapon(1, weapon1);
-        }
-        {
             auto &playerBody = player.component<RigidBodyComponent>().value();
             playerBody->transform().setPosition({0.0f, 20.0f, 50.0f});
         }
@@ -102,6 +88,7 @@ public:
             auto asteroidBody = asteroid.component<RigidBodyComponent>().value();
             asteroidBody->transform().setPosition(RandomUnitVec3() * 1250.0f);
         }
+
         for (auto i = 0; i < 15; i++) {
             auto asteroid = m_entityPrototypeManager->createEntity({"Asteroid01"}, "MyAsteroid");
             auto asteroidBody = asteroid.component<RigidBodyComponent>().value();
@@ -112,7 +99,7 @@ public:
          * Create enemies
          */
         for (auto i = 0; i < 4; i++) {
-            auto npc = m_entityPrototypeManager->createEntity({"Drone", "Npc"}, "MyNPC");
+            auto npc = m_entityPrototypeManager->createEntity({"Drone", "Npc", "Pirate"}, "MyNPC");
             auto npcBody = npc.component<RigidBodyComponent>().value();
             npcBody->transform().setPosition(glm::vec3(300.0f, 0.0f, 0.0f) + RandomUnitVec3() * 1000.0f);
         }

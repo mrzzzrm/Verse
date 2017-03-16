@@ -10,25 +10,11 @@
 #include <Deliberation/ECS/Entity.h>
 
 #include "ComponentPrototype.h"
+#include "Equipment.h"
 #include "GameLib.h"
+#include "ItemSlot.h"
 
 class VfxManager;
-
-struct SlotPrototype
-{
-    glm::uvec3  voxel;
-    Pose3D      pose;
-};
-
-struct EnginePrototype:
-    SlotPrototype
-{};
-
-struct HardpointPrototype:
-    SlotPrototype
-{
-    float maxAngle = 0.0f;
-};
 
 class EquipmentPrototype final:
     public ComponentPrototype
@@ -36,16 +22,12 @@ class EquipmentPrototype final:
 public:
     EquipmentPrototype(const Json & json, VfxManager & vfxManager);
 
-    const std::vector<EnginePrototype> & engines() const;
-    const std::vector<HardpointPrototype> & hardpoints() const;
-
     void applyToEntity(Entity & entity) const override;
 
 private:
-    void loadSlotPrototype(const Json & obj, SlotPrototype & slot) const;
+    void loadSlotDesc(const Json & obj, ItemSlotDesc & slot) const;
 
 private:
-    VfxManager &                    m_vfxManager;
-    std::vector<EnginePrototype>    m_engines;
-    std::vector<HardpointPrototype> m_hardpoints;
+    VfxManager &    m_vfxManager;
+    EquipmentDesc   m_desc;
 };

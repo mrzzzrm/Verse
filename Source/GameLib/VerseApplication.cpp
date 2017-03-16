@@ -1,11 +1,14 @@
 #include "VerseApplication.h"
 
 #include <Deliberation/Draw/TextureLoader.h>
+#include <Npc/NpcBehaviourSystem.h>
 
 #include "VoxelClusterSplitSystem.h"
 
 #include "EntityPrototypeManager.h"
 #include "EquipmentSystem.h"
+#include "FactionManager.h"
+#include "NpcBehaviourSystem.h"
 #include "PlayerSystem.h"
 #include "CoriolisSystem.h"
 #include "VfxSystem.h"
@@ -31,12 +34,12 @@ void VerseApplication::onStartup()
     m_navigator.reset(m_camera, input(), 150.0f);
 
     auto skyboxPaths = std::array<std::string, 6> {
-        "Data/Skybox/Right.png",
-        "Data/Skybox/Left.png",
-        "Data/Skybox/Top.png",
-        "Data/Skybox/Bottom.png",
-        "Data/Skybox/Front.png",
-        "Data/Skybox/Back.png"
+        GameDataPath("Data/Skybox/Right.png"),
+        GameDataPath("Data/Skybox/Left.png"),
+        GameDataPath("Data/Skybox/Top.png"),
+        GameDataPath("Data/Skybox/Bottom.png"),
+        GameDataPath("Data/Skybox/Front.png"),
+        GameDataPath("Data/Skybox/Back.png")
     };
 
     auto skyboxCubemapBinary = TextureLoader(skyboxPaths).load();
@@ -59,10 +62,12 @@ void VerseApplication::onStartup()
     m_vfxManager.emplace(context(), m_camera, *m_voxelWorld);
     m_world.addSystem<VfxSystem>(*m_vfxManager);
     //m_world.addSystem<NpcDebugRendererSystem>(context(), m_camera);
-    m_debugOverlay = m_world.addSystem<DebugOverlay>();
+    m_debugOverlay = m_world.addSystem<DebugOverlay>(context());
     m_world.addSystem<CoriolisSystem>();
     m_world.addSystem<EquipmentSystem>();
     m_world.addSystem<PlayerSystem>(input(), m_camera, m_physicsWorld);
+    m_world.addSystem<FactionManager>();
+    m_world.addSystem<NpcBehaviourSystem>();
 
     m_debugGeometryManager.emplace(context());
 

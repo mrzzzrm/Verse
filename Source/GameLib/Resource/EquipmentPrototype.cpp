@@ -12,52 +12,29 @@ EquipmentPrototype::EquipmentPrototype(const Json & json, VfxManager & vfxManage
 {
     for (const auto & obj : json["Engines"])
     {
-        EnginePrototype prototype;
-        loadSlotPrototype(obj, prototype);
+        EngineSlotDesc desc;
+        loadSlotDesc(obj, desc);
 
-        m_engines.emplace_back(prototype);
+        m_desc.engineSlotDescs.emplace_back(desc);
     }
 
     for (const auto & obj : json["Hardpoints"])
     {
-        HardpointPrototype prototype;
-        loadSlotPrototype(obj, prototype);
+        HardpointDesc desc;
+        loadSlotDesc(obj, desc);
 
-        prototype.maxAngle = obj["MaxAngle"];
+        desc.maxAngle = obj["MaxAngle"];
 
-        m_hardpoints.emplace_back(prototype);
+        m_desc.hardpointDescs.emplace_back(desc);
     }
-}
-
-const std::vector<EnginePrototype> & EquipmentPrototype::engines() const
-{
-    return m_engines;
-}
-
-const std::vector<HardpointPrototype> & EquipmentPrototype::hardpoints() const
-{
-    return m_hardpoints;
 }
 
 void EquipmentPrototype::applyToEntity(Entity & entity) const
 {
-    auto & equipment = entity.addComponent<Equipment>(m_vfxManager);
-
-    for (const auto & enginePrototype : m_engines)
-    {
-        auto engine = std::make_shared<EngineSlot>(enginePrototype.voxel, enginePrototype.pose);
-        equipment.addEngineSlot(engine);
-    }
-    for (const auto & hardpointPrototype : m_hardpoints)
-    {
-        auto hardpoint = std::make_shared<Hardpoint>(hardpointPrototype.voxel,
-                                                     hardpointPrototype.pose,
-                                                     hardpointPrototype.maxAngle);
-        equipment.addHardpoint(hardpoint);
-    }
+    auto & equipment = entity.addComponent<Equipment>(m_vfxManager, m_desc);
 }
 
-void EquipmentPrototype::loadSlotPrototype(const Json & obj, SlotPrototype & slot) const
+void EquipmentPrototype::loadSlotDesc(const Json & obj, ItemSlotDesc & slot) const
 {
     slot.voxel = obj["Voxel"];
     std::swap(slot.voxel.y, slot.voxel.z);

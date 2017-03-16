@@ -10,8 +10,8 @@ VfxRenderer::VfxRenderer(Context & context, const Camera3D & camera):
     m_context(context),
     m_camera(camera)
 {
-    m_program = m_context.createProgram({"Data/Shaders/Particle.vert",
-                                         "Data/Shaders/Particle.frag"});
+    m_program = m_context.createProgram({GameDataPath("Data/Shaders/Particle.vert"),
+                                         GameDataPath("Data/Shaders/Particle.frag")});
 
     auto globalsDataLayout = m_program.interface().uniformBlock("Globals").layout();
 

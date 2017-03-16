@@ -14,34 +14,9 @@ class NpcControllerSystem:
     public System<NpcControllerSystem>
 {
 public:
-    NpcControllerSystem(World & world):
-        Base(world, ComponentFilter::requires<
-            NpcController,
-            RigidBodyComponent,
-            Equipment,
-            NpcFlightControl,
-            FlightControlConfig>())
-    {}
+    NpcControllerSystem(World & world);
 
 protected:
-    void onEntityAdded(Entity & entity) override
-    {
-        entity.addComponent<NpcFlightControl>();
-    }
-
-    void onEntityPrePhysicsUpdate(Entity & entity, float seconds) override
-    {
-        auto & body = *entity.component<RigidBodyComponent>().value();
-        auto & equipment = entity.component<Equipment>();
-        auto & npcController = entity.component<NpcController>();
-        auto & flightControl = entity.component<NpcFlightControl>();
-        auto & flightControlConfig = entity.component<FlightControlConfig>();
-
-        auto & task = npcController.task();
-
-        if (task) task->update(npcController, body, equipment, seconds);
-
-        npcController.update(body, flightControl, flightControlConfig, seconds);
-        flightControl.update(body, flightControlConfig, seconds);
-    }
+    void onEntityAdded(Entity & entity) override;
+    void onEntityPrePhysicsUpdate(Entity & entity, float seconds) override;
 };

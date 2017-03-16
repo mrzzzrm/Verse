@@ -2,7 +2,6 @@
 
 #include <Deliberation/ECS/Entity.h>
 
-//  static void to_json(json& j, const glm::tquat<T, P> & v);
 static void from_json(const Json& j, FlightControlComponent & component)
 {
     component.acceleration = j[0];

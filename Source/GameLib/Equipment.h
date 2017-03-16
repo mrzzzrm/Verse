@@ -10,6 +10,7 @@
 
 #include <Deliberation/ECS/Component.h>
 
+#include "Hardpoint.h"
 #include "EngineSlot.h"
 #include "GameLib.h"
 #include "VoxelObjectModification.h"
@@ -19,7 +20,6 @@ namespace deliberation
 class Pose3D;
 }
 
-class Hardpoint;
 class VfxManager;
 class Weapon;
 
@@ -30,18 +30,23 @@ struct EquipmentUpdateContext
     glm::vec3   linearVelocity;
 };
 
+struct EquipmentDesc
+{
+    std::vector<HardpointDesc> hardpointDescs;
+    std::vector<EngineSlotDesc> engineSlotDescs;
+};
+
 class Equipment final:
     public Component<Equipment, ComponentSubscriptions<Equipment, VoxelObjectModification>>
 {
 public:
-    Equipment(VfxManager & vfxManager);
+    Equipment(VfxManager & vfxManager, const EquipmentDesc & desc);
 
-    void addHardpoint(std::shared_ptr<Hardpoint> hardpoint);
+    size_t numHardpoints() const;
     void setFireRequest(bool active, const glm::vec3 & target);
     void setWeapon(size_t slot, std::shared_ptr<Weapon> weapon);
 
     size_t numEngineSlots() const;
-    void addEngineSlot(std::shared_ptr<EngineSlot> engineSlot);
     void setEngine(size_t slot, std::shared_ptr<Engine> engine);
 
     void update(float seconds, const EquipmentUpdateContext & context);

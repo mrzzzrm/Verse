@@ -5,9 +5,9 @@
 #include "Weapon.h"
 #include "Equipment.h"
 
-Hardpoint::Hardpoint(const glm::uvec3 & voxel, const Pose3D & pose, float maxAngle):
-    ItemSlot(voxel, pose),
-    m_maxAngle(maxAngle)
+Hardpoint::Hardpoint(const HardpointDesc & desc):
+    ItemSlot(desc),
+    m_maxAngle(desc.maxAngle)
 {}
 
 void Hardpoint::setFireRequest(bool active, const glm::vec3 & target)
@@ -31,8 +31,8 @@ void Hardpoint::update(float seconds, const EquipmentUpdateContext & context)
 
     if (m_enabled)
     {
-        auto voxelPose = context.targetPose.poseLocalToWorld(Pose3D::atPosition(glm::vec3(m_voxel)));
-        auto hardpointTargetPose = voxelPose.poseLocalToWorld(m_pose);
+        auto voxelPose = context.targetPose.poseLocalToWorld(Pose3D::atPosition(glm::vec3(m_desc.voxel)));
+        auto hardpointTargetPose = voxelPose.poseLocalToWorld(m_desc.pose);
 
         m_weapon->update(seconds, context, voxelPose, m_maxAngle);
     }

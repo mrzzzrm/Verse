@@ -1,6 +1,10 @@
 [
     {
         "Component": "PlayerFlightControl"
+    },
+    {
+        "Component": "Allegiance",
+        "Faction": "Player"
     }
 ]
 

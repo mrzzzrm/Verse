@@ -13,6 +13,8 @@ class NpcAttackTask:
 public:
     NpcAttackTask();
 
+    const Entity & target() const;
+
     void setTarget(Entity target);
 
     void update(NpcController & controller, RigidBody & body, Equipment & equipment, float seconds) override;

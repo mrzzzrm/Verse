@@ -17,6 +17,11 @@ NpcAttackTask::NpcAttackTask()
 
 }
 
+const Entity & NpcAttackTask::target() const
+{
+    return m_target;
+}
+
 void NpcAttackTask::setTarget(Entity target)
 {
     m_target = target;

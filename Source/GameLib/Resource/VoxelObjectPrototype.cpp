@@ -10,7 +10,7 @@ VoxelObjectPrototype::VoxelObjectPrototype(const Json & json, VoxelWorld & voxel
 
     VoxReader voxReader;
     {
-        auto models = voxReader.read("Data/VoxelClusters/" + voxelClusterName + ".vox");
+        auto models = voxReader.read(GameDataPath("Data/VoxelClusters/" + voxelClusterName + ".vox"));
         if (!models.empty())
         {
             m_voxelDataPrototype = std::make_shared<VoxelObjectVoxelData>(voxelWorld, models[0].size);

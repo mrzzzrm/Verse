@@ -46,7 +46,7 @@ VfxManager::VfxManager(
 
     indices.assign({0, 1, 3, 1, 2, 3});
 
-    const auto textureBinary = TextureLoader("Data/Particles/BaseParticle.png").load();
+    const auto textureBinary = TextureLoader(GameDataPath("Data/Particles/BaseParticle.png")).load();
     const auto texture = context.createTexture(textureBinary);
 
     Mesh2 mesh(std::move(vertices), std::move(indicesBlob), {texture});

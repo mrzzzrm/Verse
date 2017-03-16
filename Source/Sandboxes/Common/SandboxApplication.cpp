@@ -27,16 +27,16 @@ void SandboxApplication::onStartup()
     m_navigator.reset(m_camera, input(), 150.0f);
 
     auto skyboxPaths = std::array<std::string, 6> {
-        deliberation::dataPath("Data/Skybox/Cloudy/Right.png"),
-        deliberation::dataPath("Data/Skybox/Cloudy/Left.png"),
-        deliberation::dataPath("Data/Skybox/Cloudy/Top.png"),
-        deliberation::dataPath("Data/Skybox/Cloudy/Bottom.png"),
-        deliberation::dataPath("Data/Skybox/Cloudy/Back.png"),
-        deliberation::dataPath("Data/Skybox/Cloudy/Front.png")
+        deliberation::DeliberationDataPath("Data/Skybox/Cloudy/Right.png"),
+        deliberation::DeliberationDataPath("Data/Skybox/Cloudy/Left.png"),
+        deliberation::DeliberationDataPath("Data/Skybox/Cloudy/Top.png"),
+        deliberation::DeliberationDataPath("Data/Skybox/Cloudy/Bottom.png"),
+        deliberation::DeliberationDataPath("Data/Skybox/Cloudy/Back.png"),
+        deliberation::DeliberationDataPath("Data/Skybox/Cloudy/Front.png")
     };
 
     auto faceTexture = context().createTexture(
-        TextureLoader(deliberation::dataPath("Data/Skybox/Debug/Right.png")).load());
+        TextureLoader(deliberation::DeliberationDataPath("Data/Skybox/Debug/Right.png")).load());
 
     auto skyboxCubemapBinary = TextureLoader(skyboxPaths).load();
     auto skyboxCubemap = context().createTexture(skyboxCubemapBinary);

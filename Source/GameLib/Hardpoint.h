@@ -10,11 +10,17 @@
 class EquipmentUpdateContext;
 class Weapon;
 
+struct HardpointDesc:
+    ItemSlotDesc
+{
+    float maxAngle = 0.0f;
+};
+
 class Hardpoint final:
     public ItemSlot
 {
 public:
-    Hardpoint(const glm::uvec3 & voxel, const Pose3D & pose, float maxAngle);
+    Hardpoint(const HardpointDesc & desc);
 
     void setFireRequest(bool active, const glm::vec3 & target);
 

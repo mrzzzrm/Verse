@@ -6,6 +6,11 @@ add_library(${target}
     Debug/DebugOverlay.cpp
     Debug/DebugOverlay.h
 
+    Faction/Allegiance.cpp
+    Faction/Allegiance.h
+    Faction/FactionManager.cpp
+    Faction/FactionManager.h
+
     Hailstorm/HailstormBullet.h
     Hailstorm/HailstormManager.cpp
     Hailstorm/HailstormManager.h
@@ -14,6 +19,12 @@ add_library(${target}
 
     Npc/NpcAttackTask.cpp
     Npc/NpcAttackTask.h
+    Npc/NpcBehaviour.cpp
+    Npc/NpcBehaviour.h
+    Npc/NpcBehaviourSystem.cpp
+    Npc/NpcBehaviourSystem.h
+    Npc/NpcControllerSystem.cpp
+    Npc/NpcControllerSystem.h
     Npc/NpcSteering.cpp
     Npc/NpcSteering.h
     Npc/NpcController.cpp
@@ -33,6 +44,7 @@ add_library(${target}
     Player/PlayerSystem.cpp
     Player/PlayerSystem.h
 
+    Resource/AllegiancePrototype.h
     Resource/ComponentPrototype.h
     Resource/CoriolisPrototype.cpp
     Resource/CoriolisPrototype.h
@@ -44,6 +56,7 @@ add_library(${target}
     Resource/EquipmentPrototype.h
     Resource/FlightControlConfigPrototype.cpp
     Resource/FlightControlConfigPrototype.h
+    Resource/NpcBehaviourPrototype.h
     Resource/NpcControllerPrototype.cpp
     Resource/NpcControllerPrototype.h
     Resource/PlayerFlightControlPrototype.cpp
@@ -125,6 +138,7 @@ add_library(${target}
 
     AimHelper.cpp
     AimHelper.h
+    Components.h
     CoriolisComponent.h
     CoriolisSystem.cpp
     CoriolisSystem.h
@@ -156,6 +170,7 @@ target_include_directories(${target}
 
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/Debug
+    ${CMAKE_CURRENT_SOURCE_DIR}/Faction
     ${CMAKE_CURRENT_SOURCE_DIR}/Hailstorm
     ${CMAKE_CURRENT_SOURCE_DIR}/Systems
     ${CMAKE_CURRENT_SOURCE_DIR}/Npc
