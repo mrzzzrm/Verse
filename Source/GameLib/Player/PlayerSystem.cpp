@@ -1,5 +1,6 @@
 #include "PlayerSystem.h"
 
+#include <Deliberation/Core/Math/Trajetory.h>
 #include <Deliberation/Core/Math/PrimitiveIntersection.h>
 #include <Deliberation/Core/StreamUtils.h>
 
@@ -35,7 +36,9 @@ PlayerSystem::PlayerSystem(World & world,
         Equipment>()),
     m_context(context),
     m_input(input),
+    m_cameraMode(CameraMode::Normal),
     m_camera(camera),
+    m_navigator(m_camera, m_input, 150.0f),
     m_physicsWorld(physicsWorld),
     m_cameraDolly(m_camera)
 {
@@ -43,7 +46,7 @@ PlayerSystem::PlayerSystem(World & world,
         GameDataPath("Data/Shaders/UiElement.vert"),
         GameDataPath("Data/Shaders/UiElement.frag")});
 
-    auto & resourceManager = world().system<ResourceManager>();
+    auto & resourceManager = world.system<ResourceManager>();
     auto mesh = resourceManager.mesh(R::UiCrosshairMesh);
 
     m_crosshairsDraw = m_context.createDraw(program);
@@ -53,109 +56,117 @@ PlayerSystem::PlayerSystem(World & world,
     m_crosshairsDraw.state().setDepthState(DepthState::disabledRW());
     m_crosshairsDraw.state().setBlendState({gl::GL_FUNC_ADD, gl::GL_SRC_ALPHA, gl::GL_ONE_MINUS_SRC_ALPHA});
     m_crosshairPositionUniform = m_crosshairsDraw.uniform("ElementPosition");
+    m_viewportSizeUniform = m_crosshairsDraw.uniform("ViewportSize");
 }
 
 void PlayerSystem::onEntityUpdate(Entity & entity, float seconds)
 {
-    auto & body = *entity.component<RigidBodyComponent>().value();
-    auto & flightControlConfig = entity.component<FlightControlConfig>();
-    auto & flightControl = entity.component<PlayerFlightControl>();
+    auto &body = *entity.component<RigidBodyComponent>().value();
+    auto &flightControlConfig = entity.component<FlightControlConfig>();
+    auto &flightControl = entity.component<PlayerFlightControl>();
 
-    glm::vec3 linearThrust;
-    glm::vec3 angularThrust;
+    if (m_cameraMode == CameraMode::Normal) {
+        glm::vec3 linearThrust;
+        glm::vec3 angularThrust;
 
-    if (m_input.keyDown(InputBase::Key_W)) linearThrust += glm::vec3(0.0f, 0.0f, -1.0f);
-    if (m_input.keyDown(InputBase::Key_S)) linearThrust += glm::vec3(0.0f, 0.0f, 1.0f);
-    if (m_input.keyDown(InputBase::Key_D)) linearThrust += glm::vec3(1.0f, 0.0f, 0.0f);
-    if (m_input.keyDown(InputBase::Key_A)) linearThrust += glm::vec3(-1.0f, 0.0f, 0.0f);
+        if (m_input.keyDown(InputBase::Key_W)) linearThrust += glm::vec3(0.0f, 0.0f, -1.0f);
+        if (m_input.keyDown(InputBase::Key_S)) linearThrust += glm::vec3(0.0f, 0.0f, 1.0f);
+        if (m_input.keyDown(InputBase::Key_D)) linearThrust += glm::vec3(1.0f, 0.0f, 0.0f);
+        if (m_input.keyDown(InputBase::Key_A)) linearThrust += glm::vec3(-1.0f, 0.0f, 0.0f);
 
-    if (m_input.keyDown(InputBase::Key_Q)) angularThrust.z = 1;
-    if (m_input.keyDown(InputBase::Key_E)) angularThrust.z = -1;
+        if (m_input.keyDown(InputBase::Key_Q)) angularThrust.z = 1;
+        if (m_input.keyDown(InputBase::Key_E)) angularThrust.z = -1;
 
-    flightControl.setLinearThrust(linearThrust);
+        flightControl.setLinearThrust(linearThrust);
 
-    if (m_input.mouseButtonDown(InputBase::MouseButton_Left))
-    {
-        auto mouse = m_input.mousePosition();
+        if (m_input.mouseButtonDown(InputBase::MouseButton_Left)) {
+            auto mouse = m_input.mousePosition();
 
-        angularThrust.x = mouse.y;
-        angularThrust.y = -mouse.x;
+            angularThrust.x = mouse.y;
+            angularThrust.y = -mouse.x;
 
-        flightControl.setAngularThrust(angularThrust);
-    }
-    else
-    {
-        flightControl.setAngularThrust(angularThrust);
+            flightControl.setAngularThrust(angularThrust);
+        } else {
+            flightControl.setAngularThrust(angularThrust);
 
-        if (m_leftMousePressedMillis != 0)
-        {
-            if (CurrentMillis() - m_leftMousePressedMillis < 300)
-            {
+            if (m_leftMousePressedMillis != 0) {
                 auto result = AimHelper(m_camera, m_physicsWorld).getTarget(m_input.mousePosition());
 
-                if (result.hit)
-                {
-                    if (result.body->entity().isValid())
-                    {
+                if (result.hit) {
+                    if (result.body->entity().isValid()) {
                         m_playerTarget = result.body->entity();
+                        std::cout << "Selected target: " << m_playerTarget.name() << std::endl;
                     }
                 }
             }
+
+            m_leftMousePressedMillis = 0;
         }
 
-        m_leftMousePressedMillis = 0;
-    }
-
-    if (m_input.mouseButtonPressed(InputBase::MouseButton_Left))
-    {
-        m_leftMousePressedMillis = CurrentMillis();
-    }
-
-    {
-        AimHelper aimHelper(m_camera, m_physicsWorld);
-
-        auto & equipment = entity.component<Equipment>();
-
-        auto result = aimHelper.getTarget(m_input.mousePosition(),);
-
-        if (m_input.mouseButtonDown(InputBase::MouseButton_Right))
-        {
-            equipment.setFireRequest(true, glm::normalize(result.pointOfImpact - body.transform().position()));
+        if (m_input.mouseButtonPressed(InputBase::MouseButton_Left)) {
+            m_leftMousePressedMillis = CurrentMillis();
         }
-        else
+
         {
-            equipment.setFireRequest(false, {});
+            AimHelper aimHelper(m_camera, m_physicsWorld);
+
+            auto &equipment = entity.component<Equipment>();
+
+            auto result = aimHelper.getTarget(m_input.mousePosition());
+
+            if (m_input.mouseButtonDown(InputBase::MouseButton_Right)) {
+                equipment.setFireRequest(true, glm::normalize(result.pointOfImpact - body.transform().position()));
+            } else {
+                equipment.setFireRequest(false, {});
+            }
         }
     }
 
     flightControl.update(body, flightControlConfig, seconds);
+
+    if (m_input.keyPressed(InputBase::Key_C))
+    {
+        m_cameraMode = (CameraMode)(((int)m_cameraMode + 1) % (int)CameraMode::Count);
+    }
 }
 
 void PlayerSystem::onEntityPrePhysicsUpdate(Entity & entity, float seconds)
 {
-    auto & voxelObject = entity.component<VoxelObject>();
-    auto & voxelData = voxelObject.data();
+    if (m_cameraMode == CameraMode::Normal)
+    {
+        auto & voxelObject = entity.component<VoxelObject>();
+        auto & voxelData = voxelObject.data();
 
-    auto & playerBody = *entity.component<RigidBodyComponent>().value();
+        auto & playerBody = *entity.component<RigidBodyComponent>().value();
 
-    glm::vec3 offset;
-    offset.z = voxelData.size().z * 1.4f;
-    offset.y = voxelData.size().y * 2;
+        glm::vec3 offset;
+        offset.z = voxelData.size().z * 1.4f;
+        offset.y = voxelData.size().y * 2;
 
-    Pose3D targetPose(playerBody.transform().position() +
-                      playerBody.transform().orientation() * offset,
-                      playerBody.transform().orientation());
+        Pose3D targetPose(playerBody.transform().position() +
+                          playerBody.transform().orientation() * offset,
+                          playerBody.transform().orientation());
 
-    auto position = targetPose.pointLocalToWorld({});
+        auto position = targetPose.pointLocalToWorld({});
 
-    m_cameraDolly.update(position, targetPose.orientation(), seconds);
+        m_cameraDolly.update(position, targetPose.orientation(), seconds);
+    }
+    else if (m_cameraMode == CameraMode::FreeFlight)
+    {
+        m_navigator.update(seconds);
+    }
 }
 
 void PlayerSystem::renderUi()
 {
     if (m_playerTarget.isValid())
     {
+        m_viewportSizeUniform.set(glm::vec2{m_context.backbuffer().width(), m_context.backbuffer().height()});
+
         const auto targetPosition = m_playerTarget.component<RigidBodyComponent>().value()->transform().position();
+
+
+        CalculateTrajectory(playerPosition, playerVelocity, bulletSpeed, targetPosition, targetVelocity, success);
 
         const auto ray = Ray3D::fromTo(m_camera.position(), targetPosition);
         const auto nearPlane = m_camera.nearPlane();
@@ -164,9 +175,9 @@ void PlayerSystem::renderUi()
         auto nearPlanePosition = Rect3DRay3DIntersectionPoint(nearPlane, ray, hit);
         if (hit)
         {
-            auto nearPlanePositionNS = nearPlanePosition / nearPlane.size();
+            auto nearPlanePositionNS = nearPlanePosition * 2.0f  - 1.0f;
 
-            m_crosshairPositionUniform.set(nearPlanePositionWS);
+            m_crosshairPositionUniform.set(nearPlanePositionNS);
             m_crosshairsDraw.schedule();
         }
     }

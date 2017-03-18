@@ -70,7 +70,7 @@ void SandboxApplication::onStartup()
 
 void SandboxApplication::onFrame(float seconds)
 {
-    auto physicsSimulationSeconds = m_physicsWorld.nextSimulationStep(seconds);
+    auto physicsSimulationSeconds = m_physicsWorld.nextSimulationStepSeconds(seconds);
 
     if (EpsilonGt(physicsSimulationSeconds, 0.0f))
     {

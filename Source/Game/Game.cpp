@@ -58,12 +58,6 @@ public:
         // deliberation::EnableGLErrorChecksAndLogging();
 
         /**
-         *
-         */
-        auto bulletMesh = UVSphere(5, 5).generateMesh2();
-        auto bulletMeshID = m_hailstormManager->vfxManager().renderer().addMesh(bulletMesh);
-
-        /**
          * Create player
          */
         auto player = m_entityPrototypeManager->createEntity({"Ship", "Player"}, "PlayerShip");
@@ -99,11 +93,11 @@ public:
         /**
          * Create enemies
          */
-//        for (auto i = 0; i < 4; i++) {
-//            auto npc = m_entityPrototypeManager->createEntity({"Drone", "Npc", "Pirate"}, "MyNPC");
-//            auto npcBody = npc.component<RigidBodyComponent>().value();
-//            npcBody->transform().setPosition(glm::vec3(300.0f, 0.0f, 0.0f) + RandomUnitVec3() * 1000.0f);
-//        }
+        for (auto i = 0; i < 4; i++) {
+            auto npc = m_entityPrototypeManager->createEntity({"Drone", "Npc", "Pirate"}, "MyNPC");
+            auto npcBody = npc.component<RigidBodyComponent>().value();
+            npcBody->transform().setPosition(glm::vec3(300.0f, 0.0f, 0.0f) + RandomUnitVec3() * 1000.0f);
+        }
     }
 };
 

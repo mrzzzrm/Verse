@@ -65,19 +65,19 @@ ResourceManager::ResourceManager(World & world, Context & context):
      */
     {
         const auto layout = DataLayout{{
-                                           {"Position", Type_Vec3},
+                                           {"Position", Type_Vec2},
                                            {"UV", Type_Vec2}
                                        }};
 
         LayoutedBlob vertices(layout, 4);
-        auto positions = vertices.field<glm::vec3>("Position");
+        auto positions = vertices.field<glm::vec2>("Position");
         auto uvs = vertices.field<glm::vec2>("UV");
 
         positions.assign({
-                             glm::vec3(-0.5f, -0.5f, 0.0f),
-                             glm::vec3(0.5f, -0.5f, 0.0f),
-                             glm::vec3(0.5f, 0.5f, 0.0f),
-                             glm::vec3(-0.5f, 0.5f, 0.0f)
+                             glm::vec2(-0.5f, -0.5f),
+                             glm::vec2(0.5f, -0.5f),
+                             glm::vec2(0.5f, 0.5f),
+                             glm::vec2(-0.5f, 0.5f)
                          });
 
         uvs.assign({

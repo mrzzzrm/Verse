@@ -22,7 +22,7 @@ AimHelperResult AimHelper::getTarget(const glm::vec2 & mouse)
     auto mouseNearPlane = (mouse + 1.0f) / 2.0f;
     auto nearPlane = m_camera.nearPlane();
     auto mouseWorld = nearPlane.origin() + mouseNearPlane.x * nearPlane.right() + mouseNearPlane.y * nearPlane.up();
-    auto direction = (mouseWorld - m_camera.position()) * 2000.0f;
+    auto direction = glm::normalize(mouseWorld - m_camera.position()) * 2000.0f;
     auto origin = m_camera.position();
 
     glm::vec3 target = origin + direction;

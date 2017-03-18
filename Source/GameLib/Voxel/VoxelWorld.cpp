@@ -8,6 +8,8 @@
 
 #include <Deliberation/Physics/PhysicsWorld.h>
 
+#include <Deliberation/Scene/Camera3D.h>
+
 VoxelWorld::VoxelWorld(World & world, Context & context, PhysicsWorld & physicsWorld, const Camera3D & camera, const Texture & envMap):
     m_context(context),
     m_physicsWorld(physicsWorld),

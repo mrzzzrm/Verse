@@ -32,8 +32,6 @@ void VerseApplication::onStartup()
     m_camera.setOrientation(glm::quat({-1.0f, 0.0f, 0.0f}));
     m_camera.setAspectRatio((float)context().backbuffer().width() / context().backbuffer().height());
 
-    m_navigator.reset(m_camera, input(), 150.0f);
-
     auto skyboxPaths = std::array<std::string, 6> {
         GameDataPath("Data/Skybox/Right.png"),
         GameDataPath("Data/Skybox/Left.png"),
@@ -66,7 +64,7 @@ void VerseApplication::onStartup()
     m_debugOverlay = m_world.addSystem<DebugOverlay>(context());
     m_world.addSystem<CoriolisSystem>();
     m_world.addSystem<EquipmentSystem>();
-    m_world.addSystem<PlayerSystem>(input(), context(), m_camera, m_physicsWorld);
+    m_world.addSystem<PlayerSystem>(context(), input(), m_camera, m_physicsWorld);
     m_world.addSystem<FactionManager>();
     m_world.addSystem<NpcBehaviourSystem>();
 
@@ -81,13 +79,12 @@ void VerseApplication::onFrame(float seconds)
 {
     m_debugOverlay->setFps(fps());
 
-    auto physicsSimulationSeconds = m_physicsWorld.nextSimulationStep(seconds);
+    auto physicsSimulationSeconds = m_physicsWorld.nextSimulationStepSeconds(seconds);
 
     if (EpsilonGt(physicsSimulationSeconds, 0.0f))
     {
         m_world.prePhysicsUpdate(physicsSimulationSeconds);
         m_physicsWorld.update(seconds);
-        m_world.update(physicsSimulationSeconds);
         m_hailstormManager->update(physicsSimulationSeconds);
         m_vfxManager->update(physicsSimulationSeconds);
 
@@ -100,7 +97,7 @@ void VerseApplication::onFrame(float seconds)
 
     onApplicationUpdate(seconds);
 
-  //  m_navigator->update(seconds);
+    m_world.update(seconds);
 
     m_clear.render();
     m_world.render();
@@ -111,6 +108,8 @@ void VerseApplication::onFrame(float seconds)
 
     m_hailstormManager->render();
     m_vfxManager->render();
+
+    m_world.system<PlayerSystem>().renderUi();
 
     m_world.frameComplete();
 }
