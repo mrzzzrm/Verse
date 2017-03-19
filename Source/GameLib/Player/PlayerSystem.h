@@ -32,6 +32,8 @@ public:
     void renderUi();
 
 protected:
+    void onEntityAdded(Entity & entity) override;
+    void onEntityRemoved(Entity & entity) override;
     void onEntityUpdate(Entity & entity, float seconds) override;
     void onEntityPrePhysicsUpdate(Entity & entity, float seconds) override;
 
@@ -55,6 +57,7 @@ private:
 
     TimestampMillis         m_leftMousePressedMillis = 0;
 
+    Entity                  m_player;
     Entity                  m_playerTarget;
 
     Draw                    m_crosshairsDraw;

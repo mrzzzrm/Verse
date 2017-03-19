@@ -28,6 +28,7 @@ AimHelperResult AimHelper::getTarget(const glm::vec2 & mouse)
     glm::vec3 target = origin + direction;
 
     result.hit = false;
+    result.pointOfImpact = origin + direction;
 
     m_physicsWorld.lineCast(Ray3D(origin, direction), [&](const RayCastIntersection &intersection) -> bool {
         if (intersection.body->shape()->type() == (int)::CollisionShapeType::VoxelCluster)

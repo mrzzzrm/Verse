@@ -59,6 +59,17 @@ PlayerSystem::PlayerSystem(World & world,
     m_viewportSizeUniform = m_crosshairsDraw.uniform("ViewportSize");
 }
 
+void PlayerSystem::onEntityAdded(Entity & entity)
+{
+    Assert(!m_player.isValid(), "Can't have 2 player identities");
+    m_player = entity;
+}
+
+void PlayerSystem::onEntityRemoved(Entity & entity)
+{
+    m_player = Entity();
+}
+
 void PlayerSystem::onEntityUpdate(Entity & entity, float seconds)
 {
     auto &body = *entity.component<RigidBodyComponent>().value();
@@ -159,16 +170,28 @@ void PlayerSystem::onEntityPrePhysicsUpdate(Entity & entity, float seconds)
 
 void PlayerSystem::renderUi()
 {
+    if (!m_player.isValid()) return;
+
     if (m_playerTarget.isValid())
     {
         m_viewportSizeUniform.set(glm::vec2{m_context.backbuffer().width(), m_context.backbuffer().height()});
 
-        const auto targetPosition = m_playerTarget.component<RigidBodyComponent>().value()->transform().position();
+        const auto & targetBody = *m_playerTarget.component<RigidBodyComponent>().value();
 
+        const auto targetPosition = targetBody.transform().position();
+        const auto targetVelocity = targetBody.linearVelocity();
 
-        CalculateTrajectory(playerPosition, playerVelocity, bulletSpeed, targetPosition, targetVelocity, success);
+        const auto & body = *m_player.component<RigidBodyComponent>().value();
+        const auto & equipment = m_player.component<Equipment>();
 
-        const auto ray = Ray3D::fromTo(m_camera.position(), targetPosition);
+        const auto bulletSpeed = equipment.bulletSpeed();
+
+        bool success;
+        const auto trajectory = CalculateTrajectory(
+            body.transform().position(), body.linearVelocity(),
+            bulletSpeed, targetPosition, targetVelocity, success);
+
+        const auto ray = Ray3D(m_camera.position(), trajectory);
         const auto nearPlane = m_camera.nearPlane();
 
         bool hit;

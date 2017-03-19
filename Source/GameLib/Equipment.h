@@ -45,10 +45,15 @@ public:
     Equipment(VfxManager & vfxManager, const EquipmentDesc & desc);
 
     const std::vector<std::shared_ptr<Hardpoint>> & hardpoints() const;
+    const std::vector<std::shared_ptr<EngineSlot>> & engineSlots() const;
+
+    /**
+     * @return Bullet speed to be used for predictive aiming
+     */
+    float bulletSpeed() const;
+
     void setFireRequest(bool active, const glm::vec3 & direction);
     void setWeapon(size_t slot, std::shared_ptr<Weapon> weapon);
-
-    const std::vector<std::shared_ptr<EngineSlot>> & engineSlots() const;
     void setEngine(size_t slot, std::shared_ptr<Engine> engine);
 
     void update(float seconds, const EquipmentUpdateContext & context);

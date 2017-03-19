@@ -2,6 +2,7 @@
 
 #include "Hardpoint.h"
 #include "VfxManager.h"
+#include "Weapon.h"
 
 Equipment::Equipment(VfxManager & vfxManager, const EquipmentDesc & desc):
     m_vfxManager(vfxManager)
@@ -27,6 +28,28 @@ const std::vector<std::shared_ptr<Hardpoint>> & Equipment::hardpoints() const
     return m_hardpoints;
 }
 
+const std::vector<std::shared_ptr<EngineSlot>> & Equipment::engineSlots() const
+{
+    return m_engineSlots;
+}
+
+float Equipment::bulletSpeed() const
+{
+    if (m_hardpoints.empty()) return 0.0f;
+
+    auto bulletSpeed = 0.0f;
+
+    for (size_t h = 0; h < m_hardpoints.size(); h++) {
+        const auto &weapon = m_hardpoints[h]->weapon();
+        if (!weapon) continue;
+
+        bulletSpeed = weapon->config().bulletSpeed;
+        break;
+    }
+
+    return bulletSpeed;
+}
+
 void Equipment::setFireRequest(bool active, const glm::vec3 & direction)
 {
     for (auto & hardpoint : m_hardpoints) hardpoint->setFireRequest(active, direction);
@@ -36,11 +59,6 @@ void Equipment::setWeapon(size_t slot, std::shared_ptr<Weapon> weapon)
 {
     Assert(slot < m_hardpoints.size(), "");
     m_hardpoints[slot]->setWeapon(weapon);
-}
-
-const std::vector<std::shared_ptr<EngineSlot>> & Equipment::engineSlots() const
-{
-    return m_engineSlots;
 }
 
 void Equipment::setEngine(size_t slot, std::shared_ptr<Engine> engine)

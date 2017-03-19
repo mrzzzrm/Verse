@@ -80,31 +80,20 @@ void NpcAttackTask::update(NpcController & controller, RigidBody & body, Equipme
     /**
      * Setup fire request
      */
-    if (!equipment.hardpoints().empty())
+    auto bulletSpeed = equipment.bulletSpeed();
+
+    if (bulletSpeed != 0.0f)
     {
-        auto bulletSpeed = 0.0f;
+        const auto & bodyPosition = body.transform().position();
+        const auto & bodyVelocity = body.linearVelocity();
+        const auto & targetVelocity = targetBody->linearVelocity();
 
-        for (size_t h = 0; h < equipment.hardpoints().size(); h++)
-        {
-            const auto & weapon = equipment.hardpoints()[h]->weapon();
-            if (!weapon) continue;
+        auto success = false;
+        const auto trajectory = CalculateTrajectory(bodyPosition, bodyVelocity,
+                                                    bulletSpeed, targetPosition, targetVelocity, success);
 
-            bulletSpeed = weapon->config().bulletSpeed;
-        }
-
-        if (bulletSpeed != 0.0f)
-        {
-            const auto & bodyPosition = body.transform().position();
-            const auto & bodyVelocity = body.linearVelocity();
-            const auto & targetVelocity = targetBody->linearVelocity();
-
-            auto success = false;
-            const auto trajectory = CalculateTrajectory(bodyPosition, bodyVelocity,
-                                                        bulletSpeed, targetPosition, targetVelocity, success);
-
-            if (success) equipment.setFireRequest(true, glm::normalize(trajectory));
-            else equipment.setFireRequest(false, {});
-        }
+        if (success) equipment.setFireRequest(true, glm::normalize(trajectory));
+        else equipment.setFireRequest(false, {});
     }
 }
 
