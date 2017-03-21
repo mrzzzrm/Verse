@@ -5,14 +5,17 @@
 #include <Deliberation/Draw/Context.h>
 
 #include <Deliberation/ECS/Components.h>
+#include <Deliberation/ECS/Systems/ApplicationSystem.h>
+#include <Deliberation/ECS/Systems/PhysicsWorldSystem.h>
+#include <Deliberation/ECS/World.h>
 
 #include <Deliberation/Physics/PhysicsWorld.h>
 
 #include <Deliberation/Scene/Camera3D.h>
 
-VoxelWorld::VoxelWorld(World & world, Context & context, PhysicsWorld & physicsWorld, const Camera3D & camera, const Texture & envMap):
-    m_context(context),
-    m_physicsWorld(physicsWorld),
+VoxelWorld::VoxelWorld(World & world, const Camera3D & camera, const Texture & envMap):
+    m_context(world.system<ApplicationSystem>().context()),
+    m_physicsWorld(world.system<PhysicsWorldSystem>().physicsWorld()),
     m_camera(camera),
     m_envMap(envMap),
     Base(world, ComponentFilter::requires<VoxelObject>())

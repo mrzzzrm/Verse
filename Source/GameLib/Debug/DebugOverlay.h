@@ -19,11 +19,8 @@ public:
     void setFps(float fps);
 
 protected:
-    void onRender() override;
+    void onUpdate(float seconds) override;
 
 private:
-    Font            m_font;
-    LabelRenderer   m_renderer;
-
-    MultilineLabel  m_labels;
+    float m_fps;
 };

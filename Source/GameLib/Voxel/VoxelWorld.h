@@ -32,8 +32,6 @@ class VoxelWorld final:
 {
 public:
     VoxelWorld(World & world,
-               Context & context,
-               PhysicsWorld & physicsWorld,
                const Camera3D & camera,
                const Texture & envMap);
 

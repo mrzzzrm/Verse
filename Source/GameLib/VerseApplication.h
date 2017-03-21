@@ -75,8 +75,6 @@ protected:
     Camera3D                m_camera;
     Clear                   m_clear;
     PhysicsWorld            m_physicsWorld;
-    Optional<DebugGroundPlaneRenderer>
-                            m_groundPlane;
     World                   m_world;
 
     std::shared_ptr<HailstormManager>

@@ -26,7 +26,7 @@ VfxRenderBatch::VfxRenderBatch(VfxRenderer & renderer, const Mesh2 & mesh, VfxPa
                                          });
     if (orientationType == VfxParticleOrientationType::World)
     {
-        instanceDataLayout.addField("BirthOrientation", Type_Vec4);
+        instanceDataLayout.addField({"BirthOrientation", Type_Vec4});
     }
 
     m_instances = LayoutedBlob(instanceDataLayout, 0);

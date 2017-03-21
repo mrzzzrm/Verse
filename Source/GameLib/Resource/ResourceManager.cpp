@@ -3,15 +3,18 @@
 #include <Deliberation/Core/DataLayout.h>
 #include <Deliberation/Core/LayoutedBlob.h>
 
+#include <Deliberation/ECS/Systems/ApplicationSystem.h>
+#include <Deliberation/ECS/World.h>
+
 #include <Deliberation/Draw/Context.h>
 #include <Deliberation/Draw/TextureLoader.h>
 
 #include <Deliberation/Scene/UVSphere.h>
 #include <Deliberation/Scene/Mesh2.h>
 
-ResourceManager::ResourceManager(World & world, Context & context):
+ResourceManager::ResourceManager(World & world):
     Base(world),
-    m_context(context)
+    m_context(world.system<ApplicationSystem>().context())
 {
     /**
     * Init base particle got nowhere else to put this right now
@@ -46,7 +49,7 @@ ResourceManager::ResourceManager(World & world, Context & context):
         indices.assign({0, 1, 3, 1, 2, 3});
 
         const auto textureBinary = TextureLoader(GameDataPath("Data/Particles/BaseParticle.png")).load();
-        const auto texture = context.createTexture(textureBinary);
+        const auto texture = m_context.createTexture(textureBinary);
 
         Mesh2 mesh(std::move(vertices), std::move(indicesBlob), {texture});
         m_meshByResourceId.emplace((size_t)R::ParticleMesh, std::make_shared<Mesh2>(mesh));
@@ -93,7 +96,7 @@ ResourceManager::ResourceManager(World & world, Context & context):
         indices.assign({0, 1, 3, 1, 2, 3});
 
         const auto textureBinary = TextureLoader(GameDataPath("Data/Ui/Crosshairs.png")).load();
-        const auto texture = context.createTexture(textureBinary);
+        const auto texture = m_context.createTexture(textureBinary);
 
         Mesh2 mesh(std::move(vertices), std::move(indicesBlob), {texture});
         m_meshByResourceId.emplace((size_t)R::UiCrosshairMesh, std::make_shared<Mesh2>(mesh));

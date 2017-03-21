@@ -17,6 +17,12 @@ add_library(${target}
     Hailstorm/HailstormPhysicsWorld.cpp
     Hailstorm/HailstormPhysicsWorld.h
 
+    Hud/Hud.cpp
+    Hud/Hud.h
+    Hud/HudButton.h
+    Hud/HudEntityMarkers.cpp
+    Hud/HudEntityMarkers.h
+
     Npc/NpcAttackTask.cpp
     Npc/NpcAttackTask.h
     Npc/NpcBehaviour.cpp
@@ -175,6 +181,7 @@ target_include_directories(${target}
     ${CMAKE_CURRENT_SOURCE_DIR}/Debug
     ${CMAKE_CURRENT_SOURCE_DIR}/Faction
     ${CMAKE_CURRENT_SOURCE_DIR}/Hailstorm
+    ${CMAKE_CURRENT_SOURCE_DIR}/Hud
     ${CMAKE_CURRENT_SOURCE_DIR}/Systems
     ${CMAKE_CURRENT_SOURCE_DIR}/Npc
     ${CMAKE_CURRENT_SOURCE_DIR}/Player

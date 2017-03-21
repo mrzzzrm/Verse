@@ -199,7 +199,7 @@ public:
 
     void onSandboxUpdate(float seconds) override
     {
-        if (input().mouseButtonDown(InputBase::MouseButton_Right))
+        if (input().mouseButtonDown(MouseButton_Right))
         {
             AimHelper aimHelper(m_camera, m_physicsWorld);
             auto hit = false;

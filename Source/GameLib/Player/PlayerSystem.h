@@ -1,10 +1,15 @@
 #pragma once
 
+#include <memory>
+
 #include <Deliberation/Core/Chrono.h>
 
 #include <Deliberation/Draw/Draw.h>
 
 #include <Deliberation/ECS/System.h>
+
+#include <Deliberation/Platform/Input.h>
+#include <Deliberation/Platform/InputLayer.h>
 
 #include <Deliberation/Scene/CameraDolly3D.h>
 #include <Deliberation/Scene/Debug/DebugCameraNavigator3D.h>
@@ -20,22 +25,29 @@ class World;
 }
 
 class PlayerSystem:
-    public System<PlayerSystem>
+    public std::enable_shared_from_this<PlayerSystem>,
+    public System<PlayerSystem>,
+    public InputLayer
 {
 public:
     PlayerSystem(World & world,
-                 Context & context,
-                 InputBase & input,
-                 Camera3D & camera,
-                 PhysicsWorld & physicsWorld);
+                 Camera3D & camera);
+
+    void setPlayerTarget(Entity & entity) { m_playerTarget = entity; }
 
     void renderUi();
 
+    void onCreated() override { m_input.addLayer(shared_from_this()); }
+    void onRemoved() override { m_input.removeLayer(shared_from_this()); }
+
 protected:
+    void onFrameBegin() override;
     void onEntityAdded(Entity & entity) override;
     void onEntityRemoved(Entity & entity) override;
     void onEntityUpdate(Entity & entity, float seconds) override;
     void onEntityPrePhysicsUpdate(Entity & entity, float seconds) override;
+
+    void onMouseButtonDown(MouseButtonEvent & event) override;
 
 private:
     enum class CameraMode
@@ -63,4 +75,7 @@ private:
     Draw                    m_crosshairsDraw;
     Uniform                 m_viewportSizeUniform;
     Uniform                 m_crosshairPositionUniform;
+
+    glm::vec3               m_linearThrust;
+    glm::vec3               m_angularThrust;
 };

@@ -1,25 +1,22 @@
 #include "HailstormManager.h"
 
 #include <Deliberation/Core/ScopeProfiler.h>
+
+#include <Deliberation/ECS/Systems/ApplicationSystem.h>
+#include <Deliberation/ECS/Systems/PhysicsWorldSystem.h>
 #include <Deliberation/ECS/World.h>
+
+#include "VoxelWorld.h"
 
 HailstormManager::HailstormManager(
     World & world,
-    Context & context,
-    const Camera3D & camera,
-    PhysicsWorld & physicsWorld,
-    VoxelWorld & voxelWorld
+    const Camera3D & camera
 ):
     Base(world),
-    m_vfxManager(context, camera, voxelWorld),
-    m_hailstormPhysicsWorld(physicsWorld, voxelWorld)
+    m_vfxManager(world.system<ApplicationSystem>().context(), camera, world.system<VoxelWorld>()),
+    m_hailstormPhysicsWorld(world.system<PhysicsWorldSystem>().physicsWorld(), world.system<VoxelWorld>())
 {
 
-}
-
-DurationMicros HailstormManager::updateDuration() const
-{
-    return m_updateDuration;
 }
 
 VfxManager & HailstormManager::vfxManager()
@@ -35,8 +32,6 @@ void HailstormManager::addBullet(HailstormBullet bullet)
 
 void HailstormManager::onUpdate(float seconds)
 {
-    ScopeProfiler profiler;
-
     m_vfxManager.update(seconds);
     m_hailstormPhysicsWorld.update(seconds);
 
@@ -54,8 +49,6 @@ void HailstormManager::onUpdate(float seconds)
     {
         m_vfxManager.removeParticle(bullet.particleId);
     }
-
-    m_updateDuration = profiler.stop();
 }
 
 void HailstormManager::onRender()

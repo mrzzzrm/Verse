@@ -1,18 +1,21 @@
 #include "VerseApplication.h"
 
 #include <Deliberation/Draw/TextureLoader.h>
-#include <Npc/NpcBehaviourSystem.h>
 
-#include "VoxelClusterSplitSystem.h"
+#include <Deliberation/ECS/Systems/ApplicationSystem.h>
+
+#include <Deliberation/ImGui/ImGuiSystem.h>
 
 #include "EntityPrototypeManager.h"
 #include "EquipmentSystem.h"
+#include "Hud.h"
 #include "FactionManager.h"
 #include "NpcBehaviourSystem.h"
 #include "PlayerSystem.h"
 #include "ResourceManager.h"
 #include "CoriolisSystem.h"
 #include "VfxSystem.h"
+#include "VoxelClusterSplitSystem.h"
 
 VerseApplication::VerseApplication(const std::string & name):
     Application(name)
@@ -48,25 +51,23 @@ void VerseApplication::onStartup()
 
     m_clear = context().createClear();
 
-    m_groundPlane.reset(context(), m_camera);
-    m_groundPlane->setSize(1000.0f);
-    m_groundPlane->setQuadSize(100.0f);
-    m_groundPlane->setRadius(750.0f);
-
-    m_world.addSystem<ResourceManager>(context());
+    m_world.addSystem<ApplicationSystem>(*this);
+    m_world.addSystem<ResourceManager>();
     m_world.addSystem<PhysicsWorldSystem>(m_physicsWorld);
     m_world.addSystem<VoxelClusterSplitSystem>();
-    m_voxelWorld = m_world.addSystem<VoxelWorld>(context(), m_physicsWorld, m_camera, skyboxCubemap);
+    m_voxelWorld = m_world.addSystem<VoxelWorld>(m_camera, skyboxCubemap);
     m_world.addSystem<NpcControllerSystem>();
-    m_hailstormManager = m_world.addSystem<HailstormManager>(context(), m_camera, m_physicsWorld, *m_voxelWorld);
+    m_hailstormManager = m_world.addSystem<HailstormManager>(m_camera);
     m_vfxManager.emplace(context(), m_camera, *m_voxelWorld);
     m_world.addSystem<VfxSystem>(*m_vfxManager);
     m_debugOverlay = m_world.addSystem<DebugOverlay>(context());
     m_world.addSystem<CoriolisSystem>();
     m_world.addSystem<EquipmentSystem>();
-    m_world.addSystem<PlayerSystem>(context(), input(), m_camera, m_physicsWorld);
+    m_world.addSystem<PlayerSystem>(m_camera);
     m_world.addSystem<FactionManager>();
     m_world.addSystem<NpcBehaviourSystem>();
+    m_world.addSystem<ImGuiSystem>();
+    m_world.addSystem<Hud>(m_camera);
 
     m_debugGeometryManager.emplace(context());
 
@@ -77,6 +78,10 @@ void VerseApplication::onStartup()
 
 void VerseApplication::onFrame(float seconds)
 {
+    m_world.frameBegin();
+
+    input().processInput();
+
     m_debugOverlay->setFps(fps());
 
     auto physicsSimulationSeconds = m_physicsWorld.nextSimulationStepSeconds(seconds);
@@ -101,7 +106,6 @@ void VerseApplication::onFrame(float seconds)
 
     m_clear.render();
     m_world.render();
-  //  m_groundPlane->render();
     m_skyboxRenderer->render();
 
     onApplicationRender();

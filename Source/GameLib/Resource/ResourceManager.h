@@ -20,7 +20,7 @@ class ResourceManager:
     public System<ResourceManager>
 {
 public:
-    ResourceManager(World & world, Context & context);
+    ResourceManager(World & world);
 
     const Mesh2 & mesh(ResourceId resourceId) const;
 

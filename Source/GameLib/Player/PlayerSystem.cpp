@@ -8,12 +8,15 @@
 #include <Deliberation/Draw/Program.h>
 
 #include <Deliberation/ECS/Components.h>
+#include <Deliberation/ECS/Systems/ApplicationSystem.h>
+#include <Deliberation/ECS/Systems/PhysicsWorldSystem.h>
 #include <Deliberation/ECS/World.h>
 
 #include <Deliberation/Physics/RigidBody.h>
 #include <Deliberation/Physics/PhysicsWorld.h>
 
 #include <Deliberation/Platform/Input.h>
+#include <Deliberation/Platform/KeyMap.h>
 
 #include <Deliberation/Scene/Camera3D.h>
 
@@ -24,22 +27,20 @@
 #include "VoxelObject.h"
 
 PlayerSystem::PlayerSystem(World & world,
-                           Context & context,
-                           InputBase & input,
-                           Camera3D & camera,
-                           PhysicsWorld & physicsWorld):
+                           Camera3D & camera):
     Base(world, ComponentFilter::requires<
         RigidBodyComponent,
         VoxelObject,
         FlightControlConfig,
         PlayerFlightControl,
         Equipment>()),
-    m_context(context),
-    m_input(input),
+    InputLayer(0),
+    m_context(world.system<ApplicationSystem>().context()),
+    m_input(world.system<ApplicationSystem>().input()),
     m_cameraMode(CameraMode::Normal),
     m_camera(camera),
     m_navigator(m_camera, m_input, 150.0f),
-    m_physicsWorld(physicsWorld),
+    m_physicsWorld(world.system<PhysicsWorldSystem>().physicsWorld()),
     m_cameraDolly(m_camera)
 {
     auto program = m_context.createProgram({
@@ -57,6 +58,12 @@ PlayerSystem::PlayerSystem(World & world,
     m_crosshairsDraw.state().setBlendState({gl::GL_FUNC_ADD, gl::GL_SRC_ALPHA, gl::GL_ONE_MINUS_SRC_ALPHA});
     m_crosshairPositionUniform = m_crosshairsDraw.uniform("ElementPosition");
     m_viewportSizeUniform = m_crosshairsDraw.uniform("ViewportSize");
+}
+
+void PlayerSystem::onFrameBegin()
+{
+    m_linearThrust = {};
+    m_angularThrust = {};
 }
 
 void PlayerSystem::onEntityAdded(Entity & entity)
@@ -77,34 +84,26 @@ void PlayerSystem::onEntityUpdate(Entity & entity, float seconds)
     auto &flightControl = entity.component<PlayerFlightControl>();
 
     if (m_cameraMode == CameraMode::Normal) {
-        glm::vec3 linearThrust;
-        glm::vec3 angularThrust;
+        if (m_input.keyDown(Key_W)) m_linearThrust += glm::vec3(0.0f, 0.0f, -1.0f);
+        if (m_input.keyDown(Key_S)) m_linearThrust += glm::vec3(0.0f, 0.0f, 1.0f);
+        if (m_input.keyDown(Key_D)) m_linearThrust += glm::vec3(1.0f, 0.0f, 0.0f);
+        if (m_input.keyDown(Key_A)) m_linearThrust += glm::vec3(-1.0f, 0.0f, 0.0f);
 
-        if (m_input.keyDown(InputBase::Key_W)) linearThrust += glm::vec3(0.0f, 0.0f, -1.0f);
-        if (m_input.keyDown(InputBase::Key_S)) linearThrust += glm::vec3(0.0f, 0.0f, 1.0f);
-        if (m_input.keyDown(InputBase::Key_D)) linearThrust += glm::vec3(1.0f, 0.0f, 0.0f);
-        if (m_input.keyDown(InputBase::Key_A)) linearThrust += glm::vec3(-1.0f, 0.0f, 0.0f);
+        if (m_input.keyDown(Key_Q)) m_angularThrust.z = 1;
+        if (m_input.keyDown(Key_E)) m_angularThrust.z = -1;
 
-        if (m_input.keyDown(InputBase::Key_Q)) angularThrust.z = 1;
-        if (m_input.keyDown(InputBase::Key_E)) angularThrust.z = -1;
+        flightControl.setLinearThrust(m_linearThrust);
+        flightControl.setAngularThrust(m_angularThrust);
 
-        flightControl.setLinearThrust(linearThrust);
-
-        if (m_input.mouseButtonDown(InputBase::MouseButton_Left)) {
-            auto mouse = m_input.mousePosition();
-
-            angularThrust.x = mouse.y;
-            angularThrust.y = -mouse.x;
-
-            flightControl.setAngularThrust(angularThrust);
+        if (m_input.mouseButtonDown(MouseButton_Left)) {
         } else {
-            flightControl.setAngularThrust(angularThrust);
+            flightControl.setAngularThrust(m_angularThrust);
 
             if (m_leftMousePressedMillis != 0) {
                 auto result = AimHelper(m_camera, m_physicsWorld).getTarget(m_input.mousePosition());
 
                 if (result.hit) {
-                    if (result.body->entity().isValid()) {
+                    if (result.body->entity().isValid() && m_player != result.body->entity()) {
                         m_playerTarget = result.body->entity();
                         std::cout << "Selected target: " << m_playerTarget.name() << std::endl;
                     }
@@ -114,7 +113,7 @@ void PlayerSystem::onEntityUpdate(Entity & entity, float seconds)
             m_leftMousePressedMillis = 0;
         }
 
-        if (m_input.mouseButtonPressed(InputBase::MouseButton_Left)) {
+        if (m_input.mouseButtonPressed(MouseButton_Left)) {
             m_leftMousePressedMillis = CurrentMillis();
         }
 
@@ -125,7 +124,7 @@ void PlayerSystem::onEntityUpdate(Entity & entity, float seconds)
 
             auto result = aimHelper.getTarget(m_input.mousePosition());
 
-            if (m_input.mouseButtonDown(InputBase::MouseButton_Right)) {
+            if (m_input.mouseButtonDown(MouseButton_Right)) {
                 equipment.setFireRequest(true, glm::normalize(result.pointOfImpact - body.transform().position()));
             } else {
                 equipment.setFireRequest(false, {});
@@ -135,7 +134,7 @@ void PlayerSystem::onEntityUpdate(Entity & entity, float seconds)
 
     flightControl.update(body, flightControlConfig, seconds);
 
-    if (m_input.keyPressed(InputBase::Key_C))
+    if (m_input.keyPressed(Key_C))
     {
         m_cameraMode = (CameraMode)(((int)m_cameraMode + 1) % (int)CameraMode::Count);
     }
@@ -203,5 +202,16 @@ void PlayerSystem::renderUi()
             m_crosshairPositionUniform.set(nearPlanePositionNS);
             m_crosshairsDraw.schedule();
         }
+    }
+}
+
+void PlayerSystem::onMouseButtonDown(MouseButtonEvent & event)
+{
+    if (event.button() == MouseButton_Left)
+    {
+        const auto & mouse = event.mousePosition();
+
+        m_angularThrust.x = mouse.y;
+        m_angularThrust.y = -mouse.x;
     }
 }

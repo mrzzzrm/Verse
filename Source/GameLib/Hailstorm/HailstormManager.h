@@ -18,12 +18,7 @@ class HailstormManager final:
 public:
     HailstormManager(
         World & world,
-        Context & context,
-        const Camera3D & camera,
-        PhysicsWorld & physicsWorld,
-        VoxelWorld & voxelWorld);
-
-    DurationMicros updateDuration() const;
+        const Camera3D & camera);
 
     VfxManager & vfxManager();
 
@@ -36,5 +31,4 @@ protected:
 private:
     VfxManager              m_vfxManager;
     HailstormPhysicsWorld   m_hailstormPhysicsWorld;
-    DurationMicros          m_updateDuration = 0;
 };
