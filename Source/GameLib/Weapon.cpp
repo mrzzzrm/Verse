@@ -59,7 +59,7 @@ void Weapon::update(float seconds, const EquipmentUpdateContext & context, const
 
         auto angle = glm::angle(trajectoryLocal, glm::vec3(0.0f, 0.0f, -1.0f));
 
-        if (angle <= maxAngle)
+        if (angle <= maxAngle || true)
         {
             VfxParticle particle(
                 m_config.meshID,

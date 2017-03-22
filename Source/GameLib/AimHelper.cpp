@@ -25,6 +25,8 @@ AimHelperResult AimHelper::getTarget(const glm::vec2 & mouse)
     auto direction = glm::normalize(mouseWorld - m_camera.position()) * 2000.0f;
     auto origin = m_camera.position();
 
+    std::cout << direction << std::endl;
+
     glm::vec3 target = origin + direction;
 
     result.hit = false;

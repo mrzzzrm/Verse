@@ -37,19 +37,16 @@ void HudEntityMarkers::update()
         auto entity = rigidBody->entity();
         if (entity.hasComponent<PlayerFlightControl>()) continue;
 
-        const auto relativePosition = rigidBody->transform().position() - m_camera.position();
+        bool inFrontOfCamera;
+        const auto buttonPosition = m_camera.projectToNearPlane(rigidBody->transform().position(), inFrontOfCamera);
 
-        if (glm::dot(relativePosition, nearPlaneForward) < 0) continue;
+        if (!inFrontOfCamera) continue;
 
         const auto radius = rigidBody->bounds().diameter() / 2.0f;
 
-        const auto localRelativePosition = glm::transpose(m_camera.pose().basis()) * relativePosition;
-
-        const auto factor = m_camera.zNear() / -localRelativePosition.z;
-
-        const auto nearPlanePositionWS = (localRelativePosition * factor);
-        const auto nearPlanePosition2dWS = glm::vec2(nearPlanePositionWS.x, nearPlanePositionWS.y);
-        const auto nearPlanePosition = 2.0f * nearPlanePosition2dWS / nearPlane.size();
+        const auto upperRightWS = rigidBody->transform().position() + nearPlaneRight * radius + nearPlaneUp * radius;
+        const auto upperRightNP = m_camera.projectToNearPlane(upperRightWS, inFrontOfCamera);
+        Assert(inFrontOfCamera, "");
 
         std::shared_ptr<HudButton> button;
 
@@ -64,8 +61,8 @@ void HudEntityMarkers::update()
         button = iter->second;
 
         button->setVisible(true);
-        button->setPosition(nearPlanePosition);
-        button->setHalfExtent(glm::vec2((radius / glm::root_two<float>()) / 2.0f));
+        button->setPosition(buttonPosition);
+        button->setHalfExtent(upperRightNP - buttonPosition);
 
         button->setClickCallback([&]() {
             m_hud.setPlayerTarget(entity);

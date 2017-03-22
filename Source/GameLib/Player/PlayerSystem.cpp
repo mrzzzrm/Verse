@@ -124,6 +124,8 @@ void PlayerSystem::onEntityUpdate(Entity & entity, float seconds)
 
             auto result = aimHelper.getTarget(m_input.mousePosition());
 
+            //std::cout << result.pointOfImpact << std::endl;
+
             if (m_input.mouseButtonDown(MouseButton_Right)) {
                 equipment.setFireRequest(true, glm::normalize(result.pointOfImpact - body.transform().position()));
             } else {
