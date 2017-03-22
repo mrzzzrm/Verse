@@ -78,17 +78,17 @@ public:
         /**
          * Create asteroids
          */
-//        for (auto i = 0; i < 15; i++) {
-//            auto asteroid = m_entityPrototypeManager->createEntity({"Asteroid00"}, "MyAsteroid");
-//            auto asteroidBody = asteroid.component<RigidBodyComponent>().value();
-//            asteroidBody->transform().setPosition(RandomUnitVec3() * 1250.0f);
-//        }
-//
-//        for (auto i = 0; i < 15; i++) {
-//            auto asteroid = m_entityPrototypeManager->createEntity({"Asteroid01"}, "MyAsteroid");
-//            auto asteroidBody = asteroid.component<RigidBodyComponent>().value();
-//            asteroidBody->transform().setPosition(RandomUnitVec3() * 1250.0f);
-//        }
+        for (auto i = 0; i < 0; i++) {
+            auto asteroid = m_entityPrototypeManager->createEntity({"Asteroid00"}, "MyAsteroid");
+            auto asteroidBody = asteroid.component<RigidBodyComponent>().value();
+            asteroidBody->transform().setPosition(RandomUnitVec3() * 1250.0f);
+        }
+
+        for (auto i = 0; i < 5; i++) {
+            auto asteroid = m_entityPrototypeManager->createEntity({"Asteroid01"}, "MyAsteroid");
+            auto asteroidBody = asteroid.component<RigidBodyComponent>().value();
+            asteroidBody->transform().setPosition(RandomUnitVec3() * 1250.0f);
+        }
 
         /**
          * Create enemies

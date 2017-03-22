@@ -5,7 +5,9 @@ enum class R
     None,
     BulletMesh,
     ParticleMesh,
-    UiCrosshairMesh
+    UiCrosshairMesh,
+    HudEntityMarkerUpperLeft,
+    HudElement
 };
 
 using ResourceId = R;

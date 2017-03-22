@@ -24,7 +24,7 @@ public:
     void setHalfExtent(const glm::vec2 & halfExtent) { m_halfExtent = halfExtent; }
     void setClickCallback(const ClickCallback & clickCallback) { m_clickCallback = clickCallback; }
 
-    void onClick() { if (m_clickCallback) clickCallback(); }
+    void onClick() { if (m_clickCallback) m_clickCallback(); }
 
 private:
     bool            m_visible = true;

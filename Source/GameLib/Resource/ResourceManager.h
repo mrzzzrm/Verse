@@ -3,6 +3,7 @@
 #include <memory>
 
 #include <Deliberation/Core/HashUtils.h>
+#include <Deliberation/Draw/Program.h>
 
 #include <Deliberation/ECS/System.h>
 
@@ -23,9 +24,11 @@ public:
     ResourceManager(World & world);
 
     const Mesh2 & mesh(ResourceId resourceId) const;
+    const Program & program(ResourceId resourceId) const;
 
 private:
-    Context & m_context;
+    Context &                                           m_context;
 
-    std::unordered_map<size_t, std::shared_ptr<Mesh2>> m_meshByResourceId;
+    std::unordered_map<size_t, std::shared_ptr<Mesh2>>  m_meshByResourceId;
+    std::unordered_map<size_t, Program>                 m_programByResourceId;
 };

@@ -3,6 +3,7 @@
 #include <Deliberation/Draw/TextureLoader.h>
 
 #include <Deliberation/ECS/Systems/ApplicationSystem.h>
+#include <Deliberation/ECS/Systems/DebugGeometrySystem.h>
 
 #include <Deliberation/ImGui/ImGuiSystem.h>
 
@@ -31,7 +32,7 @@ void VerseApplication::onStartup()
     m_physicsWorld.narrowphase().contactDispatcher().
         registerContactType<VoxelClusterContact>((int)::CollisionShapeType::VoxelCluster);
 
-    m_camera.setPosition({0.0f, 200.0f, 300.0f});
+    m_camera.setPosition({0.0f, 0.0f, 0.0f});
     m_camera.setOrientation(glm::quat({-1.0f, 0.0f, 0.0f}));
     m_camera.setAspectRatio((float)context().backbuffer().width() / context().backbuffer().height());
 
@@ -52,6 +53,7 @@ void VerseApplication::onStartup()
     m_clear = context().createClear();
 
     m_world.addSystem<ApplicationSystem>(*this);
+    m_world.addSystem<DebugGeometrySystem>();
     m_world.addSystem<ResourceManager>();
     m_world.addSystem<PhysicsWorldSystem>(m_physicsWorld);
     m_world.addSystem<VoxelClusterSplitSystem>();

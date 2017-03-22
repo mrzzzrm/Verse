@@ -59,8 +59,6 @@ void Hud::onMouseButtonClicked(MouseButtonEvent & event)
         const auto & halfExtent = button->halfExtent();
         const auto absMouseDelta = glm::abs(event.mousePosition() - button->position());
 
-        std::cout << absMouseDelta << " " << halfExtent << std::endl;
-
         if (absMouseDelta.x <= halfExtent.x && absMouseDelta.y <= halfExtent.y)
         {
             event.consume();

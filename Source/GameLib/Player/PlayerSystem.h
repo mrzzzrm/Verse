@@ -13,6 +13,7 @@
 
 #include <Deliberation/Scene/CameraDolly3D.h>
 #include <Deliberation/Scene/Debug/DebugCameraNavigator3D.h>
+#include <Deliberation/Scene/Debug/DebugGeometryRenderer.h>
 
 #include "GameLib.h"
 
@@ -46,6 +47,7 @@ protected:
     void onEntityRemoved(Entity & entity) override;
     void onEntityUpdate(Entity & entity, float seconds) override;
     void onEntityPrePhysicsUpdate(Entity & entity, float seconds) override;
+    void onRender() override;
 
     void onMouseButtonDown(MouseButtonEvent & event) override;
 
@@ -78,4 +80,6 @@ private:
 
     glm::vec3               m_linearThrust;
     glm::vec3               m_angularThrust;
+
+    DebugGeometryRenderer   m_debugGeometryRenderer;
 };

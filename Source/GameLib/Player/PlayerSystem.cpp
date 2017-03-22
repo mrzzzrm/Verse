@@ -9,6 +9,7 @@
 
 #include <Deliberation/ECS/Components.h>
 #include <Deliberation/ECS/Systems/ApplicationSystem.h>
+#include <Deliberation/ECS/Systems/DebugGeometrySystem.h>
 #include <Deliberation/ECS/Systems/PhysicsWorldSystem.h>
 #include <Deliberation/ECS/World.h>
 
@@ -41,22 +42,21 @@ PlayerSystem::PlayerSystem(World & world,
     m_camera(camera),
     m_navigator(m_camera, m_input, 150.0f),
     m_physicsWorld(world.system<PhysicsWorldSystem>().physicsWorld()),
-    m_cameraDolly(m_camera)
+    m_cameraDolly(m_camera),
+    m_debugGeometryRenderer(world.system<DebugGeometrySystem>().manager())
 {
-    auto program = m_context.createProgram({
-        GameDataPath("Data/Shaders/UiElement.vert"),
-        GameDataPath("Data/Shaders/UiElement.frag")});
 
     auto & resourceManager = world.system<ResourceManager>();
     auto mesh = resourceManager.mesh(R::UiCrosshairMesh);
+    auto program = resourceManager.program(R::HudElement);
 
     m_crosshairsDraw = m_context.createDraw(program);
     m_crosshairsDraw.setIndices(mesh.indices());
     m_crosshairsDraw.addVertices(mesh.vertices());
     m_crosshairsDraw.sampler("Texture").setTexture(mesh.textures()[0]);
+    m_crosshairsDraw.setAttribute("Flip", glm::vec2(1.0f));
     m_crosshairsDraw.state().setDepthState(DepthState::disabledRW());
     m_crosshairsDraw.state().setBlendState({gl::GL_FUNC_ADD, gl::GL_SRC_ALPHA, gl::GL_ONE_MINUS_SRC_ALPHA});
-    m_crosshairPositionUniform = m_crosshairsDraw.uniform("ElementPosition");
     m_viewportSizeUniform = m_crosshairsDraw.uniform("ViewportSize");
 }
 
@@ -95,24 +95,6 @@ void PlayerSystem::onEntityUpdate(Entity & entity, float seconds)
         flightControl.setLinearThrust(m_linearThrust);
         flightControl.setAngularThrust(m_angularThrust);
 
-        if (m_input.mouseButtonDown(MouseButton_Left)) {
-        } else {
-            flightControl.setAngularThrust(m_angularThrust);
-
-            if (m_leftMousePressedMillis != 0) {
-                auto result = AimHelper(m_camera, m_physicsWorld).getTarget(m_input.mousePosition());
-
-                if (result.hit) {
-                    if (result.body->entity().isValid() && m_player != result.body->entity()) {
-                        m_playerTarget = result.body->entity();
-                        std::cout << "Selected target: " << m_playerTarget.name() << std::endl;
-                    }
-                }
-            }
-
-            m_leftMousePressedMillis = 0;
-        }
-
         if (m_input.mouseButtonPressed(MouseButton_Left)) {
             m_leftMousePressedMillis = CurrentMillis();
         }
@@ -123,8 +105,6 @@ void PlayerSystem::onEntityUpdate(Entity & entity, float seconds)
             auto &equipment = entity.component<Equipment>();
 
             auto result = aimHelper.getTarget(m_input.mousePosition());
-
-            //std::cout << result.pointOfImpact << std::endl;
 
             if (m_input.mouseButtonDown(MouseButton_Right)) {
                 equipment.setFireRequest(true, glm::normalize(result.pointOfImpact - body.transform().position()));
@@ -169,6 +149,11 @@ void PlayerSystem::onEntityPrePhysicsUpdate(Entity & entity, float seconds)
     }
 }
 
+void PlayerSystem::onRender()
+{
+    m_debugGeometryRenderer.schedule(m_camera);
+}
+
 void PlayerSystem::renderUi()
 {
     if (!m_player.isValid()) return;
@@ -201,7 +186,7 @@ void PlayerSystem::renderUi()
         {
             auto nearPlanePositionNS = nearPlanePosition * 2.0f  - 1.0f;
 
-            m_crosshairPositionUniform.set(nearPlanePositionNS);
+            m_crosshairsDraw.setAttribute("ElementPosition", nearPlanePositionNS);
             m_crosshairsDraw.schedule();
         }
     }
