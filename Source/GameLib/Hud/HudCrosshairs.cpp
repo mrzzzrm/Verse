@@ -17,6 +17,8 @@
 #include "PlayerSystem.h"
 #include "R.h"
 #include "ResourceManager.h"
+#include "VoxelObject.h"
+#include "Weapon.h"
 
 HudCrosshairs::HudCrosshairs(Hud & hud):
     HudLayer(hud),
@@ -42,8 +44,8 @@ void HudCrosshairs::update(float seconds)
     const auto halfExtent = glm::vec2(32.0f) / glm::vec2(m_context.backbuffer().size());
     setHalfExtent(halfExtent);
 
-    auto player = m_playerSystem.player();
-    auto playerTarget = m_playerSystem.playerTarget();
+    auto & player = m_playerSystem.player();
+    auto & playerTarget = m_playerSystem.playerTarget();
 
     if (player.isValid() && playerTarget.isValid())
     {
@@ -58,11 +60,11 @@ void HudCrosshairs::update(float seconds)
         const auto bulletSpeed = equipment.bulletSpeed();
 
         bool success;
-        const auto trajectory = CalculateTrajectory(
+        m_trajectory = CalculateTrajectory(
             body.transform().position(), body.linearVelocity(),
             bulletSpeed, targetPosition, targetVelocity, success);
 
-        const auto ray = Ray3D(m_hud.camera().position(), trajectory);
+        const auto ray = Ray3D(m_hud.camera().position(), m_trajectory);
         const auto nearPlane = m_hud.camera().nearPlane();
 
         bool hit;
@@ -84,8 +86,8 @@ void HudCrosshairs::render()
 {
     if (!visible()) return;
 
-    auto player = m_playerSystem.player();
-    auto playerTarget = m_playerSystem.playerTarget();
+    auto & player = m_playerSystem.player();
+    auto & playerTarget = m_playerSystem.playerTarget();
 
     if (player.isValid() && playerTarget.isValid())
     {
@@ -101,5 +103,37 @@ void HudCrosshairs::render()
 
 void HudCrosshairs::onMouseButtonDown(MouseButtonEvent & event)
 {
+    if (event.button() != MouseButton_Right) return;
+
+    auto & player = m_playerSystem.player();
+    auto & playerTarget = m_playerSystem.playerTarget();
+
+    const auto & targetBody = *playerTarget.component<RigidBodyComponent>().value();
+    const auto & targetPosition = targetBody.transform().position();
+    const auto & targetVelocity = targetBody.linearVelocity();
+
+    auto & equipment = player.component<Equipment>();
+    const auto & body = *player.component<RigidBodyComponent>().value();
+    const auto & voxelObject = player.component<VoxelObject>();
+
+    for (auto & hardpoint : equipment.hardpoints())
+    {
+        const auto weapon = hardpoint->weapon();
+        if (!weapon) continue;
+
+        const auto hardpointPosition =
+            body.transform().pointLocalToWorld(glm::vec3(hardpoint->voxel()) * voxelObject.scale());
+
+        const auto bulletSpeed = weapon->config().bulletSpeed;
+
+        bool success;
+        auto trajectory = CalculateTrajectory(
+            hardpointPosition, body.linearVelocity(),
+            bulletSpeed, targetPosition, targetVelocity, success);
+
+        hardpoint->setFireRequest(success, glm::normalize(trajectory));
+    }
+
+
     event.consume();
 }

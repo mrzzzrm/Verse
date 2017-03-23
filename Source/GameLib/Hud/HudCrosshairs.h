@@ -27,5 +27,5 @@ private:
     Draw            m_draw;
     Uniform         m_viewportSizeUniform;
     Uniform         m_crosshairPositionUniform;
-
+    glm::vec3       m_trajectory;
 };

@@ -1,5 +1,8 @@
 [
     {
+        "Component": "HudProxy"
+    },
+    {
         "Component": "VoxelObject",
         "VoxelCluster": "Asteroid00",
         "Scale": 3

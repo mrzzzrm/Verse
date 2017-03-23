@@ -1,5 +1,8 @@
 [
     {
+        "Component": "HudProxy"
+    },
+    {
         "Component": "VoxelObject",
         "VoxelCluster": "Station",
         "Scale": 10

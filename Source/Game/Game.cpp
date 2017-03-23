@@ -71,20 +71,20 @@ public:
         /**
          * Create station
          */
-        auto station = m_entityPrototypeManager->createEntity({"Station"}, "MyStation");
-        auto stationBody = station.component<RigidBodyComponent>().value();
-        stationBody->transform().setPosition({0.0f, 40.0f, -100.0f});
+//        auto station = m_entityPrototypeManager->createEntity({"Station"}, "MyStation");
+//        auto stationBody = station.component<RigidBodyComponent>().value();
+//        stationBody->transform().setPosition({0.0f, 40.0f, -100.0f});
 
         /**
          * Create asteroids
          */
-        for (auto i = 0; i < 0; i++) {
+        for (auto i = 0; i < 16; i++) {
             auto asteroid = m_entityPrototypeManager->createEntity({"Asteroid00"}, "MyAsteroid");
             auto asteroidBody = asteroid.component<RigidBodyComponent>().value();
             asteroidBody->transform().setPosition(RandomUnitVec3() * 1250.0f);
         }
 
-        for (auto i = 0; i < 5; i++) {
+        for (auto i = 0; i < 15; i++) {
             auto asteroid = m_entityPrototypeManager->createEntity({"Asteroid01"}, "MyAsteroid");
             auto asteroidBody = asteroid.component<RigidBodyComponent>().value();
             asteroidBody->transform().setPosition(RandomUnitVec3() * 1250.0f);
@@ -93,11 +93,11 @@ public:
         /**
          * Create enemies
          */
-//        for (auto i = 0; i < 4; i++) {
-//            auto npc = m_entityPrototypeManager->createEntity({"Drone", "Npc", "Pirate"}, "MyNPC");
-//            auto npcBody = npc.component<RigidBodyComponent>().value();
-//            npcBody->transform().setPosition(glm::vec3(300.0f, 0.0f, 0.0f) + RandomUnitVec3() * 1000.0f);
-//        }
+        for (auto i = 0; i < 1; i++) {
+            auto npc = m_entityPrototypeManager->createEntity({"Drone", "Npc", "Pirate"}, "MyNPC");
+            auto npcBody = npc.component<RigidBodyComponent>().value();
+            npcBody->transform().setPosition(glm::vec3(300.0f, 0.0f, 0.0f) + RandomUnitVec3() * 1000.0f);
+        }
     }
 };
 

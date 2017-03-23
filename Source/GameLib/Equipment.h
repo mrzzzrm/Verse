@@ -52,7 +52,8 @@ public:
      */
     float bulletSpeed() const;
 
-    void setFireRequest(bool active, const glm::vec3 & direction);
+    void setFireRequestForAllHardpoints(bool active, const glm::vec3 & direction);
+
     void setWeapon(size_t slot, std::shared_ptr<Weapon> weapon);
     void setEngine(size_t slot, std::shared_ptr<Engine> engine);
 

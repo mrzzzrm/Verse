@@ -34,8 +34,10 @@ public:
     PlayerSystem(World & world,
                  Camera3D & camera);
 
-    Entity player() const { return m_player; }
-    Entity playerTarget() const { return m_playerTarget; }
+    Entity & player() { return m_player; }
+    const Entity & player() const { return m_player; }
+    Entity & playerTarget() { return m_playerTarget; }
+    const Entity & playerTarget() const { return m_playerTarget; }
 
     void setPlayerTarget(Entity & entity) { m_playerTarget = entity; }
 

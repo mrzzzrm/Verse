@@ -107,8 +107,8 @@ void VerseApplication::onFrame(float seconds)
     m_world.update(seconds);
 
     m_clear.render();
-    m_world.render();
     m_skyboxRenderer->render();
+    m_world.render();
 
     onApplicationRender();
 

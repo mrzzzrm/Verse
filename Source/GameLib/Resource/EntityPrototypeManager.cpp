@@ -10,6 +10,7 @@
 #include "EntityPrototype.h"
 #include "EquipmentPrototype.h"
 #include "FlightControlConfigPrototype.h"
+#include "HudProxyPrototype.h"
 #include "NpcControllerPrototype.h"
 #include "PlayerFlightControlPrototype.h"
 #include "RigidBodyPrototype.h"
@@ -32,6 +33,8 @@ EntityPrototypeManager::EntityPrototypeManager(World & world):
     registerComponentLoader<PlayerFlightControlPrototype>("PlayerFlightControl");
     registerComponentLoader<AllegiancePrototype>("Allegiance");
     registerComponentLoader<NpcBehaviourPrototype>("NpcBehaviour");
+    registerComponentLoader<NpcBehaviourPrototype>("NpcBehaviour");
+    registerComponentLoader<HudProxyPrototype>("HudProxy");
 }
 
 Entity EntityPrototypeManager::createEntity(const std::vector<std::string> & prototypeNames,

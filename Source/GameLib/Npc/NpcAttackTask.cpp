@@ -33,7 +33,7 @@ void NpcAttackTask::update(NpcController & controller, RigidBody & body, Equipme
 {
     if (!m_target.isValid())
     {
-        equipment.setFireRequest(false, {});
+        equipment.setFireRequestForAllHardpoints(false, {});
         return;
     }
 
@@ -92,8 +92,8 @@ void NpcAttackTask::update(NpcController & controller, RigidBody & body, Equipme
         const auto trajectory = CalculateTrajectory(bodyPosition, bodyVelocity,
                                                     bulletSpeed, targetPosition, targetVelocity, success);
 
-        if (success) equipment.setFireRequest(true, glm::normalize(trajectory));
-        else equipment.setFireRequest(false, {});
+        if (success) equipment.setFireRequestForAllHardpoints(true, glm::normalize(trajectory));
+        else equipment.setFireRequestForAllHardpoints(false, {});
     }
 }
 

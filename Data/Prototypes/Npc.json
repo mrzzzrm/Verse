@@ -1,5 +1,8 @@
 [
     {
+        "Component": "HudProxy"
+    },
+    {
         "Component": "NpcController"
     }
 ]

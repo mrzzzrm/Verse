@@ -54,7 +54,7 @@ void PlayerSystem::onFrameBegin()
     m_angularThrust = {};
 
     auto & equipment = m_player.component<Equipment>();
-    equipment.setFireRequest(false, {});
+    equipment.setFireRequestForAllHardpoints(false, {});
 }
 
 void PlayerSystem::onEntityAdded(Entity & entity)
@@ -98,7 +98,8 @@ void PlayerSystem::onEntityUpdate(Entity & entity, float seconds)
             auto result = aimHelper.getTarget(m_input.mousePosition());
 
             if (m_input.mouseButtonDown(MouseButton_Right)) {
-                equipment.setFireRequest(true, glm::normalize(result.pointOfImpact - body.transform().position()));
+                equipment.setFireRequestForAllHardpoints(true, glm::normalize(
+                    result.pointOfImpact - body.transform().position()));
             } else {
             }
         }
@@ -163,6 +164,7 @@ void PlayerSystem::onMouseButtonDown(MouseButtonEvent & event)
         auto & body = *m_player.component<RigidBodyComponent>().value();
 
         auto & equipment = m_player.component<Equipment>();
-        equipment.setFireRequest(true, glm::normalize(result.pointOfImpact - body.transform().position()));
+        equipment.setFireRequestForAllHardpoints(true,
+                                                 glm::normalize(result.pointOfImpact - body.transform().position()));
     }
 }

@@ -50,7 +50,7 @@ float Equipment::bulletSpeed() const
     return bulletSpeed;
 }
 
-void Equipment::setFireRequest(bool active, const glm::vec3 & direction)
+void Equipment::setFireRequestForAllHardpoints(bool active, const glm::vec3 & direction)
 {
     for (auto & hardpoint : m_hardpoints) hardpoint->setFireRequest(active, direction);
 }

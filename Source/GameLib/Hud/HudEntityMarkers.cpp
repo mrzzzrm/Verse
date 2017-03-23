@@ -10,6 +10,7 @@
 
 #include "Hud.h"
 #include "HudButton.h"
+#include "HudProxy.h"
 #include "PlayerFlightControl.h"
 #include "ResourceManager.h"
 
@@ -60,6 +61,7 @@ void HudEntityMarkers::update(float seconds)
     {
         auto entity = rigidBody->entity();
         if (entity.hasComponent<PlayerFlightControl>()) continue;
+        if (!entity.hasComponent<HudProxy>()) continue;
 
         bool inFrontOfCamera;
         const auto buttonPosition = m_camera.projectToNearPlane(rigidBody->transform().position(), inFrontOfCamera);
