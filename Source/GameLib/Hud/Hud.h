@@ -15,6 +15,7 @@ class Camera3D;
 }
 
 class HudButton;
+class HudElement;
 class PlayerSystem;
 
 class Hud:
@@ -25,10 +26,12 @@ class Hud:
 public:
     Hud(World & world, const Camera3D & camera);
 
+    const Camera3D & camera() const { return m_camera; }
+
     void setPlayerTarget(Entity & entity);
 
-    void addButton(const std::shared_ptr<HudButton> & button);
-    void removeButton(const std::shared_ptr<HudButton> & button);
+    void addElement(const std::shared_ptr<HudElement> & element);
+    void removeElement(const std::shared_ptr<HudElement> & element);
 
     void onCreated() override { m_input.addLayer(shared_from_this()); }
     void onRemoved() override { m_input.removeLayer(shared_from_this()); }
@@ -38,10 +41,16 @@ protected:
     void onRender() override;
 
     void onMouseButtonClicked(MouseButtonEvent & event) override;
+    void onMouseButtonDown(MouseButtonEvent & event) override;
 
 private:
-    InputBase &                             m_input;
-    PlayerSystem &                          m_playerSystem;
-    HudEntityMarkers                        m_entityMarkers;
-    std::vector<std::shared_ptr<HudButton>> m_buttons;
+    template<typename T>
+    void processMouseEvent(T & event, const std::function<void(HudElement & element)> & fn) const;
+
+private:
+    const Camera3D &                            m_camera;
+    InputBase &                                 m_input;
+    PlayerSystem &                              m_playerSystem;
+    std::vector<std::shared_ptr<HudLayer>>      m_layers;
+    std::vector<std::shared_ptr<HudElement>>    m_elements;
 };

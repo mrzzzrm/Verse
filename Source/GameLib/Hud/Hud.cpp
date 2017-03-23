@@ -7,19 +7,25 @@
 #include <Deliberation/ECS/World.h>
 
 #include "HudButton.h"
+#include "HudCrosshairs.h"
 #include "PlayerSystem.h"
 
 Hud::Hud(World & world, const Camera3D & camera):
     Base(world),
     InputLayer(1),
+    m_camera(camera),
     m_input(world.system<ApplicationSystem>().input()),
-    m_entityMarkers(*this,
-                    world.system<ApplicationSystem>().context(),
-                    world.system<PhysicsWorldSystem>().physicsWorld(),
-                    camera),
     m_playerSystem(world.system<PlayerSystem>())
 {
+    auto & context = world.system<ApplicationSystem>().context();
+    auto & physicsWorld = world.system<PhysicsWorldSystem>().physicsWorld();
 
+    auto crosshairs = std::make_shared<HudCrosshairs>(*this);
+
+    m_layers.emplace_back(crosshairs);
+    m_layers.emplace_back(std::make_shared<HudEntityMarkers>(*this, context, physicsWorld, camera));
+
+    addElement(crosshairs);
 }
 
 void Hud::setPlayerTarget(Entity & entity)
@@ -27,43 +33,63 @@ void Hud::setPlayerTarget(Entity & entity)
     m_playerSystem.setPlayerTarget(entity);
 }
 
-void Hud::addButton(const std::shared_ptr<HudButton> & button)
+void Hud::addElement(const std::shared_ptr<HudElement> & element)
 {
-    m_buttons.emplace_back(button);
+    m_elements.emplace_back(element);
 }
 
-void Hud::removeButton(const std::shared_ptr<HudButton> & button)
+void Hud::removeElement(const std::shared_ptr<HudElement> & element)
 {
-    const auto iter = std::find(m_buttons.begin(), m_buttons.end(), button);
-    Assert(iter != m_buttons.end(), "No such button");
+    const auto iter = std::find(m_elements.begin(), m_elements.end(), element);
+    Assert(iter != m_elements.end(), "No such button");
 
-    m_buttons.erase(iter);
+    m_elements.erase(iter);
 }
 
 void Hud::onUpdate(float seconds)
 {
-    m_entityMarkers.update();
+    for (auto & layer : m_layers)
+    {
+        layer->update(seconds);
+    }
 }
 
 void Hud::onRender()
 {
-    m_entityMarkers.render();
+    for (auto & layer : m_layers)
+    {
+        layer->render();
+    }
 }
 
 void Hud::onMouseButtonClicked(MouseButtonEvent & event)
 {
-    for (auto & button : m_buttons)
-    {
-        if (!button->visible()) continue;
+    processMouseEvent(event, [&] (HudElement & element) {
+        element.onMouseButtonClicked(event);
+    });
+}
 
-        const auto & halfExtent = button->halfExtent();
-        const auto absMouseDelta = glm::abs(event.mousePosition() - button->position());
+void Hud::onMouseButtonDown(MouseButtonEvent & event)
+{
+    processMouseEvent(event, [&] (HudElement & element) {
+        element.onMouseButtonDown(event);
+    });
+}
+
+template<typename T>
+void Hud::processMouseEvent(T & event, const std::function<void(HudElement & element)> & fn) const
+{
+    for (auto & element : m_elements)
+    {
+        if (!element->visible()) continue;
+
+        const auto & halfExtent = element->halfExtent();
+        const auto absMouseDelta = glm::abs(event.mousePosition() - element->position());
 
         if (absMouseDelta.x <= halfExtent.x && absMouseDelta.y <= halfExtent.y)
         {
-            event.consume();
-            button->onClick();
-            break;
+            fn(*element);
+            if (event.isConsumed()) break;
         }
     }
 }

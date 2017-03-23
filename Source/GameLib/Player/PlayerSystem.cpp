@@ -46,24 +46,15 @@ PlayerSystem::PlayerSystem(World & world,
     m_debugGeometryRenderer(world.system<DebugGeometrySystem>().manager())
 {
 
-    auto & resourceManager = world.system<ResourceManager>();
-    auto mesh = resourceManager.mesh(R::UiCrosshairMesh);
-    auto program = resourceManager.program(R::HudElement);
-
-    m_crosshairsDraw = m_context.createDraw(program);
-    m_crosshairsDraw.setIndices(mesh.indices());
-    m_crosshairsDraw.addVertices(mesh.vertices());
-    m_crosshairsDraw.sampler("Texture").setTexture(mesh.textures()[0]);
-    m_crosshairsDraw.setAttribute("Flip", glm::vec2(1.0f));
-    m_crosshairsDraw.state().setDepthState(DepthState::disabledRW());
-    m_crosshairsDraw.state().setBlendState({gl::GL_FUNC_ADD, gl::GL_SRC_ALPHA, gl::GL_ONE_MINUS_SRC_ALPHA});
-    m_viewportSizeUniform = m_crosshairsDraw.uniform("ViewportSize");
 }
 
 void PlayerSystem::onFrameBegin()
 {
     m_linearThrust = {};
     m_angularThrust = {};
+
+    auto & equipment = m_player.component<Equipment>();
+    equipment.setFireRequest(false, {});
 }
 
 void PlayerSystem::onEntityAdded(Entity & entity)
@@ -109,7 +100,6 @@ void PlayerSystem::onEntityUpdate(Entity & entity, float seconds)
             if (m_input.mouseButtonDown(MouseButton_Right)) {
                 equipment.setFireRequest(true, glm::normalize(result.pointOfImpact - body.transform().position()));
             } else {
-                equipment.setFireRequest(false, {});
             }
         }
     }
@@ -154,44 +144,6 @@ void PlayerSystem::onRender()
     m_debugGeometryRenderer.schedule(m_camera);
 }
 
-void PlayerSystem::renderUi()
-{
-    if (!m_player.isValid()) return;
-
-    if (m_playerTarget.isValid())
-    {
-        m_viewportSizeUniform.set(glm::vec2{m_context.backbuffer().width(), m_context.backbuffer().height()});
-
-        const auto & targetBody = *m_playerTarget.component<RigidBodyComponent>().value();
-
-        const auto targetPosition = targetBody.transform().position();
-        const auto targetVelocity = targetBody.linearVelocity();
-
-        const auto & body = *m_player.component<RigidBodyComponent>().value();
-        const auto & equipment = m_player.component<Equipment>();
-
-        const auto bulletSpeed = equipment.bulletSpeed();
-
-        bool success;
-        const auto trajectory = CalculateTrajectory(
-            body.transform().position(), body.linearVelocity(),
-            bulletSpeed, targetPosition, targetVelocity, success);
-
-        const auto ray = Ray3D(m_camera.position(), trajectory);
-        const auto nearPlane = m_camera.nearPlane();
-
-        bool hit;
-        auto nearPlanePosition = Rect3DRay3DIntersectionPoint(nearPlane, ray, hit);
-        if (hit)
-        {
-            auto nearPlanePositionNS = nearPlanePosition * 2.0f  - 1.0f;
-
-            m_crosshairsDraw.setAttribute("ElementPosition", nearPlanePositionNS);
-            m_crosshairsDraw.schedule();
-        }
-    }
-}
-
 void PlayerSystem::onMouseButtonDown(MouseButtonEvent & event)
 {
     if (event.button() == MouseButton_Left)
@@ -200,5 +152,17 @@ void PlayerSystem::onMouseButtonDown(MouseButtonEvent & event)
 
         m_angularThrust.x = mouse.y;
         m_angularThrust.y = -mouse.x;
+    }
+
+    if (event.button() == MouseButton_Right)
+    {
+        AimHelper aimHelper(m_camera, m_physicsWorld);
+
+        auto result = aimHelper.getTarget(m_input.mousePosition());
+
+        auto & body = *m_player.component<RigidBodyComponent>().value();
+
+        auto & equipment = m_player.component<Equipment>();
+        equipment.setFireRequest(true, glm::normalize(result.pointOfImpact - body.transform().position()));
     }
 }

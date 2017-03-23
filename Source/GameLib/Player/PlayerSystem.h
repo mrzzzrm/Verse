@@ -34,9 +34,10 @@ public:
     PlayerSystem(World & world,
                  Camera3D & camera);
 
-    void setPlayerTarget(Entity & entity) { m_playerTarget = entity; }
+    Entity player() const { return m_player; }
+    Entity playerTarget() const { return m_playerTarget; }
 
-    void renderUi();
+    void setPlayerTarget(Entity & entity) { m_playerTarget = entity; }
 
     void onCreated() override { m_input.addLayer(shared_from_this()); }
     void onRemoved() override { m_input.removeLayer(shared_from_this()); }
@@ -73,10 +74,6 @@ private:
 
     Entity                  m_player;
     Entity                  m_playerTarget;
-
-    Draw                    m_crosshairsDraw;
-    Uniform                 m_viewportSizeUniform;
-    Uniform                 m_crosshairPositionUniform;
 
     glm::vec3               m_linearThrust;
     glm::vec3               m_angularThrust;

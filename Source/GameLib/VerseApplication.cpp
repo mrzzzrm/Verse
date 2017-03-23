@@ -115,7 +115,5 @@ void VerseApplication::onFrame(float seconds)
     m_hailstormManager->render();
     m_vfxManager->render();
 
-    m_world.system<PlayerSystem>().renderUi();
-
     m_world.frameComplete();
 }

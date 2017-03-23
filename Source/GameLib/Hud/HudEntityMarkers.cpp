@@ -17,7 +17,7 @@ HudEntityMarkers::HudEntityMarkers(Hud & hud,
                                    Context & context,
                                    const PhysicsWorld & physicsWorld,
                                    const Camera3D & camera):
-    m_hud(hud),
+    HudLayer(hud),
     m_context(context),
     m_physicsWorld(physicsWorld),
     m_camera(camera)
@@ -43,7 +43,7 @@ HudEntityMarkers::HudEntityMarkers(Hud & hud,
     m_viewportSizeUniform = m_draw.uniform("ViewportSize");
 }
 
-void HudEntityMarkers::update()
+void HudEntityMarkers::update(float seconds)
 {
     for (auto & pair : m_markersByEntity)
     {
@@ -79,7 +79,7 @@ void HudEntityMarkers::update()
         {
             button = std::make_shared<HudButton>();
             iter = m_markersByEntity.emplace(entity, button).first;
-            m_hud.addButton(button);
+            m_hud.addElement(button);
         }
 
         button = iter->second;

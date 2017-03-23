@@ -19,9 +19,14 @@ add_library(${target}
 
     Hud/Hud.cpp
     Hud/Hud.h
+    Hud/HudButton.cpp
     Hud/HudButton.h
+    Hud/HudCrosshairs.cpp
+    Hud/HudCrosshairs.h
     Hud/HudEntityMarkers.cpp
     Hud/HudEntityMarkers.h
+    Hud/HudEntityMarkers.h
+    Hud/HudLayer.h
 
     Npc/NpcAttackTask.cpp
     Npc/NpcAttackTask.h

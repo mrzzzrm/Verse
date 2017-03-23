@@ -9,6 +9,7 @@
 #include <Deliberation/ECS/Entity.h>
 
 #include "GameLib.h"
+#include "HudLayer.h"
 
 namespace deliberation
 {
@@ -20,18 +21,18 @@ class Camera3D;
 class Hud;
 class HudButton;
 
-class HudEntityMarkers
+class HudEntityMarkers:
+    public HudLayer
 {
 public:
     HudEntityMarkers(Hud & hud, Context & context,
                      const PhysicsWorld & physicsWorld,
                      const Camera3D & camera);
 
-    void update();
-    void render();
+    void update(float seconds) override;
+    void render() override;
 
 private:
-    Hud &                   m_hud;
     Context &               m_context;
     const PhysicsWorld &    m_physicsWorld;
     const Camera3D &        m_camera;
