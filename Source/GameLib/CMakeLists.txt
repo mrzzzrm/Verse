@@ -25,7 +25,8 @@ add_library(${target}
     Hud/HudCrosshairs.h
     Hud/HudEntityMarkers.cpp
     Hud/HudEntityMarkers.h
-    Hud/HudEntityMarkers.h
+    Hud/HudEntityMarkersRenderer.cpp
+    Hud/HudEntityMarkersRenderer.h
     Hud/HudLayer.h
 
     Npc/NpcAttackTask.cpp

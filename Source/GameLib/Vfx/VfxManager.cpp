@@ -15,9 +15,9 @@
 VfxManager::VfxManager(
     Context & context,
     const Camera3D & camera,
-    VoxelWorld & voxelWorld
+    ResourceManager & resourceManager
 ):
-    m_voxelWorld(voxelWorld),
+    m_resourceManager(resourceManager),
     m_renderer(context, camera)
 {
 
@@ -38,9 +38,7 @@ VfxMeshId VfxManager::getOrCreateMeshId(ResourceId resourceId)
     auto iter = m_meshIdByResourceId.find((size_t)resourceId);
     if (iter == m_meshIdByResourceId.end())
     {
-        auto & resourceManager = m_voxelWorld.world().system<ResourceManager>();
-
-        const auto & mesh = resourceManager.mesh(resourceId);
+        const auto & mesh = m_resourceManager.mesh(resourceId);
         const auto meshId = m_renderer.addMesh(mesh);
 
         bool success;

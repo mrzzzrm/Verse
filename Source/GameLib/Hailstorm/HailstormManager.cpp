@@ -7,13 +7,14 @@
 #include <Deliberation/ECS/World.h>
 
 #include "VoxelWorld.h"
+#include "ResourceManager.h"
 
 HailstormManager::HailstormManager(
     World & world,
     const Camera3D & camera
 ):
     Base(world),
-    m_vfxManager(world.system<ApplicationSystem>().context(), camera, world.system<VoxelWorld>()),
+    m_vfxManager(world.system<ApplicationSystem>().context(), camera, world.system<ResourceManager>()),
     m_hailstormPhysicsWorld(world.system<PhysicsWorldSystem>().physicsWorld(), world.system<VoxelWorld>())
 {
 
@@ -53,5 +54,7 @@ void HailstormManager::onUpdate(float seconds)
 
 void HailstormManager::onRender()
 {
+    std::cout << "HailstormBegin" << std::endl;
     m_vfxManager.render();
+    std::cout << "HailstormEnd" << std::endl;
 }

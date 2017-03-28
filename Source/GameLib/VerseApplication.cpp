@@ -4,10 +4,12 @@
 
 #include <Deliberation/ECS/Systems/ApplicationSystem.h>
 #include <Deliberation/ECS/Systems/DebugGeometrySystem.h>
+#include <Deliberation/ECS/Systems/SkyboxSystem.h>
 
 #include <Deliberation/ImGui/ImGuiSystem.h>
 
 #include "EntityPrototypeManager.h"
+#include "EntityPrototypeSystem.h"
 #include "EquipmentSystem.h"
 #include "Hud.h"
 #include "FactionManager.h"
@@ -18,8 +20,9 @@
 #include "VfxSystem.h"
 #include "VoxelClusterSplitSystem.h"
 
-VerseApplication::VerseApplication(const std::string & name):
-    Application(name)
+VerseApplication::VerseApplication(const std::string & name, VerseApplicationSystemInitMode systemInitMode):
+    Application(name),
+    m_systemInitMode(systemInitMode)
 {
 
 }
@@ -46,34 +49,33 @@ void VerseApplication::onStartup()
     };
 
     auto skyboxCubemapBinary = TextureLoader(skyboxPaths).load();
-    auto skyboxCubemap = context().createTexture(skyboxCubemapBinary);
-
-    m_skyboxRenderer = std::make_shared<SkyboxRenderer>(context(), m_camera, skyboxCubemap);
+    m_skyboxCubemap = context().createTexture(skyboxCubemapBinary);
 
     m_clear = context().createClear();
 
     m_world.addSystem<ApplicationSystem>(*this);
-    m_world.addSystem<DebugGeometrySystem>();
-    m_world.addSystem<ResourceManager>();
-    m_world.addSystem<PhysicsWorldSystem>(m_physicsWorld);
-    m_world.addSystem<VoxelClusterSplitSystem>();
-    m_voxelWorld = m_world.addSystem<VoxelWorld>(m_camera, skyboxCubemap);
-    m_world.addSystem<NpcControllerSystem>();
-    m_hailstormManager = m_world.addSystem<HailstormManager>(m_camera);
-    m_vfxManager.emplace(context(), m_camera, *m_voxelWorld);
-    m_world.addSystem<VfxSystem>(*m_vfxManager);
-    m_debugOverlay = m_world.addSystem<DebugOverlay>(context());
-    m_world.addSystem<CoriolisSystem>();
-    m_world.addSystem<EquipmentSystem>();
-    m_world.addSystem<PlayerSystem>(m_camera);
-    m_world.addSystem<FactionManager>();
-    m_world.addSystem<NpcBehaviourSystem>();
-    m_world.addSystem<ImGuiSystem>();
-    m_world.addSystem<Hud>(m_camera);
 
-    m_debugGeometryManager.emplace(context());
-
-    m_entityPrototypeManager = std::make_shared<EntityPrototypeManager>(m_world);
+    if (m_systemInitMode == VerseApplicationSystemInitMode::AllSystems)
+    {
+        m_world.addSystem<SkyboxSystem>(m_camera, m_skyboxCubemap);
+        m_world.addSystem<DebugGeometrySystem>();
+        m_world.addSystem<ResourceManager>();
+        m_world.addSystem<PhysicsWorldSystem>(m_physicsWorld);
+        m_world.addSystem<VoxelClusterSplitSystem>();
+        m_world.addSystem<VoxelWorld>(m_camera, m_skyboxCubemap);
+        m_world.addSystem<NpcControllerSystem>();
+        m_world.addSystem<HailstormManager>(m_camera);
+        m_world.addSystem<VfxSystem>(m_camera);
+        m_world.addSystem<DebugOverlay>(context());
+        m_world.addSystem<CoriolisSystem>();
+        m_world.addSystem<EquipmentSystem>();
+        m_world.addSystem<PlayerSystem>(m_camera);
+        m_world.addSystem<FactionManager>();
+        m_world.addSystem<NpcBehaviourSystem>();
+        m_world.addSystem<ImGuiSystem>();
+        m_world.addSystem<Hud>(m_camera);
+        m_world.addSystem<EntityPrototypeSystem>();
+    }
 
     onApplicationStartup();
 }
@@ -84,16 +86,12 @@ void VerseApplication::onFrame(float seconds)
 
     input().processInput();
 
-    m_debugOverlay->setFps(fps());
-
     auto physicsSimulationSeconds = m_physicsWorld.nextSimulationStepSeconds(seconds);
 
     if (EpsilonGt(physicsSimulationSeconds, 0.0f))
     {
         m_world.prePhysicsUpdate(physicsSimulationSeconds);
         m_physicsWorld.update(seconds);
-        m_hailstormManager->update(physicsSimulationSeconds);
-        m_vfxManager->update(physicsSimulationSeconds);
 
         onApplicationPhysicsUpdate(physicsSimulationSeconds);
     }
@@ -102,18 +100,13 @@ void VerseApplication::onFrame(float seconds)
         m_physicsWorld.update(seconds);
     }
 
+    m_world.update(seconds);
     onApplicationUpdate(seconds);
 
-    m_world.update(seconds);
-
     m_clear.render();
-    m_skyboxRenderer->render();
+
     m_world.render();
-
     onApplicationRender();
-
-    m_hailstormManager->render();
-    m_vfxManager->render();
 
     m_world.frameComplete();
 }

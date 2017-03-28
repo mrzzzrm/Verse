@@ -13,7 +13,7 @@ VfxRenderer::VfxRenderer(Context & context, const Camera3D & camera):
     m_program = m_context.createProgram({GameDataPath("Data/Shaders/Particle.vert"),
                                          GameDataPath("Data/Shaders/Particle.frag")});
 
-    auto globalsDataLayout = m_program.interface().uniformBlock("Globals").layout();
+    auto globalsDataLayout = m_program.interface().uniformBlockRef("Globals").layout();
 
     m_globals = LayoutedBlob(globalsDataLayout, 1);
     m_viewProjectionGlobal = m_globals.field<glm::mat4>("ViewProjection");

@@ -41,6 +41,7 @@
 #include "NpcController.h"
 #include "NpcControllerSystem.h"
 #include "NpcSteering.h"
+#include "VerseApplication.h"
 #include "VoxelRigidBodyPayload.h"
 #include "VoxelRenderChunkTree.h"
 #include "VoxelWorld.h"
@@ -49,6 +50,7 @@
 #include "VoxelRigidBodyPayload.h"
 #include "VoxelClusterContact.h"
 #include "VoxelObjectPrimitives.h"
+#include "ResourceManager.h"
 #include "Weapon.h"
 
 #include "SandboxApplication.h"
@@ -56,60 +58,49 @@
 using namespace deliberation;
 
 class ShootingRangeSandbox:
-    public SandboxApplication
+    public VerseApplication
 {
 public:
     ShootingRangeSandbox():
-        SandboxApplication("ShootingRangeSandbox")
+        VerseApplication("ShootingRangeSandbox", VerseApplicationSystemInitMode::NoSystems)
     {
 
     }
 
-    void onSandboxStartup() override
+    void onApplicationStartup() override
     {
-        {
-            auto data = BuildVoxelBlock(*m_voxelWorld, {20, 20, 20}, {0.8f, 0.9f, 0.0f});
-
-            for (i32 i = 0; i < 1; i++) {
-                m_entity = m_world.createEntity("Block");
-
-                auto & voxelObject = m_entity.addComponent<VoxelObject>(data);
-
-                auto rigidBodyPayload = std::make_shared<VoxelRigidBodyPayload>(voxelObject);
-                auto rigidBody = std::make_shared<RigidBody>(voxelObject.data().shape());
-                rigidBody->transform().setPosition({i * 50, 30.0f, 0.0f});
-                rigidBody->transform().setOrientation(glm::quat({0.0f, glm::pi<float>() * 0.3f, 0.0f}));
-               // rigidBody->setAngularVelocity({0.0f, 0.2f, 0.0f});
-
-                m_entity.addComponent<RigidBodyComponent>(rigidBody);
-            }
-        }
+        m_world.addSystem<ResourceManager>();
+        m_world.addSystem<PhysicsWorldSystem>(m_physicsWorld);
+        m_world.addSystem<VoxelWorld>(m_camera, m_skyboxCubemap);
+        m_world.addSystem<HailstormManager>(m_camera);
+        auto hailstormManager = m_world.addSystem<HailstormManager>(m_camera);
 
         auto bulletMesh = UVSphere(5, 5).generateMesh2();
-        m_bulletMeshID = m_hailstormManager->vfxManager().renderer().addMesh(bulletMesh);
+        m_bulletMeshID = hailstormManager->vfxManager().renderer().addMesh(bulletMesh);
 
         WeaponConfig weaponConfig;
         weaponConfig.cooldown = 0.1f;
         weaponConfig.meshID = m_bulletMeshID;
-        m_hardpoint = std::make_shared<Hardpoint>(Pose3D(), glm::pi<float>());
+
+        HardpointDesc hardpointDesc;
+        hardpointDesc.maxAngle = glm::half_pi<float>();
+
+        m_hardpoint = std::make_shared<Hardpoint>(hardpointDesc);
         m_hardpoint->setWeapon(std::make_shared<Weapon>(weaponConfig,
-                                                        *m_hailstormManager,
+                                                        *hailstormManager,
                                                         INVALID_VOXEL_OBJECT_WORLD_UID));
 
-        m_debugGeometryManager.emplace(context());
-        m_debugGeometryRenderer.emplace(*m_debugGeometryManager);
-        m_debugGeometryRenderer->addArrow({}, {}, {1.0f, 0.0f, 0.0f});
     }
 
-    void onSandboxUpdate(float seconds) override
+    void onApplicationUpdate(float seconds) override
     {
         if (input().mouseButtonDown(MouseButton_Right))
         {
             AimHelper aimHelper(m_camera, m_physicsWorld);
             auto hit = false;
-            auto target = aimHelper.getTarget(input().mousePosition(), hit);
+            auto result = aimHelper.getTarget(input().mousePosition());
 
-            m_hardpoint->setFireRequest(true, target);
+            m_hardpoint->setFireRequest(true, glm::normalize(result.pointOfImpact - m_camera.position()));
         }
         else
         {
@@ -120,35 +111,15 @@ public:
         context.targetPose = m_camera.pose().localTranslated({5.0f, 0.0f, -15.0f});
 
         m_hardpoint->update(seconds, context);
-
-        {
-            auto & body = m_entity.component<RigidBodyComponent>().value();
-
-            auto point = glm::vec3{50.0f, 0.0f, 0.0f};
-            auto origin = body->transform().pointLocalToWorld(body->transform().center() + point);
-            auto delta =  body->localVelocity(body->transform().directionLocalToWorld(point));
-            m_debugGeometryRenderer->arrow(0).reset(origin, delta);
-        }
     }
 
-    void onSandboxPhysicsUpdate(float physicsSeconds) override
+    void onApplicationRender() override
     {
-
-    }
-
-    void onSandboxRender() override
-    {
-        m_debugGeometryRenderer->schedule(m_camera);
     }
 
 private:
     std::shared_ptr<Hardpoint>  m_hardpoint;
     VfxMeshId                   m_bulletMeshID;
-
-    std::experimental::optional<DebugGeometryManager> m_debugGeometryManager;
-    std::experimental::optional<DebugGeometryRenderer> m_debugGeometryRenderer;
-
-    Entity m_entity;
 };
 
 int main(int argc, char *argv[])

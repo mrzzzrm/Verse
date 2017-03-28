@@ -10,6 +10,11 @@
 
 #include "GameLib.h"
 
+namespace deliberation
+{
+class Application;
+}
+
 class DebugOverlay:
     public System<DebugOverlay>
 {
@@ -22,5 +27,6 @@ protected:
     void onUpdate(float seconds) override;
 
 private:
-    float m_fps;
+    Application &   m_application;
+    float           m_fps;
 };

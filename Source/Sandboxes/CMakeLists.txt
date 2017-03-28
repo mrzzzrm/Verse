@@ -19,3 +19,6 @@ target_link_libraries(ResourceSandbox SandboxCommon)
 
 add_executable(ShootingRangeSandbox ShootingRangeSandbox.cpp)
 target_link_libraries(ShootingRangeSandbox SandboxCommon)
+
+add_executable(HudSandbox HudSandbox.cpp)
+target_link_libraries(HudSandbox SandboxCommon)

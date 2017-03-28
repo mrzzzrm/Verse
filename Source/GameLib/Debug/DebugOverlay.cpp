@@ -7,11 +7,13 @@
 #include <Deliberation/Draw/Context.h>
 #include <Deliberation/Draw/Framebuffer.h>
 
+#include <Deliberation/ECS/Systems/ApplicationSystem.h>
 
 #include "HailstormManager.h"
 
 DebugOverlay::DebugOverlay(World & world, Context & context):
-    Base(world)
+    Base(world),
+    m_application(world.system<ApplicationSystem>().application())
 {
 }
 
@@ -24,6 +26,7 @@ void DebugOverlay::onUpdate(float seconds)
 {
 //    bool open = true;
 //    ImGui::ShowTestWindow(&open);
+    m_fps = m_application.fps();
 
     const auto & profiler = world().profiler();
     const auto numScopes = std::min<size_t>(profiler.scopes().size(), 5u);

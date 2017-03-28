@@ -56,11 +56,18 @@
 
 class EntityPrototypeManager;
 
+enum class VerseApplicationSystemInitMode
+{
+    NoSystems,
+    AllSystems
+};
+
 class VerseApplication:
     public Application
 {
 public:
-    VerseApplication(const std::string & name);
+    VerseApplication(const std::string & name,
+                     VerseApplicationSystemInitMode systemInitMode = VerseApplicationSystemInitMode::AllSystems);
 
     void onStartup() final override;
     void onFrame(float seconds) final override;
@@ -72,26 +79,12 @@ protected:
     virtual void onApplicationRender() {};
 
 protected:
-    Camera3D                m_camera;
-    Clear                   m_clear;
-    PhysicsWorld            m_physicsWorld;
-    World                   m_world;
+    VerseApplicationSystemInitMode          m_systemInitMode;
 
-    std::shared_ptr<HailstormManager>
-        m_hailstormManager;
-    std::experimental::optional<VfxManager>
-        m_vfxManager;
+    Camera3D                                m_camera;
+    Clear                                   m_clear;
+    PhysicsWorld                            m_physicsWorld;
+    World                                   m_world;
 
-    std::experimental::optional<DebugGeometryManager>
-        m_debugGeometryManager;
-
-    std::shared_ptr<SkyboxRenderer>
-        m_skyboxRenderer;
-    std::shared_ptr<VoxelWorld>
-        m_voxelWorld;
-
-    std::shared_ptr<EntityPrototypeManager>
-        m_entityPrototypeManager;
-    std::shared_ptr<DebugOverlay>
-        m_debugOverlay;
+    Texture                                 m_skyboxCubemap;
 };

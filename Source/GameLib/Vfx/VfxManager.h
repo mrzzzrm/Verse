@@ -10,7 +10,7 @@
 #include "VfxParticle.h"
 #include "VfxRenderer.h"
 
-class VoxelWorld;
+class ResourceManager;
 
 class VfxManager final
 {
@@ -18,7 +18,7 @@ public:
     VfxManager(
         Context & context,
         const Camera3D & camera,
-        VoxelWorld & voxelWorld);
+        ResourceManager & resourceManager);
 
     VfxRenderer & renderer();
     const VfxRenderer & renderer() const;
@@ -35,7 +35,7 @@ public:
     void render();
 
 private:
-    VoxelWorld &                    m_voxelWorld;
+    ResourceManager &               m_resourceManager;
     VfxRenderer                     m_renderer;
 
     std::unordered_map<size_t, VfxMeshId>

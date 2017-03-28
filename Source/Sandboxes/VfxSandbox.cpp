@@ -10,30 +10,40 @@
 #include <Deliberation/Scene/Debug/DebugGroundPlaneRenderer.h>
 
 #include "Emitter.h"
-#include "EmitterInstance.h"
+#include "ResourceManager.h"
+#include "VfxSystem.h"
 #include "VfxManager.h"
 #include "VoxelRenderChunkTree.h"
 #include "VoxelWorld.h"
-#include "VoxelClusterPrimitiveTest.h"
-
-#include "SandboxApplication.h"
+#include "VerseApplication.h"
 
 using namespace deliberation;
 
 class VfxSandbox:
-    public SandboxApplication
+    public VerseApplication
 {
 public:
     VfxSandbox():
-        SandboxApplication("VfxSandbox")
+        VerseApplication("VfxSandbox", VerseApplicationSystemInitMode::NoSystems)
     {
 
     }
 
-    void onSandboxStartup() override
+    void onApplicationStartup() override
     {
-        auto particleMesh = UVSphere(5, 5).generateMesh2();
-        auto particleMeshID = m_vfxManager->renderer().addMesh(particleMesh);
+        EnableGLErrorChecksAndLogging();
+
+        m_camera.setPosition({0.0f, 10.0f, 0.0f});
+        m_camera.setOrientation(glm::quat({-glm::half_pi<float>(), 0.0f, 0.0f}));
+
+        m_world.addSystem<ResourceManager>();
+        m_world.addSystem<VfxSystem>(m_camera);
+
+        m_navigator = std::make_shared<DebugCameraNavigator3D>(m_camera, input(), 1000.0f);
+//        m_ground = std::make_shared<DebugGroundPlaneRenderer>(context(), m_camera);
+//        m_ground->setQuadSize(10.0f);
+//        m_ground->setRadius(80.0f);
+//        m_ground->setSize(10.0f);
 
         {
             auto lifetime = std::make_shared<EmitterRandomLifetime>(5.5f, 8.0f);
@@ -46,8 +56,8 @@ public:
             auto size = std::make_shared<EmitterSizeOverLifetime>(3.0f, 7.0f);
 
             m_emitterSmoke = std::make_shared<Emitter>(
-                *m_vfxManager,
-                m_vfxManager->baseParticleMeshId(),
+                m_world.system<VfxSystem>().manager(),
+                m_world.system<VfxSystem>().manager().getOrCreateMeshId(R::ParticleMesh),
                 velocity,
                 rotation,
                 placement,
@@ -56,27 +66,27 @@ public:
                 color,
                 size);
         }
-        {
-            auto lifetime = std::make_shared<EmitterRandomLifetime>(5.5f, 8.0f);
-            auto placement = std::make_shared<EmitterGaussianSphericalPlacement>(1.0f, 1.0f);
-            auto velocity = std::make_shared<EmitterAnyDirection>(0.2f, 0.5f);
-            auto intensity = std::make_shared<EmitterNoisyIntensity>(30, 0.0f);
-            auto rotation = std::make_shared<EmitterViewBillboardStrategy>();
-            auto color = std::make_shared<EmitterColorOverLifetime>(glm::vec4{0.4f, 0.4f, 0.4f, 0.4f},
-                                                                    glm::vec4{0.4f, 0.4f, 0.4f, 0.0f});
-            auto size = std::make_shared<EmitterSizeOverLifetime>(3.0f, 7.0f);
-
-            m_emitterSmoky = std::make_shared<Emitter>(
-                *m_vfxManager,
-                m_vfxManager->baseParticleMeshId(),
-                velocity,
-                rotation,
-                placement,
-                intensity,
-                lifetime,
-                color,
-                size);
-        }
+//        {
+//            auto lifetime = std::make_shared<EmitterRandomLifetime>(5.5f, 8.0f);
+//            auto placement = std::make_shared<EmitterGaussianSphericalPlacement>(1.0f, 1.0f);
+//            auto velocity = std::make_shared<EmitterAnyDirection>(0.2f, 0.5f);
+//            auto intensity = std::make_shared<EmitterNoisyIntensity>(30, 0.0f);
+//            auto rotation = std::make_shared<EmitterViewBillboardStrategy>();
+//            auto color = std::make_shared<EmitterColorOverLifetime>(glm::vec4{0.4f, 0.4f, 0.4f, 0.4f},
+//                                                                    glm::vec4{0.4f, 0.4f, 0.4f, 0.0f});
+//            auto size = std::make_shared<EmitterSizeOverLifetime>(3.0f, 7.0f);
+//
+//            m_emitterSmoky = std::make_shared<Emitter>(
+//                *m_vfxManager,
+//                m_vfxManager->getOrCreateMeshId(R::ParticleMesh),
+//                velocity,
+//                rotation,
+//                placement,
+//                intensity,
+//                lifetime,
+//                color,
+//                size);
+//        }
 
         for (int i = 0; i < 10; i++)
         {
@@ -90,61 +100,44 @@ public:
 
             m_instances.emplace_back(emitterInstance);
 
-            m_vfxManager->addEmitterInstance(emitterInstance);
+            m_world.system<VfxSystem>().manager().addEmitterInstance(emitterInstance);
         }
-        for (int i = 0; i < 10; i++)
-        {
-            auto emitterInstance = std::make_shared<EmitterInstance>(m_emitterSmoky);
-
-            auto pose = Pose3D::atOrientation(glm::quat(glm::vec3{glm::half_pi<float>(), 0.0f, 0.0f}));
-            pose.setPosition({i * 10.0f, 10.0f, -20.0f});
-
-            emitterInstance->setBasePose(pose);
-            emitterInstance->setTargetPose(pose);
-
-            m_instances.emplace_back(emitterInstance);
-
-            m_vfxManager->addEmitterInstance(emitterInstance);
-        }
-
-        m_debugGeometryRenderer.emplace(*m_debugGeometryManager);
-    }
-
-    void onSandboxUpdate(float seconds) override
-    {
-//        for (auto i = 0; i < m_instances.size(); i++)
+//        for (int i = 0; i < 10; i++)
 //        {
-//            auto & instance = m_instances[i];
-//            auto radius = 50.0f + i * 25;
+//            auto emitterInstance = std::make_shared<EmitterInstance>(m_emitterSmoky);
 //
-//            Pose3D pose;
-//            pose.setPosition({std::cos(m_angle) * radius, 10.0f, std::sin(m_angle) * radius});
-//            pose.setOrientation(glm::quat(glm::vec3{0.0f, -m_angle, 0.0f}));
+//            auto pose = Pose3D::atOrientation(glm::quat(glm::vec3{glm::half_pi<float>(), 0.0f, 0.0f}));
+//            pose.setPosition({i * 10.0f, 10.0f, -20.0f});
 //
-//            instance->setTargetPose(pose);
+//            emitterInstance->setBasePose(pose);
+//            emitterInstance->setTargetPose(pose);
 //
-//            m_debugGeometryRenderer->pose(i).setPose(pose);
+//            m_instances.emplace_back(emitterInstance);
+//
+//            m_vfxManager->addEmitterInstance(emitterInstance);
 //        }
 
-        //m_angle += seconds;
+//        m_debugGeometryRenderer.emplace(*m_debugGeometryManager);
     }
 
-    void onSandboxRender() override
+    void onApplicationUpdate(float seconds) override
     {
-        m_debugGeometryRenderer->schedule(m_camera);
+        m_navigator->update(seconds);
+    }
+
+    void onApplicationRender() override
+    {
+//        m_ground->render();
     }
 
 private:
-    std::shared_ptr<Emitter>        m_emitterSmoke;
-    std::shared_ptr<Emitter>        m_emitterSmoky;
+    std::shared_ptr<Emitter>                        m_emitterSmoke;
+    std::shared_ptr<Emitter>                        m_emitterSmoky;
 
-    std::vector<std::shared_ptr<EmitterInstance>>
-                                    m_instances;
+    std::vector<std::shared_ptr<EmitterInstance>>   m_instances;
 
-    std::experimental::optional<DebugGeometryRenderer>
-                                    m_debugGeometryRenderer;
-
-    float m_angle = 0.0f;
+    std::shared_ptr<DebugCameraNavigator3D>         m_navigator;
+    std::shared_ptr<DebugGroundPlaneRenderer>       m_ground;
 };
 
 int main(int argc, char *argv[])

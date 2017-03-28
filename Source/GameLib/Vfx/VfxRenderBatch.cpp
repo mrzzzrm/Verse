@@ -92,7 +92,7 @@ VfxRenderBatch::VfxRenderBatch(VfxRenderer & renderer, const Mesh2 & mesh, VfxPa
 
     m_draw.addVertices(mesh.vertices());
     m_draw.setIndices(mesh.indices());
-    m_draw.addInstanceBuffer(m_instanceBuffer, (u32)mesh.indices().count());
+    m_draw.addInstanceBuffer(m_instanceBuffer, 1);
     m_draw.setUniformBuffer("Globals", m_renderer.globalsBuffer());
     m_draw.state().setBlendState({gl::GL_FUNC_ADD, gl::GL_SRC_ALPHA, gl::GL_ONE_MINUS_SRC_ALPHA});
     m_draw.state().setDepthState(DepthState::disabledW());

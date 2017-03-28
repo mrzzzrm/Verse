@@ -10,6 +10,7 @@
 
 #include "GameLib.h"
 #include "HudLayer.h"
+#include "HudEntityMarkersRenderer.h"
 
 namespace deliberation
 {
@@ -33,16 +34,15 @@ public:
     void render() override;
 
 private:
-    Context &               m_context;
-    const PhysicsWorld &    m_physicsWorld;
-    const Camera3D &        m_camera;
-    Draw                    m_draw;
-    Uniform                 m_viewportSizeUniform;
-    LayoutedBlob            m_instances;
-    Buffer                  m_instanceBuffer;
-    size_t                  m_numVisibleMarkers = 0;
+    const PhysicsWorld &        m_physicsWorld;
+    const Camera3D &            m_camera;
+    size_t                      m_numVisibleMarkers = 0;
 
+    HudEntityMarkersRenderer    m_renderer;
+
+    std::vector<std::shared_ptr<HudButton>>
+                                m_visibleMarkers;
 
     std::map<Entity, std::shared_ptr<HudButton>>
-                            m_markersByEntity;
+                                m_markersByEntity;
 };

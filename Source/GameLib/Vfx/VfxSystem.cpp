@@ -3,18 +3,22 @@
 #include <Deliberation/Core/Math/Pose3D.h>
 
 #include <Deliberation/ECS/EventManager.h>
+#include <Deliberation/ECS/Systems/ApplicationSystem.h>
 #include <Deliberation/ECS/World.h>
-#include <Hailstorm/VoxelObjectBulletHit.h>
 
+#include "VoxelObjectBulletHit.h"
 #include "Emitter.h"
+#include "ResourceManager.h"
 #include "VoxelObject.h"
 #include "VoxelObjectBulletHit.h"
 #include "VoxelObjectModification.h"
 #include "VfxManager.h"
 
-VfxSystem::VfxSystem(World & world, VfxManager & vfxManager):
+VfxSystem::VfxSystem(World & world, const Camera3D & camera):
     Base(world),
-    m_vfxManager(vfxManager)
+    m_vfxManager(world.system<ApplicationSystem>().context(),
+                 camera,
+                 world.system<ResourceManager>())
 {
     {
         auto lifetime = std::make_shared<EmitterRandomLifetime>(0.4, 0.8f);
@@ -66,11 +70,6 @@ VfxSystem::VfxSystem(World & world, VfxManager & vfxManager):
     world.eventManager().subscribe<VoxelObjectBulletHit>(*this);
 }
 
-VfxManager & VfxSystem::manager() const
-{
-    return m_vfxManager;
-}
-
 void VfxSystem::receive(const VoxelObjectModification & modification)
 {
     for (const auto & voxel : modification.removals)
@@ -92,4 +91,14 @@ void VfxSystem::receive(const VoxelObjectBulletHit & hit)
     emitterInstance->setBasePose(Pose3D::atPosition(position));
 
     m_vfxManager.addEmitterInstance(emitterInstance);
+}
+
+void VfxSystem::onUpdate(float seconds)
+{
+    m_vfxManager.update(seconds);
+}
+
+void VfxSystem::onRender()
+{
+    m_vfxManager.render();
 }

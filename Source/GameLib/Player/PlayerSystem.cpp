@@ -53,8 +53,11 @@ void PlayerSystem::onFrameBegin()
     m_linearThrust = {};
     m_angularThrust = {};
 
-    auto & equipment = m_player.component<Equipment>();
-    equipment.setFireRequestForAllHardpoints(false, {});
+    if (m_player.isValid())
+    {
+        auto & equipment = m_player.component<Equipment>();
+        equipment.setFireRequestForAllHardpoints(false, {});
+    }
 }
 
 void PlayerSystem::onEntityAdded(Entity & entity)

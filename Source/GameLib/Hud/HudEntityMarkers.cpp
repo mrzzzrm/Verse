@@ -19,29 +19,10 @@ HudEntityMarkers::HudEntityMarkers(Hud & hud,
                                    const PhysicsWorld & physicsWorld,
                                    const Camera3D & camera):
     HudLayer(hud),
-    m_context(context),
     m_physicsWorld(physicsWorld),
-    m_camera(camera)
+    m_camera(camera),
+    m_renderer(context, hud.world().system<ResourceManager>())
 {
-    auto & resourceManager = hud.world().system<ResourceManager>();
-
-    auto mesh = resourceManager.mesh(R::HudEntityMarkerUpperLeft);
-    auto program = resourceManager.program(R::HudElement);
-
-    auto instanceLayout = DataLayout({{"ElementPosition", Type_Vec2}, {"Flip", Type_Vec2}});
-
-    m_instances = LayoutedBlob(instanceLayout);
-    m_instanceBuffer = context.createBuffer(instanceLayout);
-
-    m_draw = context.createDraw(program);
-    m_draw.setIndices(mesh.indices());
-    m_draw.addVertices(mesh.vertices());
-    m_draw.addInstanceBuffer(m_instanceBuffer, mesh.indices().count());
-    m_draw.sampler("Texture").setTexture(mesh.textures()[0]);
-    m_draw.state().setDepthState(DepthState::disabledR());
-    m_draw.state().setCullState(CullState::disabled());
-    m_draw.state().setBlendState({gl::GL_FUNC_ADD, gl::GL_SRC_ALPHA, gl::GL_ONE_MINUS_SRC_ALPHA});
-    m_viewportSizeUniform = m_draw.uniform("ViewportSize");
 }
 
 void HudEntityMarkers::update(float seconds)
@@ -102,33 +83,16 @@ void HudEntityMarkers::render()
 {
     if (m_numVisibleMarkers == 0) return;
 
-    m_instances.resize(m_numVisibleMarkers * 4); // 4 corners per marker
-
-    auto elementPositions = m_instances.iterator<glm::vec2>("ElementPosition");
-    auto flips = m_instances.iterator<glm::vec2>("Flip");
+    m_visibleMarkers.clear();
 
     for (const auto & pair : m_markersByEntity)
     {
-        const auto & marker = *pair.second;
+        const auto & marker = pair.second;
 
-        if (!marker.visible()) continue;
+        if (!marker->visible()) continue;
 
-        const auto x = marker.halfExtent().x;
-        const auto y = marker.halfExtent().y;
-
-        elementPositions.put(marker.position() + glm::vec2(-x, y));
-        flips.put({1, 1});
-        elementPositions.put(marker.position() + glm::vec2(x, y));
-        flips.put({-1, 1});
-        elementPositions.put(marker.position() + glm::vec2(x, -y));
-        flips.put({-1, -1});
-        elementPositions.put(marker.position() + glm::vec2(-x, -y));
-        flips.put({1, -1});
+        m_visibleMarkers.emplace_back(marker);
     }
 
-    m_instanceBuffer.scheduleUpload(m_instances);
-
-    m_viewportSizeUniform.set(glm::vec2{m_context.backbuffer().width(), m_context.backbuffer().height()});
-
-    m_draw.schedule();
+    m_renderer.render(m_visibleMarkers);
 }
