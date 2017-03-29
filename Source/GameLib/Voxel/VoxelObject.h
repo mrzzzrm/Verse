@@ -20,7 +20,6 @@ class Camera3D;
 }
 
 class VoxelObjectPrototype;
-class VoxelRigidBodyPayload;
 
 struct VoxelObjectID
 {
@@ -32,7 +31,6 @@ class VoxelObject final:
 {
 public:
     VoxelObject(const VoxelObjectVoxelData & voxelData);
-    ~VoxelObject();
 
     const VoxelObjectID & id() const;
     const Pose3D & pose() const;
@@ -42,20 +40,22 @@ public:
     void setId(VoxelObjectID id);
     void setPose(const Pose3D & pose);
     void setScale(float scale);
+    void setInvincible(bool invincible) { m_invincible = invincible; }
 
     void setVoxelHealthPoints(const glm::uvec3 & voxel, float healthPoints);
 
     void addVoxels(const std::vector<Voxel> & voxels);
     void removeVoxels(const std::vector<glm::uvec3> & voxels);
 
+    std::vector<glm::uvec3> processImpact(const glm::uvec3 & voxel, float intensity, float radius);
+
     void schedule();
 
 private:
     const VoxelWorld &          m_voxelWorld;
     VoxelObjectVoxelData        m_voxelData;
-    std::shared_ptr<VoxelRigidBodyPayload>
-                                m_rigidBodyPayload;
     VoxelObjectID               m_id;
     Pose3D                      m_pose;
     std::shared_ptr<RigidBody>  m_body;
+    bool                        m_invincible = false;
 };

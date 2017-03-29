@@ -12,6 +12,11 @@ FactionManager::FactionManager(World & world):
 
 }
 
+FactionRelation FactionManager::factionRelation(const std::string & factionA, const std::string & factionB) const
+{
+    return FactionRelation::Hostile;
+}
+
 const std::vector<Entity> & FactionManager::faction(const std::string & factionName) const
 {
     auto & faction = m_entitiesByFaction[factionName];

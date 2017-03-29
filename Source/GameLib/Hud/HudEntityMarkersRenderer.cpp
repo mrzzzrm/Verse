@@ -12,7 +12,9 @@ HudEntityMarkersRenderer::HudEntityMarkersRenderer(Context & context, ResourceMa
     auto mesh = resourceManager.mesh(R::HudEntityMarkerUpperLeft);
     auto program = resourceManager.program(R::HudElement);
 
-    auto instanceLayout = DataLayout({{"ElementPosition", Type_Vec2}, {"Flip", Type_Vec2}});
+    auto instanceLayout = DataLayout({{"ElementPosition", Type_Vec2},
+                                      {"ElementColor", Type_Vec3},
+                                      {"Flip", Type_Vec2}});
 
     m_instances = LayoutedBlob(instanceLayout);
     m_instanceBuffer = context.createBuffer(instanceLayout);
@@ -30,26 +32,32 @@ HudEntityMarkersRenderer::HudEntityMarkersRenderer(Context & context, ResourceMa
 
 void HudEntityMarkersRenderer::render(const std::vector<std::shared_ptr<HudButton>> & markers)
 {
-    std::cout << "Markers: " << markers.size() << std::endl;
-
     m_instances.resize(markers.size() * 4); // 4 corners per marker
 
-    m_elementPositions = m_instances.iterator<glm::vec2>("ElementPosition");
-    m_flips = m_instances.iterator<glm::vec2>("Flip");
+    auto elementPositions = m_instances.iterator<glm::vec2>("ElementPosition");
+    auto elementColors = m_instances.iterator<glm::vec3>("ElementColor");
+    auto flips = m_instances.iterator<glm::vec2>("Flip");
     
     for (const auto & marker : markers)
     {
         const auto x = marker->halfExtent().x;
         const auto y = marker->halfExtent().y;
 
-        m_elementPositions.put(marker->position() + glm::vec2(-x, y));
-        m_flips.put({1, 1});
-        m_elementPositions.put(marker->position() + glm::vec2(x, y));
-        m_flips.put({-1, 1});
-        m_elementPositions.put(marker->position() + glm::vec2(x, -y));
-        m_flips.put({-1, -1});
-        m_elementPositions.put(marker->position() + glm::vec2(-x, -y));
-        m_flips.put({1, -1});
+        elementColors.put(marker->color());
+        elementPositions.put(marker->position() + glm::vec2(-x, y));
+        flips.put({1, 1});
+
+        elementColors.put(marker->color());
+        elementPositions.put(marker->position() + glm::vec2(x, y));
+        flips.put({-1, 1});
+
+        elementColors.put(marker->color());
+        elementPositions.put(marker->position() + glm::vec2(x, -y));
+        flips.put({-1, -1});
+
+        elementColors.put(marker->color());
+        elementPositions.put(marker->position() + glm::vec2(-x, -y));
+        flips.put({1, -1});
     }
     
     m_instanceBuffer.scheduleUpload(m_instances);

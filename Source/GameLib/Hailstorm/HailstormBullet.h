@@ -13,13 +13,13 @@ struct HailstormBulletId
 
 struct HailstormBullet
 {
-    inline HailstormBullet(VfxParticle particle, float intensity, float impactRadius, entity_id_t creator);
+    inline HailstormBullet(VfxParticle particle, float intensity, float impactRadius, EntityId creator);
 
     VfxParticle         particle;
     HailstormBulletId   id;
     float               intensity = 0.0f;
     float               impactRadius = 0.0f;
-    entity_id_t         creator = ECS_INVALID_ENTITY_ID;
+    EntityId         creator = ECS_INVALID_ENTITY_ID;
 };
 
 #include "HailstormBullet.inl"

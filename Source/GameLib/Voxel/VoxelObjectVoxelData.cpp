@@ -24,7 +24,8 @@ VoxelObjectVoxelData::VoxelObjectVoxelData(const VoxelObjectVoxelData & prototyp
     m_renderTree(prototype.m_renderTree),
     m_shape(std::make_shared<VoxelShape>(*prototype.m_shape)),
     m_hull(prototype.m_hull),
-    m_splitDetector(prototype.m_splitDetector)
+    m_splitDetector(prototype.m_splitDetector),
+    m_numVoxels(prototype.m_numVoxels)
 {
 
 }
@@ -131,6 +132,8 @@ void VoxelObjectVoxelData::addVoxels(std::vector<Voxel> voxels)
     }
 
     m_splitDetector.addVoxels(voxels);
+
+    m_numVoxels += voxels.size();
 }
 
 void VoxelObjectVoxelData::removeVoxels(const std::vector<glm::uvec3> & voxels)
@@ -153,4 +156,6 @@ void VoxelObjectVoxelData::removeVoxels(const std::vector<glm::uvec3> & voxels)
     }
 
     m_splitDetector.removeVoxels(voxels);
+
+    m_numVoxels -= voxels.size();
 }

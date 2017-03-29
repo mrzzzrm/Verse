@@ -32,6 +32,7 @@ public:
     const VoxelHull & hull() const;
     const VoxelClusterSplitDetector & splitDetector() const;
     float scale() const;
+    size_t numVoxels() const { return m_numVoxels; }
 
     void setCrucialVoxel(const glm::uvec3 & voxel);
 
@@ -58,4 +59,5 @@ private:
     VoxelHull                       m_hull;
     VoxelClusterSplitDetector       m_splitDetector;
     float                           m_scale = 1.0f;
+    size_t                          m_numVoxels = 0;
 };

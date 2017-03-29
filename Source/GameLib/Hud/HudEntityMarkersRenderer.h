@@ -26,7 +26,4 @@ private:
     Uniform                         m_viewportSizeUniform;
     LayoutedBlob                    m_instances;
     Buffer                          m_instanceBuffer;
-
-    TypedBlobIterator<glm::vec2>    m_elementPositions;
-    TypedBlobIterator<glm::vec2>    m_flips;
 };

@@ -34,6 +34,7 @@ HudCrosshairs::HudCrosshairs(Hud & hud):
     m_draw.addVertices(mesh.vertices());
     m_draw.sampler("Texture").setTexture(mesh.textures()[0]);
     m_draw.setAttribute("Flip", glm::vec2(1.0f));
+    m_draw.setAttribute("ElementColor", glm::vec3(0.5f, 0.4f, 1.0f));
     m_draw.state().setDepthState(DepthState::disabledR());
     m_draw.state().setBlendState({gl::GL_FUNC_ADD, gl::GL_SRC_ALPHA, gl::GL_ONE_MINUS_SRC_ALPHA});
     m_viewportSizeUniform = m_draw.uniform("ViewportSize");
@@ -107,6 +108,8 @@ void HudCrosshairs::onMouseButtonDown(MouseButtonEvent & event)
 
     auto & player = m_playerSystem.player();
     auto & playerTarget = m_playerSystem.playerTarget();
+
+    if (!playerTarget.isValid() || !player.isValid()) return;
 
     const auto & targetBody = *playerTarget.component<RigidBodyComponent>().value();
     const auto & targetPosition = targetBody.transform().position();

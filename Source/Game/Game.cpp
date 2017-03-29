@@ -65,6 +65,8 @@ public:
          */
         auto player = entityPrototypeManager.createEntity({"Ship", "Player"}, "PlayerShip");
 
+        player.component<VoxelObject>().setInvincible(true);
+
         {
             auto &playerBody = player.component<RigidBodyComponent>().value();
             playerBody->transform().setPosition({0.0f, 20.0f, 50.0f});
@@ -96,7 +98,7 @@ public:
         /**
          * Create enemies
          */
-        for (auto i = 0; i < 1; i++) {
+        for (auto i = 0; i < 5; i++) {
             auto npc = entityPrototypeManager.createEntity({"Drone", "Npc", "Pirate"}, "MyNPC");
             auto npcBody = npc.component<RigidBodyComponent>().value();
             npcBody->transform().setPosition(glm::vec3(300.0f, 0.0f, 0.0f) + RandomUnitVec3() * 1000.0f);

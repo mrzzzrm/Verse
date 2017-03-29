@@ -1,7 +1,8 @@
 [
     {
         "Component": "VoxelObject",
-        "VoxelCluster": "drone"
+        "VoxelCluster": "drone",
+        "CrucialVoxel": [3, 5, 5]
     },
     
     {

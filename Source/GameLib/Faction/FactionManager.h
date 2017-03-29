@@ -6,11 +6,20 @@
 
 #include "GameLib.h"
 
+enum class FactionRelation
+{
+    Friendly,
+    Neutral,
+    Hostile
+};
+
 class FactionManager:
     public System<FactionManager>
 {
 public:
     FactionManager(World & world);
+
+    FactionRelation factionRelation(const std::string & factionA, const std::string & factionB) const;
 
     const std::vector<Entity> & faction(const std::string & factionName) const;
 

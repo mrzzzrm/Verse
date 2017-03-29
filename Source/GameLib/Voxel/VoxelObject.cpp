@@ -1,15 +1,12 @@
 #include "VoxelObject.h"
 
+#include "VoxelImpactSystem.h"
 #include "VoxelRigidBodyPayload.h"
 #include "VoxelObjectModification.h"
 
 VoxelObject::VoxelObject(const VoxelObjectVoxelData & voxelData):
     m_voxelWorld(voxelData.voxelWorld()),
     m_voxelData(voxelData)
-{
-}
-
-VoxelObject::~VoxelObject()
 {
 }
 
@@ -71,6 +68,13 @@ void VoxelObject::removeVoxels(const std::vector<glm::uvec3> & voxels)
     modification.removals = voxels;
 
     emit(modification);
+}
+
+std::vector<glm::uvec3> VoxelObject::processImpact(const glm::uvec3 & voxel, float intensity, float radius)
+{
+    if (m_invincible) return {};
+
+    return VoxelImpactSystem().process(*this, voxel, intensity, radius);
 }
 
 void VoxelObject::schedule()

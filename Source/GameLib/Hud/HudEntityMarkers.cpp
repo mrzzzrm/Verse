@@ -7,11 +7,14 @@
 #include <Deliberation/Physics/RigidBody.h>
 
 #include <Deliberation/Scene/Camera3D.h>
+#include <Faction/Allegiance.h>
 
+#include "FactionManager.h"
 #include "Hud.h"
 #include "HudButton.h"
 #include "HudProxy.h"
 #include "PlayerFlightControl.h"
+#include "PlayerSystem.h"
 #include "ResourceManager.h"
 
 HudEntityMarkers::HudEntityMarkers(Hud & hud,
@@ -33,10 +36,22 @@ void HudEntityMarkers::update(float seconds)
     }
     m_numVisibleMarkers = 0;
 
+    auto & playerSystem = m_hud.world().system<PlayerSystem>();
+    auto & factionManager = m_hud.world().system<FactionManager>();
+
     const auto nearPlane = m_camera.nearPlane();
     const auto nearPlaneForward =  m_camera.orientation() * glm::vec3(0.0f, 0.0f, -1.0f);
     const auto nearPlaneRight = m_camera.orientation() * glm::vec3(1.0f, 0.0f, 0.0f);
     const auto nearPlaneUp = m_camera.orientation() * glm::vec3(0.0f, 1.0f, 0.0f);
+    const auto * playerAllegiance = (Allegiance*)nullptr;
+
+    if (playerSystem.player().isValid())
+    {
+        if (playerSystem.player().hasComponent<Allegiance>())
+        {
+            playerAllegiance = &playerSystem.player().component<Allegiance>();
+        }
+    }
 
     for (const auto & rigidBody : m_physicsWorld.rigidBodies())
     {
@@ -70,6 +85,23 @@ void HudEntityMarkers::update(float seconds)
         button->setVisible(true);
         button->setPosition(buttonPosition);
         button->setHalfExtent(upperRightNP - buttonPosition);
+
+        /**
+         * Set color based on allegiance
+         */
+        auto color = glm::vec3(0.5f, 0.5f, 0.5f);
+        if (playerAllegiance != nullptr && entity.hasComponent<Allegiance>())
+        {
+            auto entityAllegiance = entity.component<Allegiance>();
+
+            auto factionRelation = factionManager.factionRelation(playerAllegiance->faction(), entityAllegiance.faction());
+
+            if (factionRelation == FactionRelation::Hostile)
+            {
+                color = glm::vec3(1.0f, 0.2f, 0.0f);
+            }
+        }
+        button->setColor(color);
 
         m_numVisibleMarkers++;
 

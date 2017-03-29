@@ -54,7 +54,5 @@ void HailstormManager::onUpdate(float seconds)
 
 void HailstormManager::onRender()
 {
-    std::cout << "HailstormBegin" << std::endl;
     m_vfxManager.render();
-    std::cout << "HailstormEnd" << std::endl;
 }

@@ -75,7 +75,7 @@ void HailstormPhysicsWorld::update(float seconds)
                 }
 
                 auto & voxelObject = entity.component<VoxelObject>();
-                auto voxels = m_impactSystem.process(voxelObject, voxelClusterIntersection.voxel, 100, 2);
+                auto voxels = voxelObject.processImpact(voxelClusterIntersection.voxel, 100, 2);
 
                 if (!voxels.empty())
                 {

@@ -34,16 +34,12 @@ public:
     void update(float seconds);
 
 private:
-    VoxelWorld &                    m_voxelWorld;
-    PhysicsWorld &                  m_physicsWorld;
+    VoxelWorld &                            m_voxelWorld;
+    PhysicsWorld &                          m_physicsWorld;
 
-    VoxelImpactSystem               m_impactSystem;
+    SparseVector<HailstormBullet>           m_bullets;
+    std::vector<HailstormBulletId>          m_destroyedBullets;
 
-    SparseVector<HailstormBullet>   m_bullets;
-    std::vector<HailstormBulletId>  m_destroyedBullets;
-
-    std::vector<VoxelObjectModification>
-                                    m_voxelObjectModifications;
-    std::vector<VoxelObjectBulletHit>
-                                    m_voxelObjectBulletHits;
+    std::vector<VoxelObjectModification>    m_voxelObjectModifications;
+    std::vector<VoxelObjectBulletHit>       m_voxelObjectBulletHits;
 };

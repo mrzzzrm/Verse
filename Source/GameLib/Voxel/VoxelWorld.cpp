@@ -80,6 +80,12 @@ void VoxelWorld::onRender()
 
 void VoxelWorld::onEntityUpdate(Entity & entity, float seconds)
 {
+    auto & voxelObject = entity.component<VoxelObject>();
+    if (voxelObject.data().numVoxels() == 0)
+    {
+        entity.scheduleRemoval();
+    }
+
     if (entity.hasComponent<RigidBodyComponent>())
     {
         auto & body = entity.component<RigidBodyComponent>().value();
