@@ -67,6 +67,8 @@ void VoxelObject::removeVoxels(const std::vector<glm::uvec3> & voxels)
     VoxelObjectModification modification(shared_from_this());
     modification.removals = voxels;
 
+    m_world->system
+
     emit(modification);
 }
 
