@@ -3,7 +3,7 @@
 #include <stack>
 #include <vector>
 
-#include <Deliberation/Core/Experimental.h>
+#include <boost/optional.hpp>
 
 #include "GameLib.h"
 #include "Voxel.h"
@@ -27,7 +27,7 @@ public:
 
     size_t splitContainingCrucialVoxel() const;
 
-    void setCrucialVoxel(const std::experimental::optional<glm::uvec3> & crucialVoxel);
+    void setCrucialVoxel(const boost::optional<glm::uvec3> & crucialVoxel);
 
     void addVoxels(const std::vector<Voxel> & voxels);
     void removeVoxels(const std::vector<glm::uvec3> & voxels);
@@ -45,7 +45,7 @@ private:
     std::vector<VoxelClusterSplit>          m_splits;
     std::stack<glm::uvec3>                  m_floodStack;
     size_t                                  m_splitContainingCrucialVoxel = 0;
-    std::experimental::optional<glm::uvec3> m_crucialVoxel;
+    boost::optional<glm::uvec3>             m_crucialVoxel;
     size_t                                  m_numVoxels = 0;
 };
 

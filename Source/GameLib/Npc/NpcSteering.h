@@ -1,8 +1,8 @@
 #pragma once
 
-#include <glm/glm.hpp>
+#include <boost/optional.hpp>
 
-#include <Deliberation/Core/Experimental.h>
+#include <glm/glm.hpp>
 
 #include "NpcFlightControl.h"
 
@@ -17,7 +17,6 @@ public:
     void update(RigidBody & body, NpcFlightControl & flightControl, const FlightControlConfig & config, float seconds);
 
 private:
-    std::experimental::optional<glm::vec3>
-                                    m_destination;
+    boost::optional<glm::vec3>      m_destination;
     bool                            m_stopAtDestination = true;
 };

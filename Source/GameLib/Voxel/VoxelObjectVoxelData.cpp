@@ -179,7 +179,7 @@ void VoxelObjectVoxelData::removeVoxels(const std::vector<glm::uvec3> & voxels)
 #endif
 }
 
-void VoxelObjectVoxelData::setCrucialVoxel(const std::experimental::optional<glm::uvec3> & crucialVoxel)
+void VoxelObjectVoxelData::setCrucialVoxel(const boost::optional<glm::uvec3> & crucialVoxel)
 {
     m_splitDetector.setCrucialVoxel(crucialVoxel);
 }

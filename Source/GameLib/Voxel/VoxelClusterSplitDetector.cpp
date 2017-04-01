@@ -19,7 +19,7 @@ size_t VoxelClusterSplitDetector::splitContainingCrucialVoxel() const
     return m_splitContainingCrucialVoxel;
 }
 
-void VoxelClusterSplitDetector::setCrucialVoxel(const std::experimental::optional<glm::uvec3> & crucialVoxel)
+void VoxelClusterSplitDetector::setCrucialVoxel(const boost::optional<glm::uvec3> & crucialVoxel)
 {
     m_crucialVoxel = crucialVoxel;
 }

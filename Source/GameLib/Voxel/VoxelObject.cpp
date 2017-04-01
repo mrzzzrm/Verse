@@ -46,7 +46,7 @@ void VoxelObject::setScale(float scale)
     m_voxelData.setScale(scale);
 }
 
-void VoxelObject::setCrucialVoxel(const std::experimental::optional<glm::uvec3> & crucialVoxel)
+void VoxelObject::setCrucialVoxel(const boost::optional<glm::uvec3> & crucialVoxel)
 {
     m_crucialVoxel = crucialVoxel;
     m_voxelData.setCrucialVoxel(crucialVoxel);
