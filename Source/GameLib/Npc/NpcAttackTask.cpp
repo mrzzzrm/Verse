@@ -4,7 +4,7 @@
 
 #include <glm/glm.hpp>
 
-#include <Deliberation/Core/Math/Trajetory.h>
+#include <Deliberation/Core/Math/Trajectory.h>
 #include <Deliberation/Core/Math/FloatUtils.h>
 #include <Deliberation/Core/Math/MathUtils.h>
 #include <Deliberation/Core/Math/Random.h>
@@ -33,7 +33,7 @@ void NpcAttackTask::update(NpcController & controller, RigidBody & body, Equipme
 {
     if (!m_target.isValid())
     {
-        equipment.setFireRequestForAllHardpoints(false, {});
+        equipment.clearFireRequests();
         return;
     }
 
@@ -92,8 +92,8 @@ void NpcAttackTask::update(NpcController & controller, RigidBody & body, Equipme
         const auto trajectory = CalculateTrajectory(bodyPosition, bodyVelocity,
                                                     bulletSpeed, targetPosition, targetVelocity, success);
 
-        if (success) equipment.setFireRequestForAllHardpoints(true, glm::normalize(trajectory));
-        else equipment.setFireRequestForAllHardpoints(false, {});
+        if (success) equipment.setFireRequestDirectionForAllHardpoints(glm::normalize(trajectory));
+        else equipment.clearFireRequests();
     }
 }
 

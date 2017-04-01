@@ -1,6 +1,6 @@
 #include "PlayerSystem.h"
 
-#include <Deliberation/Core/Math/Trajetory.h>
+#include <Deliberation/Core/Math/Trajectory.h>
 #include <Deliberation/Core/Math/PrimitiveIntersection.h>
 #include <Deliberation/Core/StreamUtils.h>
 
@@ -56,7 +56,7 @@ void PlayerSystem::onFrameBegin()
     if (m_player.isValid())
     {
         auto & equipment = m_player.component<Equipment>();
-        equipment.setFireRequestForAllHardpoints(false, {});
+        equipment.clearFireRequests();
     }
 }
 
@@ -94,26 +94,16 @@ void PlayerSystem::onEntityUpdate(Entity & entity, float seconds)
         }
 
         {
-            AimHelper aimHelper(m_camera, m_physicsWorld);
-
-            auto &equipment = entity.component<Equipment>();
-
-            auto result = aimHelper.getTarget(m_input.mousePosition());
-
-            if (m_input.mouseButtonDown(MouseButton_Right)) {
-                equipment.setFireRequestForAllHardpoints(true, glm::normalize(
-                    result.pointOfImpact - body.transform().position()));
-            } else {
-            }
+//            AimHelper aimHelper(m_camera, m_physicsWorld);
+//
+//            auto result = aimHelper.getTarget(m_input.mousePosition());
+//            m_debugGeometryRenderer.sphere(0).setColor({1.0f, 1.0f, 0.0f});
+//            m_debugGeometryRenderer.sphere(0).setRadius(2.0f);
+//            m_debugGeometryRenderer.sphere(0).setTransform(Transform3D::atPosition(result.pointOfImpact));
         }
     }
 
     flightControl.update(body, flightControlConfig, seconds);
-
-    if (m_input.keyPressed(Key_C))
-    {
-        m_cameraMode = (CameraMode)(((int)m_cameraMode + 1) % (int)CameraMode::Count);
-    }
 }
 
 void PlayerSystem::onEntityPrePhysicsUpdate(Entity & entity, float seconds)
@@ -137,7 +127,19 @@ void PlayerSystem::onEntityPrePhysicsUpdate(Entity & entity, float seconds)
 
         m_cameraDolly.update(position, targetPose.orientation(), seconds);
     }
-    else if (m_cameraMode == CameraMode::FreeFlight)
+}
+
+void PlayerSystem::onUpdate(float seconds)
+{
+    if (m_input.keyPressed(Key_C))
+    {
+        m_cameraMode = (CameraMode)(((int)m_cameraMode + 1) % (int)CameraMode::Count);
+    }
+}
+
+void PlayerSystem::onPrePhysicsUpdate(float seconds)
+{
+    if (m_cameraMode == CameraMode::FreeFlight)
     {
         m_navigator.update(seconds);
     }
@@ -167,7 +169,14 @@ void PlayerSystem::onMouseButtonDown(MouseButtonEvent & event)
         auto & body = *m_player.component<RigidBodyComponent>().value();
 
         auto & equipment = m_player.component<Equipment>();
-        equipment.setFireRequestForAllHardpoints(true,
-                                                 glm::normalize(result.pointOfImpact - body.transform().position()));
+        Transform3D equipmentTransform = body.transform();
+
+        equipmentTransform.setScale(m_player.component<VoxelObject>().scale());
+
+        equipment.setFireRequestTargetForAllHardpoints(
+            equipmentTransform,
+            body.linearVelocity(),
+            result.pointOfImpact,
+            glm::vec3(0.0f));
     }
 }

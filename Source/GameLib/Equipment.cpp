@@ -1,5 +1,10 @@
 #include "Equipment.h"
 
+#include <Deliberation/Core/Math/Transform3D.h>
+#include <Deliberation/Core/Math/Trajectory.h>
+
+#include <Deliberation/Physics/RigidBody.h>
+
 #include "Hardpoint.h"
 #include "VfxManager.h"
 #include "Weapon.h"
@@ -50,9 +55,40 @@ float Equipment::bulletSpeed() const
     return bulletSpeed;
 }
 
-void Equipment::setFireRequestForAllHardpoints(bool active, const glm::vec3 & direction)
+void Equipment::clearFireRequests()
 {
-    for (auto & hardpoint : m_hardpoints) hardpoint->setFireRequest(active, direction);
+    for (auto & hardpoint : m_hardpoints) hardpoint->clearFireRequest();
+}
+
+void Equipment::setFireRequestDirectionForAllHardpoints(const glm::vec3 & direction)
+{
+    for (auto & hardpoint : m_hardpoints) hardpoint->setFireRequest(direction);
+}
+
+
+void Equipment::setFireRequestTargetForAllHardpoints(
+    const Transform3D & equipmentTransform,
+    const glm::vec3 & equipmentVelocity,
+    const glm::vec3 & targetPosition,
+    const glm::vec3 & targetVelocity)
+{
+    for (auto & hardpoint : m_hardpoints)
+    {
+        const auto weapon = hardpoint->weapon();
+        if (!weapon) continue;
+
+        const auto hardpointPosition =
+            equipmentTransform.pointLocalToWorld(glm::vec3(hardpoint->voxel()));
+
+        const auto bulletSpeed = weapon->config().bulletSpeed;
+
+        bool success;
+        auto trajectory = CalculateTrajectory(
+            hardpointPosition, equipmentVelocity,
+            bulletSpeed, targetPosition, targetVelocity, success);
+
+        if (success) hardpoint->setFireRequest(glm::normalize(trajectory));
+    }
 }
 
 void Equipment::setWeapon(size_t slot, std::shared_ptr<Weapon> weapon)

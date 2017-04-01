@@ -56,7 +56,7 @@ public:
 
     void onApplicationStartup() override {
         DisableGLErrorChecks();
-        // deliberation::EnableGLErrorChecksAndLogging();
+        //EnableGLErrorChecksAndLogging();
 
         auto & entityPrototypeManager = m_world.system<EntityPrototypeSystem>().manager();
 
@@ -72,37 +72,50 @@ public:
             playerBody->transform().setPosition({0.0f, 20.0f, 50.0f});
         }
 
+        /**
+         * Create block
+         */
+//        auto block = entityPrototypeManager.createEntity({"Block8x8x8"}, "Block");
+//        {
+//            auto &blockBody = player.component<RigidBodyComponent>().value();
+//            blockBody->transform().setPosition({0.0f, 20.0f, 150.0f});
+//        }
 
         /**
          * Create station
          */
-//        auto station = m_entityPrototypeManager.createEntity({"Station"}, "MyStation");
+//        auto station = entityPrototypeManager.createEntity({"Station"}, "MyStation");
 //        auto stationBody = station.component<RigidBodyComponent>().value();
 //        stationBody->transform().setPosition({0.0f, 40.0f, -100.0f});
 
         /**
          * Create asteroids
          */
-        for (auto i = 0; i < 16; i++) {
+        for (auto i = 0; i < 30; i++) {
             auto asteroid = entityPrototypeManager.createEntity({"Asteroid00"}, "MyAsteroid");
             auto asteroidBody = asteroid.component<RigidBodyComponent>().value();
-            asteroidBody->transform().setPosition(RandomUnitVec3() * 1250.0f);
+            asteroidBody->transform().setPosition(RandomUnitVec3() * 250.0f);
         }
 
-        for (auto i = 0; i < 15; i++) {
-            auto asteroid = entityPrototypeManager.createEntity({"Asteroid01"}, "MyAsteroid");
-            auto asteroidBody = asteroid.component<RigidBodyComponent>().value();
-            asteroidBody->transform().setPosition(RandomUnitVec3() * 1250.0f);
-        }
+//        for (auto i = 0; i < 15; i++) {
+//            auto asteroid = entityPrototypeManager.createEntity({"Asteroid01"}, "MyAsteroid");
+//            auto asteroidBody = asteroid.component<RigidBodyComponent>().value();
+//            asteroidBody->transform().setPosition(RandomUnitVec3() * 1250.0f);
+//        }
 
         /**
          * Create enemies
          */
-        for (auto i = 0; i < 5; i++) {
-            auto npc = entityPrototypeManager.createEntity({"Drone", "Npc", "Pirate"}, "MyNPC");
-            auto npcBody = npc.component<RigidBodyComponent>().value();
-            npcBody->transform().setPosition(glm::vec3(300.0f, 0.0f, 0.0f) + RandomUnitVec3() * 1000.0f);
-        }
+//        for (auto i = 0; i < 2; i++) {
+//            auto npc = entityPrototypeManager.createEntity({"Sting", "Npc", "Pirate"}, "MyNPC");
+//            auto npcBody = npc.component<RigidBodyComponent>().value();
+//            npcBody->transform().setPosition(glm::vec3(300.0f, 0.0f, 0.0f) + RandomUnitVec3() * 1000.0f);
+//        }
+//        for (auto i = 0; i < 1; i++) {
+//            auto npc = entityPrototypeManager.createEntity({"Drone", "Npc", "Pirate"}, "MyNPC");
+//            auto npcBody = npc.component<RigidBodyComponent>().value();
+//            npcBody->transform().setPosition(glm::vec3(300.0f, 0.0f, 0.0f) + RandomUnitVec3() * 1000.0f);
+//        }
     }
 };
 

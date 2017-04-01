@@ -1,6 +1,6 @@
 #include "HudCrosshairs.h"
 
-#include <Deliberation/Core/Math/Trajetory.h>
+#include <Deliberation/Core/Math/Trajectory.h>
 #include <Deliberation/Core/Math/PrimitiveIntersection.h>
 
 #include <Deliberation/Draw/Context.h>
@@ -112,31 +112,22 @@ void HudCrosshairs::onMouseButtonDown(MouseButtonEvent & event)
     if (!playerTarget.isValid() || !player.isValid()) return;
 
     const auto & targetBody = *playerTarget.component<RigidBodyComponent>().value();
-    const auto & targetPosition = targetBody.transform().position();
-    const auto & targetVelocity = targetBody.linearVelocity();
 
     auto & equipment = player.component<Equipment>();
     const auto & body = *player.component<RigidBodyComponent>().value();
     const auto & voxelObject = player.component<VoxelObject>();
 
-    for (auto & hardpoint : equipment.hardpoints())
-    {
-        const auto weapon = hardpoint->weapon();
-        if (!weapon) continue;
+    const auto & targetPosition = targetBody.transform().position();
+    const auto & targetVelocity = targetBody.linearVelocity();
 
-        const auto hardpointPosition =
-            body.transform().pointLocalToWorld(glm::vec3(hardpoint->voxel()) * voxelObject.scale());
+    Transform3D equipmentTransform = body.transform();
+    equipmentTransform.setScale(voxelObject.scale());
 
-        const auto bulletSpeed = weapon->config().bulletSpeed;
-
-        bool success;
-        auto trajectory = CalculateTrajectory(
-            hardpointPosition, body.linearVelocity(),
-            bulletSpeed, targetPosition, targetVelocity, success);
-
-        hardpoint->setFireRequest(success, glm::normalize(trajectory));
-    }
-
+    equipment.setFireRequestTargetForAllHardpoints(
+        equipmentTransform,
+        body.linearVelocity(),
+        targetPosition,
+        targetVelocity);
 
     event.consume();
 }

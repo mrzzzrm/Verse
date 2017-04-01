@@ -15,9 +15,9 @@ const std::shared_ptr<Weapon> & Hardpoint::weapon() const
     return m_weapon;
 }
 
-void Hardpoint::setFireRequest(bool active, const glm::vec3 & direction)
+void Hardpoint::setFireRequest(const glm::vec3 & direction)
 {
-    if (m_weapon) m_weapon->setFireRequest(active, direction);
+    if (m_weapon) m_weapon->setFireRequest(direction);
 }
 
 void Hardpoint::setReferencePose(const Pose3D & referencePose)

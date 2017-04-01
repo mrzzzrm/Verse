@@ -2,7 +2,7 @@
 
 #include <glm/gtx/vector_angle.hpp>
 
-#include <Deliberation/Core/Math/Trajetory.h>
+#include <Deliberation/Core/Math/Trajectory.h>
 
 #include "Equipment.h"
 #include "HailstormBullet.h"
@@ -21,11 +21,11 @@ const WeaponConfig & Weapon::config() const
     return m_config;
 }
 
-void Weapon::setFireRequest(bool active, const glm::vec3 & direction)
+void Weapon::setFireRequest(const glm::vec3 & direction)
 {
-    Assert(!active || EpsilonEq(glm::length2(direction), 1.0f), "Normalize direction!")
+    Assert(EpsilonEq(glm::length2(direction), 1.0f), "Normalize direction!")
 
-    m_fireRequestActive = active;
+    m_fireRequestActive = true;
     m_fireRequestDirection = direction;
 }
 

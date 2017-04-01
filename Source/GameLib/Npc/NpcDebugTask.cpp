@@ -26,5 +26,6 @@ void NpcDebugTask::setFireRequest(bool enabled, const glm::vec3 & direction)
 
 void NpcDebugTask::update(NpcController & controller, RigidBody & body, Equipment & equipment, float seconds)
 {
-    equipment.setFireRequestForAllHardpoints(m_fireRequestEnabled, m_fireRequestDirection);
+    if (m_fireRequestEnabled) equipment.setFireRequestDirectionForAllHardpoints(m_fireRequestDirection);
+    else equipment.clearFireRequests();
 }

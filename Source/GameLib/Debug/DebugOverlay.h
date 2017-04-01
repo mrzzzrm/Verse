@@ -29,4 +29,5 @@ protected:
 private:
     Application &   m_application;
     float           m_fps;
+    Entity          m_selectedEntity;
 };

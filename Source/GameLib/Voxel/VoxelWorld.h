@@ -1,5 +1,6 @@
 #pragma once
 
+#include <set>
 #include <memory>
 #include <unordered_map>
 
@@ -25,6 +26,7 @@ class PhysicsWorld;
 
 class VoxelObject;
 class VoxelObjectID;
+class VoxelObjectModification;
 
 class VoxelWorld final:
     public System<VoxelWorld>,
@@ -42,27 +44,33 @@ public:
     const Texture & envMap() const;
 
     void addVoxelObject(std::shared_ptr<VoxelObject> voxelObject);
+    void removeVoxelObject(std::shared_ptr<VoxelObject> voxelObject);
+
+    void addVoxelObjectModification(VoxelObjectModification && voxelObjectModification);
+
+    void onCrucialVoxelDestroyed(VoxelObject & voxelObject);
 
 protected:
     void onEntityAdded(Entity & entity) override;
     void onEntityRemoved(Entity & entity) override;
     void onEntityUpdate(Entity & entity, float seconds) override;
+    void onUpdate(float seconds) override;
     void onRender() override;
 
 private:
-    Context &           m_context;
-    PhysicsWorld &      m_physicsWorld;
-    const Camera3D &    m_camera;
-    Texture             m_envMap;
-    VoxelClusterMarchingCubesTriangulation
-                        m_marchingCubesTriangulation;
-    Program             m_program;
+    Context &                                   m_context;
+    PhysicsWorld &                              m_physicsWorld;
+    const Camera3D &                            m_camera;
+    Texture                                     m_envMap;
+    VoxelClusterMarchingCubesTriangulation      m_marchingCubesTriangulation;
+    Program                                     m_program;
 
-    std::vector<std::shared_ptr<VoxelObject>>
-                        m_objects;
+    std::vector<std::shared_ptr<VoxelObject>>   m_objects;
 
     std::unordered_map<VoxelObjectWorldUID, std::shared_ptr<VoxelObject>>
-                        m_objectsByUID;
+                                                m_objectsByUID;
 
-    u64                 m_uidIncrementor = 0;
+    u64                                         m_uidIncrementor = 0;
+
+    std::vector<VoxelObjectModification>        m_objectModifications;
 };

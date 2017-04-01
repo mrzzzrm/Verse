@@ -49,6 +49,8 @@ protected:
     void onEntityAdded(Entity & entity) override;
     void onEntityRemoved(Entity & entity) override;
     void onEntityUpdate(Entity & entity, float seconds) override;
+    void onUpdate(float seconds) override;
+    void onPrePhysicsUpdate(float seconds) override;
     void onEntityPrePhysicsUpdate(Entity & entity, float seconds) override;
     void onRender() override;
 

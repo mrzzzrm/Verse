@@ -19,7 +19,8 @@ VoxelObjectPrototype::VoxelObjectPrototype(const Json & json, VoxelWorld & voxel
             const auto iter = json.find("CrucialVoxel");
             if (iter != json.end())
             {
-                m_voxelDataPrototype->setCrucialVoxel(*iter);
+                glm::uvec3 crucialVoxel = *iter;
+                m_crucialVoxel = crucialVoxel;
             }
         }
     }
@@ -34,4 +35,5 @@ void VoxelObjectPrototype::applyToEntity(Entity & entity) const
 {
     auto & voxelObject = entity.addComponent<VoxelObject>(*m_voxelDataPrototype);
     voxelObject.setScale(m_scale);
+    voxelObject.setCrucialVoxel(m_crucialVoxel);
 }

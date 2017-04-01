@@ -2,6 +2,45 @@
 
 #include <Deliberation/Core/Assert.h>
 
+//template<typename T>
+//VoxelClusterIterator<T>::VoxelClusterIterator(const VoxelCluster<T> & cluster, const glm::uvec3 & voxel):
+//    m_cluster(cluster),
+//    m_voxel(voxel)
+//{}
+
+//template<typename T>
+//VoxelClusterIterator VoxelClusterIterator<T>::operator++()
+//{
+//    auto voxel = m_voxel;
+
+//    voxel.x++;
+//    if (voxel.x >= m_cluster.size().x)
+//    {
+//        voxel.x = 0;
+//        voxel.y++;
+//        if (voxel.y >= m_cluster.size().y)
+//        {
+//            voxel.y = 0;
+//            voxel.z++;
+//        }
+//    }
+
+//    return {m_cluster, voxel};
+//}
+
+//template<typename T>
+//const T & VoxelClusterIterator<T>::operator*() const
+//{
+//    return m_cluster.get(m_voxel);
+//}
+
+//template<typename T>
+//bool VoxelClusterIterator<T>::operator!=(const VoxelClusterIterator & rhs) const
+//{
+//    Assert(&m_cluster == &rhs.m_cluster, "");
+//    return m_voxel != rhs.m_voxel;
+//}
+
 template<typename T>
 VoxelCluster<T>::VoxelCluster(const glm::uvec3 & size):
     m_size(size),
@@ -139,3 +178,15 @@ glm::uvec3 VoxelCluster<T>::indexToVoxel(size_t index) const
 
     return {x, y, z};
 }
+
+//template<typename T>
+//VoxelClusterIterator VoxelCluster<T>::begin() const
+//{
+//    return {*this, {}};
+//}
+//
+//template<typename T>
+//VoxelClusterIterator VoxelCluster<T>::end() const
+//{
+//    return {*this, {m_size.x, m_size.y - 1, m_size.z - 1}};
+//}

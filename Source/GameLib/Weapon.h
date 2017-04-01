@@ -29,8 +29,8 @@ public:
 
     const WeaponConfig & config() const;
 
-    void setFireRequest(bool active,
-                        const glm::vec3 & direction);
+    void clearFireRequest() { m_fireRequestActive = false; }
+    void setFireRequest(const glm::vec3 & direction);
 
     void setPose(const Pose3D & pose);
 

@@ -6,6 +6,22 @@
 
 #include "GameLib.h"
 
+//template<typename T> class VoxelCluster;
+//
+//template<typename T>
+//struct VoxelClusterIterator final
+//{
+//    VoxelClusterIterator(const VoxelCluster<T> & cluster, const glm::uvec3 & voxel);
+//
+//    VoxelClusterIterator operator++();
+//    const T & operator*() const;
+//    bool operator!=(const VoxelClusterIterator & rhs) const;
+//
+//private:
+//    const VoxelCluster<T> &     m_cluster;
+//    glm::uvec3                  m_voxel;
+//};
+
 template<typename T>
 class VoxelCluster final
 {
@@ -42,6 +58,9 @@ public:
 
     size_t voxelToIndex(const glm::uvec3 & voxel) const;
     glm::uvec3 indexToVoxel(size_t index) const;
+
+//    VoxelClusterIterator begin() const;
+//    VoxelClusterIterator end() const;
 
 private:
     glm::uvec3      m_size;

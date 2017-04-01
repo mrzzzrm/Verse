@@ -26,5 +26,6 @@ public:
 
 private:
     float                                   m_scale = 1.0f;
+    std::experimental::optional<glm::uvec3> m_crucialVoxel;
     std::shared_ptr<VoxelObjectVoxelData>   m_voxelDataPrototype;
 };

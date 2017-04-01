@@ -1,5 +1,7 @@
 #include "VoxelWorld.h"
 
+#include <algorithm>
+
 #include <Deliberation/Core/ScopeProfiler.h>
 
 #include <Deliberation/Draw/Context.h>
@@ -12,6 +14,9 @@
 #include <Deliberation/Physics/PhysicsWorld.h>
 
 #include <Deliberation/Scene/Camera3D.h>
+
+#include "VoxelClusterSplitSystem.h"
+#include "VoxelObjectModification.h"
 
 VoxelWorld::VoxelWorld(World & world, const Camera3D & camera, const Texture & envMap):
     m_context(world.system<ApplicationSystem>().context()),
@@ -62,6 +67,41 @@ void VoxelWorld::addVoxelObject(std::shared_ptr<VoxelObject> voxelObject)
     m_objectsByUID[id.worldUID] = voxelObject;
 }
 
+void VoxelWorld::removeVoxelObject(std::shared_ptr<VoxelObject> voxelObject)
+{
+    const auto iter = std::find(m_objects.begin(), m_objects.end(), voxelObject);
+    Assert(iter != m_objects.end(), "");
+
+    m_objectsByUID.erase((*iter)->id().worldUID);
+    m_objects.erase(iter);
+}
+
+void VoxelWorld::addVoxelObjectModification(VoxelObjectModification && voxelObjectModification)
+{
+    m_objectModifications.emplace_back(std::move(voxelObjectModification));
+}
+
+void VoxelWorld::onCrucialVoxelDestroyed(VoxelObject & voxelObject)
+{
+    auto originalEntity = world().entityByIndex(voxelObject.entityIndex());
+    const auto & originalRigidBody = originalEntity.component<RigidBodyComponent>().value();
+
+    std::cout << "Turning '" << originalEntity.name()
+              << "' to remnant because its crucial voxel was destroyed" << std::endl;
+
+    auto remnantVoxelData = voxelObject.data();
+    remnantVoxelData.setCrucialVoxel({});
+
+    auto remnant = world().createEntity("Remnant of '" + originalEntity.name() + "'");
+    auto & remnantVoxelObject = remnant.addComponent<VoxelObject>(std::move(remnantVoxelData));
+
+    auto remnantRigidBody = std::make_shared<RigidBody>(voxelObject.data().shape());
+    remnantRigidBody->setTransform(originalRigidBody->transform());
+    remnant.addComponent<RigidBodyComponent>(remnantRigidBody);
+
+    originalEntity.scheduleRemoval();
+}
+
 void VoxelWorld::onEntityAdded(Entity & entity)
 {
     auto & voxelObject = entity.component<VoxelObject>();
@@ -70,7 +110,8 @@ void VoxelWorld::onEntityAdded(Entity & entity)
 
 void VoxelWorld::onEntityRemoved(Entity & entity)
 {
-
+    auto & voxelObject = entity.component<VoxelObject>();
+    removeVoxelObject(voxelObject.shared_from_this());
 }
 
 void VoxelWorld::onRender()
@@ -98,4 +139,22 @@ void VoxelWorld::onEntityUpdate(Entity & entity, float seconds)
 
         object.setPose(pose);
     }
+}
+
+void VoxelWorld::onUpdate(float seconds)
+{
+    /**
+     * Process VoxelObjectModifications
+     */
+    auto & splitSystem = world().system<VoxelClusterSplitSystem>();
+    for (const auto & modification : m_objectModifications)
+    {
+        splitSystem.onVoxelObjectModified(modification.object);
+        modification.object->addVoxels(modification.additions);
+        modification.object->removeVoxels(modification.removals);
+    }
+    m_objectModifications.clear();
+
+
+
 }

@@ -7,9 +7,12 @@
 #include <glm/gtx/hash.hpp>
 
 #include <Deliberation/Core/StreamUtils.h>
+#include <Deliberation/ECS/World.h>
 
 #include "VoxelObject.h"
 #include "VoxelObjectPrototype.h"
+#include "VoxelObjectModification.h"
+#include "VoxelWorld.h"
 
 std::vector<glm::uvec3> VoxelImpactSystem::process(
     VoxelObject & voxelObject,
@@ -17,6 +20,8 @@ std::vector<glm::uvec3> VoxelImpactSystem::process(
     float intensity,
     float radius)
 {
+    auto & voxelWorld = voxelObject.voxelWorld();
+
     const auto maxDepth = (u32)(std::ceil(radius * 1.5f));
     auto & voxelData = voxelObject.data();
 
@@ -72,7 +77,8 @@ std::vector<glm::uvec3> VoxelImpactSystem::process(
         std::swap(currentDepthSet, nextDepthSet);
     }
 
-    voxelObject.removeVoxels(voxelRemovals);
+    voxelWorld.addVoxelObjectModification(
+        VoxelObjectModification::removal(voxelObject.shared_from_this(), voxelRemovals));
 
     return voxelRemovals;
 }

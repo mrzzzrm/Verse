@@ -6,6 +6,7 @@
 
 #include "GameLib.h"
 #include "ItemSlot.h"
+#include "Weapon.h"
 
 class EquipmentUpdateContext;
 class Weapon;
@@ -24,7 +25,8 @@ public:
 
     const std::shared_ptr<Weapon> & weapon() const;
 
-    void setFireRequest(bool active, const glm::vec3 & direction);
+    void clearFireRequest() { if (m_weapon) m_weapon->clearFireRequest(); }
+    void setFireRequest(const glm::vec3 & direction);
 
     /**
      * Only used for warping the Hardpoint, otherwise use update()'s referencePose

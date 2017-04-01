@@ -23,18 +23,17 @@ public:
 
 public:
     VoxelObjectVoxelData(const VoxelObjectVoxelData & prototype);
-    VoxelObjectVoxelData(const VoxelWorld & voxelWorld, const glm::uvec3 & size);
+    VoxelObjectVoxelData(VoxelWorld & voxelWorld, const glm::uvec3 & size);
 
-    const VoxelWorld & voxelWorld() const;
+    VoxelWorld & voxelWorld() const;
     const glm::uvec3 & size() const;
     const VoxelRenderChunkTree & renderTree() const;
     const std::shared_ptr<VoxelShape> & shape() const;
     const VoxelHull & hull() const;
-    const VoxelClusterSplitDetector & splitDetector() const;
     float scale() const;
     size_t numVoxels() const { return m_numVoxels; }
-
-    void setCrucialVoxel(const glm::uvec3 & voxel);
+    VoxelClusterSplitDetector & splitDetector() { return m_splitDetector; }
+    const VoxelClusterSplitDetector & splitDetector() const { return m_splitDetector; }
 
     bool hasVoxel(const glm::ivec3 & voxel) const;
 
@@ -47,17 +46,19 @@ public:
     void addVoxels(std::vector<Voxel> voxels);
     void removeVoxels(const std::vector<glm::uvec3> & voxels);
 
+    void setCrucialVoxel(const std::experimental::optional<glm::uvec3> & crucialVoxel);
+
     void operator=(const VoxelObjectVoxelData & prototype) = delete;
     void operator=(VoxelObjectVoxelData && prototype) = delete;
 
 private:
-    const VoxelWorld &              m_voxelWorld;
+    VoxelWorld &                    m_voxelWorld;
     VoxelCluster<glm::vec3>         m_colors;
     VoxelCluster<float>             m_healthPoints;
     VoxelRenderChunkTree            m_renderTree;
     std::shared_ptr<VoxelShape>     m_shape;
     VoxelHull                       m_hull;
-    VoxelClusterSplitDetector       m_splitDetector;
     float                           m_scale = 1.0f;
     size_t                          m_numVoxels = 0;
+    VoxelClusterSplitDetector       m_splitDetector;
 };

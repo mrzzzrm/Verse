@@ -2,6 +2,8 @@
 
 #include "VoxReader.h"
 
+#define VERBOSE 1
+
 std::shared_ptr<VoxelObjectVoxelData> VoxelObjectVoxelData::fromFile(VoxReader & voxReader,
                                                                      VoxelWorld & voxelWorld,
                                                                      const std::string & path)
@@ -24,13 +26,13 @@ VoxelObjectVoxelData::VoxelObjectVoxelData(const VoxelObjectVoxelData & prototyp
     m_renderTree(prototype.m_renderTree),
     m_shape(std::make_shared<VoxelShape>(*prototype.m_shape)),
     m_hull(prototype.m_hull),
-    m_splitDetector(prototype.m_splitDetector),
-    m_numVoxels(prototype.m_numVoxels)
+    m_numVoxels(prototype.m_numVoxels),
+    m_splitDetector(prototype.m_splitDetector)
 {
 
 }
 
-VoxelObjectVoxelData::VoxelObjectVoxelData(const VoxelWorld & voxelWorld, const glm::uvec3 & size):
+VoxelObjectVoxelData::VoxelObjectVoxelData(VoxelWorld & voxelWorld, const glm::uvec3 & size):
     m_voxelWorld(voxelWorld),
     m_colors(size),
     m_healthPoints(size),
@@ -42,7 +44,7 @@ VoxelObjectVoxelData::VoxelObjectVoxelData(const VoxelWorld & voxelWorld, const 
 
 }
 
-const VoxelWorld & VoxelObjectVoxelData::voxelWorld() const
+VoxelWorld & VoxelObjectVoxelData::voxelWorld() const
 {
     return m_voxelWorld;
 }
@@ -67,19 +69,9 @@ const VoxelHull & VoxelObjectVoxelData::hull() const
     return m_hull;
 }
 
-const VoxelClusterSplitDetector & VoxelObjectVoxelData::splitDetector() const
-{
-    return m_splitDetector;
-}
-
 float VoxelObjectVoxelData::scale() const
 {
     return m_scale;
-}
-
-void VoxelObjectVoxelData::setCrucialVoxel(const glm::uvec3 & voxel)
-{
-    m_splitDetector.setCrucialVoxel(voxel);
 }
 
 bool VoxelObjectVoxelData::hasVoxel(const glm::ivec3 & voxel) const
@@ -111,10 +103,21 @@ void VoxelObjectVoxelData::setScale(float scale)
 
 void VoxelObjectVoxelData::addVoxels(std::vector<Voxel> voxels)
 {
+#if VERBOSE
+    std::cout << "VoxelObjectVoxelData::addVoxels(" << this << ") - Voxels: " << m_numVoxels << " + " << voxels.size() << std::endl;
+    for (const auto & voxel : voxels)
+    {
+        std::cout << "  " << voxel.cell << std::endl;
+    }
+    std::cout << std::endl;
+#endif
+
     m_hull.addVoxels(voxels);
 
     for (auto & voxel : voxels)
     {
+        Assert(!m_colors.test(voxel.cell), "Already contains voxel " + ToString(voxel.cell));
+
         m_colors.set(voxel.cell, voxel.color);
         m_healthPoints.set(voxel.cell, voxel.healthPoints);
         m_renderTree.addVoxel(voxel, m_hull.isHullVoxel(voxel.cell));
@@ -138,8 +141,18 @@ void VoxelObjectVoxelData::addVoxels(std::vector<Voxel> voxels)
 
 void VoxelObjectVoxelData::removeVoxels(const std::vector<glm::uvec3> & voxels)
 {
+#if VERBOSE
+    std::cout << "VoxelObjectVoxelData(" << this << ")::removeVoxels() - Voxels: " << m_numVoxels << " - " << voxels.size() << std::endl;
+    for (const auto & voxel : voxels)
+    {
+        std::cout << "  " << voxel << std::endl;
+    }
+#endif
+
     for (auto & voxel : voxels)
     {
+        Assert(m_colors.test(voxel), "Doesn't contain voxel " + ToString(voxel));
+
         m_colors.set(voxel, VoxelCluster<glm::vec3>::EMPTY_VOXEL);
         m_healthPoints.set(voxel, VoxelCluster<float>::EMPTY_VOXEL);
 
@@ -157,5 +170,16 @@ void VoxelObjectVoxelData::removeVoxels(const std::vector<glm::uvec3> & voxels)
 
     m_splitDetector.removeVoxels(voxels);
 
+    Assert(m_numVoxels >= voxels.size(), "");
     m_numVoxels -= voxels.size();
+
+#if VERBOSE
+    std::cout << "Remaining Voxels: " << m_numVoxels << ", removed: " << voxels.size() << std::endl;
+    std::cout << std::endl;
+#endif
+}
+
+void VoxelObjectVoxelData::setCrucialVoxel(const std::experimental::optional<glm::uvec3> & crucialVoxel)
+{
+    m_splitDetector.setCrucialVoxel(crucialVoxel);
 }

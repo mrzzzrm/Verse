@@ -3,6 +3,7 @@
 #include "VoxelImpactSystem.h"
 #include "VoxelRigidBodyPayload.h"
 #include "VoxelObjectModification.h"
+#include "VoxelWorld.h"
 
 VoxelObject::VoxelObject(const VoxelObjectVoxelData & voxelData):
     m_voxelWorld(voxelData.voxelWorld()),
@@ -45,6 +46,12 @@ void VoxelObject::setScale(float scale)
     m_voxelData.setScale(scale);
 }
 
+void VoxelObject::setCrucialVoxel(const std::experimental::optional<glm::uvec3> & crucialVoxel)
+{
+    m_crucialVoxel = crucialVoxel;
+    m_voxelData.setCrucialVoxel(crucialVoxel);
+}
+
 void VoxelObject::setVoxelHealthPoints(const glm::uvec3 & voxel, float healthPoints)
 {
     m_voxelData.setVoxelHealthPoints(voxel, healthPoints);
@@ -67,7 +74,14 @@ void VoxelObject::removeVoxels(const std::vector<glm::uvec3> & voxels)
     VoxelObjectModification modification(shared_from_this());
     modification.removals = voxels;
 
-    m_world->system
+    if (m_crucialVoxel)
+    {
+        auto crucialVoxel = *m_crucialVoxel;
+        for (const auto & voxel : voxels)
+        {
+            if (voxel == crucialVoxel) m_voxelWorld.onCrucialVoxelDestroyed(*this);
+        }
+    }
 
     emit(modification);
 }

@@ -18,6 +18,7 @@
 
 namespace deliberation
 {
+class Transform3D;
 class Pose3D;
 }
 
@@ -52,7 +53,13 @@ public:
      */
     float bulletSpeed() const;
 
-    void setFireRequestForAllHardpoints(bool active, const glm::vec3 & direction);
+    void clearFireRequests();
+    void setFireRequestDirectionForAllHardpoints(const glm::vec3 & direction);
+    void setFireRequestTargetForAllHardpoints(
+        const Transform3D & equipmentTransform,
+        const glm::vec3 & equipmentVelocity,
+        const glm::vec3 & targetPosition,
+        const glm::vec3 & targetVelocity);
 
     void setWeapon(size_t slot, std::shared_ptr<Weapon> weapon);
     void setEngine(size_t slot, std::shared_ptr<Engine> engine);
