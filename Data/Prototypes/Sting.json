@@ -1,0 +1,33 @@
+[
+    {
+        "Component": "VoxelObject",
+        "VoxelCluster": "Sting",
+        "CrucialVoxel": [6, 24, 9]
+    },
+    
+    {
+        "Component": "RigidBody"
+    },
+    
+    {
+        "Component": "Equipment",
+        "Engines": [
+            {"Voxel": [6, 30, 3], "Orientation": [0, "PI", 0]}
+        ],
+        
+        "Hardpoints": [        
+            {"Voxel": [10, 16, 3], "Orientation": [0, 0, 0], "MaxAngle": 0.6 },
+            {"Voxel": [2, 16, 3], "Orientation": [0, 0, 0], "MaxAngle": 0.6 } 
+        ]
+    },
+    
+    {
+        "Component": "FlightControlConfig",
+        "Forward": [130.0 , 100.0],
+        "Backward": [20.0 , 60.0],
+        "Horizontal": [20.0 , 60.0],
+        "Vertical": [20.0, 60.0],
+        "Angular": [3.0, 2.0]
+    }    
+]
+

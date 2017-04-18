@@ -8,6 +8,7 @@
 #include "GameLib.h"
 
 class ComponentPrototype;
+struct EntityDesc;
 class EntityPrototype;
 
 class EntityPrototypeManager final
@@ -15,7 +16,7 @@ class EntityPrototypeManager final
 public:
     EntityPrototypeManager(World & world);
 
-    Entity createEntity(const std::vector<std::string> & prototypeNames, const std::string & entityName);
+    Entity createEntity(const EntityDesc & desc);
 
 private:
     template<typename T, typename ... Args>

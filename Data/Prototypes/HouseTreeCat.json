@@ -1,0 +1,11 @@
+[
+    {
+        "Component": "VoxelObject",
+        "VoxelCluster": "HouseTreeCat",
+        "Scale": 5
+    },
+    {
+        "Component": "RigidBody"
+    }
+]
+

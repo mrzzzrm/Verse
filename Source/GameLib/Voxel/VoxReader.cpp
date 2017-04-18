@@ -8,6 +8,8 @@
 #include <Deliberation/Core/IntTypes.h>
 #include <Deliberation/Core/StreamUtils.h>
 
+#define VERBOSE 1
+
 using namespace deliberation;
 
 namespace
@@ -47,6 +49,10 @@ VoxReader::Palette DEFAULT_PALETTE = {
 
 std::vector<VoxReader::VoxelModel> VoxReader::read(const std::string & path)
 {
+#if VERBOSE
+    std::cout << "VoxReader: Loading '" << path << "'" << std::endl;
+#endif
+
     std::ifstream file(path, std::ios_base::binary);
 
     Assert(file.is_open(), std::string("Couldn't open '") + path + "'");
@@ -114,11 +120,14 @@ std::vector<VoxReader::VoxelModel> VoxReader::read(const std::string & path)
     auto rgbaChunk = readChunkHeader(file);
     if (rgbaChunk.type == RGBA_CHUNK)
     {
+#if VERBOSE
+        std::cout << "VoxReader: Custom palette" << std::endl;
+#endif
         std::array<u8, 4> rgba;
-        for (u32 c = 0; c < 256; c++)
+        for (u32 c = 0; c < 255; c++)
         {
             file.read((char*)rgba.data(), rgba.size());
-            paletteInFile[c] = ((u32)rgba[0] << 0) | ((u32)rgba[1] << 8) | ((u32)rgba[2] << 16) | ((u32)rgba[3] << 24);
+            paletteInFile[c + 1] = ((u32)rgba[0] << 0) | ((u32)rgba[1] << 8) | ((u32)rgba[2] << 16) | ((u32)rgba[3] << 24);
         }
 
         palette = &paletteInFile;

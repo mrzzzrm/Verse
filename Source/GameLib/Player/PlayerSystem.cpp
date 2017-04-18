@@ -152,6 +152,8 @@ void PlayerSystem::onRender()
 
 void PlayerSystem::onMouseButtonDown(MouseButtonEvent & event)
 {
+    if (!m_player.isValid()) return;
+
     if (event.button() == MouseButton_Left)
     {
         const auto & mouse = event.mousePosition();

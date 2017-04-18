@@ -2,7 +2,7 @@
 
 #include "VoxReader.h"
 
-#define VERBOSE 1
+#define VERBOSE 0
 
 std::shared_ptr<VoxelObjectVoxelData> VoxelObjectVoxelData::fromFile(VoxReader & voxReader,
                                                                      VoxelWorld & voxelWorld,

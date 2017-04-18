@@ -3,16 +3,18 @@
 #include <fstream>
 
 #include <Deliberation/Core/Assert.h>
-#include <Player/PlayerFlightControl.h>
+#include <Deliberation/ECS/Components.h>
 
 #include "AllegiancePrototype.h"
 #include "CoriolisPrototype.h"
+#include "EntityDesc.h"
 #include "EntityPrototype.h"
 #include "EquipmentPrototype.h"
 #include "FlightControlConfigPrototype.h"
 #include "HudProxyPrototype.h"
 #include "NpcControllerPrototype.h"
 #include "PlayerFlightControlPrototype.h"
+#include "PlayerFlightControl.h"
 #include "RigidBodyPrototype.h"
 #include "VfxSystem.h"
 #include "VoxelObjectPrototype.h"
@@ -37,12 +39,13 @@ EntityPrototypeManager::EntityPrototypeManager(World & world):
     registerComponentLoader<HudProxyPrototype>("HudProxy");
 }
 
-Entity EntityPrototypeManager::createEntity(const std::vector<std::string> & prototypeNames,
-                                            const std::string & entityName)
+Entity EntityPrototypeManager::createEntity(const EntityDesc & desc)
 {
-    auto entity = m_world.createEntity(entityName);
+    std::cout << "Creating entity '" << desc.entityName << "'" << std::endl;
 
-    for (const auto & prototypeName : prototypeNames)
+    auto entity = m_world.createEntity(desc.entityName);
+
+    for (const auto & prototypeName : desc.prototypeNames)
     {
         {
             const auto iter = m_entityPrototypeByName.find(prototypeName);
@@ -82,6 +85,13 @@ Entity EntityPrototypeManager::createEntity(const std::vector<std::string> & pro
 
         m_entityPrototypeByName.emplace(prototypeName, entityPrototype);
         entityPrototype->applyToEntity(entity);
+    }
+
+    // Apply secondary EntityDesc settings
+    if (entity.hasComponent<RigidBodyComponent>())
+    {
+        auto & body = entity.component<RigidBodyComponent>().value();
+        body->transform().setPosition(desc.position);
     }
 
     return entity;

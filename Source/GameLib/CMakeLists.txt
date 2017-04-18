@@ -60,6 +60,8 @@ add_library(${target}
     Resource/ComponentPrototype.h
     Resource/CoriolisPrototype.cpp
     Resource/CoriolisPrototype.h
+    Resource/EntityDesc.cpp
+    Resource/EntityDesc.h
     Resource/EntityPrototype.cpp
     Resource/EntityPrototype.h
     Resource/EntityPrototypeManager.cpp

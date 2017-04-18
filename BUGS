@@ -1,0 +1,4 @@
+* Voxel might be removed twice when VoxelObject is split and impacted in the same frame
+* VoxelSplits appear in the wrong position during their first frame
+* Single voxel VoxelObjects somtimes can't be aimed at, Weapons miss
+* When splitting, remnants jump move around a bit

@@ -24,6 +24,7 @@
 #include <Voxel/VoxelClusterPrimitiveTest.h>
 
 #include "AimHelper.h"
+#include "EntityDesc.h"
 #include "Emitter.h"
 #include "Equipment.h"
 #include "EquipmentPrototype.h"
@@ -63,23 +64,19 @@ public:
         /**
          * Create player
          */
-        auto player = entityPrototypeManager.createEntity({"Ship", "Player"}, "PlayerShip");
-
-        player.component<VoxelObject>().setInvincible(true);
-
-        {
-            auto &playerBody = player.component<RigidBodyComponent>().value();
-            playerBody->transform().setPosition({0.0f, 20.0f, 50.0f});
-        }
+//        auto player = entityPrototypeManager.createEntity({{"Ship", "Player"}, "PlayerShip"});
+//
+//        player.component<VoxelObject>().setInvincible(true);
+//
+//        {
+//            auto &playerBody = player.component<RigidBodyComponent>().value();
+//            playerBody->transform().setPosition({0.0f, 20.0f, 50.0f});
+//        }
 
         /**
          * Create block
          */
-//        auto block = entityPrototypeManager.createEntity({"Block8x8x8"}, "Block");
-//        {
-//            auto &blockBody = player.component<RigidBodyComponent>().value();
-//            blockBody->transform().setPosition({0.0f, 20.0f, 150.0f});
-//        }
+//        entityPrototypeManager.createEntity({{"Block2x2x2"}, "Block"});
 
         /**
          * Create station
@@ -91,17 +88,24 @@ public:
         /**
          * Create asteroids
          */
-        for (auto i = 0; i < 30; i++) {
-            auto asteroid = entityPrototypeManager.createEntity({"Asteroid00"}, "MyAsteroid");
-            auto asteroidBody = asteroid.component<RigidBodyComponent>().value();
-            asteroidBody->transform().setPosition(RandomUnitVec3() * 250.0f);
-        }
+//        for (auto i = 0; i < 30; i++) {
+//            auto asteroid = entityPrototypeManager.createEntity({{"Asteroid00"}, "MyAsteroid"});
+//            auto asteroidBody = asteroid.component<RigidBodyComponent>().value();
+//            asteroidBody->transform().setPosition(RandomUnitVec3() * 250.0f);
+//        }
 
 //        for (auto i = 0; i < 15; i++) {
 //            auto asteroid = entityPrototypeManager.createEntity({"Asteroid01"}, "MyAsteroid");
 //            auto asteroidBody = asteroid.component<RigidBodyComponent>().value();
 //            asteroidBody->transform().setPosition(RandomUnitVec3() * 1250.0f);
 //        }
+
+        {
+            EntityDesc desc({"HouseTreeCat"});
+            desc.position = {0.0f, -200.0f, 0.0f};
+            entityPrototypeManager.createEntity(desc);
+        }
+
 
         /**
          * Create enemies

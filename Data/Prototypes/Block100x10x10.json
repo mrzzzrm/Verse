@@ -1,0 +1,14 @@
+[
+    {
+        "Component": "HudProxy"
+    },
+    {
+        "Component": "VoxelObject",
+        "VoxelCluster": "Block100x10x10",
+        "Scale": 1
+    },
+    {
+        "Component": "RigidBody"
+    }
+]
+
