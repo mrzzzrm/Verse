@@ -2,6 +2,8 @@
 
 #include <memory>
 
+#include <boost/optional.hpp>
+
 #include <Deliberation/Core/Math/Pose3D.h>
 
 #include <Deliberation/ECS/Component.h>
@@ -42,7 +44,7 @@ public:
     void setPose(const Pose3D & pose);
     void setScale(float scale);
     void setInvincible(bool invincible) { m_invincible = invincible; }
-    void setCrucialVoxel(const std::experimental::optional<glm::uvec3> & crucialVoxel);
+    void setCrucialVoxel(const boost::optional<glm::uvec3> & crucialVoxel);
 
     void setVoxelHealthPoints(const glm::uvec3 & voxel, float healthPoints);
 
@@ -61,6 +63,5 @@ private:
     Pose3D                      m_pose;
     std::shared_ptr<RigidBody>  m_body;
     bool                        m_invincible = false;
-    std::experimental::optional<glm::uvec3>
-                                m_crucialVoxel;
+    boost::optional<glm::uvec3> m_crucialVoxel;
 };

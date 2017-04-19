@@ -1,8 +1,8 @@
 #pragma once
 
-#include <glm/glm.hpp>
+#include <boost/optional.hpp>
 
-#include <Deliberation/Core/Experimental.h>
+#include <glm/glm.hpp>
 
 #include "GameLib.h"
 #include "Voxel.h"
@@ -46,7 +46,7 @@ public:
     void addVoxels(std::vector<Voxel> voxels);
     void removeVoxels(const std::vector<glm::uvec3> & voxels);
 
-    void setCrucialVoxel(const std::experimental::optional<glm::uvec3> & crucialVoxel);
+    void setCrucialVoxel(const boost::optional<glm::uvec3> & crucialVoxel);
 
     void operator=(const VoxelObjectVoxelData & prototype) = delete;
     void operator=(VoxelObjectVoxelData && prototype) = delete;
