@@ -22,7 +22,7 @@ class VoxelWorld;
 
 class VoxelRenderChunkTree final {
 public:
-    VoxelRenderChunkTree(const VoxelWorld & voxelWorld, const glm::uvec3 & size);
+    VoxelRenderChunkTree(VoxelWorld & voxelWorld, const glm::uvec3 & size);
 
     const glm::uvec3 & size() const { return m_size; }
 
@@ -68,7 +68,7 @@ private:
     bool isVoxelRenderedByNode(size_t index, const glm::uvec3 & voxel);
 
 protected:
-    const VoxelWorld &          m_voxelWorld;
+    VoxelWorld &                m_voxelWorld;
     glm::uvec3                  m_size;
     std::vector<Node>           m_nodes;
     std::vector<ChunkWrapper>   m_chunks;

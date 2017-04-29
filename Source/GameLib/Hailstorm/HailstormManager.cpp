@@ -6,15 +6,14 @@
 #include <Deliberation/ECS/Systems/PhysicsWorldSystem.h>
 #include <Deliberation/ECS/World.h>
 
+#include <Deliberation/Scene/Pipeline/RenderManager.h>
+
 #include "VoxelWorld.h"
 #include "ResourceManager.h"
 
-HailstormManager::HailstormManager(
-    World & world,
-    const Camera3D & camera
-):
+HailstormManager::HailstormManager(World & world):
     Base(world),
-    m_vfxManager(world.system<ApplicationSystem>().context(), camera, world.system<ResourceManager>()),
+    m_vfxManager(world.system<RenderManager>(), world.system<ResourceManager>()),
     m_hailstormPhysicsWorld(world.system<PhysicsWorldSystem>().physicsWorld(), world.system<VoxelWorld>())
 {
 
@@ -50,9 +49,4 @@ void HailstormManager::onUpdate(float seconds)
     {
         m_vfxManager.removeParticle(bullet.particleId);
     }
-}
-
-void HailstormManager::onRender()
-{
-    m_vfxManager.render();
 }

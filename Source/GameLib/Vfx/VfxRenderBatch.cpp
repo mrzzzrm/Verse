@@ -3,14 +3,15 @@
 #include <Deliberation/Core/Math/Pose3D.h>
 #include <Deliberation/Core/LayoutedBlobElement.h>
 
-#include <Deliberation/Draw/Context.h>
+#include <Deliberation/Draw/DrawContext.h>
 #include <Deliberation/Draw/TextureLoader.h>
 
 #include <Deliberation/Scene/Camera3D.h>
+#include <Deliberation/Scene/Pipeline/RenderManager.h>
 
 #include "VfxRenderer.h"
 
-VfxRenderBatch::VfxRenderBatch(VfxRenderer & renderer, const Mesh2 & mesh, VfxParticleOrientationType orientationType):
+VfxRenderBatch::VfxRenderBatch(VfxRenderer & renderer, const MeshData & mesh, VfxParticleOrientationType orientationType):
     m_renderer(renderer),
     m_orientationType(orientationType)
 {
@@ -45,9 +46,9 @@ VfxRenderBatch::VfxRenderBatch(VfxRenderer & renderer, const Mesh2 & mesh, VfxPa
         m_birthOrientations = m_instances.field<glm::vec4>("BirthOrientation");
     }
 
-    m_instanceBuffer = m_renderer.context().createBuffer(instanceDataLayout);
+    m_instanceBuffer = m_renderer.drawContext().createBuffer(instanceDataLayout);
 
-    m_draw = m_renderer.context().createDraw(m_renderer.program(), gl::GL_TRIANGLES);
+    m_draw = m_renderer.drawContext().createDraw(m_renderer.program(), gl::GL_TRIANGLES);
 
     const auto & vertexLayout = mesh.vertices().layout();
     Assert(vertexLayout.hasField("UV") == !mesh.textures().empty(), "");
@@ -60,7 +61,7 @@ VfxRenderBatch::VfxRenderBatch(VfxRenderer & renderer, const Mesh2 & mesh, VfxPa
         m_draw.setAttribute("UV", glm::vec2(0.0f, 0.0f));
 
         const auto dummyTextureBinary = TextureLoader({1, 1}, glm::vec3(1.0f, 1.0f, 1.0f)).load();
-        const auto dummyTexture = m_renderer.context().createTexture(dummyTextureBinary);
+        const auto dummyTexture = m_renderer.drawContext().createTexture(dummyTextureBinary);
 
         m_draw.sampler("Texture").setTexture(dummyTexture);
     }
@@ -175,7 +176,7 @@ void VfxRenderBatch::render()
 
     if (m_orientationType == VfxParticleOrientationType::ViewBillboard)
     {
-        auto cameraBasis = m_renderer.camera().pose().basis();
+        auto cameraBasis = m_renderer.renderManager().mainCamera().pose().basis();
         m_viewBillboardRotation.set(cameraBasis);
     }
 

@@ -24,9 +24,9 @@ class Hud:
     public InputLayer
 {
 public:
-    Hud(World & world, const Camera3D & camera);
+    Hud(World & world);
 
-    const Camera3D & camera() const { return m_camera; }
+    const std::vector<std::shared_ptr<HudLayer>> & layers() const;
 
     void setPlayerTarget(Entity & entity);
 
@@ -38,7 +38,6 @@ public:
 
 protected:
     void onUpdate(float seconds) override;
-    void onRender() override;
 
     void onMouseButtonClicked(MouseButtonEvent & event) override;
     void onMouseButtonDown(MouseButtonEvent & event) override;
@@ -48,7 +47,6 @@ private:
     void processMouseEvent(T & event, const std::function<void(HudElement & element)> & fn) const;
 
 private:
-    const Camera3D &                            m_camera;
     InputBase &                                 m_input;
     PlayerSystem &                              m_playerSystem;
     std::vector<std::shared_ptr<HudLayer>>      m_layers;

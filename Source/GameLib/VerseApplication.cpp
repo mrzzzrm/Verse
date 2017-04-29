@@ -35,10 +35,6 @@ void VerseApplication::onStartup()
     m_physicsWorld.narrowphase().contactDispatcher().
         registerContactType<VoxelClusterContact>((int)::CollisionShapeType::VoxelCluster);
 
-    m_camera.setPosition({0.0f, 0.0f, 0.0f});
-    m_camera.setOrientation(glm::quat({-1.0f, 0.0f, 0.0f}));
-    m_camera.setAspectRatio((float)context().backbuffer().width() / context().backbuffer().height());
-
     auto skyboxPaths = std::array<std::string, 6> {
         GameDataPath("Data/Skybox/Right.png"),
         GameDataPath("Data/Skybox/Left.png"),
@@ -49,31 +45,30 @@ void VerseApplication::onStartup()
     };
 
     auto skyboxCubemapBinary = TextureLoader(skyboxPaths).load();
-    m_skyboxCubemap = context().createTexture(skyboxCubemapBinary);
-
-    m_clear = context().createClear();
+    m_skyboxCubemap = drawContext().createTexture(skyboxCubemapBinary);
 
     m_world.addSystem<ApplicationSystem>(*this);
 
     if (m_systemInitMode == VerseApplicationSystemInitMode::AllSystems)
     {
-        m_world.addSystem<SkyboxSystem>(m_camera, m_skyboxCubemap);
+        m_world.addSystem<RenderManager>(drawContext());
+        m_world.addSystem<SkyboxSystem>(m_skyboxCubemap);
         m_world.addSystem<DebugGeometrySystem>();
         m_world.addSystem<ResourceManager>();
         m_world.addSystem<PhysicsWorldSystem>(m_physicsWorld);
         m_world.addSystem<VoxelClusterSplitSystem>();
-        m_world.addSystem<VoxelWorld>(m_camera, m_skyboxCubemap);
+        m_world.addSystem<VoxelWorld>(m_skyboxCubemap);
         m_world.addSystem<NpcControllerSystem>();
-        m_world.addSystem<HailstormManager>(m_camera);
-        m_world.addSystem<VfxSystem>(m_camera);
-        m_world.addSystem<DebugOverlay>(context());
+        m_world.addSystem<HailstormManager>();
+        m_world.addSystem<VfxSystem>();
+        m_world.addSystem<DebugOverlay>(drawContext());
         m_world.addSystem<CoriolisSystem>();
         m_world.addSystem<EquipmentSystem>();
-        m_world.addSystem<PlayerSystem>(m_camera);
+        m_world.addSystem<PlayerSystem>();
         m_world.addSystem<FactionManager>();
         m_world.addSystem<NpcBehaviourSystem>();
         m_world.addSystem<ImGuiSystem>();
-        m_world.addSystem<Hud>(m_camera);
+        m_world.addSystem<Hud>();
         m_world.addSystem<EntityPrototypeSystem>();
     }
 
@@ -103,10 +98,7 @@ void VerseApplication::onFrame(float seconds)
     m_world.update(seconds);
     onApplicationUpdate(seconds);
 
-    m_clear.render();
-
-    m_world.render();
-    onApplicationRender();
+    m_world.system<RenderManager>().render();
 
     m_world.frameComplete();
 }

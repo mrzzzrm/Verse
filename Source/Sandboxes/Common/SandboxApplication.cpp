@@ -23,7 +23,7 @@
 //
 //    m_camera.setPosition({0.0f, 200.0f, 300.0f});
 //    m_camera.setOrientation(glm::quat({-1.0f, 0.0f, 0.0f}));
-//    m_camera.setAspectRatio((float)context().backbuffer().width() / context().backbuffer().height());
+//    m_camera.setAspectRatio((float)drawContext().backbuffer().width() / drawContext().backbuffer().height());
 //
 //    m_navigator.reset(m_camera, input(), 150.0f);
 //
@@ -36,35 +36,35 @@
 //        deliberation::DeliberationDataPath("Data/Skybox/Cloudy/Front.png")
 //    };
 //
-//    auto faceTexture = context().createTexture(
+//    auto faceTexture = drawContext().createTexture(
 //        TextureLoader(deliberation::DeliberationDataPath("Data/Skybox/Debug/Right.png")).load());
 //
 //    auto skyboxCubemapBinary = TextureLoader(skyboxPaths).load();
-//    auto skyboxCubemap = context().createTexture(skyboxCubemapBinary);
+//    auto skyboxCubemap = drawContext().createTexture(skyboxCubemapBinary);
 //
-//    m_skyboxRenderer = std::make_shared<SkyboxRenderer>(context(), m_camera, skyboxCubemap);
+//    m_skyboxRenderer = std::make_shared<SkyboxRenderer>(drawContext(), m_camera, skyboxCubemap);
 //
-////    m_voxelWorld.reset(context(), m_physicsWorld, m_camera, skyboxCubemap);
+////    m_voxelWorld.reset(drawContext(), m_physicsWorld, m_camera, skyboxCubemap);
 //
-//    m_clear = context().createClear();
+//    m_clear = drawContext().createClear();
 //
-//    m_groundPlane.reset(context(), m_camera);
+//    m_groundPlane.reset(drawContext(), m_camera);
 //    m_groundPlane->setSize(1000.0f);
 //    m_groundPlane->setQuadSize(100.0f);
 //    m_groundPlane->setRadius(750.0f);
 //
-//    m_vfxManager.emplace(context(), m_camera, *m_voxelWorld);
+//    m_vfxManager.emplace(drawContext(), m_camera, *m_voxelWorld);
 //
 //    m_world.addSystem<ApplicationSystem>(*this);
 //    m_world.addSystem<PhysicsWorldSystem>(m_physicsWorld);
 //    //m_world.addSystem<VoxelWorld>(m_camera, );
 //    m_world.addSystem<NpcControllerSystem>();
-//    m_hailstormManager = m_world.addSystem<HailstormManager>(context(), m_camera, m_physicsWorld, *m_voxelWorld);
+//    m_hailstormManager = m_world.addSystem<HailstormManager>(drawContext(), m_camera, m_physicsWorld, *m_voxelWorld);
 //    m_world.addSystem<VoxelClusterSplitSystem>();
 //    m_world.addSystem<VfxSystem>(*m_vfxManager);
-//    //m_world.addSystem<NpcDebugRendererSystem>(context(), m_camera);
+//    //m_world.addSystem<NpcDebugRendererSystem>(drawContext(), m_camera);
 //
-//    m_debugGeometryManager.emplace(context());
+//    m_debugGeometryManager.emplace(drawContext());
 //
 //
 //    onSandboxStartup();

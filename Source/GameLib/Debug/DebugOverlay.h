@@ -19,7 +19,7 @@ class DebugOverlay:
     public System<DebugOverlay>
 {
 public:
-    DebugOverlay(World & world, Context & context);
+    DebugOverlay(World & world, DrawContext & context);
 
     void setFps(float fps);
 

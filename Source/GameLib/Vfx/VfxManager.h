@@ -16,8 +16,7 @@ class VfxManager final
 {
 public:
     VfxManager(
-        Context & context,
-        const Camera3D & camera,
+        RenderManager & renderManager,
         ResourceManager & resourceManager);
 
     VfxRenderer & renderer();
@@ -32,11 +31,10 @@ public:
     void removeEmitterInstance(std::shared_ptr<EmitterInstance> emitterInstance);
 
     void update(float seconds);
-    void render();
 
 private:
     ResourceManager &               m_resourceManager;
-    VfxRenderer                     m_renderer;
+    std::shared_ptr<VfxRenderer>    m_renderer;
 
     std::unordered_map<size_t, VfxMeshId>
                                     m_meshIdByResourceId;

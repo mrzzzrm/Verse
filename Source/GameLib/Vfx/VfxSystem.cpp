@@ -6,6 +6,8 @@
 #include <Deliberation/ECS/Systems/ApplicationSystem.h>
 #include <Deliberation/ECS/World.h>
 
+#include <Deliberation/Scene/Pipeline/RenderManager.h>
+
 #include "VoxelObjectBulletHit.h"
 #include "Emitter.h"
 #include "ResourceManager.h"
@@ -14,10 +16,9 @@
 #include "VoxelObjectModification.h"
 #include "VfxManager.h"
 
-VfxSystem::VfxSystem(World & world, const Camera3D & camera):
+VfxSystem::VfxSystem(World & world):
     Base(world),
-    m_vfxManager(world.system<ApplicationSystem>().context(),
-                 camera,
+    m_vfxManager(world.system<RenderManager>(),
                  world.system<ResourceManager>())
 {
     {
@@ -96,9 +97,4 @@ void VfxSystem::receive(const VoxelObjectBulletHit & hit)
 void VfxSystem::onUpdate(float seconds)
 {
     m_vfxManager.update(seconds);
-}
-
-void VfxSystem::onRender()
-{
-    m_vfxManager.render();
 }

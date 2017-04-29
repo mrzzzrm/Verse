@@ -14,7 +14,7 @@
 
 namespace deliberation
 {
-class Context;
+class DrawContext;
 class PhysicsWorld;
 class Camera3D;
 }
@@ -26,7 +26,7 @@ class HudEntityMarkers:
     public HudLayer
 {
 public:
-    HudEntityMarkers(Hud & hud, Context & context,
+    HudEntityMarkers(Hud & hud, DrawContext & context,
                      const PhysicsWorld & physicsWorld,
                      const Camera3D & camera);
 

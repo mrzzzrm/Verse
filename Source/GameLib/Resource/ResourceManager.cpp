@@ -6,15 +6,15 @@
 #include <Deliberation/ECS/Systems/ApplicationSystem.h>
 #include <Deliberation/ECS/World.h>
 
-#include <Deliberation/Draw/Context.h>
+#include <Deliberation/Draw/DrawContext.h>
 #include <Deliberation/Draw/TextureLoader.h>
 
 #include <Deliberation/Scene/UVSphere.h>
-#include <Deliberation/Scene/Mesh2.h>
+#include <Deliberation/Scene/MeshData.h>
 
 ResourceManager::ResourceManager(World & world):
     Base(world),
-    m_context(world.system<ApplicationSystem>().context())
+    m_drawContext(world.system<ApplicationSystem>().drawContext())
 {
     /**
     * Init base particle got nowhere else to put this right now
@@ -49,17 +49,17 @@ ResourceManager::ResourceManager(World & world):
         indices.assign({0, 1, 3, 1, 2, 3});
 
         const auto textureBinary = TextureLoader(GameDataPath("Data/Particles/BaseParticle.png")).load();
-        const auto texture = m_context.createTexture(textureBinary);
+        const auto texture = m_drawContext.createTexture(textureBinary);
 
-        Mesh2 mesh(std::move(vertices), std::move(indicesBlob), {texture});
-        m_meshByResourceId.emplace((size_t)R::ParticleMesh, std::make_shared<Mesh2>(mesh));
+        MeshData mesh(std::move(vertices), std::move(indicesBlob), {texture});
+        m_meshByResourceId.emplace((size_t)R::ParticleMesh, std::make_shared<MeshData>(mesh));
     }
 
     /**
      * Init bullet particle
      */
     {
-        auto mesh = std::make_shared<Mesh2>(UVSphere(5, 5).generateMesh2());
+        auto mesh = std::make_shared<MeshData>(UVSphere(5, 5).generateMesh2());
         m_meshByResourceId.emplace((size_t)R::BulletMesh, mesh);
     }
 
@@ -96,10 +96,10 @@ ResourceManager::ResourceManager(World & world):
         indices.assign({0, 1, 3, 1, 2, 3});
 
         const auto textureBinary = TextureLoader(GameDataPath("Data/Ui/Crosshairs.png")).load();
-        const auto texture = m_context.createTexture(textureBinary);
+        const auto texture = m_drawContext.createTexture(textureBinary);
 
-        Mesh2 mesh(std::move(vertices), std::move(indicesBlob), {texture});
-        m_meshByResourceId.emplace((size_t)R::UiCrosshairMesh, std::make_shared<Mesh2>(mesh));
+        MeshData mesh(std::move(vertices), std::move(indicesBlob), {texture});
+        m_meshByResourceId.emplace((size_t)R::UiCrosshairMesh, std::make_shared<MeshData>(mesh));
     }
 
     /**
@@ -135,24 +135,24 @@ ResourceManager::ResourceManager(World & world):
         indices.assign({0, 1, 3, 1, 2, 3});
 
         const auto textureBinary = TextureLoader(GameDataPath("Data/Ui/HudEntityMarkerUpperLeft.png")).load();
-        const auto texture = m_context.createTexture(textureBinary);
+        const auto texture = m_drawContext.createTexture(textureBinary);
 
-        Mesh2 mesh(std::move(vertices), std::move(indicesBlob), {texture});
-        m_meshByResourceId.emplace((size_t)R::HudEntityMarkerUpperLeft, std::make_shared<Mesh2>(mesh));
+        MeshData mesh(std::move(vertices), std::move(indicesBlob), {texture});
+        m_meshByResourceId.emplace((size_t)R::HudEntityMarkerUpperLeft, std::make_shared<MeshData>(mesh));
     }
 
 
-    auto & context = world.system<ApplicationSystem>().context();
+    auto & context = world.system<ApplicationSystem>().drawContext();
 
     {
-        auto program = m_context.createProgram({
+        auto program = m_drawContext.createProgram({
                                                 GameDataPath("Data/Shaders/HudElement.vert"),
                                                 GameDataPath("Data/Shaders/HudElement.frag")});
         m_programByResourceId.emplace((size_t)R::HudElement, program);
     }
 }
 
-const Mesh2 & ResourceManager::mesh(ResourceId resourceId) const
+const MeshData & ResourceManager::mesh(ResourceId resourceId) const
 {
     const auto iter = m_meshByResourceId.find((size_t)resourceId);
     Assert(iter != m_meshByResourceId.end(), "Couldn't find resource " + std::to_string((size_t)resourceId));

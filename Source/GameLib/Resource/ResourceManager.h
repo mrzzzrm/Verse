@@ -7,14 +7,14 @@
 
 #include <Deliberation/ECS/System.h>
 
-#include <Deliberation/Scene/Mesh2.h>
+#include <Deliberation/Scene/MeshData.h>
 
 #include "GameLib.h"
 #include "R.h"
 
 namespace deliberation
 {
-class Context;
+class DrawContext;
 }
 
 class ResourceManager:
@@ -23,12 +23,12 @@ class ResourceManager:
 public:
     ResourceManager(World & world);
 
-    const Mesh2 & mesh(ResourceId resourceId) const;
+    const MeshData & mesh(ResourceId resourceId) const;
     const Program & program(ResourceId resourceId) const;
 
 private:
-    Context &                                           m_context;
+    DrawContext &                                           m_drawContext;
 
-    std::unordered_map<size_t, std::shared_ptr<Mesh2>>  m_meshByResourceId;
+    std::unordered_map<size_t, std::shared_ptr<MeshData>>  m_meshByResourceId;
     std::unordered_map<size_t, Program>                 m_programByResourceId;
 };

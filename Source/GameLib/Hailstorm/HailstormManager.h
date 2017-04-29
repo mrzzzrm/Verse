@@ -16,9 +16,7 @@ class HailstormManager final:
     public System<HailstormManager>
 {
 public:
-    HailstormManager(
-        World & world,
-        const Camera3D & camera);
+    HailstormManager(World & world);
 
     VfxManager & vfxManager();
 
@@ -26,7 +24,6 @@ public:
 
 protected:
     void onUpdate(float seconds) override;
-    void onRender() override;
 
 private:
     VfxManager              m_vfxManager;

@@ -7,7 +7,7 @@
 #include <Deliberation/Core/StreamUtils.h>
 #include <Deliberation/Core/ScopeProfiler.h>
 
-VoxelRenderChunkTree::VoxelRenderChunkTree(const VoxelWorld & voxelWorld, const glm::uvec3 & size):
+VoxelRenderChunkTree::VoxelRenderChunkTree(VoxelWorld & voxelWorld, const glm::uvec3 & size):
     m_voxelWorld(voxelWorld),
     m_size(size)
 {

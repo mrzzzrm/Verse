@@ -101,7 +101,7 @@ public:
 //        }
 
         {
-            EntityDesc desc({"HouseTreeCat"});
+            EntityDesc desc({"Ship2"});
             desc.position = {0.0f, -200.0f, 0.0f};
             entityPrototypeManager.createEntity(desc);
         }

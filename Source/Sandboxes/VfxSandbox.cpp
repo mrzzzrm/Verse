@@ -40,7 +40,7 @@ public:
         m_world.addSystem<VfxSystem>(m_camera);
 
         m_navigator = std::make_shared<DebugCameraNavigator3D>(m_camera, input(), 1000.0f);
-//        m_ground = std::make_shared<DebugGroundPlaneRenderer>(context(), m_camera);
+//        m_ground = std::make_shared<DebugGroundPlaneRenderer>(drawContext(), m_camera);
 //        m_ground->setQuadSize(10.0f);
 //        m_ground->setRadius(80.0f);
 //        m_ground->setSize(10.0f);

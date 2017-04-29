@@ -1,13 +1,13 @@
 #include "HudEntityMarkersRenderer.h"
 
-#include <Deliberation/Draw/Context.h>
+#include <Deliberation/Draw/DrawContext.h>
 
 #include "HudButton.h"
 #include "R.h"
 #include "ResourceManager.h"
 
-HudEntityMarkersRenderer::HudEntityMarkersRenderer(Context & context, ResourceManager & resourceManager):
-    m_context(context)
+HudEntityMarkersRenderer::HudEntityMarkersRenderer(DrawContext & context, ResourceManager & resourceManager):
+    m_drawContext(context)
 {
     auto mesh = resourceManager.mesh(R::HudEntityMarkerUpperLeft);
     auto program = resourceManager.program(R::HudElement);
@@ -62,7 +62,7 @@ void HudEntityMarkersRenderer::render(const std::vector<std::shared_ptr<HudButto
     
     m_instanceBuffer.scheduleUpload(m_instances);
 
-    m_viewportSizeUniform.set(glm::vec2{m_context.backbuffer().width(), m_context.backbuffer().height()});
+    m_viewportSizeUniform.set(glm::vec2{m_drawContext.backbuffer().width(), m_drawContext.backbuffer().height()});
 
     m_draw.schedule();
 }

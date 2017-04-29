@@ -4,14 +4,14 @@
 
 #include <imgui.h>
 
-#include <Deliberation/Draw/Context.h>
+#include <Deliberation/Draw/DrawContext.h>
 #include <Deliberation/Draw/Framebuffer.h>
 
 #include <Deliberation/ECS/Systems/ApplicationSystem.h>
 
 #include "HailstormManager.h"
 
-DebugOverlay::DebugOverlay(World & world, Context & context):
+DebugOverlay::DebugOverlay(World & world, DrawContext & context):
     Base(world),
     m_application(world.system<ApplicationSystem>().application())
 {

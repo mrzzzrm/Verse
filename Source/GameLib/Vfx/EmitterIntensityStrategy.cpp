@@ -26,7 +26,7 @@ EmitterBurstIntensity::EmitterBurstIntensity(float mean, float standardDeviation
 
 float EmitterBurstIntensity::generateInterval(EmitterInstance & instance) const
 {
-    auto context = std::dynamic_pointer_cast<Context>(instance.intensityContext());
+    auto context = std::dynamic_pointer_cast<DrawContext>(instance.intensityContext());
 
     if (context->countdown > 0)
     {
@@ -41,7 +41,7 @@ float EmitterBurstIntensity::generateInterval(EmitterInstance & instance) const
 
 std::shared_ptr<EmitterIntensityContext> EmitterBurstIntensity::createContext() const
 {
-    auto context = std::make_shared<Context>();
+    auto context = std::make_shared<DrawContext>();
     context->countdown = (u32)m_dist(m_engine);
     return context;
 }

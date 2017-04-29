@@ -6,14 +6,18 @@
 
 #include <Deliberation/Core/Assert.h>
 
-#include <Deliberation/Draw/Context.h>
+#include <Deliberation/Draw/DrawContext.h>
+
+#include <Deliberation/ECS/World.h>
 
 #include <Deliberation/Scene/Camera3D.h>
+#include <Deliberation/Scene/Pipeline/RenderManager.h>
 
+#include "VoxelCluster.h"
 #include "VoxelClusterMarchingCubes.h"
 #include "VoxelWorld.h"
 
-VoxelRenderChunk::VoxelRenderChunk(const VoxelWorld & voxelWorld, const glm::uvec3 & size,
+VoxelRenderChunk::VoxelRenderChunk(VoxelWorld & voxelWorld, const glm::uvec3 & size,
                                    const glm::uvec3 & llfRender, const glm::uvec3 & urbRender,
                                    const Optional<glm::vec3> & colorOverride):
     m_cluster(size),
@@ -122,7 +126,7 @@ void VoxelRenderChunk::schedule(const Pose3D & pose, float scale) const
 
         if (!m_meshEmpty)
         {
-            m_draw = m_voxelWorld.context().createDraw(m_voxelWorld.program());
+            m_draw = m_voxelWorld.drawContext().createDraw(m_voxelWorld.program());
             m_draw.addVertices(std::move(vertices));
             //     m_draw.state().setCullState(CullState::disabled());
 
@@ -141,9 +145,11 @@ void VoxelRenderChunk::schedule(const Pose3D & pose, float scale) const
 
     if (m_meshEmpty) return;
 
-    m_viewProjectionUniform.set(m_voxelWorld.camera().viewProjection());
+    const auto & camera = m_voxelWorld.world().system<RenderManager>().mainCamera();
+
+    m_viewProjectionUniform.set(camera.viewProjection());
     m_transformUniform.set(pose.matrix());
     m_scaleUniform.set(scale);
-    m_cameraPositionUniform.set(m_voxelWorld.camera().position());
+    m_cameraPositionUniform.set(camera.position());
     m_draw.schedule();
 }

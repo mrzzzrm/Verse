@@ -4,7 +4,7 @@
 
 #include <Deliberation/Core/ScopeProfiler.h>
 
-#include <Deliberation/Draw/Context.h>
+#include <Deliberation/Draw/DrawContext.h>
 
 #include <Deliberation/ECS/Components.h>
 #include <Deliberation/ECS/Systems/ApplicationSystem.h>
@@ -14,29 +14,25 @@
 #include <Deliberation/Physics/PhysicsWorld.h>
 
 #include <Deliberation/Scene/Camera3D.h>
+#include <Deliberation/Scene/Pipeline/RenderManager.h>
 
 #include "VoxelClusterSplitSystem.h"
 #include "VoxelObjectModification.h"
 
-VoxelWorld::VoxelWorld(World & world, const Camera3D & camera, const Texture & envMap):
-    m_context(world.system<ApplicationSystem>().context()),
-    m_physicsWorld(world.system<PhysicsWorldSystem>().physicsWorld()),
-    m_camera(camera),
-    m_envMap(envMap),
-    Base(world, ComponentFilter::requires<VoxelObject>())
+VoxelWorld::VoxelWorld(World & world, const Texture & envMap):
+    Base(world, ComponentFilter::requires<VoxelObject>()),
+    m_drawContext(world.system<ApplicationSystem>().drawContext()),
+    m_envMap(envMap)
 {
-    m_program = m_context.createProgram({GameDataPath("Data/Shaders/Voxel.vert"),
+    m_renderer = world.system<RenderManager>().addRenderer<VoxelRenderer>(envMap);
+
+    m_program = m_drawContext.createProgram({GameDataPath("Data/Shaders/Voxel.vert"),
                                          GameDataPath("Data/Shaders/Voxel.frag")});
 }
 
-Context & VoxelWorld::context() const
+DrawContext & VoxelWorld::drawContext() const
 {
-    return m_context;
-}
-
-const Camera3D & VoxelWorld::camera() const
-{
-    return m_camera;
+    return m_drawContext;
 }
 
 const VoxelClusterMarchingCubesTriangulation & VoxelWorld::marchingCubesTriangulation() const
@@ -52,28 +48,6 @@ const Program & VoxelWorld::program() const
 const Texture & VoxelWorld::envMap() const
 {
     return m_envMap;
-}
-
-void VoxelWorld::addVoxelObject(std::shared_ptr<VoxelObject> voxelObject)
-{
-    VoxelObjectID id;
-    id.worldUID = m_uidIncrementor;
-
-    voxelObject->setId(id);
-    m_uidIncrementor++;
-
-    m_objects.emplace_back(voxelObject);
-
-    m_objectsByUID[id.worldUID] = voxelObject;
-}
-
-void VoxelWorld::removeVoxelObject(std::shared_ptr<VoxelObject> voxelObject)
-{
-    const auto iter = std::find(m_objects.begin(), m_objects.end(), voxelObject);
-    Assert(iter != m_objects.end(), "");
-
-    m_objectsByUID.erase((*iter)->id().worldUID);
-    m_objects.erase(iter);
 }
 
 void VoxelWorld::addVoxelObjectModification(VoxelObjectModification && voxelObjectModification)
@@ -105,20 +79,14 @@ void VoxelWorld::onCrucialVoxelDestroyed(VoxelObject & voxelObject)
 void VoxelWorld::onEntityAdded(Entity & entity)
 {
     auto & voxelObject = entity.component<VoxelObject>();
-    addVoxelObject(voxelObject.shared_from_this());
+    m_renderer->addVoxelObject(voxelObject.shared_from_this());
 }
 
 void VoxelWorld::onEntityRemoved(Entity & entity)
 {
     auto & voxelObject = entity.component<VoxelObject>();
-    removeVoxelObject(voxelObject.shared_from_this());
+    m_renderer->removeVoxelObject(voxelObject.shared_from_this());
 }
-
-void VoxelWorld::onRender()
-{
-    for (auto & object : m_objects) object->schedule();
-}
-
 void VoxelWorld::onEntityUpdate(Entity & entity, float seconds)
 {
     auto & voxelObject = entity.component<VoxelObject>();

@@ -10,7 +10,7 @@
 #include <Deliberation/Draw/Draw.h>
 #include <Deliberation/Draw/Program.h>
 
-#include <Deliberation/Scene/Mesh2.h>
+#include <Deliberation/Scene/MeshData.h>
 
 #include "VfxParticle.h"
 
@@ -21,7 +21,7 @@ class VfxRenderer;
 class VfxRenderBatch
 {
 public:
-    VfxRenderBatch(VfxRenderer & renderer, const Mesh2 & mesh, VfxParticleOrientationType orientationType);
+    VfxRenderBatch(VfxRenderer & renderer, const MeshData & mesh, VfxParticleOrientationType orientationType);
 
     size_t addInstance(const VfxParticle & particle);
     void removeInstance(size_t index);

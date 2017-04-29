@@ -6,24 +6,28 @@
 #include <Deliberation/ECS/Systems/PhysicsWorldSystem.h>
 #include <Deliberation/ECS/World.h>
 
+#include <Deliberation/Scene/Pipeline/RenderManager.h>
+
 #include "HudButton.h"
 #include "HudCrosshairs.h"
 #include "PlayerSystem.h"
 
-Hud::Hud(World & world, const Camera3D & camera):
+Hud::Hud(World & world):
     Base(world),
     InputLayer(1),
-    m_camera(camera),
     m_input(world.system<ApplicationSystem>().input()),
     m_playerSystem(world.system<PlayerSystem>())
 {
-    auto & context = world.system<ApplicationSystem>().context();
+    auto & context = world.system<ApplicationSystem>().drawContext();
     auto & physicsWorld = world.system<PhysicsWorldSystem>().physicsWorld();
 
     auto crosshairs = std::make_shared<HudCrosshairs>(*this);
 
+    auto & renderManager = world.system<RenderManager>();
+
     m_layers.emplace_back(crosshairs);
-    m_layers.emplace_back(std::make_shared<HudEntityMarkers>(*this, context, physicsWorld, camera));
+    m_layers.emplace_back(std::make_shared<HudEntityMarkers>(
+        *this, context, physicsWorld, renderManager.mainCamera()));
 
     addElement(crosshairs);
 }
@@ -51,14 +55,6 @@ void Hud::onUpdate(float seconds)
     for (auto & layer : m_layers)
     {
         layer->update(seconds);
-    }
-}
-
-void Hud::onRender()
-{
-    for (auto & layer : m_layers)
-    {
-        layer->render();
     }
 }
 

@@ -5,32 +5,31 @@
 
 #include <Deliberation/ECS/World.h>
 
-#include <Deliberation/Draw/Context.h>
+#include <Deliberation/Draw/DrawContext.h>
 #include <Deliberation/Draw/Texture.h>
 #include <Deliberation/Draw/TextureLoader.h>
+
+#include <Deliberation/Scene/Pipeline/RenderManager.h>
 
 #include "VoxelWorld.h"
 #include "ResourceManager.h"
 
-VfxManager::VfxManager(
-    Context & context,
-    const Camera3D & camera,
-    ResourceManager & resourceManager
+VfxManager::VfxManager(RenderManager & renderManager,
+                       ResourceManager & resourceManager
 ):
-    m_resourceManager(resourceManager),
-    m_renderer(context, camera)
+    m_resourceManager(resourceManager)
 {
-
+    m_renderer = renderManager.addRenderer<VfxRenderer>();
 }
 
 VfxRenderer & VfxManager::renderer()
 {
-    return m_renderer;
+    return *m_renderer;
 }
 
 const VfxRenderer & VfxManager::renderer() const
 {
-    return m_renderer;
+    return *m_renderer;
 }
 
 VfxMeshId VfxManager::getOrCreateMeshId(ResourceId resourceId)
@@ -39,7 +38,7 @@ VfxMeshId VfxManager::getOrCreateMeshId(ResourceId resourceId)
     if (iter == m_meshIdByResourceId.end())
     {
         const auto & mesh = m_resourceManager.mesh(resourceId);
-        const auto meshId = m_renderer.addMesh(mesh);
+        const auto meshId = m_renderer->addMesh(mesh);
 
         bool success;
         std::tie(iter, success) = m_meshIdByResourceId.emplace((size_t)resourceId, meshId);
@@ -51,12 +50,12 @@ VfxMeshId VfxManager::getOrCreateMeshId(ResourceId resourceId)
 
 VfxParticleId VfxManager::addParticle(VfxParticle particle)
 {
-    return m_renderer.addParticle(particle);
+    return m_renderer->addParticle(particle);
 }
 
 void VfxManager::removeParticle(VfxParticleId particle)
 {
-    m_renderer.removeParticle(particle);
+    m_renderer->removeParticle(particle);
 }
 
 void VfxManager::addEmitterInstance(std::shared_ptr<EmitterInstance> emitterInstance)
@@ -91,7 +90,3 @@ void VfxManager::update(float seconds)
     m_deadEmitterInstances.clear();
 }
 
-void VfxManager::render()
-{
-    m_renderer.render();
-}

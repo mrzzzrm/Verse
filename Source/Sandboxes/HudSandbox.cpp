@@ -31,7 +31,7 @@ public:
 
         auto resourceManager = m_world.addSystem<ResourceManager>();
 
-        m_hudEntityMarkersRenderer = std::make_shared<HudEntityMarkersRenderer>(context(), *resourceManager);
+        m_hudEntityMarkersRenderer = std::make_shared<HudEntityMarkersRenderer>(drawContext(), *resourceManager);
 
         {
             auto button = std::make_shared<HudButton>();

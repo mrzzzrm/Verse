@@ -42,7 +42,7 @@ class EmitterBurstIntensity:
     public EmitterIntensityStrategy
 {
 public:
-    struct Context:
+    struct DrawContext:
         public EmitterIntensityContext
     {
         u32 countdown = 0;

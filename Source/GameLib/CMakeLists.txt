@@ -28,6 +28,8 @@ add_library(${target}
     Hud/HudEntityMarkersRenderer.cpp
     Hud/HudEntityMarkersRenderer.h
     Hud/HudLayer.h
+    Hud/HudRenderer.cpp
+    Hud/HudRenderer.h
 
     Npc/NpcAttackTask.cpp
     Npc/NpcAttackTask.h
@@ -140,6 +142,8 @@ add_library(${target}
     Voxel/VoxelObjectPrimitives.h
     Voxel/VoxelObjectVoxelData.cpp
     Voxel/VoxelObjectVoxelData.h
+    Voxel/VoxelRenderer.cpp
+    Voxel/VoxelRenderer.h
     Voxel/VoxelRenderChunk.cpp
     Voxel/VoxelRenderChunk.h
     Voxel/VoxelRenderChunkTree.cpp

@@ -4,7 +4,7 @@
 #include <Deliberation/Core/Math/PrimitiveIntersection.h>
 #include <Deliberation/Core/StreamUtils.h>
 
-#include <Deliberation/Draw/Context.h>
+#include <Deliberation/Draw/DrawContext.h>
 #include <Deliberation/Draw/Program.h>
 
 #include <Deliberation/ECS/Components.h>
@@ -20,6 +20,7 @@
 #include <Deliberation/Platform/KeyMap.h>
 
 #include <Deliberation/Scene/Camera3D.h>
+#include <Deliberation/Scene/Pipeline/RenderManager.h>
 
 #include "AimHelper.h"
 #include "Equipment.h"
@@ -27,8 +28,7 @@
 #include "ResourceManager.h"
 #include "VoxelObject.h"
 
-PlayerSystem::PlayerSystem(World & world,
-                           Camera3D & camera):
+PlayerSystem::PlayerSystem(World & world):
     Base(world, ComponentFilter::requires<
         RigidBodyComponent,
         VoxelObject,
@@ -36,14 +36,11 @@ PlayerSystem::PlayerSystem(World & world,
         PlayerFlightControl,
         Equipment>()),
     InputLayer(0),
-    m_context(world.system<ApplicationSystem>().context()),
     m_input(world.system<ApplicationSystem>().input()),
     m_cameraMode(CameraMode::Normal),
-    m_camera(camera),
-    m_navigator(m_camera, m_input, 150.0f),
+    m_navigator(world.system<RenderManager>().mainCamera(), m_input, 150.0f),
     m_physicsWorld(world.system<PhysicsWorldSystem>().physicsWorld()),
-    m_cameraDolly(m_camera),
-    m_debugGeometryRenderer(world.system<DebugGeometrySystem>().manager())
+    m_cameraDolly(world.system<RenderManager>().mainCamera())
 {
 
 }
@@ -88,10 +85,6 @@ void PlayerSystem::onEntityUpdate(Entity & entity, float seconds)
 
         flightControl.setLinearThrust(m_linearThrust);
         flightControl.setAngularThrust(m_angularThrust);
-
-        if (m_input.mouseButtonPressed(MouseButton_Left)) {
-            m_leftMousePressedMillis = CurrentMillis();
-        }
 
         {
 //            AimHelper aimHelper(m_camera, m_physicsWorld);
@@ -145,11 +138,6 @@ void PlayerSystem::onPrePhysicsUpdate(float seconds)
     }
 }
 
-void PlayerSystem::onRender()
-{
-    m_debugGeometryRenderer.schedule(m_camera);
-}
-
 void PlayerSystem::onMouseButtonDown(MouseButtonEvent & event)
 {
     if (!m_player.isValid()) return;
@@ -164,7 +152,8 @@ void PlayerSystem::onMouseButtonDown(MouseButtonEvent & event)
 
     if (event.button() == MouseButton_Right)
     {
-        AimHelper aimHelper(m_camera, m_physicsWorld);
+        auto & renderManager = world().system<RenderManager>();
+        AimHelper aimHelper(renderManager.mainCamera(), m_physicsWorld);
 
         auto result = aimHelper.getTarget(m_input.mousePosition());
 

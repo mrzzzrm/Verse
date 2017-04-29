@@ -21,7 +21,7 @@ class VfxSystem final:
     public System<VfxSystem>
 {
 public:
-    VfxSystem(World & world, const Camera3D & camera);
+    VfxSystem(World & world);
 
     VfxManager & manager() { return m_vfxManager; }
     const VfxManager & manager() const { return m_vfxManager; }
@@ -31,7 +31,6 @@ public:
 
 protected:
     void onUpdate(float seconds) override;
-    void onRender() override;
 
 private:
     VfxManager                  m_vfxManager;

@@ -14,14 +14,14 @@
 namespace deliberation
 {
 class Camera3D;
-class Context;
+class DrawContext;
 }
 
 class NpcDebugRendererSystem:
     public System<NpcDebugRendererSystem>
 {
 public:
-    NpcDebugRendererSystem(World & world, Context & context, const Camera3D & camera);
+    NpcDebugRendererSystem(World & world, DrawContext & context, const Camera3D & camera);
 
 protected:
     void onEntityAdded(Entity & entity) override;

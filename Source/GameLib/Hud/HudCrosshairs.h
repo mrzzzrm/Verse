@@ -2,6 +2,7 @@
 
 #include <Deliberation/Draw/Draw.h>
 #include <Deliberation/Draw/Uniform.h>
+#include <Deliberation/Scene/Pipeline/RenderManager.h>
 
 #include "GameLib.h"
 #include "HudElement.h"
@@ -23,7 +24,8 @@ public:
 
 private:
     PlayerSystem &  m_playerSystem;
-    Context &       m_context;
+    RenderManager & m_renderManager;
+    DrawContext &   m_drawContext;
     Draw            m_draw;
     Uniform         m_viewportSizeUniform;
     Uniform         m_crosshairPositionUniform;

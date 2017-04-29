@@ -3,7 +3,7 @@
 #include <Deliberation/Core/Math/Trajectory.h>
 #include <Deliberation/Core/Math/PrimitiveIntersection.h>
 
-#include <Deliberation/Draw/Context.h>
+#include <Deliberation/Draw/DrawContext.h>
 
 #include <Deliberation/ECS/Components.h>
 #include <Deliberation/ECS/System.h>
@@ -11,6 +11,7 @@
 #include <Deliberation/ECS/World.h>
 
 #include <Deliberation/Scene/Camera3D.h>
+#include <Deliberation/Scene/Pipeline/RenderManager.h>
 
 #include "Equipment.h"
 #include "Hud.h"
@@ -22,14 +23,15 @@
 
 HudCrosshairs::HudCrosshairs(Hud & hud):
     HudLayer(hud),
-    m_context(hud.world().system<ApplicationSystem>().context()),
-    m_playerSystem(hud.world().system<PlayerSystem>()) 
+    m_drawContext(hud.world().system<ApplicationSystem>().drawContext()),
+    m_playerSystem(hud.world().system<PlayerSystem>()),
+    m_renderManager(hud.world().system<RenderManager>())
 {
     auto & resourceManager = hud.world().system<ResourceManager>();
     auto mesh = resourceManager.mesh(R::UiCrosshairMesh);
     auto program = resourceManager.program(R::HudElement);
 
-    m_draw = m_context.createDraw(program);
+    m_draw = m_drawContext.createDraw(program);
     m_draw.setIndices(mesh.indices());
     m_draw.addVertices(mesh.vertices());
     m_draw.sampler("Texture").setTexture(mesh.textures()[0]);
@@ -42,7 +44,7 @@ HudCrosshairs::HudCrosshairs(Hud & hud):
 
 void HudCrosshairs::update(float seconds) 
 {
-    const auto halfExtent = glm::vec2(32.0f) / glm::vec2(m_context.backbuffer().size());
+    const auto halfExtent = glm::vec2(32.0f) / glm::vec2(m_drawContext.backbuffer().size());
     setHalfExtent(halfExtent);
 
     auto & player = m_playerSystem.player();
@@ -65,8 +67,8 @@ void HudCrosshairs::update(float seconds)
             body.transform().position(), body.linearVelocity(),
             bulletSpeed, targetPosition, targetVelocity, success);
 
-        const auto ray = Ray3D(m_hud.camera().position(), m_trajectory);
-        const auto nearPlane = m_hud.camera().nearPlane();
+        const auto ray = Ray3D(m_renderManager.mainCamera().position(), m_trajectory);
+        const auto nearPlane = m_renderManager.mainCamera().nearPlane();
 
         bool hit;
         auto nearPlanePosition = Rect3DRay3DIntersectionPoint(nearPlane, ray, hit);
@@ -92,7 +94,7 @@ void HudCrosshairs::render()
 
     if (player.isValid() && playerTarget.isValid())
     {
-        m_viewportSizeUniform.set(glm::vec2{m_context.backbuffer().size()});
+        m_viewportSizeUniform.set(glm::vec2{m_drawContext.backbuffer().size()});
 
         if (visible())
         {

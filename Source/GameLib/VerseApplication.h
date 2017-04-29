@@ -76,13 +76,10 @@ protected:
     virtual void onApplicationStartup() {};
     virtual void onApplicationUpdate(float seconds) {};
     virtual void onApplicationPhysicsUpdate(float physicsSeconds) {};
-    virtual void onApplicationRender() {};
 
 protected:
     VerseApplicationSystemInitMode          m_systemInitMode;
 
-    Camera3D                                m_camera;
-    Clear                                   m_clear;
     PhysicsWorld                            m_physicsWorld;
     World                                   m_world;
 

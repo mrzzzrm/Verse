@@ -31,8 +31,7 @@ class PlayerSystem:
     public InputLayer
 {
 public:
-    PlayerSystem(World & world,
-                 Camera3D & camera);
+    PlayerSystem(World & world);
 
     Entity & player() { return m_player; }
     const Entity & player() const { return m_player; }
@@ -52,7 +51,6 @@ protected:
     void onUpdate(float seconds) override;
     void onPrePhysicsUpdate(float seconds) override;
     void onEntityPrePhysicsUpdate(Entity & entity, float seconds) override;
-    void onRender() override;
 
     void onMouseButtonDown(MouseButtonEvent & event) override;
 
@@ -65,16 +63,12 @@ private:
     };
 
 private:
-    Context &               m_context;
     InputBase &             m_input;
-    Camera3D &              m_camera;
     PhysicsWorld &          m_physicsWorld;
 
     CameraMode              m_cameraMode;
     DebugCameraNavigator3D  m_navigator;
     CameraDolly3D           m_cameraDolly;
-
-    TimestampMillis         m_leftMousePressedMillis = 0;
 
     Entity                  m_player;
     Entity                  m_playerTarget;
@@ -82,5 +76,5 @@ private:
     glm::vec3               m_linearThrust;
     glm::vec3               m_angularThrust;
 
-    DebugGeometryRenderer   m_debugGeometryRenderer;
+    //DebugGeometryRenderer   m_debugGeometryRenderer;
 };

@@ -1,6 +1,6 @@
 #include "HudEntityMarkers.h"
 
-#include <Deliberation/Draw/Context.h>
+#include <Deliberation/Draw/DrawContext.h>
 #include <Deliberation/ECS/World.h>
 
 #include <Deliberation/Physics/PhysicsWorld.h>
@@ -18,7 +18,7 @@
 #include "ResourceManager.h"
 
 HudEntityMarkers::HudEntityMarkers(Hud & hud,
-                                   Context & context,
+                                   DrawContext & context,
                                    const PhysicsWorld & physicsWorld,
                                    const Camera3D & camera):
     HudLayer(hud),

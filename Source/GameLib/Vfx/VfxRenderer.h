@@ -8,7 +8,8 @@
 #include <Deliberation/Draw/Buffer.h>
 #include <Deliberation/Draw/Program.h>
 
-#include <Deliberation/Scene/Mesh2.h>
+#include <Deliberation/Scene/MeshData.h>
+#include <Deliberation/Scene/Pipeline/Renderer.h>
 
 #include "VfxDefines.h"
 #include "VfxParticle.h"
@@ -20,36 +21,33 @@ namespace deliberation
 {
 
 class Camera3D;
-class Context;
+class DrawContext;
 
 }
 
-class VfxRenderer final
+class VfxRenderer:
+    public Renderer
 {
 public:
-    VfxRenderer(Context & context, const Camera3D & camera);
-
-    Context & context() const;
-    const Camera3D & camera() const;
+    VfxRenderer(RenderManager & renderManager);
 
     const Program & program();
     const Buffer & globalsBuffer() const;
 
-    VfxMeshId addMesh(const Mesh2 & mesh);
+    VfxMeshId addMesh(const MeshData & mesh);
 
     VfxParticleId addParticle(const VfxParticle & particle);
     void removeParticle(const VfxParticleId & particle);
 
-    void update(float seconds);
-    void render();
+    void registerRenderNodes() override;
+
+private:
+    friend class VfxAlphaRenderNode;
 
 private:
     size_t batchIndex(VfxMeshId meshId, VfxParticleOrientationType orientationType) const;
 
 private:
-    Context &           m_context;
-    const Camera3D &    m_camera;
-
     LinearMap<std::unique_ptr<VfxRenderBatch>>
                         m_batches;
     size_t              m_meshIdCounter = 0;

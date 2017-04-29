@@ -24,11 +24,11 @@ public:
 
     void onStartup() override
     {
-        m_voxelWorld.reset(context(), m_physicsWorld, m_camera);
+        m_voxelWorld.reset(drawContext(), m_physicsWorld, m_camera);
 
         m_camera.setPosition({0.0f, 0.0f, 10.0f});
         m_camera.setOrientation(glm::quat({-0.0f, 0.0f, 0.0f}));
-        m_camera.setAspectRatio((float)context().backbuffer().width() / context().backbuffer().height());
+        m_camera.setAspectRatio((float)drawContext().backbuffer().width() / drawContext().backbuffer().height());
 
         m_voxelData.reset(*m_voxelWorld, glm::uvec3(2, 1, 1));
 
@@ -55,7 +55,7 @@ public:
 
         m_navigator.reset(m_camera, input(), 25.0f);
 
-        m_clear = context().createClear();
+        m_clear = drawContext().createClear();
 
         m_object0->removeVoxels({glm::uvec3(0, 0, 0)});
     }
