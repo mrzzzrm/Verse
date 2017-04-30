@@ -24,7 +24,7 @@ HudEntityMarkers::HudEntityMarkers(Hud & hud,
     HudLayer(hud),
     m_physicsWorld(physicsWorld),
     m_camera(camera),
-    m_renderer(context, hud.world().system<ResourceManager>())
+    m_renderer(context, hud.world().systemRef<ResourceManager>())
 {
 }
 
@@ -36,8 +36,8 @@ void HudEntityMarkers::update(float seconds)
     }
     m_numVisibleMarkers = 0;
 
-    auto & playerSystem = m_hud.world().system<PlayerSystem>();
-    auto & factionManager = m_hud.world().system<FactionManager>();
+    auto & playerSystem = m_hud.world().systemRef<PlayerSystem>();
+    auto & factionManager = m_hud.world().systemRef<FactionManager>();
 
     const auto nearPlane = m_camera.nearPlane();
     const auto nearPlaneForward =  m_camera.orientation() * glm::vec3(0.0f, 0.0f, -1.0f);

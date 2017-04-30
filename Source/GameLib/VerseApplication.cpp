@@ -97,7 +97,7 @@ void VerseApplication::onFrame(float seconds)
     m_world.update(seconds);
     onApplicationUpdate(seconds);
 
-    m_world.system<RenderManager>().render();
+    m_world.systemRef<RenderSystem>().renderManager().render();
 
     m_world.frameComplete();
 }

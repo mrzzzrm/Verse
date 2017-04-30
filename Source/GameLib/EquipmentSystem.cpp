@@ -15,7 +15,7 @@ EquipmentSystem::EquipmentSystem(World & world):
 
 void EquipmentSystem::onEntityAdded(Entity & entity)
 {
-    auto & hailstorm = world().system<HailstormManager>();
+    auto & hailstorm = world().systemRef<HailstormManager>();
     auto & equipment = entity.component<Equipment>();
     auto & voxelObject = entity.component<VoxelObject>();
 

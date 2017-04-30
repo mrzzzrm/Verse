@@ -36,11 +36,11 @@ PlayerSystem::PlayerSystem(World & world):
         PlayerFlightControl,
         Equipment>()),
     InputLayer(0),
-    m_input(world.system<ApplicationSystem>().input()),
+    m_input(world.systemRef<ApplicationSystem>().input()),
     m_cameraMode(CameraMode::Normal),
-    m_navigator(world.system<RenderManager>().mainCamera(), m_input, 150.0f),
-    m_physicsWorld(world.system<PhysicsWorldSystem>().physicsWorld()),
-    m_cameraDolly(world.system<RenderManager>().mainCamera())
+    m_navigator(world.systemRef<RenderSystem>().renderManager().mainCamera(), m_input, 150.0f),
+    m_physicsWorld(world.systemRef<PhysicsWorldSystem>().physicsWorld()),
+    m_cameraDolly(world.systemRef<RenderSystem>().renderManager().mainCamera())
 {
 
 }
@@ -152,7 +152,7 @@ void PlayerSystem::onMouseButtonPressed(MouseButtonEvent & event)
 
     if (event.button() == MouseButton_Right)
     {
-        auto & renderManager = world().system<RenderManager>();
+        auto & renderManager = world().systemRef<RenderSystem>().renderManager();
         AimHelper aimHelper(renderManager.mainCamera(), m_physicsWorld);
 
         auto result = aimHelper.getTarget(m_input.mousePosition());

@@ -14,7 +14,7 @@
 
 ResourceManager::ResourceManager(World & world):
     Base(world),
-    m_drawContext(world.system<ApplicationSystem>().drawContext())
+    m_drawContext(world.systemRef<ApplicationSystem>().drawContext())
 {
     /**
     * Init base particle got nowhere else to put this right now
@@ -142,7 +142,7 @@ ResourceManager::ResourceManager(World & world):
     }
 
 
-    auto & context = world.system<ApplicationSystem>().drawContext();
+    auto & context = world.systemRef<ApplicationSystem>().drawContext();
 
     {
         auto program = m_drawContext.createProgram({

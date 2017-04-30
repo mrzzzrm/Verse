@@ -13,7 +13,7 @@
 
 DebugOverlay::DebugOverlay(World & world, DrawContext & context):
     Base(world),
-    m_application(world.system<ApplicationSystem>().application())
+    m_application(world.systemRef<ApplicationSystem>().application())
 {
 }
 

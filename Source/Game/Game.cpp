@@ -59,7 +59,7 @@ public:
         DisableGLErrorChecks();
         //EnableGLErrorChecksAndLogging();
 
-        auto & entityPrototypeManager = m_world.system<EntityPrototypeSystem>().manager();
+        auto & entityPrototypeManager = m_world.systemRef<EntityPrototypeSystem>()->manager();
 
         /**
          * Create player

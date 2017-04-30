@@ -13,8 +13,8 @@
 
 HailstormManager::HailstormManager(World & world):
     Base(world),
-    m_vfxManager(world.system<RenderManager>(), world.system<ResourceManager>()),
-    m_hailstormPhysicsWorld(world.system<PhysicsWorldSystem>().physicsWorld(), world.system<VoxelWorld>())
+    m_vfxManager(world.systemRef<RenderSystem>().renderManager(), world.systemRef<ResourceManager>()),
+    m_hailstormPhysicsWorld(world.systemRef<PhysicsWorldSystem>().physicsWorld(), world.systemRef<VoxelWorld>())
 {
 
 }

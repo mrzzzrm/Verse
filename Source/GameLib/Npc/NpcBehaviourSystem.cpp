@@ -27,7 +27,7 @@ void NpcBehaviourSystem::onEntityUpdate(Entity & entity, float seconds)
 
     if (!attackTask->target().isValid())
     {
-        const auto & factionManager = world().system<FactionManager>();
+        const auto & factionManager = world().systemRef<FactionManager>();
         const auto & playerFaction = factionManager.faction("Player");
 
         if (!playerFaction.empty())

@@ -18,8 +18,8 @@
 
 VfxSystem::VfxSystem(World & world):
     Base(world),
-    m_vfxManager(world.system<RenderManager>(),
-                 world.system<ResourceManager>())
+    m_vfxManager(world.systemRef<RenderSystem>().renderManager(),
+                 world.systemRef<ResourceManager>())
 {
     {
         auto lifetime = std::make_shared<EmitterRandomLifetime>(0.4, 0.8f);

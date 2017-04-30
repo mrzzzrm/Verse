@@ -29,7 +29,7 @@ void VoxelClusterSplitSystem::onEntityUpdate(Entity & entity, float seconds)
 
 void VoxelClusterSplitSystem::onUpdate(float seconds)
 {
-    auto & voxelWorld = world().system<VoxelWorld>();
+    auto & voxelWorld = world().systemRef<VoxelWorld>();
 
     for (auto & object : m_modifiedVoxelObjects)
     {

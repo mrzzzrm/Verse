@@ -21,10 +21,10 @@
 
 VoxelWorld::VoxelWorld(World & world, const Texture & envMap):
     Base(world, ComponentFilter::requires<VoxelObject>()),
-    m_drawContext(world.system<ApplicationSystem>().drawContext()),
+    m_drawContext(world.systemRef<ApplicationSystem>().drawContext()),
     m_envMap(envMap)
 {
-    m_renderer = world.system<RenderManager>().addRenderer<VoxelRenderer>(envMap);
+    m_renderer = world.systemRef<RenderSystem>().renderManager().addRenderer<VoxelRenderer>(envMap);
 
     m_program = m_drawContext.createProgram({GameDataPath("Data/Shaders/Voxel.vert"),
                                          GameDataPath("Data/Shaders/Voxel.frag")});
@@ -114,7 +114,7 @@ void VoxelWorld::onUpdate(float seconds)
     /**
      * Process VoxelObjectModifications
      */
-    auto & splitSystem = world().system<VoxelClusterSplitSystem>();
+    auto & splitSystem = world().systemRef<VoxelClusterSplitSystem>();
     for (const auto & modification : m_objectModifications)
     {
         splitSystem.onVoxelObjectModified(modification.object);

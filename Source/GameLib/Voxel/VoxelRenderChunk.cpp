@@ -12,6 +12,7 @@
 
 #include <Deliberation/Scene/Camera3D.h>
 #include <Deliberation/Scene/Pipeline/RenderManager.h>
+#include <Deliberation/Scene/Pipeline/RenderSystem.h>
 
 #include "VoxelCluster.h"
 #include "VoxelClusterMarchingCubes.h"
@@ -131,7 +132,7 @@ void VoxelRenderChunk::schedule(const Pose3D & pose, float scale) const
             //     m_draw.state().setCullState(CullState::disabled());
 
             m_draw.sampler("Environment").setTexture(m_voxelWorld.envMap());
-            m_draw.setFramebuffer(m_voxelWorld.world().system<RenderManager>().gbuffer());
+            m_draw.setFramebuffer(m_voxelWorld.world().systemRef<RenderSystem>().renderManager().gbuffer());
 
             m_transformUniform = m_draw.uniform("Transform");
             m_viewUniform = m_draw.uniform("View");
@@ -146,7 +147,7 @@ void VoxelRenderChunk::schedule(const Pose3D & pose, float scale) const
 
     if (m_meshEmpty) return;
 
-    const auto & camera = m_voxelWorld.world().system<RenderManager>().mainCamera();
+    const auto & camera = m_voxelWorld.world().systemRef<RenderSystem>().renderManager().mainCamera();
 
     m_viewUniform.set(camera.view());
     m_projectionUniform.set(camera.projection());

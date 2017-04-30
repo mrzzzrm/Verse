@@ -56,8 +56,8 @@ public:
             auto size = std::make_shared<EmitterSizeOverLifetime>(3.0f, 7.0f);
 
             m_emitterSmoke = std::make_shared<Emitter>(
-                m_world.system<VfxSystem>().manager(),
-                m_world.system<VfxSystem>().manager().getOrCreateMeshId(R::ParticleMesh),
+                m_world.systemRef<VfxSystem>().manager(),
+                m_world.systemRef<VfxSystem>().manager().getOrCreateMeshId(R::ParticleMesh),
                 velocity,
                 rotation,
                 placement,
@@ -100,7 +100,7 @@ public:
 
             m_instances.emplace_back(emitterInstance);
 
-            m_world.system<VfxSystem>().manager().addEmitterInstance(emitterInstance);
+            m_world.systemRef<VfxSystem>().manager().addEmitterInstance(emitterInstance);
         }
 //        for (int i = 0; i < 10; i++)
 //        {

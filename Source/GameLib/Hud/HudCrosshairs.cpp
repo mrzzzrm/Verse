@@ -23,11 +23,11 @@
 
 HudCrosshairs::HudCrosshairs(Hud & hud):
     HudLayer(hud),
-    m_drawContext(hud.world().system<ApplicationSystem>().drawContext()),
-    m_playerSystem(hud.world().system<PlayerSystem>()),
-    m_renderManager(hud.world().system<RenderManager>())
+    m_drawContext(hud.world().systemRef<ApplicationSystem>().drawContext()),
+    m_playerSystem(hud.world().systemRef<PlayerSystem>()),
+    m_renderManager(hud.world().systemRef<RenderSystem>().renderManager())
 {
-    auto & resourceManager = hud.world().system<ResourceManager>();
+    auto & resourceManager = hud.world().systemRef<ResourceManager>();
     auto mesh = resourceManager.mesh(R::UiCrosshairMesh);
     auto program = resourceManager.program(R::HudElement);
 

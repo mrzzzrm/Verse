@@ -23,8 +23,8 @@
 EntityPrototypeManager::EntityPrototypeManager(World & world):
     m_world(world)
 {
-    auto & voxelWorld = m_world.system<VoxelWorld>();
-    auto & vfxManager = m_world.system<VfxSystem>().manager();
+    auto & voxelWorld = m_world.systemRef<VoxelWorld>();
+    auto & vfxManager = m_world.systemRef<VfxSystem>().manager();
 
     registerComponentLoader<VoxelObjectPrototype>("VoxelObject", voxelWorld);
     registerComponentLoader<RigidBodyPrototype>("RigidBody");
