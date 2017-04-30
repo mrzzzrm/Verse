@@ -131,10 +131,11 @@ void VoxelRenderChunk::schedule(const Pose3D & pose, float scale) const
             //     m_draw.state().setCullState(CullState::disabled());
 
             m_draw.sampler("Environment").setTexture(m_voxelWorld.envMap());
+            m_draw.setFramebuffer(m_voxelWorld.world().system<RenderManager>().gbuffer());
 
-            m_cameraPositionUniform = m_draw.uniform("CameraPosition");
             m_transformUniform = m_draw.uniform("Transform");
-            m_viewProjectionUniform = m_draw.uniform("ViewProjection");
+            m_viewUniform = m_draw.uniform("View");
+            m_projectionUniform = m_draw.uniform("Projection");
             m_scaleUniform = m_draw.uniform("Scale");
 
             m_drawDirty = false;
@@ -147,9 +148,9 @@ void VoxelRenderChunk::schedule(const Pose3D & pose, float scale) const
 
     const auto & camera = m_voxelWorld.world().system<RenderManager>().mainCamera();
 
-    m_viewProjectionUniform.set(camera.viewProjection());
+    m_viewUniform.set(camera.view());
+    m_projectionUniform.set(camera.projection());
     m_transformUniform.set(pose.matrix());
     m_scaleUniform.set(scale);
-    m_cameraPositionUniform.set(camera.position());
     m_draw.schedule();
 }

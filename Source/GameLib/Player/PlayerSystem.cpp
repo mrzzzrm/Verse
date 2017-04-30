@@ -75,13 +75,13 @@ void PlayerSystem::onEntityUpdate(Entity & entity, float seconds)
     auto &flightControl = entity.component<PlayerFlightControl>();
 
     if (m_cameraMode == CameraMode::Normal) {
-        if (m_input.keyDown(Key_W)) m_linearThrust += glm::vec3(0.0f, 0.0f, -1.0f);
-        if (m_input.keyDown(Key_S)) m_linearThrust += glm::vec3(0.0f, 0.0f, 1.0f);
-        if (m_input.keyDown(Key_D)) m_linearThrust += glm::vec3(1.0f, 0.0f, 0.0f);
-        if (m_input.keyDown(Key_A)) m_linearThrust += glm::vec3(-1.0f, 0.0f, 0.0f);
+        if (m_input.keyPressed(Key_W)) m_linearThrust += glm::vec3(0.0f, 0.0f, -1.0f);
+        if (m_input.keyPressed(Key_S)) m_linearThrust += glm::vec3(0.0f, 0.0f, 1.0f);
+        if (m_input.keyPressed(Key_D)) m_linearThrust += glm::vec3(1.0f, 0.0f, 0.0f);
+        if (m_input.keyPressed(Key_A)) m_linearThrust += glm::vec3(-1.0f, 0.0f, 0.0f);
 
-        if (m_input.keyDown(Key_Q)) m_angularThrust.z = 1;
-        if (m_input.keyDown(Key_E)) m_angularThrust.z = -1;
+        if (m_input.keyPressed(Key_Q)) m_angularThrust.z = 1;
+        if (m_input.keyPressed(Key_E)) m_angularThrust.z = -1;
 
         flightControl.setLinearThrust(m_linearThrust);
         flightControl.setAngularThrust(m_angularThrust);
@@ -124,21 +124,21 @@ void PlayerSystem::onEntityPrePhysicsUpdate(Entity & entity, float seconds)
 
 void PlayerSystem::onUpdate(float seconds)
 {
-    if (m_input.keyPressed(Key_C))
-    {
-        m_cameraMode = (CameraMode)(((int)m_cameraMode + 1) % (int)CameraMode::Count);
-    }
-}
-
-void PlayerSystem::onPrePhysicsUpdate(float seconds)
-{
     if (m_cameraMode == CameraMode::FreeFlight)
     {
         m_navigator.update(seconds);
     }
 }
 
-void PlayerSystem::onMouseButtonDown(MouseButtonEvent & event)
+void PlayerSystem::onKeyPressed(KeyEvent & event)
+{
+    if (event.key() == Key_C)
+    {
+        m_cameraMode = (CameraMode)(((int)m_cameraMode + 1) % (int)CameraMode::Count);
+    }
+}
+
+void PlayerSystem::onMouseButtonPressed(MouseButtonEvent & event)
 {
     if (!m_player.isValid()) return;
 
@@ -169,5 +169,13 @@ void PlayerSystem::onMouseButtonDown(MouseButtonEvent & event)
             body.linearVelocity(),
             result.pointOfImpact,
             glm::vec3(0.0f));
+    }
+}
+
+void PlayerSystem::onMouseMotion(MouseMotionEvent &event)
+{
+    if (m_cameraMode == CameraMode::FreeFlight)
+    {
+        m_navigator.onMouseMotion(event);
     }
 }

@@ -26,7 +26,6 @@ public:
 protected:
     void onEntityAdded(Entity & entity) override;
     void onEntityRemoved(Entity & entity) override;
-    void onRender() override;
 
 private:
     std::vector<Entity>     m_entities;

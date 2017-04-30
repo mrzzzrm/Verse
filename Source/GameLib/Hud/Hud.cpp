@@ -10,6 +10,7 @@
 
 #include "HudButton.h"
 #include "HudCrosshairs.h"
+#include "HudRenderer.h"
 #include "PlayerSystem.h"
 
 Hud::Hud(World & world):
@@ -24,6 +25,8 @@ Hud::Hud(World & world):
     auto crosshairs = std::make_shared<HudCrosshairs>(*this);
 
     auto & renderManager = world.system<RenderManager>();
+
+    renderManager.addRenderer<HudRenderer>(*this);
 
     m_layers.emplace_back(crosshairs);
     m_layers.emplace_back(std::make_shared<HudEntityMarkers>(
@@ -65,10 +68,10 @@ void Hud::onMouseButtonClicked(MouseButtonEvent & event)
     });
 }
 
-void Hud::onMouseButtonDown(MouseButtonEvent & event)
+void Hud::onMouseButtonPressed(MouseButtonEvent & event)
 {
     processMouseEvent(event, [&] (HudElement & element) {
-        element.onMouseButtonDown(event);
+        element.onMouseButtonPressed(event);
     });
 }
 

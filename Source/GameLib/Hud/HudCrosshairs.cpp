@@ -104,7 +104,7 @@ void HudCrosshairs::render()
     }  
 }
 
-void HudCrosshairs::onMouseButtonDown(MouseButtonEvent & event)
+void HudCrosshairs::onMouseButtonPressed(MouseButtonEvent & event)
 {
     if (event.button() != MouseButton_Right) return;
 

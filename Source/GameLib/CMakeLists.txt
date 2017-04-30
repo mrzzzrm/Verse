@@ -182,6 +182,8 @@ add_library(${target}
     GameLib.h
     VerseApplication.cpp
     VerseApplication.h
+    VerseRenderManager.cpp
+    VerseRenderManager.h
     Weapon.cpp
     Weapon.h
     )

@@ -19,7 +19,7 @@
 
 namespace deliberation
 {
-class InputBase;
+class Input;
 class Camera3D;
 class PhysicsWorld;
 class World;
@@ -49,10 +49,11 @@ protected:
     void onEntityRemoved(Entity & entity) override;
     void onEntityUpdate(Entity & entity, float seconds) override;
     void onUpdate(float seconds) override;
-    void onPrePhysicsUpdate(float seconds) override;
     void onEntityPrePhysicsUpdate(Entity & entity, float seconds) override;
 
-    void onMouseButtonDown(MouseButtonEvent & event) override;
+    void onMouseButtonPressed(MouseButtonEvent & event) override;
+    void onMouseMotion(MouseMotionEvent & event) override;
+    void onKeyPressed(KeyEvent & event) override;
 
 private:
     enum class CameraMode
@@ -63,7 +64,7 @@ private:
     };
 
 private:
-    InputBase &             m_input;
+    Input &             m_input;
     PhysicsWorld &          m_physicsWorld;
 
     CameraMode              m_cameraMode;

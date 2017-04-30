@@ -20,7 +20,7 @@ public:
     void update(float seconds) override;
     void render() override;
 
-    void onMouseButtonDown(MouseButtonEvent & event) override;
+    void onMouseButtonPressed(MouseButtonEvent & event) override;
 
 private:
     PlayerSystem &  m_playerSystem;

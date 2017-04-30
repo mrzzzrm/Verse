@@ -18,6 +18,7 @@
 #include "ResourceManager.h"
 #include "CoriolisSystem.h"
 #include "VfxSystem.h"
+#include "VerseRenderManager.h"
 #include "VoxelClusterSplitSystem.h"
 
 VerseApplication::VerseApplication(const std::string & name, VerseApplicationSystemInitMode systemInitMode):
@@ -51,7 +52,7 @@ void VerseApplication::onStartup()
 
     if (m_systemInitMode == VerseApplicationSystemInitMode::AllSystems)
     {
-        m_world.addSystem<RenderManager>(drawContext());
+        m_world.addSystem<VerseRenderManager>(drawContext());
         m_world.addSystem<SkyboxSystem>(m_skyboxCubemap);
         m_world.addSystem<DebugGeometrySystem>();
         m_world.addSystem<ResourceManager>();
@@ -78,8 +79,6 @@ void VerseApplication::onStartup()
 void VerseApplication::onFrame(float seconds)
 {
     m_world.frameBegin();
-
-    input().processInput();
 
     auto physicsSimulationSeconds = m_physicsWorld.nextSimulationStepSeconds(seconds);
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Deliberation/Core/InputBase.h>
+#include <Deliberation/Platform/Input.h>
 
 #include <Deliberation/ECS/System.h>
 
@@ -26,7 +26,7 @@ class Hud:
 public:
     Hud(World & world);
 
-    const std::vector<std::shared_ptr<HudLayer>> & layers() const;
+    const std::vector<std::shared_ptr<HudLayer>> & layers() const { return m_layers; }
 
     void setPlayerTarget(Entity & entity);
 
@@ -40,14 +40,14 @@ protected:
     void onUpdate(float seconds) override;
 
     void onMouseButtonClicked(MouseButtonEvent & event) override;
-    void onMouseButtonDown(MouseButtonEvent & event) override;
+    void onMouseButtonPressed(MouseButtonEvent & event) override;
 
 private:
     template<typename T>
     void processMouseEvent(T & event, const std::function<void(HudElement & element)> & fn) const;
 
 private:
-    InputBase &                                 m_input;
+    Input &                                 m_input;
     PlayerSystem &                              m_playerSystem;
     std::vector<std::shared_ptr<HudLayer>>      m_layers;
     std::vector<std::shared_ptr<HudElement>>    m_elements;

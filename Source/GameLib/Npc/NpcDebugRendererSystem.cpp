@@ -26,16 +26,16 @@ void NpcDebugRendererSystem::onEntityRemoved(Entity & entity)
     std::remove(m_entities.begin(), m_entities.end(), entity);
 }
 
-void NpcDebugRendererSystem::onRender()
-{
-    for (size_t e = 0; e < m_entities.size(); e++)
-    {
-        auto & npcController = m_entities[e].component<NpcController>();
-//        auto position = npcController.body()->transform().position();
-
-//        m_geometryRenderer.arrow(e).setOrigin(position);
-//        m_geometryRenderer.arrow(e).setDelta(npcController.steering().destination() - position);
-    }
-
-//    m_geometryRenderer.schedule(m_camera);
-}
+//void NpcDebugRendererSystem::onRender()
+//{
+//    for (size_t e = 0; e < m_entities.size(); e++)
+//    {
+//        auto & npcController = m_entities[e].component<NpcController>();
+////        auto position = npcController.body()->transform().position();
+//
+////        m_geometryRenderer.arrow(e).setOrigin(position);
+////        m_geometryRenderer.arrow(e).setDelta(npcController.steering().destination() - position);
+//    }
+//
+////    m_geometryRenderer.schedule(m_camera);
+//}
