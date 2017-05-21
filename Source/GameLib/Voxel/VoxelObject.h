@@ -46,6 +46,7 @@ public:
     void setInvincible(bool invincible) { m_invincible = invincible; }
     void setCrucialVoxel(const boost::optional<glm::uvec3> & crucialVoxel);
 
+    void setVoxelColor(const glm::uvec3 & voxel, const glm::vec3 & color);
     void setVoxelHealthPoints(const glm::uvec3 & voxel, float healthPoints);
 
     void addVoxels(const std::vector<Voxel> & voxels);

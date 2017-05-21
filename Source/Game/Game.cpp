@@ -59,7 +59,7 @@ public:
         DisableGLErrorChecks();
         //EnableGLErrorChecksAndLogging();
 
-        auto & entityPrototypeManager = m_world.systemRef<EntityPrototypeSystem>()->manager();
+        auto & entityPrototypeManager = m_world.systemRef<EntityPrototypeSystem>().manager();
 
         /**
          * Create player
@@ -101,9 +101,10 @@ public:
 //        }
 
         {
-            EntityDesc desc({"Ship2"});
-            desc.position = {0.0f, -200.0f, 0.0f};
-            entityPrototypeManager.createEntity(desc);
+            EntityDesc desc({"Block2x2x2"});
+            desc.position = {0.0f, 0.0f, -200.0f};
+            auto entity = entityPrototypeManager.createEntity(desc);
+            entity.component<VoxelObject>().setVoxelColor(glm::uvec3(0,0,0), glm::vec3(5.0f, 3.0f, 7.0f));
         }
 
 

@@ -5,20 +5,20 @@
 #include <Deliberation/Core/Math/Pose3D.h>
 
 #include "GameLib.h"
-#include "ItemSlot.h"
+#include "Attachment.h"
 #include "Weapon.h"
 
 class EquipmentUpdateContext;
 class Weapon;
 
 struct HardpointDesc:
-    ItemSlotDesc
+    AttachmentDesc
 {
     float maxAngle = 0.0f;
 };
 
 class Hardpoint final:
-    public ItemSlot
+    public Attachment
 {
 public:
     Hardpoint(const HardpointDesc & desc);

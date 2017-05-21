@@ -21,6 +21,7 @@
 
 #include <Deliberation/Scene/Camera3D.h>
 #include <Deliberation/Scene/Pipeline/RenderManager.h>
+#include <Deliberation/Scene/Pipeline/RenderSystem.h>
 
 #include "AimHelper.h"
 #include "Equipment.h"

@@ -92,6 +92,13 @@ void VoxelRenderChunk::removeVoxel(const glm::uvec3 & voxel, bool visible)
     m_voxelCount--;
 }
 
+void VoxelRenderChunk::invalidateVoxel(const glm::uvec3 & voxel)
+{
+    m_llfDirty = glm::min(m_llfDirty, voxel);
+    m_urbDirty = glm::max(m_urbDirty, voxel);
+    m_drawDirty = true;
+}
+
 void VoxelRenderChunk::updateVoxelVisibility(const glm::uvec3 & voxel, bool visible)
 {
     if (visible)
@@ -153,5 +160,5 @@ void VoxelRenderChunk::schedule(const Pose3D & pose, float scale) const
     m_projectionUniform.set(camera.projection());
     m_transformUniform.set(pose.matrix());
     m_scaleUniform.set(scale);
-    m_draw.schedule();
+    m_draw.render();
 }

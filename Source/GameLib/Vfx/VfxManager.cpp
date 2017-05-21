@@ -7,9 +7,9 @@
 
 #include <Deliberation/Draw/DrawContext.h>
 #include <Deliberation/Draw/Texture.h>
-#include <Deliberation/Draw/TextureLoader.h>
 
 #include <Deliberation/Scene/Pipeline/RenderManager.h>
+#include <Deliberation/Scene/Texture/TextureLoader.h>
 
 #include "VoxelWorld.h"
 #include "ResourceManager.h"

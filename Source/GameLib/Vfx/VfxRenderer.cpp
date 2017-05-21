@@ -24,7 +24,7 @@ public:
         m_renderer.m_viewProjectionGlobal[0] = m_renderManager.mainCamera().viewProjection();
         m_renderer.m_timeGlobal[0] = CurrentMillis();
 
-        m_renderer.m_globalsBuffer.scheduleUpload(m_renderer.m_globals);
+        m_renderer.m_globalsBuffer.upload(m_renderer.m_globals);
 
         for (auto & batch : m_renderer.m_batches) batch.second->render();
     }

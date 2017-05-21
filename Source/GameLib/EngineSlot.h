@@ -4,14 +4,14 @@
 
 #include "Engine.h"
 #include "GameLib.h"
-#include "ItemSlot.h"
+#include "Attachment.h"
 
 struct EngineSlotDesc:
-    ItemSlotDesc
+    AttachmentDesc
 {};
 
 class EngineSlot:
-    public ItemSlot
+    public Attachment
 {
 public:
     EngineSlot(const EngineSlotDesc & desc);

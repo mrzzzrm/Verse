@@ -11,8 +11,6 @@
 #include <Deliberation/Core/Math/FloatUtils.h>
 #include <Deliberation/Core/Math/Random.h>
 
-#include <Deliberation/Draw/TextureLoader.h>
-
 #include <Deliberation/ECS/Entity.h>
 #include <Deliberation/ECS/Systems/PhysicsWorldSystem.h>
 #include <Deliberation/ECS/World.h>
@@ -30,6 +28,7 @@
 #include <Deliberation/Scene/Debug/DebugGeometryManager.h>
 #include <Deliberation/Scene/Debug/DebugGeometryRenderer.h>
 #include <Deliberation/Scene/Debug/DebugGroundPlaneRenderer.h>
+#include <Deliberation/Scene/Texture/TextureLoader.h>
 #include <Npc/NpcDebugRendererSystem.h>
 
 #include "AimHelper.h"

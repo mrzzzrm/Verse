@@ -40,6 +40,7 @@ public:
     const glm::vec3 & voxelColor(const glm::uvec3 & voxel) const;
     float voxelHealthPoints(const glm::uvec3 & voxel) const;
 
+    void setVoxelColor(const glm::uvec3 & voxel, const glm::vec3 & color);
     void setVoxelHealthPoints(const glm::uvec3 & voxel, float healthPoints);
     void setScale(float scale);
 

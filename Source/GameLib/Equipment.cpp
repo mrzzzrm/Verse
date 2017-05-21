@@ -10,22 +10,9 @@
 #include "Weapon.h"
 
 Equipment::Equipment(VfxManager & vfxManager, const EquipmentDesc & desc):
-    m_vfxManager(vfxManager)
+    m_vfxManager(vfxManager),
+    m_desc(desc)
 {
-    for (const auto & hardpointDesc : desc.hardpointDescs)
-    {
-        auto hardpoint = std::make_shared<Hardpoint>(hardpointDesc);
-        m_hardpoints.emplace_back(hardpoint);
-        m_itemSlotByVoxel.emplace(hardpoint->voxel(), hardpoint);
-    }
-
-    for (const auto & engineSlotDesc : desc.engineSlotDescs)
-    {
-        auto engineSlot = std::make_shared<EngineSlot>(engineSlotDesc);
-        engineSlot->setVfxManager(m_vfxManager);
-        m_engineSlots.emplace_back(engineSlot);
-        m_itemSlotByVoxel.emplace(engineSlot->voxel(), engineSlot);
-    }
 }
 
 const std::vector<std::shared_ptr<Hardpoint>> & Equipment::hardpoints() const
@@ -64,7 +51,6 @@ void Equipment::setFireRequestDirectionForAllHardpoints(const glm::vec3 & direct
 {
     for (auto & hardpoint : m_hardpoints) hardpoint->setFireRequest(direction);
 }
-
 
 void Equipment::setFireRequestTargetForAllHardpoints(
     const Transform3D & equipmentTransform,
@@ -116,19 +102,55 @@ void Equipment::setEngine(size_t slot, std::shared_ptr<Engine> engine)
     }
 }
 
+void Equipment::addAttachment(const std::shared_ptr<Attachment> & attachment)
+{
+    m_attachmentByVoxel.emplace(attachment->voxel(), attachment);
+    attachment->setEntity(Entity(*(World*)m_world, entityId()));
+    attachment->setEnabled(true);
+}
+
 void Equipment::update(float seconds, const EquipmentUpdateContext & context)
 {
     for (auto & hardpoint : m_hardpoints) hardpoint->update(seconds, context);
     for (auto & engineSlot : m_engineSlots) engineSlot->setTargetPose(context.targetPose);
+
+    for (auto & pair : m_attachmentByVoxel)
+    {
+        pair.second->onUpdate(seconds);
+    }
 }
 
 void Equipment::receive(const VoxelObjectModification & modification)
 {
     for (const auto & voxel : modification.removals)
     {
-        auto it = m_itemSlotByVoxel.find(voxel);
-        if (it == m_itemSlotByVoxel.end()) continue;
+        auto it = m_attachmentByVoxel.find(voxel);
+        if (it == m_attachmentByVoxel.end()) continue;
 
         it->second->setEnabled(false);
+    }
+}
+
+void Equipment::onAttachedToEntity()
+{
+    for (const auto & hardpointDesc : m_desc.hardpointDescs)
+    {
+        auto hardpoint = std::make_shared<Hardpoint>(hardpointDesc);
+        m_hardpoints.emplace_back(hardpoint);
+        m_attachmentByVoxel.emplace(hardpoint->voxel(), hardpoint);
+    }
+
+    for (const auto & engineSlotDesc : m_desc.engineSlotDescs)
+    {
+        auto engineSlot = std::make_shared<EngineSlot>(engineSlotDesc);
+        engineSlot->setVfxManager(m_vfxManager);
+        m_engineSlots.emplace_back(engineSlot);
+        m_attachmentByVoxel.emplace(engineSlot->voxel(), engineSlot);
+    }
+
+    for (const auto & voxelLightDesc : m_desc.voxelLightDescs)
+    {
+        auto voxelLight = std::make_shared<VoxelLight>(voxelLightDesc);
+        addAttachment(voxelLight);
     }
 }

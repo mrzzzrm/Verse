@@ -27,6 +27,16 @@ EquipmentPrototype::EquipmentPrototype(const Json & json, VfxManager & vfxManage
 
         m_desc.hardpointDescs.emplace_back(desc);
     }
+
+    for (const auto & obj : json["VoxelLights"])
+    {
+        VoxelLightDesc desc;
+        loadSlotDesc(obj, desc);
+
+        desc.intensity = obj["Intensity"];
+
+        m_desc.voxelLightDescs.emplace_back(desc);
+    }
 }
 
 void EquipmentPrototype::applyToEntity(Entity & entity) const
@@ -34,7 +44,7 @@ void EquipmentPrototype::applyToEntity(Entity & entity) const
     auto & equipment = entity.addComponent<Equipment>(m_vfxManager, m_desc);
 }
 
-void EquipmentPrototype::loadSlotDesc(const Json & obj, ItemSlotDesc & slot) const
+void EquipmentPrototype::loadSlotDesc(const Json & obj, AttachmentDesc & slot) const
 {
     slot.voxel = obj["Voxel"];
     std::swap(slot.voxel.y, slot.voxel.z);

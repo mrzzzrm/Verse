@@ -84,6 +84,12 @@ const glm::vec3 & VoxelObjectVoxelData::voxelColor(const glm::uvec3 & voxel) con
     return m_colors.getRef(voxel);
 }
 
+void VoxelObjectVoxelData::setVoxelColor(const glm::uvec3 & voxel, const glm::vec3 & color)
+{
+    m_colors.set(voxel, color);
+    m_renderTree.invalidateVoxel(voxel);
+}
+
 float VoxelObjectVoxelData::voxelHealthPoints(const glm::uvec3 & voxel) const
 {
     return m_healthPoints.getRef(voxel);

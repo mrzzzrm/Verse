@@ -31,6 +31,7 @@ public:
     void addVoxel(const Voxel & voxel, bool visible);
     void removeVoxel(const glm::uvec3 & voxel, bool visible);
     void updateVoxelVisibility(const glm::uvec3 & voxel, bool visible);
+    void invalidateVoxel(const glm::uvec3 & voxel);
 
     void schedule(const Pose3D & pose) const;
 
@@ -63,6 +64,7 @@ protected:
 private:
     void addVoxelToNode(u32 index, const Voxel & voxel, bool visible);
     void removeVoxelFromNode(u32 index, const glm::uvec3 & voxel, bool visible);
+    void invalidateVoxel(size_t index, const glm::uvec3 & voxel);
     void updateVoxelVisibilityInNode(size_t index, const glm::uvec3 & voxel, bool visible);
     bool isVoxelInNode(size_t index, const glm::uvec3 & voxel);
     bool isVoxelRenderedByNode(size_t index, const glm::uvec3 & voxel);

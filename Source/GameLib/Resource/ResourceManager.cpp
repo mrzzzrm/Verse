@@ -7,10 +7,10 @@
 #include <Deliberation/ECS/World.h>
 
 #include <Deliberation/Draw/DrawContext.h>
-#include <Deliberation/Draw/TextureLoader.h>
 
 #include <Deliberation/Scene/UVSphere.h>
 #include <Deliberation/Scene/MeshData.h>
+#include <Deliberation/Scene/Texture/TextureLoader.h>
 
 ResourceManager::ResourceManager(World & world):
     Base(world),

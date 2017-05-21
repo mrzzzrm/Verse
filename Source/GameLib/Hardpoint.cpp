@@ -6,7 +6,7 @@
 #include "Equipment.h"
 
 Hardpoint::Hardpoint(const HardpointDesc & desc):
-    ItemSlot(desc),
+    Attachment(desc),
     m_maxAngle(desc.maxAngle)
 {}
 

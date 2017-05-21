@@ -15,6 +15,7 @@
 
 #include <Deliberation/Scene/Camera3D.h>
 #include <Deliberation/Scene/Pipeline/RenderManager.h>
+#include <Deliberation/Scene/Pipeline/RenderSystem.h>
 
 #include "VoxelClusterSplitSystem.h"
 #include "VoxelObjectModification.h"

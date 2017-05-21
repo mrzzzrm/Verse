@@ -11,7 +11,7 @@ class VerseRenderManager:
     public RenderManager
 {
 public:
-    VerseRenderManager(World & world, DrawContext & drawContext);
+    VerseRenderManager(DrawContext & drawContext);
 
 private:
     std::shared_ptr<AmbientLightRenderer>   m_ambientLightRenderer;

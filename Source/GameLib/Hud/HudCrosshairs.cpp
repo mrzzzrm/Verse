@@ -12,6 +12,7 @@
 
 #include <Deliberation/Scene/Camera3D.h>
 #include <Deliberation/Scene/Pipeline/RenderManager.h>
+#include <Deliberation/Scene/Pipeline/RenderSystem.h>
 
 #include "Equipment.h"
 #include "Hud.h"
@@ -38,7 +39,7 @@ HudCrosshairs::HudCrosshairs(Hud & hud):
     m_draw.setAttribute("Flip", glm::vec2(1.0f));
     m_draw.setAttribute("ElementColor", glm::vec3(0.5f, 0.4f, 1.0f));
     m_draw.state().setDepthState(DepthState::disabledR());
-    m_draw.state().setBlendState({gl::GL_FUNC_ADD, gl::GL_SRC_ALPHA, gl::GL_ONE_MINUS_SRC_ALPHA});
+    m_draw.state().setBlendState({BlendEquation::Add, BlendFactor::SourceAlpha, BlendFactor::OneMinusSourceAlpha});
     m_viewportSizeUniform = m_draw.uniform("ViewportSize");
 }
 
@@ -99,7 +100,7 @@ void HudCrosshairs::render()
         if (visible())
         {
             m_draw.setAttribute("ElementPosition", position());
-            m_draw.schedule();
+            m_draw.render();
         }
     }  
 }

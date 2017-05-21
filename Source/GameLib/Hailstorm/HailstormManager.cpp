@@ -7,6 +7,7 @@
 #include <Deliberation/ECS/World.h>
 
 #include <Deliberation/Scene/Pipeline/RenderManager.h>
+#include <Deliberation/Scene/Pipeline/RenderSystem.h>
 
 #include "VoxelWorld.h"
 #include "ResourceManager.h"

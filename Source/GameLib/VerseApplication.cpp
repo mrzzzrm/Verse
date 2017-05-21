@@ -1,6 +1,8 @@
 #include "VerseApplication.h"
 
-#include <Deliberation/Draw/TextureLoader.h>
+#include <Deliberation/Scene/Texture/TextureLoader.h>
+#include <Deliberation/Scene/Effects/BloomRenderer.h>
+#include <Deliberation/Scene/Lighting/PointLightRenderer.h>
 
 #include <Deliberation/ECS/Systems/ApplicationSystem.h>
 #include <Deliberation/ECS/Systems/DebugGeometrySystem.h>
@@ -52,7 +54,8 @@ void VerseApplication::onStartup()
 
     if (m_systemInitMode == VerseApplicationSystemInitMode::AllSystems)
     {
-        m_world.addSystem<VerseRenderManager>(drawContext());
+        m_world.addSystem<RenderSystem>();
+        m_world.addSystem<PointLightSystem>();
         m_world.addSystem<SkyboxSystem>(m_skyboxCubemap);
         m_world.addSystem<DebugGeometrySystem>();
         m_world.addSystem<ResourceManager>();
@@ -71,6 +74,12 @@ void VerseApplication::onStartup()
         m_world.addSystem<ImGuiSystem>();
         m_world.addSystem<Hud>();
         m_world.addSystem<EntityPrototypeSystem>();
+
+        auto & renderManager = m_world.systemRef<RenderSystem>().renderManager();
+        renderManager.addRenderer<AmbientLightRenderer>();
+        renderManager.addRenderer<BloomRenderer>();
+        renderManager.addRenderer<SsaoRenderer>();
+        renderManager.addRenderer<HdrRenderer>();
     }
 
     onApplicationStartup();

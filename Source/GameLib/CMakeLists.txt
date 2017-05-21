@@ -176,14 +176,16 @@ add_library(${target}
     FlightControlConfig.h
     Hardpoint.cpp
     Hardpoint.h
-    ItemSlot.cpp
-    ItemSlot.h
+    Attachment.cpp
+    Attachment.h
     GameLib.cpp
     GameLib.h
     VerseApplication.cpp
     VerseApplication.h
     VerseRenderManager.cpp
     VerseRenderManager.h
+    VoxelLight.cpp
+    VoxelLight.h
     Weapon.cpp
     Weapon.h
     )

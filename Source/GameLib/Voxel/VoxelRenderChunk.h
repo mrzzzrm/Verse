@@ -24,6 +24,7 @@ public:
 
     void addVoxel(const Voxel & voxel, bool visible);
     void removeVoxel(const glm::uvec3 & voxel, bool visible);
+    void invalidateVoxel(const glm::uvec3 & voxel);
     void updateVoxelVisibility(const glm::uvec3 & voxel, bool visible);
 
     std::shared_ptr<VoxelRenderChunk> clone();

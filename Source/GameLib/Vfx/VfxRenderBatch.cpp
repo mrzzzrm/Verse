@@ -4,10 +4,10 @@
 #include <Deliberation/Core/LayoutedBlobElement.h>
 
 #include <Deliberation/Draw/DrawContext.h>
-#include <Deliberation/Draw/TextureLoader.h>
 
 #include <Deliberation/Scene/Camera3D.h>
 #include <Deliberation/Scene/Pipeline/RenderManager.h>
+#include <Deliberation/Scene/Texture/TextureLoader.h>
 
 #include "VfxRenderer.h"
 
@@ -48,7 +48,7 @@ VfxRenderBatch::VfxRenderBatch(VfxRenderer & renderer, const MeshData & mesh, Vf
 
     m_instanceBuffer = m_renderer.drawContext().createBuffer(instanceDataLayout);
 
-    m_draw = m_renderer.drawContext().createDraw(m_renderer.program(), gl::GL_TRIANGLES);
+    m_draw = m_renderer.drawContext().createDraw(m_renderer.program());
 
     const auto & vertexLayout = mesh.vertices().layout();
     Assert(vertexLayout.hasField("UV") == !mesh.textures().empty(), "");
@@ -95,7 +95,7 @@ VfxRenderBatch::VfxRenderBatch(VfxRenderer & renderer, const MeshData & mesh, Vf
     m_draw.setIndices(mesh.indices());
     m_draw.addInstanceBuffer(m_instanceBuffer, 1);
     m_draw.setUniformBuffer("Globals", m_renderer.globalsBuffer());
-    m_draw.state().setBlendState({gl::GL_FUNC_ADD, gl::GL_SRC_ALPHA, gl::GL_ONE_MINUS_SRC_ALPHA});
+    m_draw.state().setBlendState({BlendEquation::Add, BlendFactor::SourceAlpha, BlendFactor::OneMinusSourceAlpha});
     m_draw.state().setDepthState(DepthState::disabledW());
 }
 
@@ -151,7 +151,7 @@ void VfxRenderBatch::removeInstance(size_t index)
 
     m_lifetimes[index] = 0;
     m_births[index] = 0;
-    m_instanceBuffer.scheduleUpload(m_instances);
+    m_instanceBuffer.upload(m_instances);
 
     m_freeInstanceSlots.push(index);
 }
@@ -180,7 +180,7 @@ void VfxRenderBatch::render()
         m_viewBillboardRotation.set(cameraBasis);
     }
 
-    m_draw.schedule();
+    m_draw.render();
 }
 
 void VfxRenderBatch::addInstanceInSlot(const VfxParticle & particle, size_t index)
@@ -206,7 +206,7 @@ void VfxRenderBatch::addInstanceInSlot(const VfxParticle & particle, size_t inde
         m_birthOrientations[index] = birthOrientation;
     }
 
-    m_instanceBuffer.scheduleUpload(m_instances);
+    m_instanceBuffer.upload(m_instances);
     m_deathQueue.emplace(particle.birth + particle.lifetime, index);
 }
 

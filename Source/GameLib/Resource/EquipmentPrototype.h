@@ -12,7 +12,7 @@
 #include "ComponentPrototype.h"
 #include "Equipment.h"
 #include "GameLib.h"
-#include "ItemSlot.h"
+#include "Attachment.h"
 
 class VfxManager;
 
@@ -25,7 +25,7 @@ public:
     void applyToEntity(Entity & entity) const override;
 
 private:
-    void loadSlotDesc(const Json & obj, ItemSlotDesc & slot) const;
+    void loadSlotDesc(const Json & obj, AttachmentDesc & slot) const;
 
 private:
     VfxManager &    m_vfxManager;

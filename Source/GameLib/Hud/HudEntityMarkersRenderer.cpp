@@ -26,7 +26,7 @@ HudEntityMarkersRenderer::HudEntityMarkersRenderer(DrawContext & context, Resour
     m_draw.sampler("Texture").setTexture(mesh.textures()[0]);
     m_draw.state().setDepthState(DepthState::disabledR());
     m_draw.state().setCullState(CullState::disabled());
-    m_draw.state().setBlendState({gl::GL_FUNC_ADD, gl::GL_SRC_ALPHA, gl::GL_ONE_MINUS_SRC_ALPHA});
+    m_draw.state().setBlendState({BlendEquation::Add, BlendFactor::SourceAlpha, BlendFactor::OneMinusSourceAlpha});
     m_viewportSizeUniform = m_draw.uniform("ViewportSize");
 }
 
@@ -60,9 +60,9 @@ void HudEntityMarkersRenderer::render(const std::vector<std::shared_ptr<HudButto
         flips.put({1, -1});
     }
     
-    m_instanceBuffer.scheduleUpload(m_instances);
+    m_instanceBuffer.upload(m_instances);
 
     m_viewportSizeUniform.set(glm::vec2{m_drawContext.backbuffer().width(), m_drawContext.backbuffer().height()});
 
-    m_draw.schedule();
+    m_draw.render();
 }

@@ -22,6 +22,11 @@
         "Hardpoints": [        
             {"Voxel": [3, 6, 4], "Orientation": [0, 0, 0], "MaxAngle": 0.6 },
             {"Voxel": [20, 6, 4], "Orientation": [0, 0, 0], "MaxAngle": 0.6 } 
+        ],
+        
+        "VoxelLights": [
+            {"Voxel": [5, 0, 11], "Orientation": [0, 0, 0], "Intensity": 5},
+            {"Voxel": [15, 0, 11], "Orientation": [0, 0, 0], "Intensity": 5}
         ]
     },
     

@@ -14,6 +14,7 @@
 #include "Hardpoint.h"
 #include "EngineSlot.h"
 #include "GameLib.h"
+#include "VoxelLight.h"
 #include "VoxelObjectModification.h"
 
 namespace deliberation
@@ -35,8 +36,9 @@ struct EquipmentUpdateContext
 
 struct EquipmentDesc
 {
-    std::vector<HardpointDesc> hardpointDescs;
+    std::vector<HardpointDesc>  hardpointDescs;
     std::vector<EngineSlotDesc> engineSlotDescs;
+    std::vector<VoxelLightDesc> voxelLightDescs;
 };
 
 class Equipment final:
@@ -64,15 +66,20 @@ public:
     void setWeapon(size_t slot, std::shared_ptr<Weapon> weapon);
     void setEngine(size_t slot, std::shared_ptr<Engine> engine);
 
+    void addAttachment(const std::shared_ptr<Attachment> & attachment);
+
     void update(float seconds, const EquipmentUpdateContext & context);
 
     void receive(const VoxelObjectModification & modification);
 
+    void onAttachedToEntity() override;
+
 private:
+    EquipmentDesc                               m_desc;
     VfxManager &                                m_vfxManager;
     std::vector<std::shared_ptr<Hardpoint>>     m_hardpoints;
     std::vector<std::shared_ptr<EngineSlot>>    m_engineSlots;
 
-    std::unordered_map<glm::uvec3, std::shared_ptr<ItemSlot>>
-                                                m_itemSlotByVoxel;
+    std::unordered_map<glm::uvec3, std::shared_ptr<Attachment>>
+                                                m_attachmentByVoxel;
 };

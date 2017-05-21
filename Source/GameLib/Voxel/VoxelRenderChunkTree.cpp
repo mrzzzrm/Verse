@@ -112,6 +112,11 @@ void VoxelRenderChunkTree::updateVoxelVisibility(const glm::uvec3 & voxel, bool 
     updateVoxelVisibilityInNode(0, voxel, visible);
 }
 
+void VoxelRenderChunkTree::invalidateVoxel(const glm::uvec3 & voxel)
+{
+    invalidateVoxel(0, voxel);
+}
+
 void VoxelRenderChunkTree::schedule(const Pose3D & pose) const
 {
     //ScopeProfiler scopeProfiler("VoxelRenderChunkTree::schedule()");
@@ -220,6 +225,23 @@ void VoxelRenderChunkTree::removeVoxelFromNode(u32 index, const glm::uvec3 & vox
     {
         removeVoxelFromNode(index * 2 + 1, voxel, visible);
         removeVoxelFromNode(index * 2 + 2, voxel, visible);
+    }
+}
+
+void VoxelRenderChunkTree::invalidateVoxel(size_t index, const glm::uvec3 & voxel)
+{
+    if (!isVoxelInNode(index, voxel)) return;
+
+    auto & node = m_nodes[index];
+
+    if (node.leaf)
+    {
+        m_chunks[node.chunk].chunk->invalidateVoxel(voxel - glm::uvec3(node.llf));
+    }
+    else
+    {
+        invalidateVoxel(index * 2 + 1, voxel);
+        invalidateVoxel(index * 2 + 2, voxel);
     }
 }
 

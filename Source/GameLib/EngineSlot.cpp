@@ -4,7 +4,7 @@
 #include "VfxManager.h"
 
 EngineSlot::EngineSlot(const EngineSlotDesc & desc):
-    ItemSlot(desc)
+    Attachment(desc)
 {}
 
 const std::shared_ptr<Engine> & EngineSlot::engine() const
