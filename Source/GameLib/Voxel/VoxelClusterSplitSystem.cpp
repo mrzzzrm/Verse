@@ -9,6 +9,7 @@
 
 #include <Deliberation/Physics/RigidBody.h>
 
+#include "ColorPalette.h"
 #include "Components.h"
 #include "VoxelObjectPrototype.h"
 #include "VoxelObject.h"
@@ -67,15 +68,20 @@ void VoxelClusterSplitSystem::onUpdate(float seconds)
 
             for (const auto & voxel : split.voxels)
             {
-                const auto color = originalVoxelData.voxelColor(voxel);
+                const auto colorIndex = originalVoxelData.voxelColorIndex(voxel);
                 const auto healthPoints = originalVoxelData.voxelHealthPoints(voxel);
-                Voxel splitVoxel(voxel - split.llf, color, healthPoints);
+                Voxel splitVoxel(voxel - split.llf, colorIndex, healthPoints);
 
                 splitVoxels.emplace_back(splitVoxel);
             }
 
+            auto splitPalette = std::make_shared<ColorPalette>(voxelWorld.drawContext(),
+                                                               originalVoxelData.palette()->colors());
+
             const auto splitSize = split.urb - split.llf + 1u;
-            VoxelObjectVoxelData splitVoxelData(originalVoxelObject.data().voxelWorld(), splitSize);
+            VoxelObjectVoxelData splitVoxelData(originalVoxelObject.data().voxelWorld(),
+                                                splitPalette,
+                                                splitSize);
             splitVoxelData.addVoxels(std::move(splitVoxels));
 
             auto splitEntity = world().createEntity("Split");

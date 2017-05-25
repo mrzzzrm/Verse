@@ -13,7 +13,7 @@
 
 #include <Deliberation/Scene/CameraDolly3D.h>
 #include <Deliberation/Scene/Debug/DebugCameraNavigator3D.h>
-#include <Deliberation/Scene/Debug/DebugGeometryRenderer.h>
+#include <Deliberation/Scene/Debug/DebugGeometryNode.h>
 
 #include "GameLib.h"
 
@@ -77,5 +77,5 @@ private:
     glm::vec3               m_linearThrust;
     glm::vec3               m_angularThrust;
 
-    //DebugGeometryRenderer   m_debugGeometryRenderer;
+    //DebugGeometryNode   m_debugGeometryRenderer;
 };

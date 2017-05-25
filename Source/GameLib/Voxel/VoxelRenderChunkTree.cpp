@@ -7,8 +7,17 @@
 #include <Deliberation/Core/StreamUtils.h>
 #include <Deliberation/Core/ScopeProfiler.h>
 
-VoxelRenderChunkTree::VoxelRenderChunkTree(VoxelWorld & voxelWorld, const glm::uvec3 & size):
+#include <Deliberation/Draw/Buffer.h>
+#include <Deliberation/Draw/DrawContext.h>
+
+#include "ColorPalette.h"
+#include "VoxelWorld.h"
+
+VoxelRenderChunkTree::VoxelRenderChunkTree(VoxelWorld & voxelWorld,
+                                           const std::shared_ptr<ColorPalette> & palette,
+                                           const glm::uvec3 & size):
     m_voxelWorld(voxelWorld),
+    m_palette(palette),
     m_size(size)
 {
     Assert(m_size.x >= 0 && m_size.y >= 0 && m_size.z >= 0, "");
@@ -89,8 +98,7 @@ VoxelRenderChunkTree::VoxelRenderChunkTree(VoxelWorld & voxelWorld, const glm::u
     auto urb = glm::ivec3(m_size) - 1;
     buildTree(0, llf, urb, llf, urb);
 
-    m_chunks.resize(numChunks);
-}
+    m_chunks.resize(numChunks);}
 
 void VoxelRenderChunkTree::setScale(float scale)
 {
@@ -112,14 +120,11 @@ void VoxelRenderChunkTree::updateVoxelVisibility(const glm::uvec3 & voxel, bool 
     updateVoxelVisibilityInNode(0, voxel, visible);
 }
 
-void VoxelRenderChunkTree::invalidateVoxel(const glm::uvec3 & voxel)
-{
-    invalidateVoxel(0, voxel);
-}
-
 void VoxelRenderChunkTree::schedule(const Pose3D & pose) const
 {
     //ScopeProfiler scopeProfiler("VoxelRenderChunkTree::schedule()");
+
+    m_palette->sync();
 
     for (auto & chunk : m_chunks)
     {
@@ -179,7 +184,7 @@ void VoxelRenderChunkTree::addVoxelToNode(u32 index, const Voxel & voxel, bool v
         {
             chunk.index = index;
             chunk.position = node.llf;
-            chunk.chunk = std::make_shared<VoxelRenderChunk>(m_voxelWorld,
+            chunk.chunk = std::make_shared<VoxelRenderChunk>(*this,
                                                              glm::uvec3(node.urb - node.llf + glm::ivec3(1)),
                                                              node.llfRender - node.llf, node.urbRender - node.llf/*,
                                                              Optional<glm::vec3>(m_colorGenerator.generate())*/);
@@ -225,23 +230,6 @@ void VoxelRenderChunkTree::removeVoxelFromNode(u32 index, const glm::uvec3 & vox
     {
         removeVoxelFromNode(index * 2 + 1, voxel, visible);
         removeVoxelFromNode(index * 2 + 2, voxel, visible);
-    }
-}
-
-void VoxelRenderChunkTree::invalidateVoxel(size_t index, const glm::uvec3 & voxel)
-{
-    if (!isVoxelInNode(index, voxel)) return;
-
-    auto & node = m_nodes[index];
-
-    if (node.leaf)
-    {
-        m_chunks[node.chunk].chunk->invalidateVoxel(voxel - glm::uvec3(node.llf));
-    }
-    else
-    {
-        invalidateVoxel(index * 2 + 1, voxel);
-        invalidateVoxel(index * 2 + 2, voxel);
     }
 }
 

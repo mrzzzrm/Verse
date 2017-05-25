@@ -1,11 +1,11 @@
 #include "VerseApplication.h"
 
+#include <Deliberation/Scene/Debug/DebugPointLightSystem.h>
 #include <Deliberation/Scene/Texture/TextureLoader.h>
 #include <Deliberation/Scene/Effects/BloomRenderer.h>
 #include <Deliberation/Scene/Lighting/PointLightRenderer.h>
 
 #include <Deliberation/ECS/Systems/ApplicationSystem.h>
-#include <Deliberation/ECS/Systems/DebugGeometrySystem.h>
 #include <Deliberation/ECS/Systems/SkyboxSystem.h>
 
 #include <Deliberation/ImGui/ImGuiSystem.h>
@@ -55,9 +55,9 @@ void VerseApplication::onStartup()
     if (m_systemInitMode == VerseApplicationSystemInitMode::AllSystems)
     {
         m_world.addSystem<RenderSystem>();
-        m_world.addSystem<PointLightSystem>();
+        auto pointLightSystem = m_world.addSystem<PointLightSystem>();
+        m_world.addSystem<DebugPointLightSystem>(pointLightSystem->pointLightRenderer());
         m_world.addSystem<SkyboxSystem>(m_skyboxCubemap);
-        m_world.addSystem<DebugGeometrySystem>();
         m_world.addSystem<ResourceManager>();
         m_world.addSystem<PhysicsWorldSystem>(m_physicsWorld);
         m_world.addSystem<VoxelClusterSplitSystem>();

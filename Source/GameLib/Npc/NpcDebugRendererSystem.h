@@ -6,8 +6,8 @@
 
 #include <Deliberation/ECS/System.h>
 
-#include <Deliberation/Scene/Debug/DebugGeometryManager.h>
 #include <Deliberation/Scene/Debug/DebugGeometryRenderer.h>
+#include <Deliberation/Scene/Debug/DebugGeometryNode.h>
 
 #include "GameLib.h"
 
@@ -29,8 +29,8 @@ protected:
 
 private:
     std::vector<Entity>     m_entities;
-    DebugGeometryManager    m_geometryManager;
-    DebugGeometryRenderer   m_geometryRenderer;
+//    DebugGeometryRenderer    m_geometryManager;
+//    DebugGeometryNode   m_geometryRenderer;
     RandomColorGenerator    m_randomColorGenerator;
     const Camera3D &        m_camera;
 };

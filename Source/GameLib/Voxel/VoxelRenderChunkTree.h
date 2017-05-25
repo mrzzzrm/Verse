@@ -18,20 +18,25 @@ namespace deliberation
 class Pose3D;
 }
 
+class ColorPalette;
 class VoxelWorld;
 
 class VoxelRenderChunkTree final {
 public:
-    VoxelRenderChunkTree(VoxelWorld & voxelWorld, const glm::uvec3 & size);
+    VoxelRenderChunkTree(VoxelWorld & voxelWorld,
+                         const std::shared_ptr<ColorPalette> & palette,
+                         const glm::uvec3 & size);
 
+    VoxelWorld & voxelWorld() const { return m_voxelWorld; }
     const glm::uvec3 & size() const { return m_size; }
+    std::shared_ptr<ColorPalette> & palette() { return m_palette; }
+    const std::shared_ptr<ColorPalette> & palette() const { return m_palette; }
 
     void setScale(float scale);
 
     void addVoxel(const Voxel & voxel, bool visible);
     void removeVoxel(const glm::uvec3 & voxel, bool visible);
     void updateVoxelVisibility(const glm::uvec3 & voxel, bool visible);
-    void invalidateVoxel(const glm::uvec3 & voxel);
 
     void schedule(const Pose3D & pose) const;
 
@@ -64,13 +69,13 @@ protected:
 private:
     void addVoxelToNode(u32 index, const Voxel & voxel, bool visible);
     void removeVoxelFromNode(u32 index, const glm::uvec3 & voxel, bool visible);
-    void invalidateVoxel(size_t index, const glm::uvec3 & voxel);
     void updateVoxelVisibilityInNode(size_t index, const glm::uvec3 & voxel, bool visible);
     bool isVoxelInNode(size_t index, const glm::uvec3 & voxel);
     bool isVoxelRenderedByNode(size_t index, const glm::uvec3 & voxel);
 
 protected:
     VoxelWorld &                m_voxelWorld;
+    std::shared_ptr<ColorPalette> m_palette;
     glm::uvec3                  m_size;
     std::vector<Node>           m_nodes;
     std::vector<ChunkWrapper>   m_chunks;

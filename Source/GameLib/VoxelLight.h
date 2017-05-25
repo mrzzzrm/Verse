@@ -20,5 +20,7 @@ protected:
 
 private:
     VoxelLightDesc  m_desc;
+    glm::vec3       m_color;
     size_t          m_pointLight = 0;
+    float           m_noiseInput = 0;
 };

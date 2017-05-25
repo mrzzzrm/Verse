@@ -25,8 +25,8 @@
 #include <Deliberation/Scene/CameraDolly3D.h>
 #include <Deliberation/Scene/UVSphere.h>
 #include <Deliberation/Scene/Debug/DebugCameraNavigator3D.h>
-#include <Deliberation/Scene/Debug/DebugGeometryManager.h>
 #include <Deliberation/Scene/Debug/DebugGeometryRenderer.h>
+#include <Deliberation/Scene/Debug/DebugGeometryNode.h>
 #include <Deliberation/Scene/Debug/DebugGroundPlaneRenderer.h>
 #include <Deliberation/Scene/Texture/TextureLoader.h>
 #include <Npc/NpcDebugRendererSystem.h>

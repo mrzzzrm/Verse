@@ -52,11 +52,6 @@ void VoxelObject::setCrucialVoxel(const boost::optional<glm::uvec3> & crucialVox
     m_voxelData.setCrucialVoxel(crucialVoxel);
 }
 
-void VoxelObject::setVoxelColor(const glm::uvec3 & voxel, const glm::vec3 & color)
-{
-    m_voxelData.setVoxelColor(voxel, color);
-}
-
 void VoxelObject::setVoxelHealthPoints(const glm::uvec3 & voxel, float healthPoints)
 {
     m_voxelData.setVoxelHealthPoints(voxel, healthPoints);

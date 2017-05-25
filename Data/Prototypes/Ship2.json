@@ -25,8 +25,8 @@
         ],
         
         "VoxelLights": [
-            {"Voxel": [5, 0, 11], "Orientation": [0, 0, 0], "Intensity": 5},
-            {"Voxel": [15, 0, 11], "Orientation": [0, 0, 0], "Intensity": 5}
+            {"Voxel": [5, 0, 11], "Orientation": [0, 0, 0], "Intensity":4},
+            {"Voxel": [15, 0, 11], "Orientation": [0, 0, 0], "Intensity": 4}
         ]
     },
     

@@ -6,8 +6,8 @@
 
 NpcDebugRendererSystem::NpcDebugRendererSystem(World & world, DrawContext & context, const Camera3D & camera):
     Base(world, ComponentFilter::requires<NpcController>()),
-    m_geometryManager(context),
-    m_geometryRenderer(m_geometryManager),
+//    m_geometryManager(context),
+//    m_geometryRenderer(m_geometryManager),
     m_camera(camera)
 {
 

@@ -7,7 +7,7 @@
 #include <Deliberation/Core/RandomColorGenerator.h>
 
 VoxelClusterMarchingCubes::VoxelClusterMarchingCubes(const VoxelClusterMarchingCubesTriangulation & triangulation,
-                                                     const VoxelCluster<glm::vec3> & cluster,
+                                                     const VoxelCluster<u32> & cluster,
                                                      float scale):
         m_triangulation(triangulation),
         m_cluster(cluster),
@@ -16,7 +16,7 @@ VoxelClusterMarchingCubes::VoxelClusterMarchingCubes(const VoxelClusterMarchingC
 {
     m_vertexLayout = DataLayout({{"Position", Type_Vec3},
                                     {"Normal",   Type_Vec3},
-                                    {"Color",    Type_Vec3}});
+                                    {"ColorIndex",    Type_U32}});
 
     m_vertices = LayoutedBlob(m_vertexLayout);
 }
@@ -35,7 +35,7 @@ void VoxelClusterMarchingCubes::run(const glm::uvec3 & llf, const glm::uvec3 & u
     
     m_positions = m_vertices.field<glm::vec3>("Position").iterator();
     m_normals = m_vertices.field<glm::vec3>("Normal").iterator();
-    m_colors = m_vertices.field<glm::vec3>("Color").iterator();
+    m_colorIndices = m_vertices.field<u32>("ColorIndex").iterator();
 
     {
         size_t actualNumVertices{0};
@@ -74,13 +74,13 @@ void VoxelClusterMarchingCubes::run(const glm::uvec3 & llf, const glm::uvec3 & u
 
                         auto cornerVoxel = cornerOffsets[triangle.corner] + glm::ivec3(x, y, z);
 
-                        auto color = m_cluster.get(cornerVoxel);
+                        auto colorIndex = m_cluster.get(cornerVoxel);
 
                         for (uint i = 0u; i < 3u; i++)
                         {
                             m_positions.put((triangle.positions[i] + glm::vec3(x, y, z)) * m_scale);
                             m_normals.put(triangle.normal);
-                            m_colors.put(color);
+                            m_colorIndices.put(colorIndex);
                         }
                     }
 
@@ -94,14 +94,14 @@ void VoxelClusterMarchingCubes::run(const glm::uvec3 & llf, const glm::uvec3 & u
         m_vertices.resize(actualNumVertices);
     }
 
-    if (colorOverride)
-    {
-        m_colors = m_vertices.field<glm::vec3>("Color").iterator();
-        for (size_t v = 0; v < m_vertices.count(); v++)
-        {
-            m_colors.put(*colorOverride);
-        }
-    }
+//    if (colorOverride)
+//    {
+//        m_colorIndices = m_vertices.field<glm::vec3>("Color").iterator();
+//        for (size_t v = 0; v < m_vertices.count(); v++)
+//        {
+//            m_colorIndices.put(*colorOverride);
+//        }
+//    }
 }
 
 void VoxelClusterMarchingCubes::onClusterChanged(const glm::uvec3 & llfCluster, const glm::uvec3 & urbCluster)
@@ -264,12 +264,12 @@ inline void VoxelClusterMarchingCubes::generateMesh(i32 x, i32 y, i32 z, u8 conf
         {
             m_positions.put((triangle.positions[i] + glm::vec3(x, y, z)) * m_scale);
             m_normals.put(triangle.normal);
-            m_colors.put(getCubeColorAtCorner(x, y, z, triangle.corner));
+            m_colorIndices.put(getCubeColorIndexAtCorner(x, y, z, triangle.corner));
         }
     }
 }
 
-inline glm::vec3 VoxelClusterMarchingCubes::getCubeColorAtCorner(i32 x, i32 y, i32 z, u8 corner) const
+inline u32 VoxelClusterMarchingCubes::getCubeColorIndexAtCorner(i32 x, i32 y, i32 z, u8 corner) const
 {
    // Assert(corner < 8, "Illegal corner index");
 

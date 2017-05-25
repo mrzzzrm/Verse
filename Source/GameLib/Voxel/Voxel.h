@@ -2,6 +2,8 @@
 
 #include <glm/glm.hpp>
 
+#include <Deliberation/Core/IntTypes.h>
+
 struct Voxel
 {
     Voxel(const glm::uvec3 & cell):
@@ -9,13 +11,13 @@ struct Voxel
     {
     }
 
-    Voxel(const glm::uvec3 & cell, const glm::vec3 & color, float healthPoints):
+    Voxel(const glm::uvec3 & cell, u32 colorIndex, float healthPoints):
         cell(cell),
-        color(color),
+        colorIndex(colorIndex),
         healthPoints(healthPoints)
     {}
 
     glm::uvec3  cell;
-    glm::vec3   color;
+    u32         colorIndex;
     float       healthPoints;
 };

@@ -13,8 +13,8 @@
 #include <Deliberation/Scene/CameraDolly3D.h>
 #include <Deliberation/Scene/Debug/DebugCameraNavigator3D.h>
 #include <Deliberation/Scene/Debug/DebugGroundPlaneRenderer.h>
-#include <Deliberation/Scene/Debug/DebugGeometryManager.h>
 #include <Deliberation/Scene/Debug/DebugGeometryRenderer.h>
+#include <Deliberation/Scene/Debug/DebugGeometryNode.h>
 #include <Deliberation/Scene/UVSphere.h>
 
 #include <Deliberation/Deliberation.h>
@@ -101,10 +101,10 @@ public:
 //        }
 
         {
-            EntityDesc desc({"Block2x2x2"});
+            EntityDesc desc({"Ship2"});
             desc.position = {0.0f, 0.0f, -200.0f};
             auto entity = entityPrototypeManager.createEntity(desc);
-            entity.component<VoxelObject>().setVoxelColor(glm::uvec3(0,0,0), glm::vec3(5.0f, 3.0f, 7.0f));
+          //  entity.component<VoxelObject>().setVoxelColor(glm::uvec3(0,0,0), glm::vec3(5.0f, 3.0f, 7.0f));
         }
 
 

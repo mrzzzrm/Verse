@@ -23,7 +23,9 @@ public:
 
 public:
     VoxelObjectVoxelData(const VoxelObjectVoxelData & prototype);
-    VoxelObjectVoxelData(VoxelWorld & voxelWorld, const glm::uvec3 & size);
+    VoxelObjectVoxelData(VoxelWorld & voxelWorld,
+                         const std::shared_ptr<ColorPalette> & palette,
+                         const glm::uvec3 & size);
 
     VoxelWorld & voxelWorld() const;
     const glm::uvec3 & size() const;
@@ -34,13 +36,13 @@ public:
     size_t numVoxels() const { return m_numVoxels; }
     VoxelClusterSplitDetector & splitDetector() { return m_splitDetector; }
     const VoxelClusterSplitDetector & splitDetector() const { return m_splitDetector; }
+    const std::shared_ptr<ColorPalette> & palette() const { return m_renderTree.palette(); }
 
     bool hasVoxel(const glm::ivec3 & voxel) const;
 
-    const glm::vec3 & voxelColor(const glm::uvec3 & voxel) const;
+    u32 voxelColorIndex(const glm::uvec3 & voxel) const;
     float voxelHealthPoints(const glm::uvec3 & voxel) const;
 
-    void setVoxelColor(const glm::uvec3 & voxel, const glm::vec3 & color);
     void setVoxelHealthPoints(const glm::uvec3 & voxel, float healthPoints);
     void setScale(float scale);
 
@@ -54,7 +56,7 @@ public:
 
 private:
     VoxelWorld &                    m_voxelWorld;
-    VoxelCluster<glm::vec3>         m_colors;
+    VoxelCluster<u32>               m_colorIndices;
     VoxelCluster<float>             m_healthPoints;
     VoxelRenderChunkTree            m_renderTree;
     std::shared_ptr<VoxelShape>     m_shape;

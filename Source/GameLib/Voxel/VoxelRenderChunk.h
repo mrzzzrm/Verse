@@ -12,19 +12,19 @@
 #include "VoxelCluster.h"
 #include "VoxelClusterMarchingCubes.h"
 
+class VoxelRenderChunkTree;
 class VoxelWorld;
 
 class VoxelRenderChunk final
 {
 public:
-    VoxelRenderChunk(VoxelWorld & voxelWorld, const glm::uvec3 & size,
+    VoxelRenderChunk(VoxelRenderChunkTree & voxelRenderChunkTree, const glm::uvec3 & size,
                      const glm::uvec3 & llfRender, const glm::uvec3 & urbRender,
                      const Optional<glm::vec3> & colorOverride = Optional<glm::vec3>());
     VoxelRenderChunk(const VoxelRenderChunk & other);
 
     void addVoxel(const Voxel & voxel, bool visible);
     void removeVoxel(const glm::uvec3 & voxel, bool visible);
-    void invalidateVoxel(const glm::uvec3 & voxel);
     void updateVoxelVisibility(const glm::uvec3 & voxel, bool visible);
 
     std::shared_ptr<VoxelRenderChunk> clone();
@@ -32,9 +32,8 @@ public:
     void schedule(const Pose3D & pose, float scale) const;
 
 private:
-    VoxelCluster<glm::vec3>
-                        m_cluster;
-    VoxelWorld &        m_voxelWorld;
+    VoxelCluster<u32>   m_cluster;
+    VoxelRenderChunkTree & m_voxelRenderChunkTree;
     mutable VoxelClusterMarchingCubes
                         m_marchingCubes;
     VoxelCluster<u8>    m_configCluster;

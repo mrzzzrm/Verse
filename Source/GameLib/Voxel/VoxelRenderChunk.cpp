@@ -14,16 +14,18 @@
 #include <Deliberation/Scene/Pipeline/RenderManager.h>
 #include <Deliberation/Scene/Pipeline/RenderSystem.h>
 
+#include "ColorPalette.h"
 #include "VoxelCluster.h"
 #include "VoxelClusterMarchingCubes.h"
+#include "VoxelRenderChunkTree.h"
 #include "VoxelWorld.h"
 
-VoxelRenderChunk::VoxelRenderChunk(VoxelWorld & voxelWorld, const glm::uvec3 & size,
+VoxelRenderChunk::VoxelRenderChunk(VoxelRenderChunkTree & voxelRenderChunkTree, const glm::uvec3 & size,
                                    const glm::uvec3 & llfRender, const glm::uvec3 & urbRender,
                                    const Optional<glm::vec3> & colorOverride):
     m_cluster(size),
-    m_voxelWorld(voxelWorld),
-    m_marchingCubes(voxelWorld.marchingCubesTriangulation(), m_cluster, 1.0f),
+    m_voxelRenderChunkTree(voxelRenderChunkTree),
+    m_marchingCubes(m_voxelRenderChunkTree.voxelWorld().marchingCubesTriangulation(), m_cluster, 1.0f),
     m_configCluster(size - glm::uvec3(1)),
     m_llfRender(llfRender),
     m_urbRender(urbRender),
@@ -35,8 +37,8 @@ VoxelRenderChunk::VoxelRenderChunk(VoxelWorld & voxelWorld, const glm::uvec3 & s
 
 VoxelRenderChunk::VoxelRenderChunk(const VoxelRenderChunk & other):
     m_cluster(other.m_cluster),
-    m_voxelWorld(other.m_voxelWorld),
-    m_marchingCubes(m_voxelWorld.marchingCubesTriangulation(), m_cluster, 1.0f),
+    m_voxelRenderChunkTree(other.m_voxelRenderChunkTree),
+    m_marchingCubes(m_voxelRenderChunkTree.voxelWorld().marchingCubesTriangulation(), m_cluster, 1.0f),
     m_configCluster(other.m_configCluster),
     m_voxelCount(other.m_voxelCount),
     m_meshEmpty(other.m_meshEmpty),
@@ -57,7 +59,7 @@ void VoxelRenderChunk::addVoxel(const Voxel & voxel, bool visible)
 {
     Assert(!m_cluster.test(voxel.cell), "Voxel already added");
 
-    m_cluster.set(voxel.cell, voxel.color);
+    m_cluster.set(voxel.cell, voxel.colorIndex);
 
     m_llfDirty = glm::min(m_llfDirty, voxel.cell);
     m_urbDirty = glm::max(m_urbDirty, voxel.cell);
@@ -90,13 +92,6 @@ void VoxelRenderChunk::removeVoxel(const glm::uvec3 & voxel, bool visible)
 
     m_drawDirty = true;
     m_voxelCount--;
-}
-
-void VoxelRenderChunk::invalidateVoxel(const glm::uvec3 & voxel)
-{
-    m_llfDirty = glm::min(m_llfDirty, voxel);
-    m_urbDirty = glm::max(m_urbDirty, voxel);
-    m_drawDirty = true;
 }
 
 void VoxelRenderChunk::updateVoxelVisibility(const glm::uvec3 & voxel, bool visible)
@@ -134,12 +129,13 @@ void VoxelRenderChunk::schedule(const Pose3D & pose, float scale) const
 
         if (!m_meshEmpty)
         {
-            m_draw = m_voxelWorld.drawContext().createDraw(m_voxelWorld.program());
+            m_draw = m_voxelRenderChunkTree.voxelWorld().drawContext().createDraw(m_voxelRenderChunkTree.voxelWorld().program());
             m_draw.addVertices(std::move(vertices));
             //     m_draw.state().setCullState(CullState::disabled());
 
-            m_draw.sampler("Environment").setTexture(m_voxelWorld.envMap());
-            m_draw.setFramebuffer(m_voxelWorld.world().systemRef<RenderSystem>().renderManager().gbuffer());
+            m_draw.sampler("Environment").setTexture(m_voxelRenderChunkTree.voxelWorld().envMap());
+            m_draw.setFramebuffer(m_voxelRenderChunkTree.voxelWorld().world().systemRef<RenderSystem>().renderManager().gbuffer());
+            m_draw.setBufferTexture("Palette", m_voxelRenderChunkTree.palette()->colorBuffer());
 
             m_transformUniform = m_draw.uniform("Transform");
             m_viewUniform = m_draw.uniform("View");
@@ -154,7 +150,7 @@ void VoxelRenderChunk::schedule(const Pose3D & pose, float scale) const
 
     if (m_meshEmpty) return;
 
-    const auto & camera = m_voxelWorld.world().systemRef<RenderSystem>().renderManager().mainCamera();
+    const auto & camera = m_voxelRenderChunkTree.voxelWorld().world().systemRef<RenderSystem>().renderManager().mainCamera();
 
     m_viewUniform.set(camera.view());
     m_projectionUniform.set(camera.projection());

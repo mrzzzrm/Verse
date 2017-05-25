@@ -18,7 +18,7 @@ class VoxelClusterMarchingCubes final
 {
 public:
     VoxelClusterMarchingCubes(const VoxelClusterMarchingCubesTriangulation & triangulation,
-                              const VoxelCluster<glm::vec3> & cluster,
+                              const VoxelCluster<u32> & cluster,
                               float scale = 1.0f);
 
     void onClusterChanged(const glm::uvec3 & llf, const glm::uvec3 & urb);
@@ -31,11 +31,11 @@ public:
 
 private:
     inline void generateMesh(i32 x, i32 y, i32 z, u8 configID);
-    inline glm::vec3 getCubeColorAtCorner(i32 x, i32 y, i32 z, u8 corner) const;
+    inline u32 getCubeColorIndexAtCorner(i32 x, i32 y, i32 z, u8 corner) const;
 
 private:
     const VoxelClusterMarchingCubesTriangulation &  m_triangulation;
-    const VoxelCluster<glm::vec3> &                 m_cluster;
+    const VoxelCluster<u32> &                       m_cluster;
     VoxelCluster<u8>                                m_configCluster;
     bool                                            m_configClusterDirty = true;
     float                                           m_scale;
@@ -46,5 +46,5 @@ private:
 
     LayoutedBlob::Iterator<glm::vec3>               m_positions;
     LayoutedBlob::Iterator<glm::vec3>               m_normals;
-    LayoutedBlob::Iterator<glm::vec3>               m_colors;
+    LayoutedBlob::Iterator<u32>                     m_colorIndices;
 };

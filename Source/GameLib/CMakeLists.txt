@@ -159,6 +159,8 @@ add_library(${target}
 
     AimHelper.cpp
     AimHelper.h
+    ColorPalette.cpp
+    ColorPalette.h
     Components.h
     CoriolisComponent.h
     CoriolisSystem.cpp

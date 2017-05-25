@@ -23,8 +23,8 @@
 #include <Deliberation/Scene/CameraDolly3D.h>
 #include <Deliberation/Scene/UVSphere.h>
 #include <Deliberation/Scene/Debug/DebugCameraNavigator3D.h>
-#include <Deliberation/Scene/Debug/DebugGeometryManager.h>
 #include <Deliberation/Scene/Debug/DebugGeometryRenderer.h>
+#include <Deliberation/Scene/Debug/DebugGeometryNode.h>
 #include <Deliberation/Scene/Debug/DebugGroundPlaneRenderer.h>
 #include <Deliberation/Scene/SkyboxRenderer.h>
 
@@ -84,7 +84,7 @@ protected:
     std::experimental::optional<VfxManager>
                             m_vfxManager;
 
-    std::experimental::optional<DebugGeometryManager>
+    std::experimental::optional<DebugGeometryRenderer>
                             m_debugGeometryManager;
 
     std::shared_ptr<SkyboxRenderer>

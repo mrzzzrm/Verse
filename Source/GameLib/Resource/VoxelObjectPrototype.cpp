@@ -1,5 +1,6 @@
 #include "VoxelObjectPrototype.h"
 
+#include "ColorPalette.h"
 #include "VoxReader.h"
 #include "VoxelObject.h"
 #include "VoxelObjectVoxelData.h"
@@ -13,7 +14,12 @@ VoxelObjectPrototype::VoxelObjectPrototype(const Json & json, VoxelWorld & voxel
         auto models = voxReader.read(GameDataPath("Data/VoxelClusters/" + voxelClusterName + ".vox"));
         if (!models.empty())
         {
-            m_voxelDataPrototype = std::make_shared<VoxelObjectVoxelData>(voxelWorld, models[0].size);
+            auto palette = std::make_shared<ColorPalette>(voxelWorld.drawContext(),
+                                                          models[0].palette);
+
+            m_voxelDataPrototype = std::make_shared<VoxelObjectVoxelData>(voxelWorld,
+                                                                          palette,
+                                                                          models[0].size);
             m_voxelDataPrototype->addVoxels(models[0].voxels);
 
             const auto iter = json.find("CrucialVoxel");

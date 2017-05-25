@@ -9,7 +9,6 @@
 
 #include <Deliberation/ECS/Components.h>
 #include <Deliberation/ECS/Systems/ApplicationSystem.h>
-#include <Deliberation/ECS/Systems/DebugGeometrySystem.h>
 #include <Deliberation/ECS/Systems/PhysicsWorldSystem.h>
 #include <Deliberation/ECS/World.h>
 

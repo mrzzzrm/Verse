@@ -7,11 +7,11 @@ uniform mat4 Transform;
 
 in vec3 Position;
 in vec3 Normal;
-in vec3 Color;
+in uint ColorIndex;
 
 out vec3 f_PositionVS;
 out vec3 f_Normal;
-out vec3 f_Color;
+flat out uint f_ColorIndex;
 
 void main()
 {
@@ -21,5 +21,5 @@ void main()
 
     f_PositionVS = positionVS.xyz;
 	f_Normal = (View * Transform * vec4(Normal, 0.0f)).xyz;
-    f_Color = Color;
+    f_ColorIndex = ColorIndex;
 }

@@ -1,5 +1,6 @@
 #include "VoxelObjectPrototype.h"
 
+#include "ColorPalette.h"
 #include "VoxReader.h"
 
 #define VERBOSE 0
@@ -11,7 +12,12 @@ std::shared_ptr<VoxelObjectVoxelData> VoxelObjectVoxelData::fromFile(VoxReader &
     auto models = voxReader.read(path);
     if (!models.empty())
     {
-        auto voxelData = std::make_shared<VoxelObjectVoxelData>(voxelWorld, models[0].size);
+        auto palette = std::make_shared<ColorPalette>(voxelWorld.drawContext(), models[0].palette);
+
+        auto voxelData = std::make_shared<VoxelObjectVoxelData>(voxelWorld,
+                                                                palette,
+                                                                models[0].size);
+
         voxelData->addVoxels(models[0].voxels);
         return voxelData;
     }
@@ -21,7 +27,7 @@ std::shared_ptr<VoxelObjectVoxelData> VoxelObjectVoxelData::fromFile(VoxReader &
 
 VoxelObjectVoxelData::VoxelObjectVoxelData(const VoxelObjectVoxelData & prototype):
     m_voxelWorld(prototype.m_voxelWorld),
-    m_colors(prototype.m_colors),
+    m_colorIndices(prototype.m_colorIndices),
     m_healthPoints(prototype.m_healthPoints),
     m_renderTree(prototype.m_renderTree),
     m_shape(std::make_shared<VoxelShape>(*prototype.m_shape)),
@@ -32,11 +38,13 @@ VoxelObjectVoxelData::VoxelObjectVoxelData(const VoxelObjectVoxelData & prototyp
 
 }
 
-VoxelObjectVoxelData::VoxelObjectVoxelData(VoxelWorld & voxelWorld, const glm::uvec3 & size):
+VoxelObjectVoxelData::VoxelObjectVoxelData(VoxelWorld & voxelWorld,
+                                           const std::shared_ptr<ColorPalette> & palette,
+                                           const glm::uvec3 & size):
     m_voxelWorld(voxelWorld),
-    m_colors(size),
+    m_colorIndices(size),
     m_healthPoints(size),
-    m_renderTree(voxelWorld, size),
+    m_renderTree(voxelWorld, palette, size),
     m_shape(std::make_shared<VoxelShape>(size)),
     m_hull(size),
     m_splitDetector(size)
@@ -51,7 +59,7 @@ VoxelWorld & VoxelObjectVoxelData::voxelWorld() const
 
 const glm::uvec3 & VoxelObjectVoxelData::size() const
 {
-    return m_colors.size();
+    return m_colorIndices.size();
 }
 
 const VoxelRenderChunkTree & VoxelObjectVoxelData::renderTree() const
@@ -76,18 +84,12 @@ float VoxelObjectVoxelData::scale() const
 
 bool VoxelObjectVoxelData::hasVoxel(const glm::ivec3 & voxel) const
 {
-    return m_colors.contains(voxel) && m_colors.test(voxel);
+    return m_colorIndices.contains(voxel) && m_colorIndices.test(voxel);
 }
 
-const glm::vec3 & VoxelObjectVoxelData::voxelColor(const glm::uvec3 & voxel) const
+u32 VoxelObjectVoxelData::voxelColorIndex(const glm::uvec3 & voxel) const
 {
-    return m_colors.getRef(voxel);
-}
-
-void VoxelObjectVoxelData::setVoxelColor(const glm::uvec3 & voxel, const glm::vec3 & color)
-{
-    m_colors.set(voxel, color);
-    m_renderTree.invalidateVoxel(voxel);
+    return m_colorIndices.getRef(voxel);
 }
 
 float VoxelObjectVoxelData::voxelHealthPoints(const glm::uvec3 & voxel) const
@@ -122,9 +124,9 @@ void VoxelObjectVoxelData::addVoxels(std::vector<Voxel> voxels)
 
     for (auto & voxel : voxels)
     {
-        Assert(!m_colors.test(voxel.cell), "Already contains voxel " + ToString(voxel.cell));
+        Assert(!m_colorIndices.test(voxel.cell), "Already contains voxel " + ToString(voxel.cell));
 
-        m_colors.set(voxel.cell, voxel.color);
+        m_colorIndices.set(voxel.cell, voxel.colorIndex);
         m_healthPoints.set(voxel.cell, voxel.healthPoints);
         m_renderTree.addVoxel(voxel, m_hull.isHullVoxel(voxel.cell));
     }
@@ -157,9 +159,9 @@ void VoxelObjectVoxelData::removeVoxels(const std::vector<glm::uvec3> & voxels)
 
     for (auto & voxel : voxels)
     {
-        Assert(m_colors.test(voxel), "Doesn't contain voxel " + ToString(voxel));
+        Assert(m_colorIndices.test(voxel), "Doesn't contain voxel " + ToString(voxel));
 
-        m_colors.set(voxel, VoxelCluster<glm::vec3>::EMPTY_VOXEL);
+        m_colorIndices.set(voxel, VoxelCluster<u32>::EMPTY_VOXEL);
         m_healthPoints.set(voxel, VoxelCluster<float>::EMPTY_VOXEL);
 
         if (m_hull.isHullVoxel(voxel)) m_shape->updateVoxel(voxel, false);
