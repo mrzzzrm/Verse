@@ -137,7 +137,7 @@ void Equipment::onAttachedToEntity()
     {
         auto hardpoint = std::make_shared<Hardpoint>(hardpointDesc);
         m_hardpoints.emplace_back(hardpoint);
-        m_attachmentByVoxel.emplace(hardpoint->voxel(), hardpoint);
+        addAttachment(hardpoint);
     }
 
     for (const auto & engineSlotDesc : m_desc.engineSlotDescs)
@@ -145,7 +145,7 @@ void Equipment::onAttachedToEntity()
         auto engineSlot = std::make_shared<EngineSlot>(engineSlotDesc);
         engineSlot->setVfxManager(m_vfxManager);
         m_engineSlots.emplace_back(engineSlot);
-        m_attachmentByVoxel.emplace(engineSlot->voxel(), engineSlot);
+        addAttachment(engineSlot);
     }
 
     for (const auto & voxelLightDesc : m_desc.voxelLightDescs)

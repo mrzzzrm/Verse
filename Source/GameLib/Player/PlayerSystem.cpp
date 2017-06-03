@@ -47,9 +47,6 @@ PlayerSystem::PlayerSystem(World & world):
 
 void PlayerSystem::onFrameBegin()
 {
-    m_linearThrust = {};
-    m_angularThrust = {};
-
     if (m_player.isValid())
     {
         auto & equipment = m_player.component<Equipment>();
@@ -85,6 +82,8 @@ void PlayerSystem::onEntityUpdate(Entity & entity, float seconds)
 
         flightControl.setLinearThrust(m_linearThrust);
         flightControl.setAngularThrust(m_angularThrust);
+        m_linearThrust = {};
+        m_angularThrust = {};
 
         {
 //            AimHelper aimHelper(m_camera, m_physicsWorld);
@@ -138,11 +137,11 @@ void PlayerSystem::onKeyPressed(KeyEvent & event)
     }
 }
 
-void PlayerSystem::onMouseButtonPressed(MouseButtonEvent & event)
+void PlayerSystem::onMouseButtonDown(MouseStateEvent & event)
 {
     if (!m_player.isValid()) return;
 
-    if (event.button() == MouseButton_Left)
+    if (event.button(MouseButton::Left))
     {
         const auto & mouse = event.mousePosition();
 
@@ -150,7 +149,7 @@ void PlayerSystem::onMouseButtonPressed(MouseButtonEvent & event)
         m_angularThrust.y = -mouse.x;
     }
 
-    if (event.button() == MouseButton_Right)
+    if (event.button(MouseButton::Right))
     {
         auto & renderManager = world().systemRef<RenderSystem>().renderManager();
         AimHelper aimHelper(renderManager.mainCamera(), m_physicsWorld);

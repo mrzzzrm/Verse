@@ -28,14 +28,17 @@ EquipmentPrototype::EquipmentPrototype(const Json & json, VfxManager & vfxManage
         m_desc.hardpointDescs.emplace_back(desc);
     }
 
-    for (const auto & obj : json["VoxelLights"])
+    if (json.count("VoxelLights") > 0)
     {
-        VoxelLightDesc desc;
-        loadSlotDesc(obj, desc);
+        for (const auto & obj : json["VoxelLights"])
+        {
+            VoxelLightDesc desc;
+            loadSlotDesc(obj, desc);
 
-        desc.intensity = obj["Intensity"];
+            desc.intensity = obj["Intensity"];
 
-        m_desc.voxelLightDescs.emplace_back(desc);
+            m_desc.voxelLightDescs.emplace_back(desc);
+        }
     }
 }
 
@@ -49,5 +52,6 @@ void EquipmentPrototype::loadSlotDesc(const Json & obj, AttachmentDesc & slot) c
     slot.voxel = obj["Voxel"];
     std::swap(slot.voxel.y, slot.voxel.z);
 
-    slot.pose.setOrientation(obj["Orientation"]);
+    slot.pose.setPosition(obj.value("Position", glm::vec3()));
+    slot.pose.setOrientation(glm::quat(obj.value<glm::quat>("Orientation", glm::quat())));
 }

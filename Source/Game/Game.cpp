@@ -64,14 +64,14 @@ public:
         /**
          * Create player
          */
-//        auto player = entityPrototypeManager.createEntity({{"Ship", "Player"}, "PlayerShip"});
-//
-//        player.component<VoxelObject>().setInvincible(true);
-//
-//        {
-//            auto &playerBody = player.component<RigidBodyComponent>().value();
-//            playerBody->transform().setPosition({0.0f, 20.0f, 50.0f});
-//        }
+        auto player = entityPrototypeManager.createEntity({{"Ship", "Player"}, "PlayerShip"});
+
+        player.component<VoxelObject>().setInvincible(true);
+
+        {
+            auto &playerBody = player.component<RigidBodyComponent>().value();
+            playerBody->transform().setPosition({0.0f, 20.0f, 50.0f});
+        }
 
         /**
          * Create block
@@ -100,12 +100,12 @@ public:
 //            asteroidBody->transform().setPosition(RandomUnitVec3() * 1250.0f);
 //        }
 
-        {
-            EntityDesc desc({"Ship2"});
-            desc.position = {0.0f, 0.0f, -200.0f};
-            auto entity = entityPrototypeManager.createEntity(desc);
-          //  entity.component<VoxelObject>().setVoxelColor(glm::uvec3(0,0,0), glm::vec3(5.0f, 3.0f, 7.0f));
-        }
+//        {
+//            EntityDesc desc({"Ship2"});
+//            desc.position = {0.0f, 0.0f, -200.0f};
+//            auto entity = entityPrototypeManager.createEntity(desc);
+//          //  entity.component<VoxelObject>().setVoxelColor(glm::uvec3(0,0,0), glm::vec3(5.0f, 3.0f, 7.0f));
+//        }
 
 
         /**

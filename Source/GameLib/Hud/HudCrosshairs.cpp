@@ -107,7 +107,7 @@ void HudCrosshairs::render()
 
 void HudCrosshairs::onMouseButtonPressed(MouseButtonEvent & event)
 {
-    if (event.button() != MouseButton_Right) return;
+    if (event.button() != MouseButton::Right) return;
 
     auto & player = m_playerSystem.player();
     auto & playerTarget = m_playerSystem.playerTarget();
