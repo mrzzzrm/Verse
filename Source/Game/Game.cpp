@@ -81,9 +81,9 @@ public:
         /**
          * Create station
          */
-//        auto station = entityPrototypeManager.createEntity({"Station"}, "MyStation");
-//        auto stationBody = station.component<RigidBodyComponent>().value();
-//        stationBody->transform().setPosition({0.0f, 40.0f, -100.0f});
+        auto station = entityPrototypeManager.createEntity({{"Factory"}, "MyStation"});
+        auto & stationBody = station.component<RigidBodyComponent>().value();
+        stationBody->transform().setPosition({0.0f, 100.0f, -1500.0f});
 
         /**
          * Create asteroids
