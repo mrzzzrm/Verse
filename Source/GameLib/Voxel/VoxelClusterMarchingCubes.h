@@ -19,7 +19,9 @@ class VoxelClusterMarchingCubes final
 public:
     VoxelClusterMarchingCubes(const VoxelClusterMarchingCubesTriangulation & triangulation,
                               const VoxelCluster<u32> & cluster,
-                              float scale = 1.0f);
+                              float scale = 1.0f, const glm::vec3 & offset = {});
+
+    const glm::vec3 & offset() const { return m_offset; }
 
     void onClusterChanged(const glm::uvec3 & llf, const glm::uvec3 & urb);
 
@@ -28,6 +30,8 @@ public:
              const Optional<glm::vec3> & colorOverride = Optional<glm::vec3>());
 
     LayoutedBlob takeVertices();
+
+    static DataLayout vertexLayout();
 
 private:
     inline void generateMesh(i32 x, i32 y, i32 z, u8 configID);
@@ -39,6 +43,7 @@ private:
     VoxelCluster<u8>                                m_configCluster;
     bool                                            m_configClusterDirty = true;
     float                                           m_scale;
+    glm::vec3                                       m_offset;
     size_t                                          m_maxNumVertices = 0;
 
     DataLayout                                      m_vertexLayout;

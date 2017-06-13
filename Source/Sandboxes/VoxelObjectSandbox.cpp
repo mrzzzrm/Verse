@@ -6,7 +6,7 @@
 #include <Deliberation/Scene/Camera3D.h>
 #include <Deliberation/Scene/Debug/DebugCameraNavigator3D.h>
 
-#include "VoxelRenderChunkTree.h"
+#include "VoxelRenderable.h"
 #include "VoxelWorld.h"
 #include "VoxelClusterPrimitiveTest.h"
 

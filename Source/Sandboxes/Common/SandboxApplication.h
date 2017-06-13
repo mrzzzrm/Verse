@@ -45,7 +45,7 @@
 #include "NpcControllerSystem.h"
 #include "NpcSteering.h"
 #include "VoxelRigidBodyPayload.h"
-#include "VoxelRenderChunkTree.h"
+#include "VoxelRenderable.h"
 #include "VoxelWorld.h"
 #include "VoxelClusterPrimitiveTest.h"
 #include "VoxReader.h"

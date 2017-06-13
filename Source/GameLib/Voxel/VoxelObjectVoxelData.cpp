@@ -62,7 +62,7 @@ const glm::uvec3 & VoxelObjectVoxelData::size() const
     return m_colorIndices.size();
 }
 
-const VoxelRenderChunkTree & VoxelObjectVoxelData::renderTree() const
+const VoxelRenderable & VoxelObjectVoxelData::renderTree() const
 {
     return m_renderTree;
 }

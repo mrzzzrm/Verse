@@ -146,8 +146,8 @@ add_library(${target}
     Voxel/VoxelRenderer.h
     Voxel/VoxelRenderChunk.cpp
     Voxel/VoxelRenderChunk.h
-    Voxel/VoxelRenderChunkTree.cpp
-    Voxel/VoxelRenderChunkTree.h
+    Voxel/VoxelRenderable.cpp
+    Voxel/VoxelRenderable.h
     Voxel/VoxelRigidBodyPayload.cpp
     Voxel/VoxelRigidBodyPayload.h
     Voxel/VoxelShape.cpp

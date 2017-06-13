@@ -1,4 +1,4 @@
-#include "VoxelRenderChunkTree.h"
+#include "VoxelRenderable.h"
 
 #include <sstream>
 
@@ -10,10 +10,14 @@
 #include <Deliberation/Draw/Buffer.h>
 #include <Deliberation/Draw/DrawContext.h>
 
+#include <Deliberation/ECS/World.h>
+
+#include <Deliberation/Scene/Pipeline/RenderSystem.h>
+
 #include "ColorPalette.h"
 #include "VoxelWorld.h"
 
-VoxelRenderChunkTree::VoxelRenderChunkTree(VoxelWorld & voxelWorld,
+VoxelRenderable::VoxelRenderable(VoxelWorld & voxelWorld,
                                            const std::shared_ptr<ColorPalette> & palette,
                                            const glm::uvec3 & size):
     m_voxelWorld(voxelWorld),
@@ -98,47 +102,116 @@ VoxelRenderChunkTree::VoxelRenderChunkTree(VoxelWorld & voxelWorld,
     auto urb = glm::ivec3(m_size) - 1;
     buildTree(0, llf, urb, llf, urb);
 
-    m_chunks.resize(numChunks);}
+    m_chunks.resize(numChunks);
+}
 
-void VoxelRenderChunkTree::setScale(float scale)
+void VoxelRenderable::setScale(float scale)
 {
     m_scale = scale;
 }
 
-void VoxelRenderChunkTree::addVoxel(const Voxel & voxel, bool visible)
+void VoxelRenderable::addVoxel(const Voxel & voxel, bool visible)
 {
     addVoxelToNode(0, voxel, visible);
 }
 
-void VoxelRenderChunkTree::removeVoxel(const glm::uvec3 & voxel, bool visible)
+void VoxelRenderable::removeVoxel(const glm::uvec3 & voxel, bool visible)
 {
     removeVoxelFromNode(0, voxel, visible);
 }
 
-void VoxelRenderChunkTree::updateVoxelVisibility(const glm::uvec3 & voxel, bool visible)
+void VoxelRenderable::updateVoxelVisibility(const glm::uvec3 & voxel, bool visible)
 {
     updateVoxelVisibilityInNode(0, voxel, visible);
 }
 
-void VoxelRenderChunkTree::schedule(const Pose3D & pose) const
+void VoxelRenderable::schedule(const Pose3D & pose) const
 {
-    //ScopeProfiler scopeProfiler("VoxelRenderChunkTree::schedule()");
+    //ScopeProfiler scopeProfiler("VoxelRenderable::schedule()");
 
+    /**
+     * Init Draw
+     */
+    if (!m_drawInitialized)
+    {
+        auto &drawContext = m_voxelWorld.drawContext();
+
+        m_vertexBuffer = drawContext.createBuffer(VoxelClusterMarchingCubes::vertexLayout());
+
+        m_draw = drawContext.createDraw(m_voxelWorld.program());
+        m_draw.addVertexBuffer(m_vertexBuffer);
+        //     m_draw.state().setCullState(CullState::disabled());
+
+        m_draw.sampler("Environment").setTexture(m_voxelWorld.envMap());
+        m_draw.setFramebuffer(m_voxelWorld.world().systemRef<RenderSystem>().renderManager().gbuffer());
+        m_draw.setBufferTexture("Palette", m_palette->colorBuffer());
+
+        m_transformUniform = m_draw.uniform("Transform");
+        m_viewUniform = m_draw.uniform("View");
+        m_projectionUniform = m_draw.uniform("Projection");
+        m_scaleUniform = m_draw.uniform("Scale");
+
+        m_drawInitialized = true;
+    }
+
+    /**
+     * Sync palette
+     */
     m_palette->sync();
+
+    /**
+     * Update Vertices
+     */
+    auto verticesChanged = false;
+    auto numVertices = 0;
 
     for (auto & chunk : m_chunks)
     {
         if (!chunk.chunk) continue;
 
-        Pose3D chunkPose(pose);
+        if (chunk.chunk->updateVertices(m_scale)) verticesChanged = true;
 
-        chunkPose.setPosition(chunkPose.position() + pose.directionLocalToWorld(chunk.position) * m_scale);
+        numVertices += chunk.chunk->vertices().count();
+    }
 
-        chunk.chunk->schedule(chunkPose, m_scale);
+    if (verticesChanged)
+    {
+        m_vertexBuffer.reinit(numVertices);
+
+        m_vertexBuffer.mapped(BufferMapping::WriteOnly, [&] (LayoutedBlob & vertices)
+        {
+            auto offset = 0;
+            const auto stride = vertices.layout().stride();
+
+            for (auto & chunk : m_chunks)
+            {
+                if (!chunk.chunk) continue;
+
+                const auto & chunkVertices = chunk.chunk->vertices();
+                vertices.write(offset * stride, chunkVertices.rawData().ptr(), chunkVertices.count() * stride);
+                offset += chunkVertices.count();
+            }
+        });
+
+    }
+
+    /**
+     * Dispatch Draw
+     */
+    if (m_vertexBuffer.count() != 0)
+    {
+        const auto & camera = voxelWorld().world().systemRef<RenderSystem>().renderManager().mainCamera();
+
+        m_viewUniform.set(camera.view());
+        m_projectionUniform.set(camera.projection());
+        m_transformUniform.set(pose.matrix());
+        m_scaleUniform.set(m_scale);
+
+        m_draw.render();
     }
 }
 
-std::string VoxelRenderChunkTree::toString() const
+std::string VoxelRenderable::toString() const
 {
     std::stringstream stream;
 
@@ -162,7 +235,7 @@ std::string VoxelRenderChunkTree::toString() const
     return stream.str();
 }
 
-void VoxelRenderChunkTree::addVoxelToNode(u32 index, const Voxel & voxel, bool visible)
+void VoxelRenderable::addVoxelToNode(u32 index, const Voxel & voxel, bool visible)
 {
     if (!isVoxelInNode(index, voxel.cell)) return;
 
@@ -184,7 +257,7 @@ void VoxelRenderChunkTree::addVoxelToNode(u32 index, const Voxel & voxel, bool v
         {
             chunk.index = index;
             chunk.position = node.llf;
-            chunk.chunk = std::make_shared<VoxelRenderChunk>(*this,
+            chunk.chunk = std::make_shared<VoxelRenderChunk>(*this, node.llf,
                                                              glm::uvec3(node.urb - node.llf + glm::ivec3(1)),
                                                              node.llfRender - node.llf, node.urbRender - node.llf/*,
                                                              Optional<glm::vec3>(m_colorGenerator.generate())*/);
@@ -202,7 +275,7 @@ void VoxelRenderChunkTree::addVoxelToNode(u32 index, const Voxel & voxel, bool v
     }
 }
 
-void VoxelRenderChunkTree::removeVoxelFromNode(u32 index, const glm::uvec3 & voxel, bool visible)
+void VoxelRenderable::removeVoxelFromNode(u32 index, const glm::uvec3 & voxel, bool visible)
 {
     if (!isVoxelInNode(index, voxel)) return;
 
@@ -233,7 +306,7 @@ void VoxelRenderChunkTree::removeVoxelFromNode(u32 index, const glm::uvec3 & vox
     }
 }
 
-void VoxelRenderChunkTree::updateVoxelVisibilityInNode(size_t index, const glm::uvec3 & voxel, bool visible)
+void VoxelRenderable::updateVoxelVisibilityInNode(size_t index, const glm::uvec3 & voxel, bool visible)
 {
     if (!isVoxelInNode(index, voxel)) return;
   //  if (!isVoxelRenderedByNode(index, voxel)) return;
@@ -266,7 +339,7 @@ void VoxelRenderChunkTree::updateVoxelVisibilityInNode(size_t index, const glm::
     }
 }
 
-bool VoxelRenderChunkTree::isVoxelInNode(size_t index, const glm::uvec3 & voxel)
+bool VoxelRenderable::isVoxelInNode(size_t index, const glm::uvec3 & voxel)
 {
     auto & node = m_nodes[index];
 
@@ -277,7 +350,7 @@ bool VoxelRenderChunkTree::isVoxelInNode(size_t index, const glm::uvec3 & voxel)
         c.z >= node.llf.z && c.z <= node.urb.z;
 }
 
-bool VoxelRenderChunkTree::isVoxelRenderedByNode(size_t index, const glm::uvec3 & voxel)
+bool VoxelRenderable::isVoxelRenderedByNode(size_t index, const glm::uvec3 & voxel)
 {
     auto & node = m_nodes[index];
 

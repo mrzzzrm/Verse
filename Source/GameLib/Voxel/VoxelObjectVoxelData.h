@@ -8,7 +8,7 @@
 #include "Voxel.h"
 #include "VoxelClusterSplitDetector.h"
 #include "VoxelHull.h"
-#include "VoxelRenderChunkTree.h"
+#include "VoxelRenderable.h"
 #include "VoxelShape.h"
 
 class VoxelWorld;
@@ -29,7 +29,7 @@ public:
 
     VoxelWorld & voxelWorld() const;
     const glm::uvec3 & size() const;
-    const VoxelRenderChunkTree & renderTree() const;
+    const VoxelRenderable & renderTree() const;
     const std::shared_ptr<VoxelShape> & shape() const;
     const VoxelHull & hull() const;
     float scale() const;
@@ -58,7 +58,7 @@ private:
     VoxelWorld &                    m_voxelWorld;
     VoxelCluster<u32>               m_colorIndices;
     VoxelCluster<float>             m_healthPoints;
-    VoxelRenderChunkTree            m_renderTree;
+    VoxelRenderable            m_renderTree;
     std::shared_ptr<VoxelShape>     m_shape;
     VoxelHull                       m_hull;
     float                           m_scale = 1.0f;

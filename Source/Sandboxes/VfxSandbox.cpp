@@ -13,7 +13,7 @@
 #include "ResourceManager.h"
 #include "VfxSystem.h"
 #include "VfxManager.h"
-#include "VoxelRenderChunkTree.h"
+#include "VoxelRenderable.h"
 #include "VoxelWorld.h"
 #include "VerseApplication.h"
 

@@ -12,16 +12,19 @@
 #include "VoxelCluster.h"
 #include "VoxelClusterMarchingCubes.h"
 
-class VoxelRenderChunkTree;
+class VoxelRenderable;
 class VoxelWorld;
 
 class VoxelRenderChunk final
 {
 public:
-    VoxelRenderChunk(VoxelRenderChunkTree & voxelRenderChunkTree, const glm::uvec3 & size,
+    VoxelRenderChunk(VoxelRenderable & voxelRenderChunkTree, const glm::uvec3 & position,
+                     const glm::uvec3 & size,
                      const glm::uvec3 & llfRender, const glm::uvec3 & urbRender,
                      const Optional<glm::vec3> & colorOverride = Optional<glm::vec3>());
     VoxelRenderChunk(const VoxelRenderChunk & other);
+
+    const LayoutedBlob & vertices() const { return m_vertices; }
 
     void addVoxel(const Voxel & voxel, bool visible);
     void removeVoxel(const glm::uvec3 & voxel, bool visible);
@@ -29,16 +32,18 @@ public:
 
     std::shared_ptr<VoxelRenderChunk> clone();
 
+    bool updateVertices(float scale);
+
     void schedule(const Pose3D & pose, float scale) const;
 
 private:
     VoxelCluster<u32>   m_cluster;
-    VoxelRenderChunkTree & m_voxelRenderChunkTree;
+    VoxelRenderable &   m_renderable;
     mutable VoxelClusterMarchingCubes
                         m_marchingCubes;
     VoxelCluster<u8>    m_configCluster;
     u32                 m_voxelCount = 0;
-    mutable bool        m_drawDirty = true;
+    mutable bool        m_verticesDirty = true;
     mutable bool        m_meshEmpty = true;
     mutable glm::uvec3  m_llfDirty{std::numeric_limits<u32>::max()};
     mutable glm::uvec3  m_urbDirty;
@@ -46,11 +51,8 @@ private:
 //    glm::uvec3          m_urbVisible;
     glm::uvec3          m_llfRender;
     glm::uvec3          m_urbRender;
-    mutable Draw        m_draw;
-    mutable Uniform     m_transformUniform;
-    mutable Uniform     m_viewUniform;
-    mutable Uniform     m_projectionUniform;
-    mutable Uniform     m_scaleUniform;
     size_t              m_numVisibleVoxels = 0;
     Optional<glm::vec3> m_colorOverride;
+
+    LayoutedBlob        m_vertices;
 };

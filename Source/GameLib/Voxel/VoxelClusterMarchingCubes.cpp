@@ -8,17 +8,14 @@
 
 VoxelClusterMarchingCubes::VoxelClusterMarchingCubes(const VoxelClusterMarchingCubesTriangulation & triangulation,
                                                      const VoxelCluster<u32> & cluster,
-                                                     float scale):
+                                                     float scale, const glm::vec3 & offset):
         m_triangulation(triangulation),
         m_cluster(cluster),
         m_configCluster(cluster.size() + glm::uvec3(1, 1, 1)),
-        m_scale(scale)
+        m_scale(scale),
+        m_offset(offset)
 {
-    m_vertexLayout = DataLayout({{"Position", Type_Vec3},
-                                    {"Normal",   Type_Vec3},
-                                    {"ColorIndex",    Type_U32}});
-
-    m_vertices = LayoutedBlob(m_vertexLayout);
+    m_vertices = LayoutedBlob(vertexLayout());
 }
 
 void VoxelClusterMarchingCubes::run()
@@ -78,7 +75,7 @@ void VoxelClusterMarchingCubes::run(const glm::uvec3 & llf, const glm::uvec3 & u
 
                         for (uint i = 0u; i < 3u; i++)
                         {
-                            m_positions.put((triangle.positions[i] + glm::vec3(x, y, z)) * m_scale);
+                            m_positions.put((triangle.positions[i] + glm::vec3(x, y, z) + m_offset) * m_scale);
                             m_normals.put(triangle.normal);
                             m_colorIndices.put(colorIndex);
                         }
@@ -245,8 +242,16 @@ void VoxelClusterMarchingCubes::onClusterChanged(const glm::uvec3 & llfCluster, 
 LayoutedBlob VoxelClusterMarchingCubes::takeVertices()
 {
     auto result = std::move(m_vertices);
-    m_vertices = LayoutedBlob(m_vertexLayout);
+    m_vertices = LayoutedBlob(vertexLayout());
     return result;
+}
+
+DataLayout VoxelClusterMarchingCubes::vertexLayout()
+{
+    return DataLayout({{"Position", Type_Vec3},
+                     {"Normal",   Type_Vec3},
+                     {"ColorIndex",    Type_U32}});
+
 }
 
 inline void VoxelClusterMarchingCubes::generateMesh(i32 x, i32 y, i32 z, u8 configID)

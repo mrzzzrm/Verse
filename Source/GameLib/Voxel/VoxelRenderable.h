@@ -21,9 +21,9 @@ class Pose3D;
 class ColorPalette;
 class VoxelWorld;
 
-class VoxelRenderChunkTree final {
+class VoxelRenderable final {
 public:
-    VoxelRenderChunkTree(VoxelWorld & voxelWorld,
+    VoxelRenderable(VoxelWorld & voxelWorld,
                          const std::shared_ptr<ColorPalette> & palette,
                          const glm::uvec3 & size);
 
@@ -74,11 +74,19 @@ private:
     bool isVoxelRenderedByNode(size_t index, const glm::uvec3 & voxel);
 
 protected:
-    VoxelWorld &                m_voxelWorld;
-    std::shared_ptr<ColorPalette> m_palette;
-    glm::uvec3                  m_size;
-    std::vector<Node>           m_nodes;
-    std::vector<ChunkWrapper>   m_chunks;
-    RandomColorGenerator        m_colorGenerator;
-    float                       m_scale = 1.0f;
+    VoxelWorld &                    m_voxelWorld;
+    std::shared_ptr<ColorPalette>   m_palette;
+    glm::uvec3                      m_size;
+    std::vector<Node>               m_nodes;
+    std::vector<ChunkWrapper>       m_chunks;
+    RandomColorGenerator            m_colorGenerator;
+    float                           m_scale = 1.0f;
+
+    mutable bool                    m_drawInitialized = false;
+    mutable Draw                    m_draw;
+    mutable Buffer                  m_vertexBuffer;
+    mutable Uniform                 m_transformUniform;
+    mutable Uniform                 m_viewUniform;
+    mutable Uniform                 m_projectionUniform;
+    mutable Uniform                 m_scaleUniform;
 };
