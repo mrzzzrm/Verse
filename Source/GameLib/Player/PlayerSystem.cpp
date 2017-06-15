@@ -47,11 +47,6 @@ PlayerSystem::PlayerSystem(World & world):
 
 void PlayerSystem::onFrameBegin()
 {
-    if (m_player.isValid())
-    {
-        auto & equipment = m_player.component<Equipment>();
-        equipment.clearFireRequests();
-    }
 }
 
 void PlayerSystem::onEntityAdded(Entity & entity)
@@ -176,5 +171,14 @@ void PlayerSystem::onMouseMotion(MouseMotionEvent &event)
     if (m_cameraMode == CameraMode::FreeFlight)
     {
         m_navigator.onMouseMotion(event);
+    }
+}
+
+void PlayerSystem::onFrameComplete()
+{
+    if (m_player.isValid())
+    {
+        auto & equipment = m_player.component<Equipment>();
+        equipment.clearFireRequests();
     }
 }

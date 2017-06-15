@@ -1,0 +1,10 @@
+[
+  {
+    "Base": "Ship"
+  },
+
+  {
+    "Override": "FlightControlConfig",
+    "Forward": [180.0 , 130.0]
+  }
+]

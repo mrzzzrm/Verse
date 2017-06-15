@@ -1,0 +1,11 @@
+[
+    {
+        "Component": "VoxelObject",
+        "VoxelCluster": "Chrystal",
+        "Scale": 4
+    },
+    {
+        "Component": "RigidBody"
+    }
+]
+

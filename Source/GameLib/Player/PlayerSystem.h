@@ -50,6 +50,7 @@ protected:
     void onEntityUpdate(Entity & entity, float seconds) override;
     void onUpdate(float seconds) override;
     void onEntityPrePhysicsUpdate(Entity & entity, float seconds) override;
+    void onFrameComplete() override;
 
     void onMouseButtonDown(MouseStateEvent & event) override;
     void onMouseMotion(MouseMotionEvent & event) override;

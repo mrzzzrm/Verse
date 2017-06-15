@@ -68,12 +68,12 @@ void VoxelClusterSplitDetector::performSplitDetection()
 
                 if (value < m_currentFloodBeginId)
                 {
-                    std::cout << " Flooding " << x << " " << y << " " << z << ". With: " << m_currentFloodId << std::endl;
+                   // std::cout << " Flooding " << x << " " << y << " " << z << ". With: " << m_currentFloodId << std::endl;
                     flood({x, y, z});
                 }
                 else
                 {
-                    std::cout << " Not flooding " << x << " " << y << " " << z << ". " << value << " vs " <<  m_currentFloodBeginId << std::endl;
+                  //  std::cout << " Not flooding " << x << " " << y << " " << z << ". " << value << " vs " <<  m_currentFloodBeginId << std::endl;
                 }
 
             }
