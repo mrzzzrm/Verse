@@ -2,18 +2,14 @@
 
 #include <Deliberation/Core/Json.h>
 
-#include "ComponentPrototype.h"
 #include "GameLib.h"
 #include "NpcBehaviour.h"
 
 class NpcBehaviourPrototype:
-    public ComponentPrototype
+    public ComponentPrototype<NpcBehaviour>
 {
 public:
-    NpcBehaviourPrototype(const Json & json) {}
-
-    void applyToEntity(Entity & entity) const override
+    void updateComponent(NpcBehaviour &) override
     {
-        entity.addComponent<NpcBehaviour>();
     }
 };

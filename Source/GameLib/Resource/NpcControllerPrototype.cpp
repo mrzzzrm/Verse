@@ -4,12 +4,6 @@
 
 #include "NpcController.h"
 
-NpcControllerPrototype::NpcControllerPrototype(const Json & json)
+void NpcControllerPrototype::updateComponent(NpcController & npcController)
 {
-
-}
-
-void NpcControllerPrototype::applyToEntity(Entity & entity) const
-{
-    entity.addComponent<NpcController>();
 }

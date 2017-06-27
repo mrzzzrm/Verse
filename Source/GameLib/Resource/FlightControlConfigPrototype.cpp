@@ -8,16 +8,11 @@ static void from_json(const Json& j, FlightControlComponent & component)
     component.maxSpeed = j[1];
 }
 
-FlightControlConfigPrototype::FlightControlConfigPrototype(const Json & json)
+void FlightControlConfigPrototype::updateComponent(FlightControlConfig & component) 
 {
-    m_config.horizontal = json["Horizontal"];
-    m_config.vertical = json["Vertical"];
-    m_config.forward = json["Forward"];
-    m_config.backward = json["Backward"];
-    m_config.angular = json["Angular"];
-}
-
-void FlightControlConfigPrototype::applyToEntity(Entity & entity) const
-{
-    entity.addComponent<FlightControlConfig>(m_config);
+    component.horizontal = m_json["Horizontal"];
+    component.vertical = m_json["Vertical"];
+    component.forward = m_json["Forward"];
+    component.backward = m_json["Backward"];
+    component.angular = m_json["Angular"];
 }

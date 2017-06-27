@@ -1,0 +1,17 @@
+[
+  {
+    "LID": "player",
+    "Name": "Player",
+    "Bases": [
+      "Player", "Ship"
+    ]
+  },
+
+  {
+    "LID": "asteroid000",
+    "Name": "Asteroid000",
+    "Bases": [
+      "Asteroid00"
+    ]
+  }
+]

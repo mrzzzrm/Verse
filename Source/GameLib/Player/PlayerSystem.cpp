@@ -53,6 +53,8 @@ void PlayerSystem::onEntityAdded(Entity & entity)
 {
     Assert(!m_player.isValid(), "Can't have 2 player identities");
     m_player = entity;
+
+    std::cout << "PlayerSystem: Player set to '" << m_player.name() << "'" << std::endl;
 }
 
 void PlayerSystem::onEntityRemoved(Entity & entity)
@@ -103,8 +105,8 @@ void PlayerSystem::onEntityPrePhysicsUpdate(Entity & entity, float seconds)
         auto & playerBody = *entity.component<RigidBodyComponent>().value();
 
         glm::vec3 offset;
-        offset.z = voxelData.size().z * 1.4f;
-        offset.y = voxelData.size().y * 2;
+        offset.z = voxelData->size().z * 1.4f;
+        offset.y = voxelData->size().y * 2;
 
         Pose3D targetPose(playerBody.transform().position() +
                           playerBody.transform().orientation() * offset,

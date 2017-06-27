@@ -8,7 +8,7 @@
         "Scale": 1
     },
     {
-        "Component": "RigidBody"
+        "Component": "VoxelRigidBody"
     }
 ]
 

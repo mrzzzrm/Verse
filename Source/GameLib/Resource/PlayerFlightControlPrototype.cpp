@@ -4,12 +4,6 @@
 
 #include "PlayerFlightControl.h"
 
-PlayerFlightControlPrototype::PlayerFlightControlPrototype(const Json & json)
+void PlayerFlightControlPrototype::updateComponent(PlayerFlightControl & playerFlightControl)
 {
-
-}
-
-void PlayerFlightControlPrototype::applyToEntity(Entity & entity) const
-{
-    entity.addComponent<PlayerFlightControl>();
 }

@@ -3,18 +3,18 @@
 #include <glm/glm.hpp>
 
 #include <Deliberation/Core/Json.h>
-#include <Deliberation/ECS/Entity.h>
 
-#include "ComponentPrototype.h"
+#include <Deliberation/ECS/Entity.h>
+#include <Deliberation/ECS/ComponentPrototype.h>
+
+#include "CoriolisComponent.h"
 
 class CoriolisPrototype:
-    public ComponentPrototype
+    public ComponentPrototype<CoriolisComponent>
 {
 public:
-    explicit CoriolisPrototype(const Json & json);
-
-    void applyToEntity(Entity & entity) const override;
-
-private:
-    glm::vec3 m_angularVelocity;
+    void updateComponent(CoriolisComponent & coriolis) override
+    {
+        coriolis.setAngularVelocity(m_json["AngularVelocity"]);
+    }
 };

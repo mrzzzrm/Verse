@@ -9,9 +9,10 @@
 #include <Deliberation/ECS/Systems/SkyboxSystem.h>
 
 #include <Deliberation/ImGui/ImGuiSystem.h>
+#include <Voxel/VoxelPhysicsSystem.h>
 
-#include "EntityPrototypeManager.h"
-#include "EntityPrototypeSystem.h"
+#include "VersePrototypeManager.h"
+#include "VersePrototypeSystem.h"
 #include "EquipmentSystem.h"
 #include "Hud.h"
 #include "FactionManager.h"
@@ -22,6 +23,7 @@
 #include "VfxSystem.h"
 #include "VerseRenderManager.h"
 #include "VoxelClusterSplitSystem.h"
+#include "VoxelPhysicsSystem.h"
 
 VerseApplication::VerseApplication(const std::string & name, VerseApplicationSystemInitMode systemInitMode):
     Application(name),
@@ -73,7 +75,8 @@ void VerseApplication::onStartup()
         m_world.addSystem<NpcBehaviourSystem>();
         m_world.addSystem<ImGuiSystem>();
         m_world.addSystem<Hud>();
-        m_world.addSystem<EntityPrototypeSystem>();
+        m_world.addSystem<VersePrototypeSystem>();
+        m_world.addSystem<VoxelPhysicsSystem>();
 
         auto & renderManager = m_world.systemRef<RenderSystem>().renderManager();
         renderManager.addRenderer<AmbientLightRenderer>();

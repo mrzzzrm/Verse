@@ -32,8 +32,3 @@ void EngineSlot::onDisabled()
 
     m_vfxManager->removeEmitterInstance(m_engine->emitterInstance());
 }
-
-void EngineSlot::setVfxManager(VfxManager & vfxManager)
-{
-    m_vfxManager = &vfxManager;
-}

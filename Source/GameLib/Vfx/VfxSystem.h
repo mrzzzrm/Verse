@@ -23,8 +23,7 @@ class VfxSystem final:
 public:
     VfxSystem(World & world);
 
-    VfxManager & manager() { return m_vfxManager; }
-    const VfxManager & manager() const { return m_vfxManager; }
+    const std::shared_ptr<VfxManager> & manager() const { return m_vfxManager; }
 
     void receive(const VoxelObjectModification & modification);
     void receive(const VoxelObjectBulletHit & hit);
@@ -33,7 +32,7 @@ protected:
     void onUpdate(float seconds) override;
 
 private:
-    VfxManager                  m_vfxManager;
+    std::shared_ptr<VfxManager> m_vfxManager;
     std::shared_ptr<Emitter>    m_blastEmitter;
     std::shared_ptr<Emitter>    m_smokeEmitter;
 };

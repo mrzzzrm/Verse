@@ -36,7 +36,7 @@ public:
     size_t numVoxels() const { return m_numVoxels; }
     VoxelClusterSplitDetector & splitDetector() { return m_splitDetector; }
     const VoxelClusterSplitDetector & splitDetector() const { return m_splitDetector; }
-    const std::shared_ptr<ColorPalette> & palette() const { return m_renderTree.palette(); }
+    const std::shared_ptr<ColorPalette> & palette() const { return m_renderable.palette(); }
 
     bool hasVoxel(const glm::ivec3 & voxel) const;
 
@@ -58,7 +58,7 @@ private:
     VoxelWorld &                    m_voxelWorld;
     VoxelCluster<u32>               m_colorIndices;
     VoxelCluster<float>             m_healthPoints;
-    VoxelRenderable            m_renderTree;
+    VoxelRenderable                 m_renderable;
     std::shared_ptr<VoxelShape>     m_shape;
     VoxelHull                       m_hull;
     float                           m_scale = 1.0f;

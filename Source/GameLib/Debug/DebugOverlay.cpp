@@ -51,7 +51,7 @@ void DebugOverlay::onUpdate(float seconds)
         ImGui::PushStyleVar(ImGuiStyleVar_ChildWindowRounding, 5.0f);
         if (ImGui::CollapsingHeader("Entities"))
         {
-            ImGui::Columns(2, "EntityColumns");
+            ImGui::Columns(3, "EntityColumns");
 
             ImGui::BeginChild("Sub1", ImVec2(ImGui::GetWindowContentRegionWidth() * 0.5f, 300), false, ImGuiWindowFlags_HorizontalScrollbar);
             for (auto & entityData : world().entities())
@@ -70,6 +70,18 @@ void DebugOverlay::onUpdate(float seconds)
 
             if (m_selectedEntity.isValid())
             {
+                auto & entityData = world().entityData(m_selectedEntity.id());
+
+                for (const auto & componentTypeId : entityData.componentSetup->componentTypeIds)
+                {
+                    const auto componentName = world().component(entityData.id, componentTypeId)->name();
+
+                    if (ImGui::Selectable(componentName.c_str(), false))
+                    {
+                    }
+                }
+
+                ImGui::NextColumn();
                 if (ImGui::Button("Remove")) m_selectedEntity.scheduleRemoval();
             }
             else

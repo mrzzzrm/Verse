@@ -5,41 +5,39 @@
 #include "VoxelObject.h"
 #include "VoxelObjectVoxelData.h"
 
-VoxelObjectPrototype::VoxelObjectPrototype(const Json & json, VoxelWorld & voxelWorld)
+VoxelObjectPrototype::VoxelObjectPrototype(const std::shared_ptr<VoxelWorld> & voxelWorld):
+    m_voxelWorld(voxelWorld) {
+}
+
+void VoxelObjectPrototype::initComponent(VoxelObject & voxelObject)
 {
-    const auto & voxelClusterName = json["VoxelCluster"].get<std::string>();
+    const auto voxelClusterName = m_json["VoxelCluster"].get<std::string>();
 
     VoxReader voxReader;
     {
         auto models = voxReader.read(GameDataPath("Data/VoxelClusters/" + voxelClusterName + ".vox"));
         if (!models.empty())
         {
-            auto palette = std::make_shared<ColorPalette>(voxelWorld.drawContext(),
+            auto palette = std::make_shared<ColorPalette>(m_voxelWorld->drawContext(),
                                                           models[0].palette);
 
-            m_voxelDataPrototype = std::make_shared<VoxelObjectVoxelData>(voxelWorld,
+            auto voxelData = std::make_shared<VoxelObjectVoxelData>(*m_voxelWorld,
                                                                           palette,
                                                                           models[0].size);
-            m_voxelDataPrototype->addVoxels(models[0].voxels);
+            voxelData->addVoxels(models[0].voxels);
+            voxelObject.setVoxelData(voxelData);
 
-            const auto iter = json.find("CrucialVoxel");
-            if (iter != json.end())
+            const auto iter = m_json.find("CrucialVoxel");
+            if (iter != m_json.end())
             {
                 glm::uvec3 crucialVoxel = *iter;
-                m_crucialVoxel = crucialVoxel;
+                voxelObject.setCrucialVoxel(crucialVoxel);
             }
         }
     }
 
     {
-        auto iter = json.find("Scale");
-        if (iter != json.end()) m_scale = *iter;
+        auto iter = m_json.find("Scale");
+        if (iter != m_json.end()) voxelObject.setScale(*iter);
     }
-}
-
-void VoxelObjectPrototype::applyToEntity(Entity & entity) const
-{
-    auto & voxelObject = entity.addComponent<VoxelObject>(*m_voxelDataPrototype);
-    voxelObject.setScale(m_scale);
-    voxelObject.setCrucialVoxel(m_crucialVoxel);
 }

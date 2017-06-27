@@ -20,9 +20,9 @@ void VoxelLight::onEnabled()
     auto & pointLightRenderer = m_entity.world().systemRef<PointLightSystem>().pointLightRenderer();
     auto & voxelObject = m_entity.component<VoxelObject>();
 
-    const auto colorIndex = voxelObject.data().voxelColorIndex(voxel());
+    const auto colorIndex = voxelObject.data()->voxelColorIndex(voxel());
 
-    m_color = voxelObject.data().palette()->colors()[colorIndex];
+    m_color = voxelObject.data()->palette()->colors()[colorIndex];
     auto intensity = m_color * m_desc.intensity;
 
     PointLight pointLight;
@@ -30,7 +30,7 @@ void VoxelLight::onEnabled()
 
     m_pointLight = pointLightRenderer->addPointLight(pointLight);
 
-    voxelObject.data().palette()->setColor(colorIndex, intensity);
+    voxelObject.data()->palette()->setColor(colorIndex, intensity);
 }
 
 void VoxelLight::onDisabled()
@@ -54,6 +54,6 @@ void VoxelLight::onUpdate(float seconds)
     pointLight.position = voxelObject.pose().poseLocalToWorld(pose()).pointLocalToWorld(voxel());
     pointLight.intensity = intensity;
 
-    const auto colorIndex = voxelObject.data().voxelColorIndex(voxel());
-    voxelObject.data().palette()->setColor(colorIndex, intensity);
+    const auto colorIndex = voxelObject.data()->voxelColorIndex(voxel());
+    voxelObject.data()->palette()->setColor(colorIndex, intensity);
 }

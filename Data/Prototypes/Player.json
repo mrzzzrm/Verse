@@ -1,10 +1,6 @@
-[
-    {
-        "Component": "PlayerFlightControl"
-    },
-    {
-        "Component": "Allegiance",
-        "Faction": "Player"
+{
+    "Components":  {
+        "PlayerFlightControl": {},
+        "Allegiance": {"Faction": "Player"}
     }
-]
-
+}

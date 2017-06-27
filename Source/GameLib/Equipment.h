@@ -34,18 +34,12 @@ struct EquipmentUpdateContext
     Entity      entity;
 };
 
-struct EquipmentDesc
-{
-    std::vector<HardpointDesc>  hardpointDescs;
-    std::vector<EngineSlotDesc> engineSlotDescs;
-    std::vector<VoxelLightDesc> voxelLightDescs;
-};
-
 class Equipment final:
     public Component<Equipment, ComponentSubscriptions<Equipment, VoxelObjectModification>>
 {
 public:
-    Equipment(VfxManager & vfxManager, const EquipmentDesc & desc);
+    const std::shared_ptr<VfxManager> & vfxManager() const { return m_vfxManager; }
+    void setVfxManager(const std::shared_ptr<VfxManager> & vfxManager) { m_vfxManager = vfxManager; }
 
     const std::vector<std::shared_ptr<Hardpoint>> & hardpoints() const;
     const std::vector<std::shared_ptr<EngineSlot>> & engineSlots() const;
@@ -72,11 +66,11 @@ public:
 
     void receive(const VoxelObjectModification & modification);
 
-    void onAttachedToEntity() override;
+private:
+    friend class EquipmentPrototype;
 
 private:
-    EquipmentDesc                               m_desc;
-    VfxManager &                                m_vfxManager;
+    std::shared_ptr<VfxManager>                 m_vfxManager;
     std::vector<std::shared_ptr<Hardpoint>>     m_hardpoints;
     std::vector<std::shared_ptr<EngineSlot>>    m_engineSlots;
 

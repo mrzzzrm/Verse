@@ -39,16 +39,16 @@ void VoxelClusterSplitSystem::onUpdate(float seconds)
         if (!entity.isValid()) continue;
 
         auto & originalVoxelData = object->data();
-        auto & splitDetector = object->data().splitDetector();
+        auto & splitDetector = object->data()->splitDetector();
 
         object->performSplitDetection();
 
         const auto & splits = splitDetector.splits();
 
         Assert(
-            !splits.empty() || originalVoxelData.numVoxels() == 0,
+            !splits.empty() || originalVoxelData->numVoxels() == 0,
             entity.name() + ": there has to be one split, the object itself, by definition. Remaining voxels: " +
-            std::to_string(originalVoxelData.numVoxels()));
+            std::to_string(originalVoxelData->numVoxels()));
 
         if (splits.size() <= 1) continue;
 
@@ -68,28 +68,29 @@ void VoxelClusterSplitSystem::onUpdate(float seconds)
 
             for (const auto & voxel : split.voxels)
             {
-                const auto colorIndex = originalVoxelData.voxelColorIndex(voxel);
-                const auto healthPoints = originalVoxelData.voxelHealthPoints(voxel);
+                const auto colorIndex = originalVoxelData->voxelColorIndex(voxel);
+                const auto healthPoints = originalVoxelData->voxelHealthPoints(voxel);
                 Voxel splitVoxel(voxel - split.llf, colorIndex, healthPoints);
 
                 splitVoxels.emplace_back(splitVoxel);
             }
 
             auto splitPalette = std::make_shared<ColorPalette>(voxelWorld.drawContext(),
-                                                               originalVoxelData.palette()->colors());
+                                                               originalVoxelData->palette()->colors());
 
             const auto splitSize = split.urb - split.llf + 1u;
-            VoxelObjectVoxelData splitVoxelData(originalVoxelObject.data().voxelWorld(),
+            auto splitVoxelData = std::make_shared<VoxelObjectVoxelData>(originalVoxelObject.data()->voxelWorld(),
                                                 splitPalette,
                                                 splitSize);
-            splitVoxelData.addVoxels(std::move(splitVoxels));
+            splitVoxelData->addVoxels(std::move(splitVoxels));
 
             auto splitEntity = world().createEntity("Split");
-            auto & splitVoxelObject = splitEntity.addComponent<VoxelObject>(splitVoxelData);
+            auto & splitVoxelObject = splitEntity.addComponent<VoxelObject>();
+            splitVoxelObject.setVoxelData(splitVoxelData);
             splitVoxelObject.setScale(originalVoxelObject.scale());
 
             auto rigidBodyPayload = std::make_shared<VoxelRigidBodyPayload>(splitVoxelObject.shared_from_this());
-            auto splitBody = std::make_shared<RigidBody>(splitVoxelObject.data().shape());
+            auto splitBody = std::make_shared<RigidBody>(splitVoxelObject.data()->shape());
             splitBody->setEntity(splitEntity);
             splitBody->adjustCenterOfMass();
 

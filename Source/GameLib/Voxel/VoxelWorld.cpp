@@ -65,12 +65,13 @@ void VoxelWorld::onCrucialVoxelDestroyed(VoxelObject & voxelObject)
               << "' to remnant because its crucial voxel was destroyed" << std::endl;
 
     auto remnantVoxelData = voxelObject.data();
-    remnantVoxelData.setCrucialVoxel({});
+    remnantVoxelData->setCrucialVoxel({});
 
     auto remnant = world().createEntity("Remnant of '" + originalEntity.name() + "'");
-    auto & remnantVoxelObject = remnant.addComponent<VoxelObject>(std::move(remnantVoxelData));
+    auto & remnantVoxelObject = remnant.addComponent<VoxelObject>();
+    remnantVoxelObject.setVoxelData(remnantVoxelData);
 
-    auto remnantRigidBody = std::make_shared<RigidBody>(voxelObject.data().shape());
+    auto remnantRigidBody = std::make_shared<RigidBody>(voxelObject.data()->shape());
     remnantRigidBody->setTransform(originalRigidBody->transform());
     remnant.addComponent<RigidBodyComponent>(remnantRigidBody);
 
@@ -91,7 +92,7 @@ void VoxelWorld::onEntityRemoved(Entity & entity)
 void VoxelWorld::onEntityUpdate(Entity & entity, float seconds)
 {
     auto & voxelObject = entity.component<VoxelObject>();
-    if (voxelObject.data().numVoxels() == 0)
+    if (voxelObject.data()->numVoxels() == 0)
     {
         entity.scheduleRemoval();
     }
