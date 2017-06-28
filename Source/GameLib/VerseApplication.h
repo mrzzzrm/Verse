@@ -54,6 +54,11 @@
 #include "VoxelClusterContact.h"
 #include "Weapon.h"
 
+namespace deliberation
+{
+class PhysicsWorldSystem;
+}
+
 class EntityPrototypeManager;
 
 enum class VerseApplicationSystemInitMode
@@ -84,4 +89,6 @@ protected:
     World                                   m_world;
 
     Texture                                 m_skyboxCubemap;
+
+    std::shared_ptr<PhysicsWorldSystem>     m_physicsWorldSystem;
 };

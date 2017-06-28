@@ -24,7 +24,7 @@ void VoxelObjectPrototype::initComponent(VoxelObject & voxelObject)
             auto voxelData = std::make_shared<VoxelObjectVoxelData>(*m_voxelWorld,
                                                                           palette,
                                                                           models[0].size);
-            voxelData->addVoxels(models[0].voxels);
+            voxelData->addVoxelsRaw(models[0].voxels);
             voxelObject.setVoxelData(voxelData);
 
             const auto iter = m_json.find("CrucialVoxel");

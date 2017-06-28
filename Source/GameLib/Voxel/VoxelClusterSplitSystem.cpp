@@ -82,7 +82,7 @@ void VoxelClusterSplitSystem::onUpdate(float seconds)
             auto splitVoxelData = std::make_shared<VoxelObjectVoxelData>(originalVoxelObject.data()->voxelWorld(),
                                                 splitPalette,
                                                 splitSize);
-            splitVoxelData->addVoxels(std::move(splitVoxels));
+            splitVoxelData->addVoxelsRaw(std::move(splitVoxels));
 
             auto splitEntity = world().createEntity("Split");
             auto & splitVoxelObject = splitEntity.addComponent<VoxelObject>();

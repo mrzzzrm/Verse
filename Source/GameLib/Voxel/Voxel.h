@@ -6,6 +6,8 @@
 
 struct Voxel
 {
+    Voxel() = default;
+
     Voxel(const glm::uvec3 & cell):
         cell(cell)
     {
@@ -16,6 +18,8 @@ struct Voxel
         colorIndex(colorIndex),
         healthPoints(healthPoints)
     {}
+
+    Voxel(const Voxel & voxel) = default;
 
     glm::uvec3  cell;
     u32         colorIndex;

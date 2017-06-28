@@ -46,9 +46,9 @@ void VoxelObject::setVoxelHealthPoints(const glm::uvec3 & voxel, float healthPoi
     m_voxelData->setVoxelHealthPoints(voxel, healthPoints);
 }
 
-void VoxelObject::addVoxels(const std::vector<Voxel> & voxels)
+void VoxelObject::addVoxelsRaw(const std::vector<Voxel> & voxels)
 {
-    m_voxelData->addVoxels(voxels);
+    m_voxelData->addVoxelsRaw(voxels);
 
     VoxelObjectModification modification(shared_from_this());
     modification.additions = voxels;
@@ -56,9 +56,9 @@ void VoxelObject::addVoxels(const std::vector<Voxel> & voxels)
     emit(modification);
 }
 
-void VoxelObject::removeVoxels(const std::vector<glm::uvec3> & voxels)
+void VoxelObject::removeVoxelsRaw(const std::vector<glm::uvec3> & voxels)
 {
-    m_voxelData->removeVoxels(voxels);
+    m_voxelData->removeVoxelsRaw(voxels);
 
     VoxelObjectModification modification(shared_from_this());
     modification.removals = voxels;

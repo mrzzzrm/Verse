@@ -61,7 +61,7 @@ void VerseApplication::onStartup()
         m_world.addSystem<DebugPointLightSystem>(pointLightSystem->pointLightRenderer());
         m_world.addSystem<SkyboxSystem>(m_skyboxCubemap);
         m_world.addSystem<ResourceManager>();
-        m_world.addSystem<PhysicsWorldSystem>(m_physicsWorld);
+        m_physicsWorldSystem = m_world.addSystem<PhysicsWorldSystem>(m_physicsWorld);
         m_world.addSystem<VoxelClusterSplitSystem>();
         m_world.addSystem<VoxelWorld>(m_skyboxCubemap);
         m_world.addSystem<NpcControllerSystem>();
@@ -97,7 +97,8 @@ void VerseApplication::onFrame(float seconds)
     if (EpsilonGt(physicsSimulationSeconds, 0.0f))
     {
         m_world.prePhysicsUpdate(physicsSimulationSeconds);
-        m_physicsWorld.update(seconds);
+        m_physicsWorldSystem->updatePhysics(seconds);
+        m_world.postPhysicsUpdate(physicsSimulationSeconds);
 
         onApplicationPhysicsUpdate(physicsSimulationSeconds);
     }

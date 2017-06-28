@@ -89,6 +89,7 @@ void VoxelWorld::onEntityRemoved(Entity & entity)
     auto & voxelObject = entity.component<VoxelObject>();
     m_renderer->removeVoxelObject(voxelObject.shared_from_this());
 }
+
 void VoxelWorld::onEntityUpdate(Entity & entity, float seconds)
 {
     auto & voxelObject = entity.component<VoxelObject>();
@@ -97,15 +98,15 @@ void VoxelWorld::onEntityUpdate(Entity & entity, float seconds)
         entity.scheduleRemoval();
     }
 
-    if (entity.hasComponent<RigidBodyComponent>())
+    if (entity.hasComponent<Transform3DComponent>())
     {
-        auto & body = entity.component<RigidBodyComponent>().value();
+        auto & transform = entity.component<Transform3DComponent>().value();
         auto & object = entity.component<VoxelObject>();
 
         Pose3D pose;
-        pose.setOrientation(body->transform().orientation());
-        pose.setPosition(body->transform().position());
-        pose.setCenter(body->transform().center());
+        pose.setOrientation(transform.orientation());
+        pose.setPosition(transform.position());
+        pose.setCenter(transform.center());
 
         object.setPose(pose);
     }
@@ -120,8 +121,8 @@ void VoxelWorld::onUpdate(float seconds)
     for (const auto & modification : m_objectModifications)
     {
         splitSystem.onVoxelObjectModified(modification.object);
-        modification.object->addVoxels(modification.additions);
-        modification.object->removeVoxels(modification.removals);
+        modification.object->addVoxelsRaw(modification.additions);
+        modification.object->removeVoxelsRaw(modification.removals);
     }
     m_objectModifications.clear();
 

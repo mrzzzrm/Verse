@@ -18,7 +18,7 @@ std::shared_ptr<VoxelObjectVoxelData> VoxelObjectVoxelData::fromFile(VoxReader &
                                                                 palette,
                                                                 models[0].size);
 
-        voxelData->addVoxels(models[0].voxels);
+        voxelData->addVoxelsRaw(models[0].voxels);
         return voxelData;
     }
 
@@ -109,7 +109,7 @@ void VoxelObjectVoxelData::setScale(float scale)
     m_shape->setScale(scale);
 }
 
-void VoxelObjectVoxelData::addVoxels(std::vector<Voxel> voxels)
+void VoxelObjectVoxelData::addVoxelsRaw(std::vector<Voxel> voxels)
 {
 #if VERBOSE
     std::cout << "VoxelObjectVoxelData::addVoxels(" << this << ") - Voxels: " << m_numVoxels << " + " << voxels.size() << std::endl;
@@ -119,6 +119,22 @@ void VoxelObjectVoxelData::addVoxels(std::vector<Voxel> voxels)
     }
     std::cout << std::endl;
 #endif
+
+    /**
+     * Erase already set Voxels from list
+     */
+    {
+        size_t vW = 0;
+        for (size_t vR = 0; vR < voxels.size(); vR++)
+        {
+            if (!hasVoxel(voxels[vR].cell))
+            {
+                voxels[vW] = voxels[vR];
+                vW++;
+            }
+        }
+        voxels.resize(vW);
+    }
 
     m_hull.addVoxels(voxels);
 
@@ -147,7 +163,7 @@ void VoxelObjectVoxelData::addVoxels(std::vector<Voxel> voxels)
     m_numVoxels += voxels.size();
 }
 
-void VoxelObjectVoxelData::removeVoxels(const std::vector<glm::uvec3> & voxels)
+void VoxelObjectVoxelData::removeVoxelsRaw(std::vector<glm::uvec3> voxels)
 {
 #if VERBOSE
     std::cout << "VoxelObjectVoxelData(" << this << ")::removeVoxels() - Voxels: " << m_numVoxels << " - " << voxels.size() << std::endl;
@@ -156,6 +172,22 @@ void VoxelObjectVoxelData::removeVoxels(const std::vector<glm::uvec3> & voxels)
         std::cout << "  " << voxel << std::endl;
     }
 #endif
+
+    /**
+     * Erase not set Voxels from list
+     */
+    {
+        size_t vW = 0;
+        for (size_t vR = 0; vR < voxels.size(); vR++)
+        {
+            if (hasVoxel(voxels[vR]))
+            {
+                voxels[vW] = voxels[vR];
+                vW++;
+            }
+        }
+        voxels.resize(vW);
+    }
 
     for (auto & voxel : voxels)
     {

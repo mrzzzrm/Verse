@@ -46,8 +46,8 @@ public:
     void setVoxelHealthPoints(const glm::uvec3 & voxel, float healthPoints);
     void setScale(float scale);
 
-    void addVoxels(std::vector<Voxel> voxels);
-    void removeVoxels(const std::vector<glm::uvec3> & voxels);
+    void addVoxelsRaw(std::vector<Voxel> voxels);
+    void removeVoxelsRaw(std::vector<glm::uvec3> voxels);
 
     void setCrucialVoxel(const boost::optional<glm::uvec3> & crucialVoxel);
 

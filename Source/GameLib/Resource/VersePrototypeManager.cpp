@@ -4,6 +4,7 @@
 
 #include <Deliberation/Core/Assert.h>
 #include <Deliberation/ECS/Components.h>
+#include <Deliberation/ECS/ComponentPrototypes.h>
 
 #include "AllegiancePrototype.h"
 #include "CoriolisPrototype.h"
@@ -35,4 +36,5 @@ VersePrototypeManager::VersePrototypeManager(World & world, const std::string & 
     registerComponentPrototype<NpcBehaviourPrototype>("NpcBehaviour");
     registerComponentPrototype<NpcBehaviourPrototype>("NpcBehaviour");
     registerComponentPrototype<HudProxyPrototype>("HudProxy");
+    registerComponentPrototype<Transform3DComponentPrototype>("Transform3D");
 }
