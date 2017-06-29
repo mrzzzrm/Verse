@@ -18,7 +18,7 @@ std::shared_ptr<VoxelObjectVoxelData> VoxelObjectVoxelData::fromFile(VoxReader &
                                                                 palette,
                                                                 models[0].size);
 
-        voxelData->addVoxels(models[0].voxels);
+        voxelData->addVoxelsRaw(models[0].voxels);
         return voxelData;
     }
 
@@ -29,7 +29,7 @@ VoxelObjectVoxelData::VoxelObjectVoxelData(const VoxelObjectVoxelData & prototyp
     m_voxelWorld(prototype.m_voxelWorld),
     m_colorIndices(prototype.m_colorIndices),
     m_healthPoints(prototype.m_healthPoints),
-    m_renderTree(prototype.m_renderTree),
+    m_renderable(prototype.m_renderable),
     m_shape(std::make_shared<VoxelShape>(*prototype.m_shape)),
     m_hull(prototype.m_hull),
     m_numVoxels(prototype.m_numVoxels),
@@ -44,7 +44,7 @@ VoxelObjectVoxelData::VoxelObjectVoxelData(VoxelWorld & voxelWorld,
     m_voxelWorld(voxelWorld),
     m_colorIndices(size),
     m_healthPoints(size),
-    m_renderTree(voxelWorld, palette, size),
+    m_renderable(voxelWorld, palette, size),
     m_shape(std::make_shared<VoxelShape>(size)),
     m_hull(size),
     m_splitDetector(size)
@@ -64,7 +64,7 @@ const glm::uvec3 & VoxelObjectVoxelData::size() const
 
 const VoxelRenderable & VoxelObjectVoxelData::renderTree() const
 {
-    return m_renderTree;
+    return m_renderable;
 }
 
 const std::shared_ptr<VoxelShape>  & VoxelObjectVoxelData::shape() const
@@ -105,11 +105,11 @@ void VoxelObjectVoxelData::setVoxelHealthPoints(const glm::uvec3 & voxel, float 
 void VoxelObjectVoxelData::setScale(float scale)
 {
     m_scale = scale;
-    m_renderTree.setScale(scale);
+    m_renderable.setScale(scale);
     m_shape->setScale(scale);
 }
 
-void VoxelObjectVoxelData::addVoxels(std::vector<Voxel> voxels)
+void VoxelObjectVoxelData::addVoxelsRaw(std::vector<Voxel> voxels)
 {
 #if VERBOSE
     std::cout << "VoxelObjectVoxelData::addVoxels(" << this << ") - Voxels: " << m_numVoxels << " + " << voxels.size() << std::endl;
@@ -120,6 +120,22 @@ void VoxelObjectVoxelData::addVoxels(std::vector<Voxel> voxels)
     std::cout << std::endl;
 #endif
 
+    /**
+     * Erase already set Voxels from list
+     */
+    {
+        size_t vW = 0;
+        for (size_t vR = 0; vR < voxels.size(); vR++)
+        {
+            if (!hasVoxel(voxels[vR].cell))
+            {
+                voxels[vW] = voxels[vR];
+                vW++;
+            }
+        }
+        voxels.resize(vW);
+    }
+
     m_hull.addVoxels(voxels);
 
     for (auto & voxel : voxels)
@@ -128,7 +144,7 @@ void VoxelObjectVoxelData::addVoxels(std::vector<Voxel> voxels)
 
         m_colorIndices.set(voxel.cell, voxel.colorIndex);
         m_healthPoints.set(voxel.cell, voxel.healthPoints);
-        m_renderTree.addVoxel(voxel, m_hull.isHullVoxel(voxel.cell));
+        m_renderable.addVoxel(voxel, m_hull.isHullVoxel(voxel.cell));
     }
 
     for (auto & voxel : m_hull.newHullVoxels())
@@ -138,7 +154,7 @@ void VoxelObjectVoxelData::addVoxels(std::vector<Voxel> voxels)
 
     for (auto & voxel : m_hull.newObscuredVoxels())
     {
-        m_renderTree.updateVoxelVisibility(voxel, false);
+        m_renderable.updateVoxelVisibility(voxel, false);
         m_shape->updateVoxel(voxel, false);
     }
 
@@ -147,7 +163,7 @@ void VoxelObjectVoxelData::addVoxels(std::vector<Voxel> voxels)
     m_numVoxels += voxels.size();
 }
 
-void VoxelObjectVoxelData::removeVoxels(const std::vector<glm::uvec3> & voxels)
+void VoxelObjectVoxelData::removeVoxelsRaw(std::vector<glm::uvec3> voxels)
 {
 #if VERBOSE
     std::cout << "VoxelObjectVoxelData(" << this << ")::removeVoxels() - Voxels: " << m_numVoxels << " - " << voxels.size() << std::endl;
@@ -157,6 +173,22 @@ void VoxelObjectVoxelData::removeVoxels(const std::vector<glm::uvec3> & voxels)
     }
 #endif
 
+    /**
+     * Erase not set Voxels from list
+     */
+    {
+        size_t vW = 0;
+        for (size_t vR = 0; vR < voxels.size(); vR++)
+        {
+            if (hasVoxel(voxels[vR]))
+            {
+                voxels[vW] = voxels[vR];
+                vW++;
+            }
+        }
+        voxels.resize(vW);
+    }
+
     for (auto & voxel : voxels)
     {
         Assert(m_colorIndices.test(voxel), "Doesn't contain voxel " + ToString(voxel));
@@ -165,7 +197,7 @@ void VoxelObjectVoxelData::removeVoxels(const std::vector<glm::uvec3> & voxels)
         m_healthPoints.set(voxel, VoxelCluster<float>::EMPTY_VOXEL);
 
         if (m_hull.isHullVoxel(voxel)) m_shape->updateVoxel(voxel, false);
-        m_renderTree.removeVoxel(voxel, m_hull.isHullVoxel(voxel));
+        m_renderable.removeVoxel(voxel, m_hull.isHullVoxel(voxel));
     }
 
     m_hull.removeVoxels(voxels);
@@ -173,7 +205,7 @@ void VoxelObjectVoxelData::removeVoxels(const std::vector<glm::uvec3> & voxels)
     for (auto & voxel : m_hull.newHullVoxels())
     {
         m_shape->updateVoxel(voxel, true);
-        m_renderTree.updateVoxelVisibility(voxel, true);
+        m_renderable.updateVoxelVisibility(voxel, true);
     }
 
     m_splitDetector.removeVoxels(voxels);

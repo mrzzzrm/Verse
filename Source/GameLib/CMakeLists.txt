@@ -59,15 +59,8 @@ add_library(${target}
     Player/PlayerSystem.h
 
     Resource/AllegiancePrototype.h
-    Resource/ComponentPrototype.h
-    Resource/CoriolisPrototype.cpp
     Resource/CoriolisPrototype.h
-    Resource/EntityDesc.cpp
-    Resource/EntityDesc.h
-    Resource/EntityPrototype.cpp
-    Resource/EntityPrototype.h
-    Resource/EntityPrototypeManager.cpp
-    Resource/EntityPrototypeManager.h
+    Resource/VersePrototypeSystem.h
     Resource/EquipmentPrototype.cpp
     Resource/EquipmentPrototype.h
     Resource/FlightControlConfigPrototype.cpp
@@ -80,10 +73,12 @@ add_library(${target}
     Resource/ResourceManager.cpp
     Resource/ResourceManager.h
     Resource/R.h
-    Resource/RigidBodyPrototype.cpp
-    Resource/RigidBodyPrototype.h
+    Resource/VoxelRigidBodyPrototype.cpp
+    Resource/VoxelRigidBodyPrototype.h
     Resource/VoxelObjectPrototype.cpp
     Resource/VoxelObjectPrototype.h
+    Resource/VersePrototypeManager.cpp
+    Resource/VersePrototypeManager.h
 
     Vfx/Emitter.cpp
     Vfx/Emitter.h
@@ -136,6 +131,8 @@ add_library(${target}
     Voxel/VoxelHull.h
     Voxel/VoxelImpactSystem.cpp
     Voxel/VoxelImpactSystem.h
+    Voxel/VoxelPhysicsSystem.cpp
+    Voxel/VoxelPhysicsSystem.h
     Voxel/VoxelObject.cpp
     Voxel/VoxelObject.h
     Voxel/VoxelObjectPrimitives.cpp

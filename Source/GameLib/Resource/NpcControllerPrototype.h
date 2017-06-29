@@ -1,15 +1,14 @@
 #pragma once
 
 #include <Deliberation/Core/Json.h>
+#include <Deliberation/ECS/ComponentPrototype.h>
 
 #include "GameLib.h"
-#include "ComponentPrototype.h"
+#include "NpcController.h"
 
 class NpcControllerPrototype:
-    public ComponentPrototype
+    public ComponentPrototype<NpcController>
 {
 public:
-    NpcControllerPrototype(const Json & json);
-
-    void applyToEntity(Entity & entity) const override;
+    void updateComponent(NpcController & npcController) override;
 };

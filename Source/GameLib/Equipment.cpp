@@ -9,12 +9,6 @@
 #include "VfxManager.h"
 #include "Weapon.h"
 
-Equipment::Equipment(VfxManager & vfxManager, const EquipmentDesc & desc):
-    m_vfxManager(vfxManager),
-    m_desc(desc)
-{
-}
-
 const std::vector<std::shared_ptr<Hardpoint>> & Equipment::hardpoints() const
 {
     return m_hardpoints;
@@ -91,14 +85,14 @@ void Equipment::setEngine(size_t slot, std::shared_ptr<Engine> engine)
 
     if (previousEngine)
     {
-        m_vfxManager.removeEmitterInstance(previousEngine->emitterInstance());
+        m_vfxManager->removeEmitterInstance(previousEngine->emitterInstance());
     }
 
     m_engineSlots[slot]->setEngine(engine);
 
     if (engine)
     {
-        m_vfxManager.addEmitterInstance(engine->emitterInstance());
+        m_vfxManager->addEmitterInstance(engine->emitterInstance());
     }
 }
 
@@ -128,29 +122,5 @@ void Equipment::receive(const VoxelObjectModification & modification)
         if (it == m_attachmentByVoxel.end()) continue;
 
         it->second->setEnabled(false);
-    }
-}
-
-void Equipment::onAttachedToEntity()
-{
-    for (const auto & hardpointDesc : m_desc.hardpointDescs)
-    {
-        auto hardpoint = std::make_shared<Hardpoint>(hardpointDesc);
-        m_hardpoints.emplace_back(hardpoint);
-        addAttachment(hardpoint);
-    }
-
-    for (const auto & engineSlotDesc : m_desc.engineSlotDescs)
-    {
-        auto engineSlot = std::make_shared<EngineSlot>(engineSlotDesc);
-        engineSlot->setVfxManager(m_vfxManager);
-        m_engineSlots.emplace_back(engineSlot);
-        addAttachment(engineSlot);
-    }
-
-    for (const auto & voxelLightDesc : m_desc.voxelLightDescs)
-    {
-        auto voxelLight = std::make_shared<VoxelLight>(voxelLightDesc);
-        addAttachment(voxelLight);
     }
 }

@@ -21,12 +21,12 @@ public:
 
     void setTargetPose(const Pose3D & pose);
 
-    void setVfxManager(VfxManager & vfxManager);
+    void setVfxManager(const std::shared_ptr<VfxManager> & vfxManager) { m_vfxManager = vfxManager; }
 
 private:
     void onDisabled() override;
 
 private:
-    std::shared_ptr<Engine> m_engine;
-    VfxManager *            m_vfxManager = nullptr;
+    std::shared_ptr<Engine>     m_engine;
+    std::shared_ptr<VfxManager> m_vfxManager;
 };

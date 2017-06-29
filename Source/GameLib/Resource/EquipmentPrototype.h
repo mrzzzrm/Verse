@@ -7,9 +7,9 @@
 #include <Deliberation/Core/Json.h>
 #include <Deliberation/Core/Math/Pose3D.h>
 
+#include <Deliberation/ECS/ComponentPrototype.h>
 #include <Deliberation/ECS/Entity.h>
 
-#include "ComponentPrototype.h"
 #include "Equipment.h"
 #include "GameLib.h"
 #include "Attachment.h"
@@ -17,17 +17,21 @@
 class VfxManager;
 
 class EquipmentPrototype final:
-    public ComponentPrototype
+    public ComponentPrototype<Equipment>
 {
 public:
-    EquipmentPrototype(const Json & json, VfxManager & vfxManager);
+    EquipmentPrototype(const std::shared_ptr<VfxManager> & vfxManager):
+        m_vfxManager(vfxManager)
+    {}
 
-    void applyToEntity(Entity & entity) const override;
+    void updateComponent(Equipment & equipment) override;
+
+protected:
+    void initComponent(Equipment & equipment) override;
 
 private:
     void loadSlotDesc(const Json & obj, AttachmentDesc & slot) const;
 
 private:
-    VfxManager &    m_vfxManager;
-    EquipmentDesc   m_desc;
+    std::shared_ptr<VfxManager> m_vfxManager;
 };

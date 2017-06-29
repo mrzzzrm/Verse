@@ -7,44 +7,58 @@
 #include "Equipment.h"
 #include "Hardpoint.h"
 
-EquipmentPrototype::EquipmentPrototype(const Json & json, VfxManager & vfxManager):
-    m_vfxManager(vfxManager)
+void EquipmentPrototype::updateComponent(Equipment & equipment)
 {
-    for (const auto & obj : json["Engines"])
-    {
-        EngineSlotDesc desc;
-        loadSlotDesc(obj, desc);
+    /**
+     * Clear Equipment
+     */
+    equipment.m_hardpoints.clear();
+    equipment.m_engineSlots.clear();
+    equipment.m_attachmentByVoxel.clear();
 
-        m_desc.engineSlotDescs.emplace_back(desc);
+    if (m_json.count("Engines") > 0) {
+        for (const auto &obj : m_json["Engines"]) {
+            EngineSlotDesc desc;
+            loadSlotDesc(obj, desc);
+
+            auto engineSlot = std::make_shared<EngineSlot>(desc);
+            engineSlot->setVfxManager(m_vfxManager);
+            equipment.m_engineSlots.emplace_back(engineSlot);
+            equipment.addAttachment(engineSlot);
+        }
     }
 
-    for (const auto & obj : json["Hardpoints"])
-    {
-        HardpointDesc desc;
-        loadSlotDesc(obj, desc);
+    if (m_json.count("Hardpoints") > 0) {
+        for (const auto &obj : m_json["Hardpoints"]) {
+            HardpointDesc desc;
+            loadSlotDesc(obj, desc);
 
-        desc.maxAngle = obj["MaxAngle"];
+            desc.maxAngle = obj["MaxAngle"];
 
-        m_desc.hardpointDescs.emplace_back(desc);
+            auto hardpoint = std::make_shared<Hardpoint>(desc);
+            equipment.m_hardpoints.emplace_back(hardpoint);
+            equipment.addAttachment(hardpoint);
+        }
     }
 
-    if (json.count("VoxelLights") > 0)
+    if (m_json.count("VoxelLights") > 0)
     {
-        for (const auto & obj : json["VoxelLights"])
+        for (const auto & obj : m_json["VoxelLights"])
         {
             VoxelLightDesc desc;
             loadSlotDesc(obj, desc);
 
             desc.intensity = obj["Intensity"];
 
-            m_desc.voxelLightDescs.emplace_back(desc);
+            auto voxelLight = std::make_shared<VoxelLight>(desc);
+            equipment.addAttachment(voxelLight);
         }
     }
 }
 
-void EquipmentPrototype::applyToEntity(Entity & entity) const
+void EquipmentPrototype::initComponent(Equipment & equipment)
 {
-    auto & equipment = entity.addComponent<Equipment>(m_vfxManager, m_desc);
+    equipment.setVfxManager(m_vfxManager);
 }
 
 void EquipmentPrototype::loadSlotDesc(const Json & obj, AttachmentDesc & slot) const

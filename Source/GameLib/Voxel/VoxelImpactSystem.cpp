@@ -25,7 +25,7 @@ std::vector<glm::uvec3> VoxelImpactSystem::process(
     const auto maxDepth = (u32)(std::ceil(radius * 1.5f));
     auto & voxelData = voxelObject.data();
 
-    if (!voxelData.hasVoxel(originVoxel)) return {};
+    if (!voxelData->hasVoxel(originVoxel)) return {};
 
     const auto radius2 = radius * radius;
 
@@ -40,7 +40,7 @@ std::vector<glm::uvec3> VoxelImpactSystem::process(
         const auto diffToOrigin = glm::abs(voxel - glm::ivec3(originVoxel));
         const auto manhattan = diffToOrigin.x + diffToOrigin.y + diffToOrigin.z;
 
-        if (!voxelData.hasVoxel(voxel)) return;
+        if (!voxelData->hasVoxel(voxel)) return;
 
         if (glm::length2(glm::vec3(diffToOrigin)) >= radius2) return;
 
@@ -55,7 +55,7 @@ std::vector<glm::uvec3> VoxelImpactSystem::process(
             const auto voxel = *iter;
             currentDepthSet.erase(iter);
 
-            const auto currentHealthPoints = voxelData.voxelHealthPoints(voxel);
+            const auto currentHealthPoints = voxelData->voxelHealthPoints(voxel);
 
             if (intensity > currentHealthPoints)
             {

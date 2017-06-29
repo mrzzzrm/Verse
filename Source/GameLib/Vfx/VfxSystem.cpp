@@ -19,8 +19,8 @@
 
 VfxSystem::VfxSystem(World & world):
     Base(world),
-    m_vfxManager(world.systemRef<RenderSystem>().renderManager(),
-                 world.systemRef<ResourceManager>())
+    m_vfxManager(std::make_shared<VfxManager>(world.systemRef<RenderSystem>().renderManager(),
+                 world.systemRef<ResourceManager>()))
 {
     {
         auto lifetime = std::make_shared<EmitterRandomLifetime>(0.4, 0.8f);
@@ -33,8 +33,8 @@ VfxSystem::VfxSystem(World & world):
         auto size = std::make_shared<EmitterSizeOverLifetime>(2.4f, 1.2f);
 
         m_blastEmitter = std::make_shared<Emitter>(
-            m_vfxManager,
-            m_vfxManager.getOrCreateMeshId(R::ParticleMesh),
+            *m_vfxManager,
+            m_vfxManager->getOrCreateMeshId(R::ParticleMesh),
             velocity,
             rotation,
             placement,
@@ -55,8 +55,8 @@ VfxSystem::VfxSystem(World & world):
         auto size = std::make_shared<EmitterSizeOverLifetime>(3.0f, 7.0f);
 
         m_smokeEmitter = std::make_shared<Emitter>(
-            m_vfxManager,
-            m_vfxManager.getOrCreateMeshId(R::ParticleMesh),
+            *m_vfxManager,
+            m_vfxManager->getOrCreateMeshId(R::ParticleMesh),
             velocity,
             rotation,
             placement,
@@ -81,7 +81,7 @@ void VfxSystem::receive(const VoxelObjectModification & modification)
         auto emitterInstance = std::make_shared<EmitterInstance>(m_smokeEmitter);
         emitterInstance->setBasePose(Pose3D::atPosition(position));
 
-        m_vfxManager.addEmitterInstance(emitterInstance);
+        m_vfxManager->addEmitterInstance(emitterInstance);
     }
 }
 
@@ -92,10 +92,10 @@ void VfxSystem::receive(const VoxelObjectBulletHit & hit)
     auto emitterInstance = std::make_shared<EmitterInstance>(m_smokeEmitter);
     emitterInstance->setBasePose(Pose3D::atPosition(position));
 
-    m_vfxManager.addEmitterInstance(emitterInstance);
+    m_vfxManager->addEmitterInstance(emitterInstance);
 }
 
 void VfxSystem::onUpdate(float seconds)
 {
-    m_vfxManager.update(seconds);
+    m_vfxManager->update(seconds);
 }

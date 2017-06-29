@@ -1,15 +1,14 @@
 #pragma once
 
 #include <Deliberation/Core/Json.h>
+#include <Deliberation/ECS/ComponentPrototype.h>
 
 #include "GameLib.h"
-#include "ComponentPrototype.h"
+#include "PlayerFlightControl.h"
 
 class PlayerFlightControlPrototype:
-    public ComponentPrototype
+    public ComponentPrototype<PlayerFlightControl>
 {
 public:
-    PlayerFlightControlPrototype(const Json & json);
-
-    void applyToEntity(Entity & entity) const override;
+    void updateComponent(PlayerFlightControl & playerFlightControl) override;
 };

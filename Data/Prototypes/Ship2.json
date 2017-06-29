@@ -9,7 +9,7 @@
     },
     
     {
-        "Component": "RigidBody"
+        "Component": "VoxelRigidBody"
     },
     
     {

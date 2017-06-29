@@ -1,18 +1,16 @@
 #pragma once
 
 #include <Deliberation/Core/Json.h>
+#include <Deliberation/ECS/ComponentPrototype.h>
 
 #include "GameLib.h"
-#include "ComponentPrototype.h"
 #include "HudProxy.h"
 
 class HudProxyPrototype:
-    public ComponentPrototype
+    public ComponentPrototype<HudProxy>
 {
 public:
-    HudProxyPrototype(const Json & json) {}
-
-    void applyToEntity(Entity & entity) const override {
-        entity.addComponent<HudProxy>();
+    void updateComponent(HudProxy & hudProxy) override
+    {
     }
 };
