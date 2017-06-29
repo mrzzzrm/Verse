@@ -46,9 +46,11 @@ private:
 private:
     VfxRenderer &       m_renderer;
 
+    MeshData                   m_meshData;
     VfxParticleOrientationType m_orientationType;
 
     Draw                m_draw;
+    bool                m_drawDirty = true;
     Buffer              m_instanceBuffer;
     Buffer              m_vertexBuffer;
     Buffer              m_indexBuffer;

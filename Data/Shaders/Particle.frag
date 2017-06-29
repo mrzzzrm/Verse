@@ -7,7 +7,7 @@ in vec2 f_UV;
 in float f_NormalisedAge;
 in vec4 f_RGBA;
 
-out vec4 o_Color;
+out vec4 o_Hdr;
 
 void main()
 {
@@ -21,7 +21,7 @@ void main()
 
     vec4 tex = texture2D(Texture, f_UV);
 
-    o_Color.rgb = tex.rgb * f_RGBA.rgb;
-    o_Color.a = tex.a * f_RGBA.a * f_RGBA.a * tex.a;
+    o_Hdr.rgb = tex.rgb * f_RGBA.rgb;
+    o_Hdr.a = tex.a * f_RGBA.a * f_RGBA.a * tex.a;
 }
 

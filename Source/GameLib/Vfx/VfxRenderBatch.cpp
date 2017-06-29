@@ -13,6 +13,7 @@
 
 VfxRenderBatch::VfxRenderBatch(VfxRenderer & renderer, const MeshData & mesh, VfxParticleOrientationType orientationType):
     m_renderer(renderer),
+    m_meshData(mesh),
     m_orientationType(orientationType)
 {
     auto instanceDataLayout = DataLayout({
@@ -48,55 +49,7 @@ VfxRenderBatch::VfxRenderBatch(VfxRenderer & renderer, const MeshData & mesh, Vf
 
     m_instanceBuffer = m_renderer.drawContext().createBuffer(instanceDataLayout);
 
-    m_draw = m_renderer.drawContext().createDraw(m_renderer.program());
 
-    const auto & vertexLayout = mesh.vertices().layout();
-    Assert(vertexLayout.hasField("UV") == !mesh.textures().empty(), "");
-
-    /**
-     * Texturing setup
-     */
-    if (!vertexLayout.hasField("UV"))
-    {
-        m_draw.setAttribute("UV", glm::vec2(0.0f, 0.0f));
-
-        const auto dummyTextureBinary = TextureLoader({1, 1}, glm::vec3(1.0f, 1.0f, 1.0f)).load();
-        const auto dummyTexture = m_renderer.drawContext().createTexture(dummyTextureBinary);
-
-        m_draw.sampler("Texture").setTexture(dummyTexture);
-    }
-    else
-    {
-        m_draw.sampler("Texture").setTexture(mesh.textures()[0]);
-    }
-
-    /**
-     * Orientation setup
-     */
-    m_viewBillboardRotation = m_draw.uniform("ViewBillboardRotation");
-    auto orientationTypeUniform = m_draw.uniform("OrientationType");
-    switch (orientationType)
-    {
-        case VfxParticleOrientationType::World:
-            orientationTypeUniform.set((int)VfxParticleOrientationType::World);
-            m_viewBillboardRotation.set(glm::mat3(1.0f)); // Dummy
-            break;
-
-        case VfxParticleOrientationType::ViewBillboard:
-            orientationTypeUniform.set((int)VfxParticleOrientationType::ViewBillboard);
-            m_draw.setAttribute("BirthOrientation", glm::vec4(0.0f));
-            break;
-
-        default:
-            Fail("");
-    }
-
-    m_draw.addVertices(mesh.vertices());
-    m_draw.setIndices(mesh.indices());
-    m_draw.addInstanceBuffer(m_instanceBuffer, 1);
-    m_draw.setUniformBuffer("Globals", m_renderer.globalsBuffer());
-    m_draw.state().setBlendState({BlendEquation::Add, BlendFactor::SourceAlpha, BlendFactor::OneMinusSourceAlpha});
-    m_draw.state().setDepthState(DepthState::disabledW());
 }
 
 size_t VfxRenderBatch::addInstance(const VfxParticle & particle)
@@ -173,6 +126,63 @@ void VfxRenderBatch::render()
     {
         return;
     }
+
+    if (m_drawDirty)
+    {
+        m_draw = m_renderer.drawContext().createDraw(m_renderer.program());
+
+        const auto & vertexLayout = m_meshData.vertices().layout();
+        Assert(vertexLayout.hasField("UV") == !m_meshData.textures().empty(), "");
+
+        /**
+         * Texturing setup
+         */
+        if (!vertexLayout.hasField("UV"))
+        {
+            m_draw.setAttribute("UV", glm::vec2(0.0f, 0.0f));
+
+            const auto dummyTextureBinary = TextureLoader({1, 1}, glm::vec3(1.0f, 1.0f, 1.0f)).load();
+            const auto dummyTexture = m_renderer.drawContext().createTexture(dummyTextureBinary);
+
+            m_draw.sampler("Texture").setTexture(dummyTexture);
+        }
+        else
+        {
+            m_draw.sampler("Texture").setTexture(m_meshData.textures()[0]);
+        }
+
+        /**
+         * Orientation setup
+         */
+        m_viewBillboardRotation = m_draw.uniform("ViewBillboardRotation");
+        auto orientationTypeUniform = m_draw.uniform("OrientationType");
+        switch (m_orientationType)
+        {
+            case VfxParticleOrientationType::World:
+                orientationTypeUniform.set((int)VfxParticleOrientationType::World);
+                m_viewBillboardRotation.set(glm::mat3(1.0f)); // Dummy
+                break;
+
+            case VfxParticleOrientationType::ViewBillboard:
+                orientationTypeUniform.set((int)VfxParticleOrientationType::ViewBillboard);
+                m_draw.setAttribute("BirthOrientation", glm::vec4(0.0f));
+                break;
+
+            default:
+            Fail("");
+        }
+
+        m_draw.addVertices(m_meshData.vertices());
+        m_draw.setIndices(m_meshData.indices());
+        m_draw.addInstanceBuffer(m_instanceBuffer, 1);
+        m_draw.setUniformBuffer("Globals", m_renderer.globalsBuffer());
+        m_draw.state().setBlendState({BlendEquation::Add, BlendFactor::SourceAlpha, BlendFactor::One});
+        m_draw.state().setDepthState({DepthTest::LessOrEqual, DepthWrite::Enabled});
+        m_draw.setFramebuffer(m_renderer.renderManager().hdrBuffer());
+
+        m_drawDirty = true;
+    }
+
 
     if (m_orientationType == VfxParticleOrientationType::ViewBillboard)
     {
