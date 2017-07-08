@@ -2,7 +2,7 @@
 
 #include <Deliberation/Core/Math/Pose3D.h>
 
-#include <Deliberation/ECS/EventManager.h>
+#include <Deliberation/Core/EventDomain.h>
 #include <Deliberation/ECS/Systems/ApplicationSystem.h>
 #include <Deliberation/ECS/World.h>
 
@@ -67,12 +67,12 @@ VfxSystem::VfxSystem(World & world):
 
         m_smokeEmitter->addChild(m_blastEmitter);
     }
-
-    world.eventManager().subscribe<VoxelObjectModification>(*this);
-    world.eventManager().subscribe<VoxelObjectBulletHit>(*this);
+    
+    subscribeEvent<VoxelObjectModification>();
+    subscribeEvent<VoxelObjectBulletHit>();
 }
 
-void VfxSystem::receive(const VoxelObjectModification & modification)
+void VfxSystem::onEvent(const VoxelObjectModification & modification)
 {
     for (const auto & voxel : modification.removals)
     {
@@ -85,7 +85,7 @@ void VfxSystem::receive(const VoxelObjectModification & modification)
     }
 }
 
-void VfxSystem::receive(const VoxelObjectBulletHit & hit)
+void VfxSystem::onEvent(const VoxelObjectBulletHit & hit)
 {
     const auto position = hit.object->pose().pointLocalToWorld(glm::vec3(hit.voxel) * hit.object->scale());
 

@@ -25,8 +25,8 @@ public:
 
     const std::shared_ptr<VfxManager> & manager() const { return m_vfxManager; }
 
-    void receive(const VoxelObjectModification & modification);
-    void receive(const VoxelObjectBulletHit & hit);
+    void onEvent(const VoxelObjectModification & modification);
+    void onEvent(const VoxelObjectBulletHit & hit);
 
 protected:
     void onUpdate(float seconds) override;

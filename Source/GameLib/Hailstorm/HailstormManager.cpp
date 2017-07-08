@@ -38,12 +38,12 @@ void HailstormManager::onUpdate(float seconds)
 
     for (const auto & modification : m_hailstormPhysicsWorld.voxelObjectModifications())
     {
-        world().eventManager().emit(modification);
+        world().events()->publishEvent(modification);
     }
 
     for (const auto & hit : m_hailstormPhysicsWorld.voxelObjectBulletHits())
     {
-        world().eventManager().emit(hit);
+        world().events()->publishEvent(hit);
     }
 
     for (auto & bullet : m_hailstormPhysicsWorld.destroyedBullets())

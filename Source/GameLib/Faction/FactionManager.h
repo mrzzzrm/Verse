@@ -32,6 +32,9 @@ protected:
     void onEntityAdded(Entity & entity) override;
     void onEntityRemoved(Entity & entity) override;
 
+    void removeEntityFromFaction(const Entity & entity, const std::string & faction);
+    void addEntityToFaction(const Entity & entity, const std::string & faction);
+
 private:
     mutable std::unordered_map<std::string,
         std::vector<Entity>> m_entitiesByFaction;
