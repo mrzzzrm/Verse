@@ -53,7 +53,7 @@ void VoxelObject::addVoxelsRaw(const std::vector<Voxel> & voxels)
     VoxelObjectModification modification(shared_from_this());
     modification.additions = voxels;
 
-    emit(modification);
+    publishEvent(modification);
 }
 
 void VoxelObject::removeVoxelsRaw(const std::vector<glm::uvec3> & voxels)
@@ -72,7 +72,7 @@ void VoxelObject::removeVoxelsRaw(const std::vector<glm::uvec3> & voxels)
         }
     }
 
-    emit(modification);
+    publishEvent(modification);
 }
 
 std::vector<glm::uvec3> VoxelObject::processImpact(const glm::uvec3 & voxel, float intensity, float radius)

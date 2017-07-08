@@ -1,7 +1,15 @@
 {
     "Components": {
         "VoxelObject": { "VoxelCluster": "Factory2", "Scale": 10 },
-        "VoxelRigidBody": {}
+        "VoxelRigidBody": {},
+        "Equipment": {
+            "DockingPoints": [
+                {
+                    "Voxel": [29, 62, 13],
+                    "Forward": [0, 1, 0],
+                    "Up": [-1, 0, 0]
+                }
+            ]
+        }
     }
-
 }

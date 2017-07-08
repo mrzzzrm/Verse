@@ -11,7 +11,7 @@ VoxelObjectPrototype::VoxelObjectPrototype(const std::shared_ptr<VoxelWorld> & v
 
 void VoxelObjectPrototype::initComponent(VoxelObject & voxelObject)
 {
-    const auto voxelClusterName = m_json["VoxelCluster"].get<std::string>();
+    const auto voxelClusterName = m_newJson["VoxelCluster"].get<std::string>();
 
     VoxReader voxReader;
     {
@@ -27,8 +27,8 @@ void VoxelObjectPrototype::initComponent(VoxelObject & voxelObject)
             voxelData->addVoxelsRaw(models[0].voxels);
             voxelObject.setVoxelData(voxelData);
 
-            const auto iter = m_json.find("CrucialVoxel");
-            if (iter != m_json.end())
+            const auto iter = m_newJson.find("CrucialVoxel");
+            if (iter != m_newJson.end())
             {
                 glm::uvec3 crucialVoxel = *iter;
                 voxelObject.setCrucialVoxel(crucialVoxel);
@@ -37,7 +37,7 @@ void VoxelObjectPrototype::initComponent(VoxelObject & voxelObject)
     }
 
     {
-        auto iter = m_json.find("Scale");
-        if (iter != m_json.end()) voxelObject.setScale(*iter);
+        auto iter = m_newJson.find("Scale");
+        if (iter != m_newJson.end()) voxelObject.setScale(*iter);
     }
 }

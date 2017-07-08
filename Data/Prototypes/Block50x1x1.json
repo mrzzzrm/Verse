@@ -1,0 +1,7 @@
+{
+    "Components": {
+        "Transform3D": {},
+        "VoxelObject": { "VoxelCluster": "Block50x1x1"},
+        "VoxelRigidBody": {}
+    }
+}

@@ -7,6 +7,7 @@
 #include <Deliberation/ECS/ComponentPrototypes.h>
 
 #include "AllegiancePrototype.h"
+#include "BehaviourPrototype.h"
 #include "CoriolisPrototype.h"
 #include "EquipmentPrototype.h"
 #include "FlightControlConfigPrototype.h"
@@ -19,11 +20,14 @@
 #include "VoxelObjectPrototype.h"
 #include "NpcBehaviourPrototype.h"
 
+#include "BehaviourSystem.h"
+
 VersePrototypeManager::VersePrototypeManager(World & world, const std::string & listPath):
     PrototypeManager(world, listPath)
 {
     auto voxelWorld = m_world.system<VoxelWorld>();
     auto & vfxManager = m_world.systemRef<VfxSystem>().manager();
+    auto & behaviourManager = m_world.systemRef<BehaviourSystem>().manager();
 
     registerComponentPrototype<VoxelObjectPrototype>("VoxelObject", voxelWorld);
     registerComponentPrototype<VoxelRigidBodyPrototype>("VoxelRigidBody");
@@ -37,4 +41,5 @@ VersePrototypeManager::VersePrototypeManager(World & world, const std::string & 
     registerComponentPrototype<NpcBehaviourPrototype>("NpcBehaviour");
     registerComponentPrototype<HudProxyPrototype>("HudProxy");
     registerComponentPrototype<Transform3DComponentPrototype>("Transform3D");
+    registerComponentPrototype<BehaviourPrototype>("Behaviour", behaviourManager);
 }

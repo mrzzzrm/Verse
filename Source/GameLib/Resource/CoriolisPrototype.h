@@ -15,6 +15,6 @@ class CoriolisPrototype:
 public:
     void updateComponent(CoriolisComponent & coriolis) override
     {
-        coriolis.setAngularVelocity(m_json["AngularVelocity"]);
+        coriolis.setAngularVelocity(m_newJson["AngularVelocity"]);
     }
 };

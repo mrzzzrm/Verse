@@ -11,7 +11,30 @@
 
 EquipmentSystem::EquipmentSystem(World & world):
     Base(world, ComponentFilter::requires<RigidBodyComponent, Equipment, VoxelObject>())
-{}
+{
+}
+
+void EquipmentSystem::onEvent(const VoxelObjectModification & voxelObjectModification)
+{
+    auto entity = m_world.entityById(voxelObjectModification.object->entityId());
+
+    if (!entity.hasComponent<Equipment>()) return;
+
+    auto & equipment = entity.component<Equipment>();
+
+    for (const auto & voxel : voxelObjectModification.removals)
+    {
+        auto it = equipment.m_attachmentByVoxel.find(voxel);
+        if (it == equipment.m_attachmentByVoxel.end()) continue;
+
+        it->second->setEnabled(false);
+    }
+}
+
+void EquipmentSystem::onCreated()
+{
+    subscribeEvent<VoxelObjectModification>();
+}
 
 void EquipmentSystem::onEntityAdded(Entity & entity)
 {

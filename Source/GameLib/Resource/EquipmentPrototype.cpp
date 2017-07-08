@@ -14,10 +14,13 @@ void EquipmentPrototype::updateComponent(Equipment & equipment)
      */
     equipment.m_hardpoints.clear();
     equipment.m_engineSlots.clear();
+    equipment.m_dockingPoints.clear();
     equipment.m_attachmentByVoxel.clear();
 
-    if (m_json.count("Engines") > 0) {
-        for (const auto &obj : m_json["Engines"]) {
+    if (m_newJson.count("Engines") > 0)
+    {
+        for (const auto &obj : m_newJson["Engines"])
+        {
             EngineSlotDesc desc;
             loadSlotDesc(obj, desc);
 
@@ -28,8 +31,10 @@ void EquipmentPrototype::updateComponent(Equipment & equipment)
         }
     }
 
-    if (m_json.count("Hardpoints") > 0) {
-        for (const auto &obj : m_json["Hardpoints"]) {
+    if (m_newJson.count("Hardpoints") > 0)
+    {
+        for (const auto &obj : m_newJson["Hardpoints"])
+        {
             HardpointDesc desc;
             loadSlotDesc(obj, desc);
 
@@ -41,9 +46,9 @@ void EquipmentPrototype::updateComponent(Equipment & equipment)
         }
     }
 
-    if (m_json.count("VoxelLights") > 0)
+    if (m_newJson.count("VoxelLights") > 0)
     {
-        for (const auto & obj : m_json["VoxelLights"])
+        for (const auto & obj : m_newJson["VoxelLights"])
         {
             VoxelLightDesc desc;
             loadSlotDesc(obj, desc);
@@ -52,6 +57,19 @@ void EquipmentPrototype::updateComponent(Equipment & equipment)
 
             auto voxelLight = std::make_shared<VoxelLight>(desc);
             equipment.addAttachment(voxelLight);
+        }
+    }
+
+    if (m_newJson.count("DockingPoints") > 0)
+    {
+        for (const auto & obj : m_newJson["DockingPoints"])
+        {
+            DockingPointDesc desc;
+            loadSlotDesc(obj, desc);
+
+            auto dockingPoint = std::make_shared<DockingPoint>(desc);
+            equipment.addAttachment(dockingPoint);
+            equipment.m_dockingPoints.emplace_back(dockingPoint);
         }
     }
 }
@@ -67,5 +85,24 @@ void EquipmentPrototype::loadSlotDesc(const Json & obj, AttachmentDesc & slot) c
     std::swap(slot.voxel.y, slot.voxel.z);
 
     slot.pose.setPosition(obj.value("Position", glm::vec3()));
-    slot.pose.setOrientation(glm::quat(obj.value<glm::quat>("Orientation", glm::quat())));
+
+    const auto orientationIter = obj.find("Orientation");
+    if (orientationIter != obj.end())
+    {
+        slot.pose.setOrientation(*orientationIter);
+    }
+    else
+    {
+        const auto forwardIter = obj.find("Forward");
+        const auto upIter = obj.find("Up");
+
+        Assert((forwardIter == obj.end()) == (upIter == obj.end()), "Either supply Forward AND Up, or neither");
+
+        glm::vec3 forward = *forwardIter;
+        glm::vec3 up = *upIter;
+
+        auto right = glm::cross(forward, up);
+
+        slot.pose.setOrientation(glm::quat_cast(glm::mat3(right, up, forward)));
+    }
 }

@@ -1,9 +1,7 @@
-[
-    {
-        "Component": "HudProxy"
-    },
-    {
-        "Component": "NpcController"
+{
+    "Components": {
+        "HudProxy": {},
+        "NpcController": {}
     }
-]
+}
 

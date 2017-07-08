@@ -22,7 +22,8 @@ public:
     virtual ~Attachment() = default;
 
     const glm::uvec3 & voxel() const;
-    const Pose3D & pose() const;
+    const Pose3D & localPose() const;
+    Pose3D worldPose() const;
     size_t index() const;
     bool enabled() const;
     Entity entity() const { return m_entity; }

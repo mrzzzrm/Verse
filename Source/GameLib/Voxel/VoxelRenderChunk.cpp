@@ -115,8 +115,15 @@ std::shared_ptr<VoxelRenderChunk> VoxelRenderChunk::clone()
 
 bool VoxelRenderChunk::updateVertices(float scale)
 {
-    if (m_voxelCount == 0) return false;
-    if (m_numVisibleVoxels == 0) return false;
+    if (m_voxelCount == 0 || m_numVisibleVoxels == 0)
+    {
+        if (m_verticesDirty)
+        {
+            m_vertices.resize(0);
+            return true;
+        }
+        return false;
+    }
 
     if (m_verticesDirty)
     {

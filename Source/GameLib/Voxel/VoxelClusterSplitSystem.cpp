@@ -94,14 +94,25 @@ void VoxelClusterSplitSystem::onUpdate(float seconds)
             splitBody->setEntity(splitEntity);
             splitBody->adjustCenterOfMass();
 
-            const auto relativeCenterOfMass = splitBody->shape()->centerOfMass() + glm::vec3(split.llf) /*+ glm::vec3(0.5f) */-
+            const auto relativeCenterOfMass = splitBody->shape()->centerOfMass() + glm::vec3(split.llf) * originalVoxelObject.scale() /*+ glm::vec3(0.5f) */-
                                               originalBody->shape()->centerOfMass();
+
+//            std::cout << "originalBody->transform().position(): " << originalBody->transform().position() << std::endl;
+//            std::cout << "splitBody->shape()->centerOfMass(): " << splitBody->shape()->centerOfMass() << std::endl;
+//            std::cout << "originalBody->shape()->centerOfMass(): " << originalBody->shape()->centerOfMass() << std::endl;
+//            std::cout << "split.llf: " << split.llf << std::endl;
+//            std::cout << "RelativeCenterOfMass: " << relativeCenterOfMass << std::endl;
 
             const auto splitPosition = originalBody->transform().position() +
                                        originalBody->transform().orientation() * relativeCenterOfMass;
+//            std::cout << "splitPosition: " << splitPosition << std::endl;
 
-            splitBody->transform().setPosition(splitPosition);
-            splitBody->transform().setOrientation(originalBody->transform().orientation());
+            auto & transform = splitEntity.addComponent<Transform3DComponent>().value();
+            transform.setCenter(splitBody->shape()->centerOfMass());
+            transform.setPosition(splitPosition);
+            transform.setOrientation(originalBody->transform().orientation());
+            splitVoxelObject.setPose(Pose3D::fromTransform(transform));
+
             splitBody->setLinearVelocity(
                 originalBody->localVelocity(originalBody->transform().pointLocalToWorld(originalBody->transform().center() + relativeCenterOfMass) -
                                             originalBody->transform().position()));
@@ -109,8 +120,7 @@ void VoxelClusterSplitSystem::onUpdate(float seconds)
 
             splitEntity.addComponent<RigidBodyComponent>(splitBody);
 
-            voxelWorld.addVoxelObjectModification(
-                VoxelObjectModification::removal(originalVoxelObject.shared_from_this(), split.voxels));
+            originalVoxelObject.removeVoxelsRaw(split.voxels);
         }
     }
     m_modifiedVoxelObjects.clear();

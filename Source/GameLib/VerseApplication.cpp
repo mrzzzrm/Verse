@@ -11,6 +11,7 @@
 #include <Deliberation/ImGui/ImGuiSystem.h>
 #include <Voxel/VoxelPhysicsSystem.h>
 
+#include "BehaviourSystem.h"
 #include "VersePrototypeManager.h"
 #include "VersePrototypeSystem.h"
 #include "EquipmentSystem.h"
@@ -75,6 +76,7 @@ void VerseApplication::onStartup()
         m_world.addSystem<NpcBehaviourSystem>();
         m_world.addSystem<ImGuiSystem>();
         m_world.addSystem<Hud>();
+        m_world.addSystem<BehaviourSystem>();
         m_world.addSystem<VersePrototypeSystem>();
         m_world.addSystem<VoxelPhysicsSystem>();
 

@@ -1,0 +1,58 @@
+[
+
+  {
+    "LID": "player",
+    "Name": "Player",
+    "Bases": [
+      "Player", "Ship"
+    ],
+    "Components": {
+      "Transform3D": {
+        "Position": [0, 0, -100],
+        "Orientation": [0, 2, 0]
+      }
+    }
+  },
+  {
+    "LID": "obj1",
+    "Bases": [
+      "Block50x1x1"
+    ],
+    "Components": {
+      "Transform3D": {
+        "Position": [0, 0, 0]
+      },
+      "VoxelObject": {
+        "Scale": 10
+      }
+    }
+  },
+  {
+    "LID": "obj2",
+    "Bases": [
+      "Block50x1x1"
+    ],
+    "Components": {
+      "Transform3D": {
+        "Position": [0, 0, 20]
+      },
+      "VoxelObject": {
+        "Scale": 4
+      }
+    }
+  },
+  {
+    "LID": "obj3",
+    "Bases": [
+      "Block50x1x1"
+    ],
+    "Components": {
+      "Transform3D": {
+        "Position": [0, 0, 40]
+      },
+      "VoxelObject": {
+        "Scale": 1
+      }
+    }
+  }
+]

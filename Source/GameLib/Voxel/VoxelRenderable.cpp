@@ -178,21 +178,25 @@ void VoxelRenderable::schedule(const Pose3D & pose) const
     {
         m_vertexBuffer.reinit(numVertices);
 
-        m_vertexBuffer.mapped(BufferMapping::WriteOnly, [&] (LayoutedBlob & vertices)
+        if (numVertices > 0)
         {
-            auto offset = 0;
-            const auto stride = vertices.layout().stride();
-
-            for (auto & chunk : m_chunks)
+            m_vertexBuffer.mapped(BufferMapping::WriteOnly, [&] (LayoutedBlob & vertices)
             {
-                if (!chunk.chunk) continue;
+                auto offset = 0;
+                const auto stride = vertices.layout().stride();
 
-                const auto & chunkVertices = chunk.chunk->vertices();
-                vertices.write(offset * stride, chunkVertices.rawData().ptr(), chunkVertices.count() * stride);
-                offset += chunkVertices.count();
-            }
-        });
+                for (auto & chunk : m_chunks)
+                {
+                    if (!chunk.chunk) continue;
 
+                    const auto & chunkVertices = chunk.chunk->vertices();
+                    if (chunkVertices.empty()) continue;
+
+                    vertices.write(offset * stride, chunkVertices.rawData().ptr(), chunkVertices.count() * stride);
+                    offset += chunkVertices.count();
+                }
+            });
+        }
     }
 
     /**

@@ -1,10 +1,6 @@
-[
-    {
-        "Component": "Allegiance",
-        "Faction": "Pirate"
-    },
-    {
-        "Component": "NpcBehaviour"
-    }    
-]
-
+{
+    "Components": {
+        "Allegiance": {"Faction": "Pirate"},
+        "NpcBehaviour": {}
+    }
+}

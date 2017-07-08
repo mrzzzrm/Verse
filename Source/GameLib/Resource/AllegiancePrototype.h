@@ -15,6 +15,7 @@ class AllegiancePrototype:
 public:
     void updateComponent(Allegiance & allegiance) override
     {
-        allegiance.setFaction(m_json["Faction"]);
+        std::cout << "Setting faction: " << allegiance.faction() << " -> " << m_newJson["Faction"] << std::endl;
+        allegiance.setFaction(m_newJson["Faction"]);
     }
 };

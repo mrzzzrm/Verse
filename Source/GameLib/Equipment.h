@@ -11,6 +11,7 @@
 #include <Deliberation/ECS/Component.h>
 #include <Deliberation/ECS/Entity.h>
 
+#include "DockingPoint.h"
 #include "Hardpoint.h"
 #include "EngineSlot.h"
 #include "GameLib.h"
@@ -35,7 +36,7 @@ struct EquipmentUpdateContext
 };
 
 class Equipment final:
-    public Component<Equipment, ComponentSubscriptions<Equipment, VoxelObjectModification>>
+    public Component<Equipment>
 {
 public:
     const std::shared_ptr<VfxManager> & vfxManager() const { return m_vfxManager; }
@@ -43,6 +44,7 @@ public:
 
     const std::vector<std::shared_ptr<Hardpoint>> & hardpoints() const;
     const std::vector<std::shared_ptr<EngineSlot>> & engineSlots() const;
+    const std::vector<std::shared_ptr<DockingPoint>> & dockingPoints() const { return m_dockingPoints; }
 
     /**
      * @return Bullet speed to be used for predictive aiming
@@ -64,15 +66,15 @@ public:
 
     void update(float seconds, const EquipmentUpdateContext & context);
 
-    void receive(const VoxelObjectModification & modification);
-
 private:
     friend class EquipmentPrototype;
+    friend class EquipmentSystem;
 
 private:
     std::shared_ptr<VfxManager>                 m_vfxManager;
     std::vector<std::shared_ptr<Hardpoint>>     m_hardpoints;
     std::vector<std::shared_ptr<EngineSlot>>    m_engineSlots;
+    std::vector<std::shared_ptr<DockingPoint>>  m_dockingPoints;
 
     std::unordered_map<glm::uvec3, std::shared_ptr<Attachment>>
                                                 m_attachmentByVoxel;

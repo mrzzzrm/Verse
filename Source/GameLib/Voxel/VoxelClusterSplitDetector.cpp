@@ -2,7 +2,7 @@
 
 #include "VoxelObjectVoxelData.h"
 
-#define VERBOSE 1
+#define VERBOSE 0
 
 VoxelClusterSplitDetector::VoxelClusterSplitDetector(const glm::uvec3 & size):
     m_cluster(size)
@@ -137,7 +137,6 @@ void VoxelClusterSplitDetector::flood(const glm::uvec3 & startVoxel)
     }
 
     m_currentFloodId++;
-    std::cout << "  Incremented flood id: " << m_currentFloodId << std::endl;
 }
 
 void VoxelClusterSplitDetector::visit(const glm::ivec3 & voxel)

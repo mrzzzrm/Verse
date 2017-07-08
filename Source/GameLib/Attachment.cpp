@@ -1,5 +1,7 @@
 #include "Attachment.h"
 
+#include <Deliberation/ECS/Components.h>
+
 Attachment::Attachment(const AttachmentDesc & desc):
     m_desc(desc)
 {}
@@ -9,9 +11,20 @@ const glm::uvec3 & Attachment::voxel() const
     return m_desc.voxel;
 }
 
-const Pose3D & Attachment::pose() const
+const Pose3D & Attachment::localPose() const
 {
     return m_desc.pose;
+}
+
+Pose3D Attachment::worldPose() const
+{
+    Assert(m_entity.hasComponent<Transform3DComponent>(), "Needs Transform");
+
+    const auto & transform = m_entity.component<Transform3DComponent>().value();
+    Pose3D pose = m_desc.pose;
+    pose.setPosition(pose.position() + glm::vec3(m_desc.voxel));
+
+    return Pose3D::fromTransform(transform).poseLocalToWorld(pose);
 }
 
 size_t Attachment::index() const

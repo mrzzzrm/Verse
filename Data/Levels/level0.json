@@ -28,6 +28,9 @@
     "Components": {
       "Transform3D": {
         "Position": [1000, 0, 100]
+      },
+      "Behaviour": {
+        "LaunchDefense": {  }
       }
     }
   }

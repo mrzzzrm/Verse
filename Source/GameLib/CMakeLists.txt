@@ -59,6 +59,8 @@ add_library(${target}
     Player/PlayerSystem.h
 
     Resource/AllegiancePrototype.h
+    Resource/BehaviourPrototype.cpp
+    Resource/BehaviourPrototype.h
     Resource/CoriolisPrototype.h
     Resource/VersePrototypeSystem.h
     Resource/EquipmentPrototype.cpp
@@ -154,8 +156,16 @@ add_library(${target}
     Voxel/VoxReader.cpp
     Voxel/VoxReader.h
 
+    AbstractBehaviour.h
     AimHelper.cpp
     AimHelper.h
+    BehaviourComponent.cpp
+    BehaviourComponent.h
+    BehaviourManager.cpp
+    BehaviourManager.h
+    BehaviourManager.inl
+    BehaviourSystem.cpp
+    BehaviourSystem.h
     ColorPalette.cpp
     ColorPalette.h
     Components.h
@@ -163,6 +173,8 @@ add_library(${target}
     CoriolisSystem.cpp
     CoriolisSystem.h
     CollisionShapeTypes.h
+    DockingPoint.cpp
+    DockingPoint.h
     Engine.cpp
     Engine.h
     EngineSlot.cpp
@@ -179,6 +191,8 @@ add_library(${target}
     Attachment.h
     GameLib.cpp
     GameLib.h
+    LaunchDefenseBehaviour.cpp
+    LaunchDefenseBehaviour.h
     VerseApplication.cpp
     VerseApplication.h
     VerseRenderManager.cpp

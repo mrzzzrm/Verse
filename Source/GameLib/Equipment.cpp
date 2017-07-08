@@ -113,14 +113,3 @@ void Equipment::update(float seconds, const EquipmentUpdateContext & context)
         pair.second->onUpdate(seconds);
     }
 }
-
-void Equipment::receive(const VoxelObjectModification & modification)
-{
-    for (const auto & voxel : modification.removals)
-    {
-        auto it = m_attachmentByVoxel.find(voxel);
-        if (it == m_attachmentByVoxel.end()) continue;
-
-        it->second->setEnabled(false);
-    }
-}

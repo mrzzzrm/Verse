@@ -6,6 +6,8 @@
 
 #include "GameLib.h"
 
+class FactionChangeEvent;
+
 enum class FactionRelation
 {
     Friendly,
@@ -22,6 +24,9 @@ public:
     FactionRelation factionRelation(const std::string & factionA, const std::string & factionB) const;
 
     const std::vector<Entity> & faction(const std::string & factionName) const;
+
+    void onEvent(const FactionChangeEvent & event);
+    void onCreated() override;
 
 protected:
     void onEntityAdded(Entity & entity) override;
