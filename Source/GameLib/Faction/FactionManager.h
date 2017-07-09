@@ -36,6 +36,7 @@ protected:
     void addEntityToFaction(const Entity & entity, const std::string & faction);
 
 private:
+    std::unordered_set<EntityId> m_entities;
     mutable std::unordered_map<std::string,
         std::vector<Entity>> m_entitiesByFaction;
 };

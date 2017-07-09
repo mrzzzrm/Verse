@@ -18,7 +18,7 @@ public:
         FactionChangeEvent event(world->entityById(m_entityId), m_faction, faction);
         m_faction = faction;
 
-        if (event.from.empty()) publishEvent(event);
+        publishEvent(event);
     }
 
 private:

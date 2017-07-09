@@ -25,6 +25,9 @@ const std::vector<Entity> & FactionManager::faction(const std::string & factionN
 
 void FactionManager::onEvent(const FactionChangeEvent & event)
 {
+    // It's possible we receive Events about Entities that have not passed through onEntityAdded yet
+    if (m_entities.count(event.entity.id()) == 0) return;
+
     removeEntityFromFaction(event.entity, event.from);
     addEntityToFaction(event.entity, event.to);
 }
@@ -36,12 +39,18 @@ void FactionManager::onCreated()
 
 void FactionManager::onEntityAdded(Entity & entity)
 {
+    auto r = m_entities.emplace(entity.id());
+    Assert(r.second, "Entity " + entity.name() + " already in FactionManager");
+
     const auto & allegiance = entity.component<Allegiance>();
     addEntityToFaction(entity, allegiance.faction());
 }
 
 void FactionManager::onEntityRemoved(Entity & entity)
 {
+    auto r = m_entities.erase(entity.id());
+    Assert(r == 1, "Entity " + entity.name() + " not in FactionManager");
+
     const auto & allegiance = entity.component<Allegiance>();
     removeEntityFromFaction(entity, allegiance.faction());
 }
