@@ -37,7 +37,7 @@ public:
     void onRemoved() override { m_input.removeLayer(shared_from_this()); }
 
 protected:
-    void onUpdate(float seconds) override;
+    void onGameUpdate(float seconds) override;
 
     void onMouseButtonClicked(MouseButtonEvent & event) override;
     void onMouseButtonPressed(MouseButtonEvent & event) override;

@@ -29,7 +29,7 @@ public:
     void onEvent(const VoxelObjectBulletHit & hit);
 
 protected:
-    void onUpdate(float seconds) override;
+    void onGameUpdate(float seconds) override;
 
 private:
     std::shared_ptr<VfxManager> m_vfxManager;

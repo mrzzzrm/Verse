@@ -77,8 +77,9 @@ std::vector<glm::uvec3> VoxelImpactSystem::process(
         std::swap(currentDepthSet, nextDepthSet);
     }
 
+    auto entity = voxelObject.voxelWorld().world().entityById(voxelObject.entityId());
     voxelWorld.addVoxelObjectModification(
-        VoxelObjectModification::removal(voxelObject.shared_from_this(), voxelRemovals));
+        VoxelObjectModification::removal(entity, voxelRemovals));
 
     return voxelRemovals;
 }

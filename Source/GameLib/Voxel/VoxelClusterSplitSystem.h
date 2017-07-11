@@ -18,8 +18,8 @@ public:
     void onVoxelObjectModified(const std::shared_ptr<VoxelObject> & object) { m_modifiedVoxelObjects.insert(object); }
 
 protected:
-    void onEntityUpdate(Entity & entity, float seconds) override;
-    void onUpdate(float seconds) override;
+    void onEntityGameUpdate(Entity & entity, float seconds) override;
+    void onGameUpdate(float seconds) override;
 
 private:
     std::set<std::shared_ptr<VoxelObject>> m_modifiedVoxelObjects;

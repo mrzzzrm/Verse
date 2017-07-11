@@ -31,7 +31,7 @@ void HailstormManager::addBullet(HailstormBullet bullet)
     m_hailstormPhysicsWorld.addBullet(bullet);
 }
 
-void HailstormManager::onUpdate(float seconds)
+void HailstormManager::onGameUpdate(float seconds)
 {
     m_vfxManager.update(seconds);
     m_hailstormPhysicsWorld.update(seconds);

@@ -9,7 +9,7 @@ CoriolisSystem::CoriolisSystem(World & world):
     Base(world, ComponentFilter::requires<CoriolisComponent, RigidBodyComponent>())
 {}
 
-void CoriolisSystem::onEntityUpdate(Entity & entity, float seconds)
+void CoriolisSystem::onEntityGameUpdate(Entity & entity, float seconds)
 {
     auto & coriolis = entity.component<CoriolisComponent>();
     auto & body = entity.component<RigidBodyComponent>().value();

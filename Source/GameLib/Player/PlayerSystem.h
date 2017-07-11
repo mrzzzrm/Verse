@@ -47,10 +47,11 @@ protected:
     void onFrameBegin() override;
     void onEntityAdded(Entity & entity) override;
     void onEntityRemoved(Entity & entity) override;
-    void onEntityUpdate(Entity & entity, float seconds) override;
-    void onUpdate(float seconds) override;
+    void onEntityGameUpdate(Entity & entity, float seconds) override;
+    void onGameUpdate(float seconds) override;
+    void onFrameUpdate(float seconds) override;
     void onEntityPostPhysicsUpdate(Entity & entity, float seconds) override;
-    void onFrameComplete() override;
+    void onFrameComplete(float seconds) override;
 
     void onMouseButtonDown(MouseStateEvent & event) override;
     void onMouseMotion(MouseMotionEvent & event) override;

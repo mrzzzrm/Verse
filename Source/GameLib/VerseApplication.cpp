@@ -94,25 +94,30 @@ void VerseApplication::onFrame(float seconds)
 {
     m_world.frameBegin();
 
-    auto physicsSimulationSeconds = m_physicsWorld.nextSimulationStepSeconds(seconds);
-
-    if (EpsilonGt(physicsSimulationSeconds, 0.0f))
+    if (!m_gameplayPaused)
     {
-        m_world.prePhysicsUpdate(physicsSimulationSeconds);
-        m_physicsWorldSystem->updatePhysics(seconds);
-        m_world.postPhysicsUpdate(physicsSimulationSeconds);
+        auto physicsSimulationSeconds = m_physicsWorld.nextSimulationStepSeconds(seconds);
 
-        onApplicationPhysicsUpdate(physicsSimulationSeconds);
-    }
-    else
-    {
-        m_physicsWorld.update(seconds);
+        if (EpsilonGt(physicsSimulationSeconds, 0.0f))
+        {
+            m_world.prePhysicsUpdate(physicsSimulationSeconds);
+            m_physicsWorldSystem->updatePhysics(seconds);
+            m_world.postPhysicsUpdate(physicsSimulationSeconds);
+
+            onApplicationPhysicsUpdate(physicsSimulationSeconds);
+        }
+        else
+        {
+            m_physicsWorld.update(seconds);
+        }
+
+        m_world.gameUpdate(seconds);
+        onApplicationUpdate(seconds);
     }
 
-    m_world.update(seconds);
-    onApplicationUpdate(seconds);
+    m_world.frameUpdate(seconds);
 
     m_world.systemRef<RenderSystem>().renderManager().render();
 
-    m_world.frameComplete();
+    m_world.frameComplete(seconds);
 }

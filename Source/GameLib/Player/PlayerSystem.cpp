@@ -62,7 +62,7 @@ void PlayerSystem::onEntityRemoved(Entity & entity)
     m_player = Entity();
 }
 
-void PlayerSystem::onEntityUpdate(Entity & entity, float seconds)
+void PlayerSystem::onEntityGameUpdate(Entity & entity, float seconds)
 {
     auto &body = *entity.component<RigidBodyComponent>().value();
     auto &flightControlConfig = entity.component<FlightControlConfig>();
@@ -118,12 +118,8 @@ void PlayerSystem::onEntityPostPhysicsUpdate(Entity & entity, float seconds)
     }
 }
 
-void PlayerSystem::onUpdate(float seconds)
+void PlayerSystem::onGameUpdate(float seconds)
 {
-    if (m_cameraMode == CameraMode::FreeFlight)
-    {
-        m_navigator.update(seconds);
-    }
 }
 
 void PlayerSystem::onKeyPressed(KeyEvent & event)
@@ -176,7 +172,15 @@ void PlayerSystem::onMouseMotion(MouseMotionEvent &event)
     }
 }
 
-void PlayerSystem::onFrameComplete()
+void PlayerSystem::onFrameUpdate(float seconds)
+{
+    if (m_cameraMode == CameraMode::FreeFlight)
+    {
+        m_navigator.update(seconds);
+    }
+}
+
+void PlayerSystem::onFrameComplete(float seconds)
 {
     if (m_player.isValid())
     {

@@ -1,7 +1,7 @@
 {
     "Components": {
-        "Transform3D": {},
-        "VoxelObject": { "VoxelCluster": "Asteroid00", "Scale": 3},
+        "Transform3D": { "Scale": 3 },
+        "VoxelObject": { "VoxelCluster": "Asteroid00"},
         "VoxelRigidBody": {}
     }
 }

@@ -11,5 +11,5 @@ public:
     CoriolisSystem(World & world);
 
 protected:
-    void onEntityUpdate(Entity & entity, float seconds) override;
+    void onEntityGameUpdate(Entity & entity, float seconds) override;
 };

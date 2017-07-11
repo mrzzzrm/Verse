@@ -32,7 +32,7 @@ public:
     void setEnabled(bool enabled);
     void setEntity(const Entity & entity);
 
-    virtual void onUpdate(float seconds) {}
+    virtual void onGameUpdate(float seconds) {}
 
 protected:
     virtual void onEnabled() {}

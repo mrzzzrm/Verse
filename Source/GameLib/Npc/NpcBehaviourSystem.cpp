@@ -12,7 +12,7 @@ NpcBehaviourSystem::NpcBehaviourSystem(World & world):
     Base(world, ComponentFilter::requires<NpcBehaviour, Allegiance, NpcController>())
 {}
 
-void NpcBehaviourSystem::onEntityUpdate(Entity & entity, float seconds)
+void NpcBehaviourSystem::onEntityGameUpdate(Entity & entity, float seconds)
 {
     auto & npcController = entity.component<NpcController>();
 

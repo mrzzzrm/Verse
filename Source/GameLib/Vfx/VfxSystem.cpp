@@ -8,6 +8,7 @@
 
 #include <Deliberation/Scene/Pipeline/RenderManager.h>
 #include <Deliberation/Scene/Pipeline/RenderSystem.h>
+#include <Deliberation/ECS/Components.h>
 
 #include "VoxelObjectBulletHit.h"
 #include "Emitter.h"
@@ -74,9 +75,11 @@ VfxSystem::VfxSystem(World & world):
 
 void VfxSystem::onEvent(const VoxelObjectModification & modification)
 {
+    auto & transform = modification.entity.component<Transform3DComponent>().value();
+
     for (const auto & voxel : modification.removals)
     {
-        const auto position = modification.object->pose().pointLocalToWorld(glm::vec3(voxel) * modification.object->scale());
+        const auto position = transform.pointLocalToWorld(glm::vec3(voxel));
 
         auto emitterInstance = std::make_shared<EmitterInstance>(m_smokeEmitter);
         emitterInstance->setBasePose(Pose3D::atPosition(position));
@@ -95,7 +98,7 @@ void VfxSystem::onEvent(const VoxelObjectBulletHit & hit)
     m_vfxManager->addEmitterInstance(emitterInstance);
 }
 
-void VfxSystem::onUpdate(float seconds)
+void VfxSystem::onGameUpdate(float seconds)
 {
     m_vfxManager->update(seconds);
 }

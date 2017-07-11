@@ -21,7 +21,7 @@
 #include "VoxelObjectModification.h"
 
 VoxelWorld::VoxelWorld(World & world, const Texture & envMap):
-    Base(world, ComponentFilter::requires<VoxelObject>()),
+    Base(world, ComponentFilter::requires<Transform3DComponent, VoxelObject>()),
     m_drawContext(world.systemRef<ApplicationSystem>().drawContext()),
     m_envMap(envMap)
 {
@@ -81,6 +81,9 @@ void VoxelWorld::onCrucialVoxelDestroyed(VoxelObject & voxelObject)
 void VoxelWorld::onEntityAdded(Entity & entity)
 {
     auto & voxelObject = entity.component<VoxelObject>();
+    auto & transform = entity.component<Transform3DComponent>().value();
+
+    voxelObject.setScale(transform.scale());
     m_renderer->addVoxelObject(voxelObject.shared_from_this());
 }
 
@@ -90,7 +93,7 @@ void VoxelWorld::onEntityRemoved(Entity & entity)
     m_renderer->removeVoxelObject(voxelObject.shared_from_this());
 }
 
-void VoxelWorld::onEntityUpdate(Entity & entity, float seconds)
+void VoxelWorld::onEntityGameUpdate(Entity & entity, float seconds)
 {
     auto & voxelObject = entity.component<VoxelObject>();
     if (voxelObject.data()->numVoxels() == 0)
@@ -112,7 +115,7 @@ void VoxelWorld::onEntityUpdate(Entity & entity, float seconds)
     }
 }
 
-void VoxelWorld::onUpdate(float seconds)
+void VoxelWorld::onGameUpdate(float seconds)
 {
     /**
      * Process VoxelObjectModifications

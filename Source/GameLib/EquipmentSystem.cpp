@@ -55,7 +55,7 @@ void EquipmentSystem::onEntityAdded(Entity & entity)
     }
 }
 
-void EquipmentSystem::onEntityUpdate(Entity & entity, float seconds)
+void EquipmentSystem::onEntityGameUpdate(Entity & entity, float seconds)
 {
     auto body = entity.component<RigidBodyComponent>().value();
     auto & equipment = entity.component<Equipment>();

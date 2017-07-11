@@ -23,7 +23,7 @@ public:
     void addBullet(HailstormBullet bullet);
 
 protected:
-    void onUpdate(float seconds) override;
+    void onGameUpdate(float seconds) override;
 
 private:
     VfxManager              m_vfxManager;

@@ -25,7 +25,7 @@ void DebugOverlay::setFps(float fps)
     m_fps = fps;
 }
 
-void DebugOverlay::onUpdate(float seconds)
+void DebugOverlay::onFrameUpdate(float seconds)
 {
     auto imGuiSystem = world().system<ImGuiSystem>();
 
@@ -112,4 +112,10 @@ void DebugOverlay::onUpdate(float seconds)
         }
         ImGui::End();
     }
+
+    /**
+     * Application Control
+     */
+    auto & application = world().systemRef<ApplicationSystem>().application();
+    application.setGameplayPaused(imGuiSystem->showView("Pause Gameplay"));
 }

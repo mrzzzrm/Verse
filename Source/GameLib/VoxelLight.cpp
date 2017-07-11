@@ -40,7 +40,7 @@ void VoxelLight::onDisabled()
     pointLightRenderer->removePointLight(m_pointLight);
 }
 
-void VoxelLight::onUpdate(float seconds)
+void VoxelLight::onGameUpdate(float seconds)
 {
     m_noiseInput += seconds * 6.0f;
 

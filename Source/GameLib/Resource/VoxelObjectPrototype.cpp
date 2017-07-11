@@ -35,9 +35,4 @@ void VoxelObjectPrototype::initComponent(VoxelObject & voxelObject)
             }
         }
     }
-
-    {
-        auto iter = m_newJson.find("Scale");
-        if (iter != m_newJson.end()) voxelObject.setScale(*iter);
-    }
 }

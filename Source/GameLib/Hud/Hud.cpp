@@ -54,7 +54,7 @@ void Hud::removeElement(const std::shared_ptr<HudElement> & element)
     m_elements.erase(iter);
 }
 
-void Hud::onUpdate(float seconds)
+void Hud::onGameUpdate(float seconds)
 {
     for (auto & layer : m_layers)
     {

@@ -23,12 +23,12 @@ VoxelClusterSplitSystem::VoxelClusterSplitSystem(World & world):
 
 }
 
-void VoxelClusterSplitSystem::onEntityUpdate(Entity & entity, float seconds)
+void VoxelClusterSplitSystem::onEntityGameUpdate(Entity & entity, float seconds)
 {
 
 }
 
-void VoxelClusterSplitSystem::onUpdate(float seconds)
+void VoxelClusterSplitSystem::onGameUpdate(float seconds)
 {
     auto & voxelWorld = world().systemRef<VoxelWorld>();
 
@@ -87,7 +87,6 @@ void VoxelClusterSplitSystem::onUpdate(float seconds)
             auto splitEntity = world().createEntity("Split");
             auto & splitVoxelObject = splitEntity.addComponent<VoxelObject>();
             splitVoxelObject.setVoxelData(splitVoxelData);
-            splitVoxelObject.setScale(originalVoxelObject.scale());
 
             auto rigidBodyPayload = std::make_shared<VoxelRigidBodyPayload>(splitVoxelObject.shared_from_this());
             auto splitBody = std::make_shared<RigidBody>(splitVoxelObject.data()->shape());
@@ -111,6 +110,7 @@ void VoxelClusterSplitSystem::onUpdate(float seconds)
             transform.setCenter(splitBody->shape()->centerOfMass());
             transform.setPosition(splitPosition);
             transform.setOrientation(originalBody->transform().orientation());
+            transform.setScale(originalBody->transform().scale());
             splitVoxelObject.setPose(Pose3D::fromTransform(transform));
 
             splitBody->setLinearVelocity(

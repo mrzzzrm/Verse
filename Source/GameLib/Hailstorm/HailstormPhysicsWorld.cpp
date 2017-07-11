@@ -79,7 +79,7 @@ void HailstormPhysicsWorld::update(float seconds)
 
                 if (!voxels.empty())
                 {
-                    VoxelObjectModification modification(voxelObject.shared_from_this());
+                    VoxelObjectModification modification(entity);
                     modification.removals = std::move(voxels);
 
                     m_voxelObjectModifications.emplace_back(std::move(modification));
