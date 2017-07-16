@@ -16,6 +16,7 @@
 #include "VersePrototypeManager.h"
 #include "VersePrototypeSystem.h"
 #include "EquipmentSystem.h"
+#include "HullSystem.h"
 #include "Hud.h"
 #include "FactionManager.h"
 #include "NpcBehaviourSystem.h"
@@ -81,6 +82,7 @@ void VerseApplication::onStartup()
         m_world.addSystem<VersePrototypeSystem>();
         m_world.addSystem<VoxelPhysicsSystem>();
         m_world.addSystem<DebugAttachmentSystem>();
+        m_world.addSystem<HullSystem>();
 
         auto & renderManager = m_world.systemRef<RenderSystem>().renderManager();
         renderManager.addRenderer<AmbientLightRenderer>();
