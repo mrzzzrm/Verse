@@ -20,53 +20,53 @@
 #include "VoxelClusterSplitSystem.h"
 #include "VoxelObjectModification.h"
 
-VoxelWorld::VoxelWorld(World & world, const Texture & envMap):
-    Base(world, ComponentFilter::requires<Transform3DComponent, VoxelObject>()),
-    m_drawContext(world.systemRef<ApplicationSystem>().drawContext()),
-    m_envMap(envMap)
+VoxelWorld::VoxelWorld(World & world, const Texture & envMap)
+    : Base(
+          world, ComponentFilter::requires<Transform3DComponent, VoxelObject>())
+    , m_drawContext(world.systemRef<ApplicationSystem>().drawContext())
+    , m_envMap(envMap)
 {
-    m_renderer = world.systemRef<RenderSystem>().renderManager().addRenderer<VoxelRenderer>(envMap);
+    m_renderer = world.systemRef<RenderSystem>()
+                     .renderManager()
+                     .addRenderer<VoxelRenderer>(envMap);
 
-    m_program = m_drawContext.createProgram({GameDataPath("Data/Shaders/Voxel.vert"),
-                                         GameDataPath("Data/Shaders/Voxel.frag")});
+    m_program =
+        m_drawContext.createProgram({GameDataPath("Data/Shaders/Voxel.vert"),
+                                     GameDataPath("Data/Shaders/Voxel.frag")});
 }
 
-DrawContext & VoxelWorld::drawContext() const
-{
-    return m_drawContext;
-}
+DrawContext & VoxelWorld::drawContext() const { return m_drawContext; }
 
-const VoxelClusterMarchingCubesTriangulation & VoxelWorld::marchingCubesTriangulation() const
+const VoxelClusterMarchingCubesTriangulation &
+VoxelWorld::marchingCubesTriangulation() const
 {
     return m_marchingCubesTriangulation;
 }
 
-const Program & VoxelWorld::program() const
-{
-    return m_program;
-}
+const Program & VoxelWorld::program() const { return m_program; }
 
-const Texture & VoxelWorld::envMap() const
-{
-    return m_envMap;
-}
+const Texture & VoxelWorld::envMap() const { return m_envMap; }
 
 void VoxelWorld::onCrucialVoxelDestroyed(VoxelObject & voxelObject)
 {
     auto originalEntity = world().entityByIndex(voxelObject.entityIndex());
-    const auto & originalRigidBody = originalEntity.component<RigidBodyComponent>().value();
+    const auto & originalRigidBody =
+        originalEntity.component<RigidBodyComponent>().value();
 
     std::cout << "Turning '" << originalEntity.name()
-              << "' to remnant because its crucial voxel was destroyed" << std::endl;
+              << "' to remnant because its crucial voxel was destroyed"
+              << std::endl;
 
     auto remnantVoxelData = voxelObject.data();
     remnantVoxelData->setCrucialVoxel({});
 
-    auto remnant = world().createEntity("Remnant of '" + originalEntity.name() + "'");
+    auto remnant =
+        world().createEntity("Remnant of '" + originalEntity.name() + "'");
     auto & remnantVoxelObject = remnant.addComponent<VoxelObject>();
     remnantVoxelObject.setVoxelData(remnantVoxelData);
 
-    auto remnantRigidBody = std::make_shared<RigidBody>(voxelObject.data()->shape());
+    auto remnantRigidBody =
+        std::make_shared<RigidBody>(voxelObject.data()->shape());
     remnantRigidBody->setTransform(originalRigidBody->transform());
     remnant.addComponent<RigidBodyComponent>(remnantRigidBody);
 
@@ -104,7 +104,4 @@ void VoxelWorld::onEntityGameUpdate(Entity & entity, float seconds)
     }
 }
 
-void VoxelWorld::onGameUpdate(float seconds)
-{
-
-}
+void VoxelWorld::onGameUpdate(float seconds) {}

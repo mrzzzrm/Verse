@@ -4,8 +4,7 @@
 
 #include "GameLib.h"
 
-class HullSystem:
-    public System<HullSystem>
+class HullSystem : public System<HullSystem>
 {
 public:
     HullSystem(World & world);

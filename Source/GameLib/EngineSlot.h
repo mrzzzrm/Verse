@@ -2,16 +2,15 @@
 
 #include <memory>
 
+#include "Attachment.h"
 #include "Engine.h"
 #include "GameLib.h"
-#include "Attachment.h"
 
-struct EngineSlotDesc:
-    AttachmentDesc
-{};
+struct EngineSlotDesc : AttachmentDesc
+{
+};
 
-class EngineSlot:
-    public Attachment
+class EngineSlot : public Attachment
 {
 public:
     EngineSlot(const EngineSlotDesc & desc);
@@ -21,7 +20,10 @@ public:
 
     void setTargetPose(const Pose3D & pose);
 
-    void setVfxManager(const std::shared_ptr<VfxManager> & vfxManager) { m_vfxManager = vfxManager; }
+    void setVfxManager(const std::shared_ptr<VfxManager> & vfxManager)
+    {
+        m_vfxManager = vfxManager;
+    }
 
 private:
     void onDisabled() override;

@@ -4,8 +4,7 @@
 
 #include "GameLib.h"
 
-class NpcBehaviour:
-    public Component<NpcBehaviour>
+class NpcBehaviour : public Component<NpcBehaviour>
 {
-DELIBERATION_COMPONENT_NAME("NpcBehaviour")
+    DELIBERATION_COMPONENT_NAME("NpcBehaviour")
 };

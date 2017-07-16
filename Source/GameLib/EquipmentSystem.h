@@ -5,8 +5,7 @@
 #include "GameLib.h"
 #include "VoxelObjectModification.h"
 
-class EquipmentSystem:
-    public System<EquipmentSystem>
+class EquipmentSystem : public System<EquipmentSystem>
 {
 public:
     EquipmentSystem(World & world);

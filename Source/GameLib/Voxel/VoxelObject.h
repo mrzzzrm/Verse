@@ -12,14 +12,12 @@
 
 #include "GameLib.h"
 #include "VoxelDefines.h"
-#include "VoxelObjectVoxelData.h"
 #include "VoxelObjectModification.h"
+#include "VoxelObjectVoxelData.h"
 
 namespace deliberation
 {
-
 class Camera3D;
-
 }
 
 class VoxelObjectPrototype;
@@ -29,39 +27,53 @@ struct VoxelObjectID
     VoxelObjectWorldUID worldUID = INVALID_VOXEL_OBJECT_WORLD_UID;
 };
 
-class VoxelObject final:
-    public Component<VoxelObject>
+class VoxelObject final : public Component<VoxelObject>
 {
-DELIBERATION_COMPONENT_NAME("VoxelObject")
+    DELIBERATION_COMPONENT_NAME("VoxelObject")
 public:
-    VoxelWorld & voxelWorld() const { Assert((bool)m_voxelData, ""); return m_voxelData->voxelWorld(); }
+    VoxelWorld & voxelWorld() const
+    {
+        Assert((bool)m_voxelData, "");
+        return m_voxelData->voxelWorld();
+    }
     const VoxelObjectID & id() const;
-    const Transform3D & transform() const { return m_transform; }
-    const std::shared_ptr<VoxelObjectVoxelData> & data() const { return m_voxelData; }
+    const Transform3D &   transform() const { return m_transform; }
+    const std::shared_ptr<VoxelObjectVoxelData> & data() const
+    {
+        return m_voxelData;
+    }
 
     void setVoxelData(const std::shared_ptr<VoxelObjectVoxelData> & voxelData);
     void setId(VoxelObjectID id);
-    void setTransform(const Transform3D & transform) { m_transform = transform; }
+    void setTransform(const Transform3D & transform)
+    {
+        m_transform = transform;
+    }
     void setInvincible(bool invincible) { m_invincible = invincible; }
     void setCrucialVoxel(const boost::optional<glm::uvec3> & crucialVoxel);
 
     void setVoxelHealthPoints(const glm::uvec3 & voxel, float healthPoints);
 
     /**
-     * Perform no checks whether the voxels already exist or whether the cells are empty
+     * Perform no checks whether the voxels already exist or whether the cells
+     * are empty
      */
     void addVoxelsRaw(const std::vector<Voxel> & voxels);
-    void removeVoxelsRaw(const std::vector<glm::uvec3> & voxels, VoxelRemovalReason reason);
+    void removeVoxelsRaw(
+        const std::vector<glm::uvec3> & voxels, VoxelRemovalReason reason);
 
     void processImpact(const glm::uvec3 & voxel, float intensity, float radius);
-    void performSplitDetection() { m_voxelData->splitDetector().performSplitDetection(); }
+    void performSplitDetection()
+    {
+        m_voxelData->splitDetector().performSplitDetection();
+    }
 
     void render();
 
 private:
-    std::shared_ptr<VoxelObjectVoxelData>   m_voxelData;
-    VoxelObjectID                           m_id;
-    Transform3D                             m_transform;
-    bool                                    m_invincible = false;
-    boost::optional<glm::uvec3>             m_crucialVoxel;
+    std::shared_ptr<VoxelObjectVoxelData> m_voxelData;
+    VoxelObjectID                         m_id;
+    Transform3D                           m_transform;
+    bool                                  m_invincible = false;
+    boost::optional<glm::uvec3>           m_crucialVoxel;
 };

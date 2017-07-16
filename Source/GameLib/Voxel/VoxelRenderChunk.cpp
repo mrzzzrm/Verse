@@ -19,34 +19,44 @@
 #include "VoxelRenderable.h"
 #include "VoxelWorld.h"
 
-VoxelRenderChunk::VoxelRenderChunk(VoxelRenderable & voxelRenderChunkTree,
-                                   const glm::uvec3 & position,
-                                   const glm::uvec3 & size,
-                                   const glm::uvec3 & llfRender, const glm::uvec3 & urbRender,
-                                   const Optional<glm::vec3> & colorOverride):
-    m_cluster(size),
-    m_renderable(voxelRenderChunkTree),
-    m_marchingCubes(m_renderable.voxelWorld().marchingCubesTriangulation(), m_cluster, 1.0f, position),
-    m_configCluster(size - glm::uvec3(1)),
-    m_llfRender(llfRender),
-    m_urbRender(urbRender),
-    m_colorOverride(colorOverride)
+VoxelRenderChunk::VoxelRenderChunk(
+    VoxelRenderable &           voxelRenderChunkTree,
+    const glm::uvec3 &          position,
+    const glm::uvec3 &          size,
+    const glm::uvec3 &          llfRender,
+    const glm::uvec3 &          urbRender,
+    const Optional<glm::vec3> & colorOverride)
+    : m_cluster(size)
+    , m_renderable(voxelRenderChunkTree)
+    , m_marchingCubes(
+          m_renderable.voxelWorld().marchingCubesTriangulation(),
+          m_cluster,
+          1.0f,
+          position)
+    , m_configCluster(size - glm::uvec3(1))
+    , m_llfRender(llfRender)
+    , m_urbRender(urbRender)
+    , m_colorOverride(colorOverride)
 {
-//    m_llfVisible = glm::uvec3(std::numeric_limits<uint32_t>::max());
-//    m_urbVisible = glm::uvec3(0);
+    //    m_llfVisible = glm::uvec3(std::numeric_limits<uint32_t>::max());
+    //    m_urbVisible = glm::uvec3(0);
 }
 
-VoxelRenderChunk::VoxelRenderChunk(const VoxelRenderChunk & other):
-    m_cluster(other.m_cluster),
-    m_renderable(other.m_renderable),
-    m_marchingCubes(m_renderable.voxelWorld().marchingCubesTriangulation(), m_cluster, 1.0f, other.m_marchingCubes.offset()),
-    m_configCluster(other.m_configCluster),
-    m_voxelCount(other.m_voxelCount),
-    m_meshEmpty(other.m_meshEmpty),
-    m_llfRender(other.m_llfRender),
-    m_urbRender(other.m_urbRender),
-    m_numVisibleVoxels(other.m_numVisibleVoxels),
-    m_colorOverride(other.m_colorOverride)
+VoxelRenderChunk::VoxelRenderChunk(const VoxelRenderChunk & other)
+    : m_cluster(other.m_cluster)
+    , m_renderable(other.m_renderable)
+    , m_marchingCubes(
+          m_renderable.voxelWorld().marchingCubesTriangulation(),
+          m_cluster,
+          1.0f,
+          other.m_marchingCubes.offset())
+    , m_configCluster(other.m_configCluster)
+    , m_voxelCount(other.m_voxelCount)
+    , m_meshEmpty(other.m_meshEmpty)
+    , m_llfRender(other.m_llfRender)
+    , m_urbRender(other.m_urbRender)
+    , m_numVisibleVoxels(other.m_numVisibleVoxels)
+    , m_colorOverride(other.m_colorOverride)
 {
     /**
      * We don't deep-copy the marching cubes state, so set all of it to dirty
@@ -67,8 +77,8 @@ void VoxelRenderChunk::addVoxel(const Voxel & voxel, bool visible)
 
     if (visible)
     {
-//        m_llfVisible = glm::min(m_llfVisible, voxel.cell);
-//        m_urbVisible = glm::max(m_urbVisible, voxel.cell);
+        //        m_llfVisible = glm::min(m_llfVisible, voxel.cell);
+        //        m_urbVisible = glm::max(m_urbVisible, voxel.cell);
         m_numVisibleVoxels++;
     }
 
@@ -95,7 +105,8 @@ void VoxelRenderChunk::removeVoxel(const glm::uvec3 & voxel, bool visible)
     m_voxelCount--;
 }
 
-void VoxelRenderChunk::updateVoxelVisibility(const glm::uvec3 & voxel, bool visible)
+void VoxelRenderChunk::updateVoxelVisibility(
+    const glm::uvec3 & voxel, bool visible)
 {
     if (visible)
     {
@@ -128,7 +139,8 @@ bool VoxelRenderChunk::updateVertices()
     if (m_verticesDirty)
     {
         m_marchingCubes.onClusterChanged(m_llfDirty, m_urbDirty);
-        //m_marchingCubes.run(glm::max(m_llfRender, m_llfVisible), glm::min(m_urbRender, m_urbVisible), m_colorOverride);
+        // m_marchingCubes.run(glm::max(m_llfRender, m_llfVisible),
+        // glm::min(m_urbRender, m_urbVisible), m_colorOverride);
         m_marchingCubes.run(m_llfRender, m_urbRender, m_colorOverride);
 
         m_vertices = m_marchingCubes.takeVertices();

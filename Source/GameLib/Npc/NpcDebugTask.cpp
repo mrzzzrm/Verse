@@ -12,11 +12,7 @@
 
 #include "NpcController.h"
 
-
-NpcDebugTask::NpcDebugTask()
-{
-
-}
+NpcDebugTask::NpcDebugTask() {}
 
 void NpcDebugTask::setFireRequest(bool enabled, const glm::vec3 & direction)
 {
@@ -24,8 +20,15 @@ void NpcDebugTask::setFireRequest(bool enabled, const glm::vec3 & direction)
     m_fireRequestDirection = direction;
 }
 
-void NpcDebugTask::update(NpcController & controller, RigidBody & body, Equipment & equipment, float seconds)
+void NpcDebugTask::update(
+    NpcController & controller,
+    RigidBody &     body,
+    Equipment &     equipment,
+    float           seconds)
 {
-    if (m_fireRequestEnabled) equipment.setFireRequestDirectionForAllHardpoints(m_fireRequestDirection);
-    else equipment.clearFireRequests();
+    if (m_fireRequestEnabled)
+        equipment.setFireRequestDirectionForAllHardpoints(
+            m_fireRequestDirection);
+    else
+        equipment.clearFireRequests();
 }

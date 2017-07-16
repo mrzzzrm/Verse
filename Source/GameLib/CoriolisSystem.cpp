@@ -5,9 +5,12 @@
 
 #include "CoriolisComponent.h"
 
-CoriolisSystem::CoriolisSystem(World & world):
-    Base(world, ComponentFilter::requires<CoriolisComponent, RigidBodyComponent>())
-{}
+CoriolisSystem::CoriolisSystem(World & world)
+    : Base(
+          world,
+          ComponentFilter::requires<CoriolisComponent, RigidBodyComponent>())
+{
+}
 
 void CoriolisSystem::onEntityGameUpdate(Entity & entity, float seconds)
 {

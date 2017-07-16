@@ -14,8 +14,7 @@ public:
     virtual Result generate() const = 0;
 };
 
-class EmitterSizeOverLifetime:
-    public EmitterSizeStrategy
+class EmitterSizeOverLifetime : public EmitterSizeStrategy
 {
 public:
     EmitterSizeOverLifetime(float scale);

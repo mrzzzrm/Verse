@@ -4,8 +4,7 @@
 
 #include "AbstractBehaviour.h"
 
-class LaunchDefenseBehaviour:
-    public AbstractBehaviour
+class LaunchDefenseBehaviour : public AbstractBehaviour
 {
 public:
     void onBehaviourUpdate(float seconds) override;

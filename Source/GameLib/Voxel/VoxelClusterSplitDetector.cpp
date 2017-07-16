@@ -4,8 +4,8 @@
 
 #define VERBOSE 0
 
-VoxelClusterSplitDetector::VoxelClusterSplitDetector(const glm::uvec3 & size):
-    m_cluster(size)
+VoxelClusterSplitDetector::VoxelClusterSplitDetector(const glm::uvec3 & size)
+    : m_cluster(size)
 {
 }
 
@@ -19,7 +19,8 @@ size_t VoxelClusterSplitDetector::splitContainingCrucialVoxel() const
     return m_splitContainingCrucialVoxel;
 }
 
-void VoxelClusterSplitDetector::setCrucialVoxel(const boost::optional<glm::uvec3> & crucialVoxel)
+void VoxelClusterSplitDetector::setCrucialVoxel(
+    const boost::optional<glm::uvec3> & crucialVoxel)
 {
     m_crucialVoxel = crucialVoxel;
 }
@@ -34,7 +35,8 @@ void VoxelClusterSplitDetector::addVoxels(const std::vector<Voxel> & voxels)
     m_numVoxels += voxels.size();
 }
 
-void VoxelClusterSplitDetector::removeVoxels(const std::vector<glm::uvec3> & voxels)
+void VoxelClusterSplitDetector::removeVoxels(
+    const std::vector<glm::uvec3> & voxels)
 {
     for (const auto & voxel : voxels)
     {
@@ -48,7 +50,8 @@ void VoxelClusterSplitDetector::removeVoxels(const std::vector<glm::uvec3> & vox
 void VoxelClusterSplitDetector::performSplitDetection()
 {
 #if VERBOSE
-    std::cout << "VoxelClusterSplitDetector(" << this << ")::performSplitDetection()" << std::endl;
+    std::cout << "VoxelClusterSplitDetector(" << this
+              << ")::performSplitDetection()" << std::endl;
 
 #endif
 
@@ -68,14 +71,17 @@ void VoxelClusterSplitDetector::performSplitDetection()
 
                 if (value < m_currentFloodBeginId)
                 {
-                   // std::cout << " Flooding " << x << " " << y << " " << z << ". With: " << m_currentFloodId << std::endl;
+                    // std::cout << " Flooding " << x << " " << y << " " << z <<
+                    // ". With: " << m_currentFloodId << std::endl;
                     flood({x, y, z});
                 }
                 else
                 {
-                  //  std::cout << " Not flooding " << x << " " << y << " " << z << ". " << value << " vs " <<  m_currentFloodBeginId << std::endl;
+                    //  std::cout << " Not flooding " << x << " " << y << " " <<
+                    //  z << ". "
+                    //  << value << " vs " <<  m_currentFloodBeginId <<
+                    //  std::endl;
                 }
-
             }
         }
     }
@@ -84,7 +90,8 @@ void VoxelClusterSplitDetector::performSplitDetection()
     {
         if (m_cluster.test(*m_crucialVoxel))
         {
-            m_splitContainingCrucialVoxel = m_cluster.get(*m_crucialVoxel) - m_currentFloodBeginId;
+            m_splitContainingCrucialVoxel =
+                m_cluster.get(*m_crucialVoxel) - m_currentFloodBeginId;
         }
     }
 
@@ -122,18 +129,18 @@ void VoxelClusterSplitDetector::flood(const glm::uvec3 & startVoxel)
         visit({x, y - 1, z});
         visit({x, y, z + 1});
         visit({x, y, z - 1});
-//        visit({x + 1, y + 1, z});
-//        visit({x + 1, y - 1, z});
-//        visit({x - 1, y + 1, z});
-//        visit({x - 1, y - 1, z});
-//        visit({x + 1, y, z + 1});
-//        visit({x + 1, y, z - 1});
-//        visit({x - 1, y, z + 1});
-//        visit({x - 1, y, z - 1});
-//        visit({x, y + 1, z + 1});
-//        visit({x, y + 1, z - 1});
-//        visit({x, y - 1, z + 1});
-//        visit({x, y - 1, z - 1});
+        //        visit({x + 1, y + 1, z});
+        //        visit({x + 1, y - 1, z});
+        //        visit({x - 1, y + 1, z});
+        //        visit({x - 1, y - 1, z});
+        //        visit({x + 1, y, z + 1});
+        //        visit({x + 1, y, z - 1});
+        //        visit({x - 1, y, z + 1});
+        //        visit({x - 1, y, z - 1});
+        //        visit({x, y + 1, z + 1});
+        //        visit({x, y + 1, z - 1});
+        //        visit({x, y - 1, z + 1});
+        //        visit({x, y - 1, z - 1});
     }
 
     m_currentFloodId++;
@@ -141,9 +148,9 @@ void VoxelClusterSplitDetector::flood(const glm::uvec3 & startVoxel)
 
 void VoxelClusterSplitDetector::visit(const glm::ivec3 & voxel)
 {
-    if (voxel.x < 0 || voxel.x >= m_cluster.size().x ||
-        voxel.y < 0 || voxel.y >= m_cluster.size().y ||
-        voxel.z < 0 || voxel.z >= m_cluster.size().z)
+    if (voxel.x < 0 || voxel.x >= m_cluster.size().x || voxel.y < 0 ||
+        voxel.y >= m_cluster.size().y || voxel.z < 0 ||
+        voxel.z >= m_cluster.size().z)
     {
         return;
     }

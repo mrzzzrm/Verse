@@ -3,11 +3,11 @@
 #include <Deliberation/Core/Json.h>
 #include <Deliberation/ECS/ComponentPrototype.h>
 
-#include "GameLib.h"
 #include "FlightControlConfig.h"
+#include "GameLib.h"
 
-class FlightControlConfigPrototype:
-    public ComponentPrototype<FlightControlConfig>
+class FlightControlConfigPrototype
+    : public ComponentPrototype<FlightControlConfig>
 {
 public:
     void updateComponent(FlightControlConfig & component) override;

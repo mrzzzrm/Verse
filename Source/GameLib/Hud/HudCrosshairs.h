@@ -10,9 +10,7 @@
 
 class PlayerSystem;
 
-class HudCrosshairs:
-    public HudLayer,
-    public HudElement
+class HudCrosshairs : public HudLayer, public HudElement
 {
 public:
     HudCrosshairs(Hud & hud);

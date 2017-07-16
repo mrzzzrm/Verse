@@ -9,8 +9,7 @@ public:
     virtual float generateLifetime() const = 0;
 };
 
-class EmitterRandomLifetime final:
-    public EmitterLifetimeStrategy
+class EmitterRandomLifetime final : public EmitterLifetimeStrategy
 {
 public:
     EmitterRandomLifetime(float min, float max);
@@ -18,7 +17,6 @@ public:
     float generateLifetime() const override;
 
 private:
-    mutable std::default_random_engine  m_engine;
-    mutable std::uniform_real_distribution<float>
-                                        m_dist;
+    mutable std::default_random_engine            m_engine;
+    mutable std::uniform_real_distribution<float> m_dist;
 };

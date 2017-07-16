@@ -6,8 +6,9 @@
 #include "R.h"
 #include "ResourceManager.h"
 
-HudEntityMarkersRenderer::HudEntityMarkersRenderer(DrawContext & context, ResourceManager & resourceManager):
-    m_drawContext(context)
+HudEntityMarkersRenderer::HudEntityMarkersRenderer(
+    DrawContext & context, ResourceManager & resourceManager)
+    : m_drawContext(context)
 {
     auto mesh = resourceManager.mesh(R::HudEntityMarkerUpperLeft);
     auto program = resourceManager.program(R::HudElement);
@@ -26,18 +27,21 @@ HudEntityMarkersRenderer::HudEntityMarkersRenderer(DrawContext & context, Resour
     m_draw.sampler("Texture").setTexture(mesh.textures()[0]);
     m_draw.state().setDepthState(DepthState::disabledR());
     m_draw.state().setCullState(CullState::disabled());
-    m_draw.state().setBlendState({BlendEquation::Add, BlendFactor::SourceAlpha, BlendFactor::OneMinusSourceAlpha});
+    m_draw.state().setBlendState({BlendEquation::Add,
+                                  BlendFactor::SourceAlpha,
+                                  BlendFactor::OneMinusSourceAlpha});
     m_viewportSizeUniform = m_draw.uniform("ViewportSize");
 }
 
-void HudEntityMarkersRenderer::render(const std::vector<std::shared_ptr<HudButton>> & markers)
+void HudEntityMarkersRenderer::render(
+    const std::vector<std::shared_ptr<HudButton>> & markers)
 {
     m_instances.resize(markers.size() * 4); // 4 corners per marker
 
     auto elementPositions = m_instances.iterator<glm::vec2>("ElementPosition");
     auto elementColors = m_instances.iterator<glm::vec3>("ElementColor");
     auto flips = m_instances.iterator<glm::vec2>("Flip");
-    
+
     for (const auto & marker : markers)
     {
         const auto x = marker->halfExtent().x;
@@ -59,10 +63,11 @@ void HudEntityMarkersRenderer::render(const std::vector<std::shared_ptr<HudButto
         elementPositions.put(marker->position() + glm::vec2(-x, -y));
         flips.put({1, -1});
     }
-    
+
     m_instanceBuffer.upload(m_instances);
 
-    m_viewportSizeUniform.set(glm::vec2{m_drawContext.backbuffer().width(), m_drawContext.backbuffer().height()});
+    m_viewportSizeUniform.set(glm::vec2{m_drawContext.backbuffer().width(),
+                                        m_drawContext.backbuffer().height()});
 
     m_draw.render();
 }

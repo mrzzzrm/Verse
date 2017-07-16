@@ -6,8 +6,7 @@
 #include "GameLib.h"
 #include "NpcController.h"
 
-class NpcControllerPrototype:
-    public ComponentPrototype<NpcController>
+class NpcControllerPrototype : public ComponentPrototype<NpcController>
 {
 public:
     void updateComponent(NpcController & npcController) override;

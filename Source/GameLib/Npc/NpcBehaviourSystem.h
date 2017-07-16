@@ -4,8 +4,7 @@
 
 #include "GameLib.h"
 
-class NpcBehaviourSystem:
-    public System<NpcBehaviourSystem>
+class NpcBehaviourSystem : public System<NpcBehaviourSystem>
 {
 public:
     NpcBehaviourSystem(World & world);

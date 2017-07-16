@@ -3,16 +3,18 @@
 #include <Deliberation/ECS/System.h>
 #include <Deliberation/ECS/World.h>
 
-#include "VersePrototypeManager.h"
 #include "GameLib.h"
+#include "VersePrototypeManager.h"
 
-class VersePrototypeSystem:
-    public System<VersePrototypeSystem>
+class VersePrototypeSystem : public System<VersePrototypeSystem>
 {
 public:
     VersePrototypeSystem(World & world);
 
-    const std::shared_ptr<VersePrototypeManager> & manager() const { return m_manager; }
+    const std::shared_ptr<VersePrototypeManager> & manager() const
+    {
+        return m_manager;
+    }
 
     void onCreated() override;
     void onRemoved() override;

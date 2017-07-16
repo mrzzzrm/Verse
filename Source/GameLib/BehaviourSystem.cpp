@@ -3,10 +3,11 @@
 #include "AbstractBehaviour.h"
 #include "BehaviourComponent.h"
 
-BehaviourSystem::BehaviourSystem(World & world):
-    Base(world, ComponentFilter::requires<BehaviourComponent>()),
-    m_manager(std::make_shared<BehaviourManager>())
-{}
+BehaviourSystem::BehaviourSystem(World & world)
+    : Base(world, ComponentFilter::requires<BehaviourComponent>())
+    , m_manager(std::make_shared<BehaviourManager>())
+{
+}
 
 void BehaviourSystem::onEntityAdded(Entity & entity)
 {

@@ -4,6 +4,7 @@
 
 #include "PlayerFlightControl.h"
 
-void PlayerFlightControlPrototype::updateComponent(PlayerFlightControl & playerFlightControl)
+void PlayerFlightControlPrototype::updateComponent(
+    PlayerFlightControl & playerFlightControl)
 {
 }

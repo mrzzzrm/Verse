@@ -14,11 +14,11 @@
 #include "HudRenderer.h"
 #include "PlayerSystem.h"
 
-Hud::Hud(World & world):
-    Base(world),
-    InputLayer(1),
-    m_input(world.systemRef<ApplicationSystem>().input()),
-    m_playerSystem(world.systemRef<PlayerSystem>())
+Hud::Hud(World & world)
+    : Base(world)
+    , InputLayer(1)
+    , m_input(world.systemRef<ApplicationSystem>().input())
+    , m_playerSystem(world.systemRef<PlayerSystem>())
 {
     auto & context = world.systemRef<ApplicationSystem>().drawContext();
     auto & physicsWorld = world.systemRef<PhysicsWorldSystem>().physicsWorld();
@@ -64,27 +64,29 @@ void Hud::onGameUpdate(float seconds)
 
 void Hud::onMouseButtonClicked(MouseButtonEvent & event)
 {
-    processMouseEvent(event, [&] (HudElement & element) {
+    processMouseEvent(event, [&](HudElement & element) {
         element.onMouseButtonClicked(event);
     });
 }
 
 void Hud::onMouseButtonPressed(MouseButtonEvent & event)
 {
-    processMouseEvent(event, [&] (HudElement & element) {
+    processMouseEvent(event, [&](HudElement & element) {
         element.onMouseButtonPressed(event);
     });
 }
 
 template<typename T>
-void Hud::processMouseEvent(T & event, const std::function<void(HudElement & element)> & fn) const
+void Hud::processMouseEvent(
+    T & event, const std::function<void(HudElement & element)> & fn) const
 {
     for (auto & element : m_elements)
     {
         if (!element->visible()) continue;
 
         const auto & halfExtent = element->halfExtent();
-        const auto absMouseDelta = glm::abs(event.mousePosition() - element->position());
+        const auto   absMouseDelta =
+            glm::abs(event.mousePosition() - element->position());
 
         if (absMouseDelta.x <= halfExtent.x && absMouseDelta.y <= halfExtent.y)
         {

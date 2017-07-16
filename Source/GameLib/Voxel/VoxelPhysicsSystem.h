@@ -4,12 +4,11 @@
 
 #include "GameLib.h"
 
-class VoxelPhysicsSystem:
-    public System<VoxelPhysicsSystem>
+class VoxelPhysicsSystem : public System<VoxelPhysicsSystem>
 {
 public:
     VoxelPhysicsSystem(World & world);
-    
+
 protected:
     void onEntityAdded(Entity & entity);
 };

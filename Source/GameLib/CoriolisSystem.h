@@ -4,8 +4,7 @@
 
 #include "GameLib.h"
 
-class CoriolisSystem:
-    public System<CoriolisSystem>
+class CoriolisSystem : public System<CoriolisSystem>
 {
 public:
     CoriolisSystem(World & world);

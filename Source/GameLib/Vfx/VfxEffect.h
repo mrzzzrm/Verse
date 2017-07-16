@@ -1,10 +1,10 @@
 //#pragma once
 //
-//class VfxManager;
+// class VfxManager;
 //
-//class VfxEffect
+// class VfxEffect
 //{
-//public:
+// public:
 //    VfxEffect(VfxManager & manager);
 //    virtual ~VfxEffect() = default;
 //
@@ -12,6 +12,6 @@
 //    virtual void update(float seconds);
 //    virtual void onCreated();
 //
-//protected:
+// protected:
 //    VfxManager & m_manager;
 //};

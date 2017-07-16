@@ -7,8 +7,7 @@
 #include "GameLib.h"
 #include "NpcTask.h"
 
-class NpcAttackTask:
-    public NpcTask
+class NpcAttackTask : public NpcTask
 {
 public:
     NpcAttackTask();
@@ -17,7 +16,11 @@ public:
 
     void setTarget(Entity target);
 
-    void update(NpcController & controller, RigidBody & body, Equipment & equipment, float seconds) override;
+    void update(
+        NpcController & controller,
+        RigidBody &     body,
+        Equipment &     equipment,
+        float           seconds) override;
 
 private:
     enum class Status
@@ -32,7 +35,7 @@ private:
     void startJoust();
 
 private:
-    Entity      m_target;
-    Status      m_status = Status::None;
-    glm::vec3   m_evasionPoint;
+    Entity    m_target;
+    Status    m_status = Status::None;
+    glm::vec3 m_evasionPoint;
 };

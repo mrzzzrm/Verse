@@ -8,12 +8,11 @@ class EmitterRotationStrategy
 {
 public:
     virtual ~EmitterRotationStrategy() = default;
-    virtual glm::quat generateOrientation() const;
+    virtual glm::quat                  generateOrientation() const;
     virtual VfxParticleOrientationType orientationType() const = 0;
 };
 
-class EmitterViewBillboardStrategy:
-    public EmitterRotationStrategy
+class EmitterViewBillboardStrategy : public EmitterRotationStrategy
 {
 public:
     VfxParticleOrientationType orientationType() const override;

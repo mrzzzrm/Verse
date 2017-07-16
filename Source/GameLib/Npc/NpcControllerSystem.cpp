@@ -1,19 +1,23 @@
 #include "NpcControllerSystem.h"
 
-NpcControllerSystem::NpcControllerSystem(World & world):
-    Base(world, ComponentFilter::requires<
-        NpcController,
-        RigidBodyComponent,
-        Equipment,
-        FlightControlConfig>())
-{}
+NpcControllerSystem::NpcControllerSystem(World & world)
+    : Base(
+          world,
+          ComponentFilter::requires<
+              NpcController,
+              RigidBodyComponent,
+              Equipment,
+              FlightControlConfig>())
+{
+}
 
 void NpcControllerSystem::onEntityAdded(Entity & entity)
 {
     entity.addComponent<NpcFlightControl>();
 }
 
-void NpcControllerSystem::onEntityPrePhysicsUpdate(Entity & entity, float seconds)
+void NpcControllerSystem::onEntityPrePhysicsUpdate(
+    Entity & entity, float seconds)
 {
     auto & body = *entity.component<RigidBodyComponent>().value();
     auto & equipment = entity.component<Equipment>();

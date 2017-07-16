@@ -10,13 +10,13 @@ namespace deliberation
 {
 class Camera3D;
 class PhysicsWorld;
-}
+} // namespace deliberation
 
 struct AimHelperResult
 {
-    bool                        hit = false;
-    glm::vec3                   pointOfImpact;
-    std::shared_ptr<RigidBody>  body;
+    bool                       hit = false;
+    glm::vec3                  pointOfImpact;
+    std::shared_ptr<RigidBody> body;
 };
 
 class AimHelper final
@@ -27,6 +27,6 @@ public:
     AimHelperResult getTarget(const glm::vec2 & mouse);
 
 private:
-    const Camera3D &        m_camera;
-    const PhysicsWorld &    m_physicsWorld;
+    const Camera3D &     m_camera;
+    const PhysicsWorld & m_physicsWorld;
 };

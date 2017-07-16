@@ -17,8 +17,7 @@ class VfxManager;
 class VoxelObjectModification;
 class VoxelObjectBulletHit;
 
-class VfxSystem final:
-    public System<VfxSystem>
+class VfxSystem final : public System<VfxSystem>
 {
 public:
     VfxSystem(World & world);

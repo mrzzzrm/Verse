@@ -17,14 +17,15 @@
 #include "PlayerSystem.h"
 #include "ResourceManager.h"
 
-HudEntityMarkers::HudEntityMarkers(Hud & hud,
-                                   DrawContext & context,
-                                   const PhysicsWorld & physicsWorld,
-                                   const Camera3D & camera):
-    HudLayer(hud),
-    m_physicsWorld(physicsWorld),
-    m_camera(camera),
-    m_renderer(context, hud.world().systemRef<ResourceManager>())
+HudEntityMarkers::HudEntityMarkers(
+    Hud &                hud,
+    DrawContext &        context,
+    const PhysicsWorld & physicsWorld,
+    const Camera3D &     camera)
+    : HudLayer(hud)
+    , m_physicsWorld(physicsWorld)
+    , m_camera(camera)
+    , m_renderer(context, hud.world().systemRef<ResourceManager>())
 {
 }
 
@@ -40,10 +41,13 @@ void HudEntityMarkers::update(float seconds)
     auto & factionManager = m_hud.world().systemRef<FactionManager>();
 
     const auto nearPlane = m_camera.nearPlane();
-    const auto nearPlaneForward =  m_camera.orientation() * glm::vec3(0.0f, 0.0f, -1.0f);
-    const auto nearPlaneRight = m_camera.orientation() * glm::vec3(1.0f, 0.0f, 0.0f);
-    const auto nearPlaneUp = m_camera.orientation() * glm::vec3(0.0f, 1.0f, 0.0f);
-    const auto * playerAllegiance = (Allegiance*)nullptr;
+    const auto nearPlaneForward =
+        m_camera.orientation() * glm::vec3(0.0f, 0.0f, -1.0f);
+    const auto nearPlaneRight =
+        m_camera.orientation() * glm::vec3(1.0f, 0.0f, 0.0f);
+    const auto nearPlaneUp =
+        m_camera.orientation() * glm::vec3(0.0f, 1.0f, 0.0f);
+    const auto * playerAllegiance = (Allegiance *)nullptr;
 
     if (playerSystem.player().isValid())
     {
@@ -59,15 +63,19 @@ void HudEntityMarkers::update(float seconds)
         if (entity.hasComponent<PlayerFlightControl>()) continue;
         if (!entity.hasComponent<HudProxy>()) continue;
 
-        bool inFrontOfCamera;
-        const auto buttonPosition = m_camera.projectToNearPlane(rigidBody->transform().position(), inFrontOfCamera);
+        bool       inFrontOfCamera;
+        const auto buttonPosition = m_camera.projectToNearPlane(
+            rigidBody->transform().position(), inFrontOfCamera);
 
         if (!inFrontOfCamera) continue;
 
         const auto radius = rigidBody->bounds().diameter() / 2.0f;
 
-        const auto upperRightWS = rigidBody->transform().position() + nearPlaneRight * radius + nearPlaneUp * radius;
-        const auto upperRightNP = m_camera.projectToNearPlane(upperRightWS, inFrontOfCamera);
+        const auto upperRightWS = rigidBody->transform().position() +
+                                  nearPlaneRight * radius +
+                                  nearPlaneUp * radius;
+        const auto upperRightNP =
+            m_camera.projectToNearPlane(upperRightWS, inFrontOfCamera);
         Assert(inFrontOfCamera, "");
 
         std::shared_ptr<HudButton> button;
@@ -94,7 +102,8 @@ void HudEntityMarkers::update(float seconds)
         {
             auto entityAllegiance = entity.component<Allegiance>();
 
-            auto factionRelation = factionManager.factionRelation(playerAllegiance->faction(), entityAllegiance.faction());
+            auto factionRelation = factionManager.factionRelation(
+                playerAllegiance->faction(), entityAllegiance.faction());
 
             if (factionRelation == FactionRelation::Hostile)
             {
@@ -105,9 +114,8 @@ void HudEntityMarkers::update(float seconds)
 
         m_numVisibleMarkers++;
 
-        button->setClickCallback([this, entity]() mutable {
-            m_hud.setPlayerTarget(entity);
-        });
+        button->setClickCallback(
+            [this, entity]() mutable { m_hud.setPlayerTarget(entity); });
     }
 }
 

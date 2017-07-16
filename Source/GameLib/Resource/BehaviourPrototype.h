@@ -6,8 +6,7 @@
 
 class BehaviourManager;
 
-class BehaviourPrototype:
-    public ComponentPrototype<BehaviourComponent>
+class BehaviourPrototype : public ComponentPrototype<BehaviourComponent>
 {
 public:
     BehaviourPrototype(const std::shared_ptr<BehaviourManager> & manager);

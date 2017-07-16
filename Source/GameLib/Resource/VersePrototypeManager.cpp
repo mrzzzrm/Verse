@@ -3,8 +3,8 @@
 #include <fstream>
 
 #include <Deliberation/Core/Assert.h>
-#include <Deliberation/ECS/Components.h>
 #include <Deliberation/ECS/ComponentPrototypes.h>
+#include <Deliberation/ECS/Components.h>
 
 #include "AllegiancePrototype.h"
 #include "BehaviourPrototype.h"
@@ -12,20 +12,21 @@
 #include "EquipmentPrototype.h"
 #include "FlightControlConfigPrototype.h"
 #include "HudProxyPrototype.h"
+#include "NpcBehaviourPrototype.h"
 #include "NpcControllerPrototype.h"
-#include "PlayerFlightControlPrototype.h"
 #include "PlayerFlightControl.h"
-#include "VoxelRigidBodyPrototype.h"
+#include "PlayerFlightControlPrototype.h"
 #include "VfxSystem.h"
 #include "VoxelObjectPrototype.h"
-#include "NpcBehaviourPrototype.h"
+#include "VoxelRigidBodyPrototype.h"
 
 #include "BehaviourSystem.h"
 
-VersePrototypeManager::VersePrototypeManager(World & world, const std::string & listPath):
-    PrototypeManager(world, listPath)
+VersePrototypeManager::VersePrototypeManager(
+    World & world, const std::string & listPath)
+    : PrototypeManager(world, listPath)
 {
-    auto voxelWorld = m_world.system<VoxelWorld>();
+    auto   voxelWorld = m_world.system<VoxelWorld>();
     auto & vfxManager = m_world.systemRef<VfxSystem>().manager();
     auto & behaviourManager = m_world.systemRef<BehaviourSystem>().manager();
 
@@ -33,13 +34,16 @@ VersePrototypeManager::VersePrototypeManager(World & world, const std::string & 
     registerComponentPrototype<VoxelRigidBodyPrototype>("VoxelRigidBody");
     registerComponentPrototype<CoriolisPrototype>("Coriolis");
     registerComponentPrototype<EquipmentPrototype>("Equipment", vfxManager);
-    registerComponentPrototype<FlightControlConfigPrototype>("FlightControlConfig");
+    registerComponentPrototype<FlightControlConfigPrototype>(
+        "FlightControlConfig");
     registerComponentPrototype<NpcControllerPrototype>("NpcController");
-    registerComponentPrototype<PlayerFlightControlPrototype>("PlayerFlightControl");
+    registerComponentPrototype<PlayerFlightControlPrototype>(
+        "PlayerFlightControl");
     registerComponentPrototype<AllegiancePrototype>("Allegiance");
     registerComponentPrototype<NpcBehaviourPrototype>("NpcBehaviour");
     registerComponentPrototype<NpcBehaviourPrototype>("NpcBehaviour");
     registerComponentPrototype<HudProxyPrototype>("HudProxy");
     registerComponentPrototype<Transform3DComponentPrototype>("Transform3D");
-    registerComponentPrototype<BehaviourPrototype>("Behaviour", behaviourManager);
+    registerComponentPrototype<BehaviourPrototype>(
+        "Behaviour", behaviourManager);
 }

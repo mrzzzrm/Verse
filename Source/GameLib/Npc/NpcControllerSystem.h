@@ -10,8 +10,7 @@
 #include "GameLib.h"
 #include "NpcController.h"
 
-class NpcControllerSystem:
-    public System<NpcControllerSystem>
+class NpcControllerSystem : public System<NpcControllerSystem>
 {
 public:
     NpcControllerSystem(World & world);

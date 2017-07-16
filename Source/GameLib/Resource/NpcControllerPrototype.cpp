@@ -4,6 +4,4 @@
 
 #include "NpcController.h"
 
-void NpcControllerPrototype::updateComponent(NpcController & npcController)
-{
-}
+void NpcControllerPrototype::updateComponent(NpcController & npcController) {}

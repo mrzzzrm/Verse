@@ -4,8 +4,7 @@
 
 #include "GameLib.h"
 
-class VoxelClusterContact:
-    public Contact
+class VoxelClusterContact : public Contact
 {
 public:
     VoxelClusterContact(RigidBody & bodyA, RigidBody & bodyB);

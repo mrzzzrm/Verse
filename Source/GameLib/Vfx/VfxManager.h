@@ -16,31 +16,29 @@ class VfxManager final
 {
 public:
     VfxManager(
-        RenderManager & renderManager,
-        ResourceManager & resourceManager);
+        RenderManager & renderManager, ResourceManager & resourceManager);
 
-    VfxRenderer & renderer();
+    VfxRenderer &       renderer();
     const VfxRenderer & renderer() const;
 
     VfxMeshId getOrCreateMeshId(ResourceId resourceId);
 
     VfxParticleId addParticle(VfxParticle particle);
-    void removeParticle(VfxParticleId particle);
+    void          removeParticle(VfxParticleId particle);
 
     void addEmitterInstance(std::shared_ptr<EmitterInstance> emitterInstance);
-    void removeEmitterInstance(std::shared_ptr<EmitterInstance> emitterInstance);
+    void
+    removeEmitterInstance(std::shared_ptr<EmitterInstance> emitterInstance);
 
     void update(float seconds);
 
 private:
-    ResourceManager &               m_resourceManager;
-    std::shared_ptr<VfxRenderer>    m_renderer;
+    ResourceManager &            m_resourceManager;
+    std::shared_ptr<VfxRenderer> m_renderer;
 
-    std::unordered_map<size_t, VfxMeshId>
-                                    m_meshIdByResourceId;
+    std::unordered_map<size_t, VfxMeshId> m_meshIdByResourceId;
 
-    SparseVector<std::shared_ptr<EmitterInstance>>
-                                    m_emitterInstances;
+    SparseVector<std::shared_ptr<EmitterInstance>> m_emitterInstances;
 
-    std::vector<size_t>             m_deadEmitterInstances;
+    std::vector<size_t> m_deadEmitterInstances;
 };

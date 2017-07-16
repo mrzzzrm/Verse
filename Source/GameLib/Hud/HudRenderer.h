@@ -5,8 +5,7 @@
 #include "GameLib.h"
 #include "Hud.h"
 
-class HudRenderer:
-    public SingleNodeRenderer
+class HudRenderer : public SingleNodeRenderer
 {
 public:
     HudRenderer(RenderManager & renderManager, Hud & hud);

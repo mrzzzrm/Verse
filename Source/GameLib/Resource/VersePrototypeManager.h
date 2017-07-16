@@ -10,8 +10,7 @@
 
 class EntityPrototype;
 
-class VersePrototypeManager:
-    public PrototypeManager
+class VersePrototypeManager : public PrototypeManager
 {
 public:
     VersePrototypeManager(World & world, const std::string & listPath);

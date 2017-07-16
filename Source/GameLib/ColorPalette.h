@@ -18,10 +18,11 @@ class DrawContext;
 class ColorPalette final
 {
 public:
-    ColorPalette(DrawContext & drawContext, const std::vector<glm::vec3> & colors);
+    ColorPalette(
+        DrawContext & drawContext, const std::vector<glm::vec3> & colors);
 
     const std::vector<glm::vec3> & colors() const { return m_colors; }
-    const Buffer & colorBuffer() const { return m_buffer; }
+    const Buffer &                 colorBuffer() const { return m_buffer; }
 
     void setColor(u32 index, const glm::vec3 & color);
 
@@ -29,6 +30,6 @@ public:
 
 private:
     std::vector<glm::vec3> m_colors;
-    bool m_colorsDirty = true;
-    Buffer m_buffer;
+    bool                   m_colorsDirty = true;
+    Buffer                 m_buffer;
 };

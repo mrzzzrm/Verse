@@ -18,23 +18,25 @@ namespace deliberation
 {
 class Ray3D;
 class Transform3D;
-}
+} // namespace deliberation
 
-class VoxelShape final:
-    public CollisionShape
+class VoxelShape final : public CollisionShape
 {
 public:
     VoxelShape(const glm::uvec3 & size);
 
     // From CollisionShape
-    AABB bounds(const Transform3D & transform) const override;
+    AABB      bounds(const Transform3D & transform) const override;
     glm::mat3 localInertia() const override;
-    float mass() const override;
+    float     mass() const override;
     glm::vec3 centerOfMass() const override;
 
     void updateVoxel(const glm::uvec3 & voxel, bool set);
 
-    bool lineCast(const Transform3D & transform, const Ray3D & ray, glm::uvec3 & voxel) const;
+    bool lineCast(
+        const Transform3D & transform,
+        const Ray3D &       ray,
+        glm::uvec3 &        voxel) const;
 
     std::string toString() const;
 
@@ -50,25 +52,33 @@ private:
         void updateVoxel(size_t index, const glm::uvec3 & voxel, bool set);
         void updateVoxelLeaf(size_t index, const glm::uvec3 & voxel, bool set);
 
-        void lineCast(size_t index, const Ray3D & ray, std::vector<glm::uvec3> & voxels) const;
-        void lineCastLeaf(size_t index, const Ray3D & ray, std::vector<glm::uvec3> & voxels) const;
+        void lineCast(
+            size_t                    index,
+            const Ray3D &             ray,
+            std::vector<glm::uvec3> & voxels) const;
+        void lineCastLeaf(
+            size_t                    index,
+            const Ray3D &             ray,
+            std::vector<glm::uvec3> & voxels) const;
 
         std::shared_ptr<Subtree<T>> clone() const;
 
-        void toString(std::stringstream & stream, size_t index, size_t indentation) const;
-        void leafToString(std::stringstream & stream, size_t index, size_t indentation) const;
+        void toString(
+            std::stringstream & stream, size_t index, size_t indentation) const;
+        void leafToString(
+            std::stringstream & stream, size_t index, size_t indentation) const;
 
         struct Node
         {
-            glm::uvec3  llf;
-            glm::uvec3  urb;
-            Sphere      bounds;
-            size_t      leaf = NO_LEAF;
-            size_t      numVoxels = 0;
+            glm::uvec3 llf;
+            glm::uvec3 urb;
+            Sphere     bounds;
+            size_t     leaf = NO_LEAF;
+            size_t     numVoxels = 0;
         };
 
-        std::vector<Node>   nodes;
-        std::vector<T>      leaves;
+        std::vector<Node> nodes;
+        std::vector<T>    leaves;
     };
 
 private:
@@ -79,17 +89,17 @@ private:
     void updateMassProperties() const;
 
 private:
-    glm::uvec3          m_size;
-    Subtree<ChunkLeaf>  m_tree;
-    mutable glm::mat3   m_localInertia;
-    mutable glm::vec3   m_centerOfMass;
-    glm::uvec3          m_voxelPositionAccumulator;
-    u32                 m_numVoxels = 0;
-    mutable bool        m_massPropertiesDirty = true;
-    mutable u32         m_absIXX = 0;
-    mutable u32         m_absIYY = 0;
-    mutable u32         m_absIZZ = 0;
-    mutable u32         m_absIXY = 0;
-    mutable u32         m_absIXZ = 0;
-    mutable u32         m_absIYZ = 0;
+    glm::uvec3         m_size;
+    Subtree<ChunkLeaf> m_tree;
+    mutable glm::mat3  m_localInertia;
+    mutable glm::vec3  m_centerOfMass;
+    glm::uvec3         m_voxelPositionAccumulator;
+    u32                m_numVoxels = 0;
+    mutable bool       m_massPropertiesDirty = true;
+    mutable u32        m_absIXX = 0;
+    mutable u32        m_absIYY = 0;
+    mutable u32        m_absIZZ = 0;
+    mutable u32        m_absIXY = 0;
+    mutable u32        m_absIXZ = 0;
+    mutable u32        m_absIYZ = 0;
 };

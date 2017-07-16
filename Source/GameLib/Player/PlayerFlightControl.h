@@ -6,18 +6,15 @@
 
 #include <Deliberation/ECS/Component.h>
 
-#include "GameLib.h"
 #include "FlightControlConfig.h"
+#include "GameLib.h"
 
 namespace deliberation
 {
-
 class RigidBody;
-
 }
 
-class  PlayerFlightControl final:
-    public Component<PlayerFlightControl>
+class PlayerFlightControl final : public Component<PlayerFlightControl>
 {
     DELIBERATION_COMPONENT_NAME("PlayerFlightControl")
 public:

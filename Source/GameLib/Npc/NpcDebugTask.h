@@ -7,17 +7,20 @@
 #include "GameLib.h"
 #include "NpcTask.h"
 
-class NpcDebugTask:
-    public NpcTask
+class NpcDebugTask : public NpcTask
 {
 public:
     NpcDebugTask();
 
     void setFireRequest(bool enabled, const glm::vec3 & target);
 
-    void update(NpcController & controller, RigidBody & body, Equipment & equipment, float seconds) override;
+    void update(
+        NpcController & controller,
+        RigidBody &     body,
+        Equipment &     equipment,
+        float           seconds) override;
 
 private:
-    bool        m_fireRequestEnabled = false;
-    glm::vec3   m_fireRequestDirection;
+    bool      m_fireRequestEnabled = false;
+    glm::vec3 m_fireRequestDirection;
 };

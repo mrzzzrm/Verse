@@ -2,30 +2,19 @@
 
 #include <Deliberation/Core/Assert.h>
 
-NpcSteering & NpcController::steering()
-{
-    return m_steering;
-}
+NpcSteering & NpcController::steering() { return m_steering; }
 
-const NpcSteering & NpcController::steering() const
-{
-    return m_steering;
-}
+const NpcSteering & NpcController::steering() const { return m_steering; }
 
-const std::shared_ptr<NpcTask> & NpcController::task() const
-{
-    return m_task;
-}
+const std::shared_ptr<NpcTask> & NpcController::task() const { return m_task; }
 
-void NpcController::setTask(std::shared_ptr<NpcTask> task)
-{
-    m_task = task;
-}
+void NpcController::setTask(std::shared_ptr<NpcTask> task) { m_task = task; }
 
-void NpcController::update(RigidBody & body,
-                           NpcFlightControl & flightControl,
-                           const FlightControlConfig & config,
-                           float seconds)
+void NpcController::update(
+    RigidBody &                 body,
+    NpcFlightControl &          flightControl,
+    const FlightControlConfig & config,
+    float                       seconds)
 {
     m_steering.update(body, flightControl, config, seconds);
 }

@@ -3,4 +3,3 @@
 #include <Deliberation/Deliberation.h>
 
 using namespace deliberation;
-

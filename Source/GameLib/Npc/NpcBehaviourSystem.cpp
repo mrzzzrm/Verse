@@ -8,9 +8,12 @@
 #include "NpcBehaviour.h"
 #include "NpcController.h"
 
-NpcBehaviourSystem::NpcBehaviourSystem(World & world):
-    Base(world, ComponentFilter::requires<NpcBehaviour, Allegiance, NpcController>())
-{}
+NpcBehaviourSystem::NpcBehaviourSystem(World & world)
+    : Base(
+          world,
+          ComponentFilter::requires<NpcBehaviour, Allegiance, NpcController>())
+{
+}
 
 void NpcBehaviourSystem::onEntityGameUpdate(Entity & entity, float seconds)
 {

@@ -10,8 +10,7 @@
 
 class VoxelObject;
 
-class VoxelClusterSplitSystem:
-    public System<VoxelClusterSplitSystem>
+class VoxelClusterSplitSystem : public System<VoxelClusterSplitSystem>
 {
 public:
     VoxelClusterSplitSystem(World & world);

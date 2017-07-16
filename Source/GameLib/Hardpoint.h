@@ -4,32 +4,34 @@
 
 #include <Deliberation/Core/Math/Pose3D.h>
 
-#include "GameLib.h"
 #include "Attachment.h"
+#include "GameLib.h"
 #include "Weapon.h"
 
 class EquipmentUpdateContext;
 class Weapon;
 
-struct HardpointDesc:
-    AttachmentDesc
+struct HardpointDesc : AttachmentDesc
 {
     float maxAngle = 0.0f;
 };
 
-class Hardpoint final:
-    public Attachment
+class Hardpoint final : public Attachment
 {
 public:
     Hardpoint(const HardpointDesc & desc);
 
     const std::shared_ptr<Weapon> & weapon() const;
 
-    void clearFireRequest() { if (m_weapon) m_weapon->clearFireRequest(); }
+    void clearFireRequest()
+    {
+        if (m_weapon) m_weapon->clearFireRequest();
+    }
     void setFireRequest(const glm::vec3 & direction);
 
     /**
-     * Only used for warping the Hardpoint, otherwise use update()'s referencePose
+     * Only used for warping the Hardpoint, otherwise use update()'s
+     * referencePose
      */
     void setReferencePose(const Pose3D & referencePose);
 

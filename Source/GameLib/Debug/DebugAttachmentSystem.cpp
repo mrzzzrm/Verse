@@ -8,18 +8,22 @@
 
 #include "Equipment.h"
 
-DebugAttachmentSystem::DebugAttachmentSystem(World & world):
-    Base(world, ComponentFilter::requires<Equipment>())
-{}
+DebugAttachmentSystem::DebugAttachmentSystem(World & world)
+    : Base(world, ComponentFilter::requires<Equipment>())
+{
+}
 
 void DebugAttachmentSystem::onCreated()
 {
-    m_visibleNode = world().system<RenderSystem>()->debugGeometryRenderer()->addNode();
-    m_obscuredNode = world().system<RenderSystem>()->debugGeometryRenderer()->addNode();
+    m_visibleNode =
+        world().system<RenderSystem>()->debugGeometryRenderer()->addNode();
+    m_obscuredNode =
+        world().system<RenderSystem>()->debugGeometryRenderer()->addNode();
 
     DrawState obscuredDrawState;
     obscuredDrawState.setDepthState({DepthTest::Greater, DepthWrite::Enabled});
-    obscuredDrawState.setBlendState({BlendEquation::Add, BlendFactor::One, BlendFactor::One});
+    obscuredDrawState.setBlendState(
+        {BlendEquation::Add, BlendFactor::One, BlendFactor::One});
     m_obscuredNode->setDrawState(obscuredDrawState);
 }
 
@@ -42,27 +46,42 @@ void DebugAttachmentSystem::onFrameUpdate(float /*seconds*/)
     {
         if (!entityEntry.active) continue;
 
-        const auto entity = world().entityById(entityEntry.id);
+        const auto   entity = world().entityById(entityEntry.id);
         const auto & equipment = entity.component<Equipment>();
 
         for (const auto attachment : equipment.attachments())
         {
             auto transform = Transform3D::fromPose(attachment->worldPose());
-            transform.setScale(entity.component<Transform3DComponent>().value().scale());
+            transform.setScale(
+                entity.component<Transform3DComponent>().value().scale());
 
-            updateSphere(m_visibleNode->sphere(currentAttachmentIndex), attachment, transform);
-            updateSphere(m_obscuredNode->sphere(currentAttachmentIndex), attachment, transform);
+            updateSphere(
+                m_visibleNode->sphere(currentAttachmentIndex),
+                attachment,
+                transform);
+            updateSphere(
+                m_obscuredNode->sphere(currentAttachmentIndex),
+                attachment,
+                transform);
 
-            updatePose(m_visibleNode->pose(currentAttachmentIndex), attachment, transform);
-            updatePose(m_obscuredNode->pose(currentAttachmentIndex), attachment, transform);
+            updatePose(
+                m_visibleNode->pose(currentAttachmentIndex),
+                attachment,
+                transform);
+            updatePose(
+                m_obscuredNode->pose(currentAttachmentIndex),
+                attachment,
+                transform);
 
             currentAttachmentIndex++;
         }
     }
 
-    m_numAllocatedPrimitives = std::max(currentAttachmentIndex, m_numAllocatedPrimitives);
+    m_numAllocatedPrimitives =
+        std::max(currentAttachmentIndex, m_numAllocatedPrimitives);
 
-    for (; currentAttachmentIndex < m_numAllocatedPrimitives; currentAttachmentIndex++)
+    for (; currentAttachmentIndex < m_numAllocatedPrimitives;
+         currentAttachmentIndex++)
     {
         m_visibleNode->pose(currentAttachmentIndex).setVisible(false);
         m_obscuredNode->pose(currentAttachmentIndex).setVisible(false);
@@ -71,7 +90,10 @@ void DebugAttachmentSystem::onFrameUpdate(float /*seconds*/)
     }
 }
 
-void DebugAttachmentSystem::updateSphere(DebugSphereInstance & sphere, const std::shared_ptr<Attachment> & attachment, const Transform3D & transform)
+void DebugAttachmentSystem::updateSphere(
+    DebugSphereInstance &               sphere,
+    const std::shared_ptr<Attachment> & attachment,
+    const Transform3D &                 transform)
 {
     sphere.setTransform(Transform3D::fromPose(attachment->worldPose()));
     sphere.setColor({0.3f, 1.0f, 0.3});
@@ -79,7 +101,10 @@ void DebugAttachmentSystem::updateSphere(DebugSphereInstance & sphere, const std
     sphere.setRadius(transform.scale());
 }
 
-void DebugAttachmentSystem::updatePose(DebugPoseInstance & pose, const std::shared_ptr<Attachment> & attachment, const Transform3D & transform)
+void DebugAttachmentSystem::updatePose(
+    DebugPoseInstance &                 pose,
+    const std::shared_ptr<Attachment> & attachment,
+    const Transform3D &                 transform)
 {
     auto transform2 = transform;
 

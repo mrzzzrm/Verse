@@ -9,40 +9,39 @@
 #include <Deliberation/ECS/Entity.h>
 
 #include "GameLib.h"
-#include "HudLayer.h"
 #include "HudEntityMarkersRenderer.h"
+#include "HudLayer.h"
 
 namespace deliberation
 {
 class DrawContext;
 class PhysicsWorld;
 class Camera3D;
-}
+} // namespace deliberation
 
 class Hud;
 class HudButton;
 
-class HudEntityMarkers:
-    public HudLayer
+class HudEntityMarkers : public HudLayer
 {
 public:
-    HudEntityMarkers(Hud & hud, DrawContext & context,
-                     const PhysicsWorld & physicsWorld,
-                     const Camera3D & camera);
+    HudEntityMarkers(
+        Hud &                hud,
+        DrawContext &        context,
+        const PhysicsWorld & physicsWorld,
+        const Camera3D &     camera);
 
     void update(float seconds) override;
     void render() override;
 
 private:
-    const PhysicsWorld &        m_physicsWorld;
-    const Camera3D &            m_camera;
-    size_t                      m_numVisibleMarkers = 0;
+    const PhysicsWorld & m_physicsWorld;
+    const Camera3D &     m_camera;
+    size_t               m_numVisibleMarkers = 0;
 
-    HudEntityMarkersRenderer    m_renderer;
+    HudEntityMarkersRenderer m_renderer;
 
-    std::vector<std::shared_ptr<HudButton>>
-                                m_visibleMarkers;
+    std::vector<std::shared_ptr<HudButton>> m_visibleMarkers;
 
-    std::map<Entity, std::shared_ptr<HudButton>>
-                                m_markersByEntity;
+    std::map<Entity, std::shared_ptr<HudButton>> m_markersByEntity;
 };

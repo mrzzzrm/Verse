@@ -7,8 +7,7 @@
 #include "GameLib.h"
 #include "VoxelObject.h"
 
-struct VoxelRigidBodyPayload:
-    public RigidBodyPayload
+struct VoxelRigidBodyPayload : public RigidBodyPayload
 {
     VoxelRigidBodyPayload(std::weak_ptr<VoxelObject> object);
 

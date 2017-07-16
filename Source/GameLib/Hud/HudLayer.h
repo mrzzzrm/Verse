@@ -7,9 +7,7 @@ class Hud;
 class HudLayer
 {
 public:
-    HudLayer(Hud & hud):
-        m_hud(hud)
-    {}
+    HudLayer(Hud & hud) : m_hud(hud) {}
 
     virtual ~HudLayer() = default;
 

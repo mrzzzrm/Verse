@@ -18,15 +18,17 @@ class HudButton;
 class HudElement;
 class PlayerSystem;
 
-class Hud:
-    public std::enable_shared_from_this<Hud>,
-    public System<Hud>,
-    public InputLayer
+class Hud : public std::enable_shared_from_this<Hud>,
+            public System<Hud>,
+            public InputLayer
 {
 public:
     Hud(World & world);
 
-    const std::vector<std::shared_ptr<HudLayer>> & layers() const { return m_layers; }
+    const std::vector<std::shared_ptr<HudLayer>> & layers() const
+    {
+        return m_layers;
+    }
 
     void setPlayerTarget(Entity & entity);
 
@@ -44,11 +46,12 @@ protected:
 
 private:
     template<typename T>
-    void processMouseEvent(T & event, const std::function<void(HudElement & element)> & fn) const;
+    void processMouseEvent(
+        T & event, const std::function<void(HudElement & element)> & fn) const;
 
 private:
-    Input &                                 m_input;
-    PlayerSystem &                              m_playerSystem;
-    std::vector<std::shared_ptr<HudLayer>>      m_layers;
-    std::vector<std::shared_ptr<HudElement>>    m_elements;
+    Input &                                  m_input;
+    PlayerSystem &                           m_playerSystem;
+    std::vector<std::shared_ptr<HudLayer>>   m_layers;
+    std::vector<std::shared_ptr<HudElement>> m_elements;
 };

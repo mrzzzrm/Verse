@@ -6,8 +6,8 @@
 #include <glm/glm.hpp>
 
 #include "GameLib.h"
-#include "VoxelCluster.h"
 #include "Voxel.h"
+#include "VoxelCluster.h"
 
 class VoxelHull final
 {

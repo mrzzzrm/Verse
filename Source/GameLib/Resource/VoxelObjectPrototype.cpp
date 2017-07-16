@@ -5,8 +5,10 @@
 #include "VoxelObject.h"
 #include "VoxelObjectVoxelData.h"
 
-VoxelObjectPrototype::VoxelObjectPrototype(const std::shared_ptr<VoxelWorld> & voxelWorld):
-    m_voxelWorld(voxelWorld) {
+VoxelObjectPrototype::VoxelObjectPrototype(
+    const std::shared_ptr<VoxelWorld> & voxelWorld)
+    : m_voxelWorld(voxelWorld)
+{
 }
 
 void VoxelObjectPrototype::initComponent(VoxelObject & voxelObject)
@@ -15,15 +17,15 @@ void VoxelObjectPrototype::initComponent(VoxelObject & voxelObject)
 
     VoxReader voxReader;
     {
-        auto models = voxReader.read(GameDataPath("Data/VoxelClusters/" + voxelClusterName + ".vox"));
+        auto models = voxReader.read(
+            GameDataPath("Data/VoxelClusters/" + voxelClusterName + ".vox"));
         if (!models.empty())
         {
-            auto palette = std::make_shared<ColorPalette>(m_voxelWorld->drawContext(),
-                                                          models[0].palette);
+            auto palette = std::make_shared<ColorPalette>(
+                m_voxelWorld->drawContext(), models[0].palette);
 
-            auto voxelData = std::make_shared<VoxelObjectVoxelData>(*m_voxelWorld,
-                                                                          palette,
-                                                                          models[0].size);
+            auto voxelData = std::make_shared<VoxelObjectVoxelData>(
+                *m_voxelWorld, palette, models[0].size);
             voxelData->addVoxelsRaw(models[0].voxels);
             voxelObject.setVoxelData(voxelData);
 

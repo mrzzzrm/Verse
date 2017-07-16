@@ -5,9 +5,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/vector_angle.hpp>
 
-#include <Deliberation/Core/Optional.h>
 #include <Deliberation/Core/Math/FloatUtils.h>
 #include <Deliberation/Core/Math/Random.h>
+#include <Deliberation/Core/Optional.h>
 
 #include <Deliberation/ECS/Entity.h>
 #include <Deliberation/ECS/Systems/PhysicsWorldSystem.h>
@@ -21,50 +21,48 @@
 
 #include <Deliberation/Scene/Camera3D.h>
 #include <Deliberation/Scene/CameraDolly3D.h>
-#include <Deliberation/Scene/UVSphere.h>
 #include <Deliberation/Scene/Debug/DebugCameraNavigator3D.h>
-#include <Deliberation/Scene/Debug/DebugGeometryRenderer.h>
 #include <Deliberation/Scene/Debug/DebugGeometryNode.h>
+#include <Deliberation/Scene/Debug/DebugGeometryRenderer.h>
 #include <Deliberation/Scene/Debug/DebugGroundPlaneRenderer.h>
+#include <Deliberation/Scene/UVSphere.h>
 #include <Npc/NpcDebugRendererSystem.h>
 
 #include "AimHelper.h"
-#include "Components.h"
 #include "CollisionShapeTypes.h"
-#include "Equipment.h"
+#include "Components.h"
 #include "Emitter.h"
-#include "PlayerFlightControl.h"
-#include "NpcFlightControl.h"
+#include "Equipment.h"
 #include "Hardpoint.h"
-#include "VfxManager.h"
 #include "NpcAttackTask.h"
 #include "NpcController.h"
 #include "NpcControllerSystem.h"
+#include "NpcFlightControl.h"
 #include "NpcSteering.h"
-#include "VerseApplication.h"
-#include "VoxelRigidBodyPayload.h"
-#include "VoxelRenderable.h"
-#include "VoxelWorld.h"
-#include "VoxelClusterPrimitiveTest.h"
-#include "VoxReader.h"
-#include "VoxelRigidBodyPayload.h"
-#include "VoxelClusterContact.h"
-#include "VoxelObjectPrimitives.h"
+#include "PlayerFlightControl.h"
 #include "ResourceManager.h"
+#include "VerseApplication.h"
+#include "VfxManager.h"
+#include "VoxReader.h"
+#include "VoxelClusterContact.h"
+#include "VoxelClusterPrimitiveTest.h"
+#include "VoxelObjectPrimitives.h"
+#include "VoxelRenderable.h"
+#include "VoxelRigidBodyPayload.h"
+#include "VoxelWorld.h"
 #include "Weapon.h"
 
 #include "SandboxApplication.h"
 
 using namespace deliberation;
 
-class ShootingRangeSandbox:
-    public VerseApplication
+class ShootingRangeSandbox : public VerseApplication
 {
 public:
-    ShootingRangeSandbox():
-        VerseApplication("ShootingRangeSandbox", VerseApplicationSystemInitMode::NoSystems)
+    ShootingRangeSandbox()
+        : VerseApplication(
+              "ShootingRangeSandbox", VerseApplicationSystemInitMode::NoSystems)
     {
-
     }
 
     void onApplicationStartup() override
@@ -76,7 +74,8 @@ public:
         auto hailstormManager = m_world.addSystem<HailstormManager>(m_camera);
 
         auto bulletMesh = UVSphere(5, 5).generateMesh2();
-        m_bulletMeshID = hailstormManager->vfxManager().renderer().addMesh(bulletMesh);
+        m_bulletMeshID =
+            hailstormManager->vfxManager().renderer().addMesh(bulletMesh);
 
         WeaponConfig weaponConfig;
         weaponConfig.cooldown = 0.1f;
@@ -86,10 +85,8 @@ public:
         hardpointDesc.maxAngle = glm::half_pi<float>();
 
         m_hardpoint = std::make_shared<Hardpoint>(hardpointDesc);
-        m_hardpoint->setWeapon(std::make_shared<Weapon>(weaponConfig,
-                                                        *hailstormManager,
-                                                        INVALID_VOXEL_OBJECT_WORLD_UID));
-
+        m_hardpoint->setWeapon(std::make_shared<Weapon>(
+            weaponConfig, *hailstormManager, INVALID_VOXEL_OBJECT_WORLD_UID));
     }
 
     void onApplicationUpdate(float seconds) override
@@ -97,10 +94,12 @@ public:
         if (input().mouseButtonDown(MouseButton::Right))
         {
             AimHelper aimHelper(m_camera, m_physicsWorld);
-            auto hit = false;
-            auto result = aimHelper.getTarget(input().mousePosition());
+            auto      hit = false;
+            auto      result = aimHelper.getTarget(input().mousePosition());
 
-            m_hardpoint->setFireRequest(true, glm::normalize(result.pointOfImpact - m_camera.position()));
+            m_hardpoint->setFireRequest(
+                true,
+                glm::normalize(result.pointOfImpact - m_camera.position()));
         }
         else
         {
@@ -108,21 +107,20 @@ public:
         }
 
         EquipmentUpdateContext context;
-        context.targetPose = m_camera.pose().localTranslated({5.0f, 0.0f, -15.0f});
+        context.targetPose =
+            m_camera.pose().localTranslated({5.0f, 0.0f, -15.0f});
 
         m_hardpoint->update(seconds, context);
     }
 
-    void onApplicationRender() override
-    {
-    }
+    void onApplicationRender() override {}
 
 private:
-    std::shared_ptr<Hardpoint>  m_hardpoint;
-    VfxMeshId                   m_bulletMeshID;
+    std::shared_ptr<Hardpoint> m_hardpoint;
+    VfxMeshId                  m_bulletMeshID;
 };
 
-int main(int argc, char *argv[])
+int main(int argc, char * argv[])
 {
     return ShootingRangeSandbox().run(argc, argv);
 }

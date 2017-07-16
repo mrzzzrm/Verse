@@ -4,9 +4,10 @@
 
 constexpr const char * RELOAD_PROTOTYPES_CONTROL = "Reload Prototypes";
 
-VersePrototypeSystem::VersePrototypeSystem(World & world):
-    Base(world),
-    m_manager(std::make_shared<VersePrototypeManager>(world, GameDataPath("Data/Prototypes/list.json")))
+VersePrototypeSystem::VersePrototypeSystem(World & world)
+    : Base(world)
+    , m_manager(std::make_shared<VersePrototypeManager>(
+          world, GameDataPath("Data/Prototypes/list.json")))
 {
     m_manager->reloadList();
 }
@@ -14,8 +15,7 @@ VersePrototypeSystem::VersePrototypeSystem(World & world):
 void VersePrototypeSystem::onCreated()
 {
     auto & imGuiSystem = world().systemRef<ImGuiSystem>();
-    imGuiSystem.addControlItem(RELOAD_PROTOTYPES_CONTROL, [&]()
-    {
+    imGuiSystem.addControlItem(RELOAD_PROTOTYPES_CONTROL, [&]() {
         m_manager->reloadList();
         m_manager->updateEntities();
     });

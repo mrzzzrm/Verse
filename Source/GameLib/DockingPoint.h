@@ -2,15 +2,15 @@
 
 #include "Attachment.h"
 
-struct DockingPointDesc:
-    AttachmentDesc
-{};
+struct DockingPointDesc : AttachmentDesc
+{
+};
 
-class DockingPoint:
-    public Attachment
+class DockingPoint : public Attachment
 {
 public:
-    DockingPoint(const DockingPointDesc & dockingPointDesc):
-        Attachment(dockingPointDesc)
-    {}
+    DockingPoint(const DockingPointDesc & dockingPointDesc)
+        : Attachment(dockingPointDesc)
+    {
+    }
 };

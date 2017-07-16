@@ -9,21 +9,21 @@
 #include <Deliberation/Scene/Pipeline/RenderManager.h>
 #include <Deliberation/Scene/Pipeline/RenderSystem.h>
 
-#include "VoxelWorld.h"
 #include "ResourceManager.h"
+#include "VoxelWorld.h"
 
-HailstormManager::HailstormManager(World & world):
-    Base(world),
-    m_vfxManager(world.systemRef<RenderSystem>().renderManager(), world.systemRef<ResourceManager>()),
-    m_hailstormPhysicsWorld(world.systemRef<PhysicsWorldSystem>().physicsWorld(), world.systemRef<VoxelWorld>())
+HailstormManager::HailstormManager(World & world)
+    : Base(world)
+    , m_vfxManager(
+          world.systemRef<RenderSystem>().renderManager(),
+          world.systemRef<ResourceManager>())
+    , m_hailstormPhysicsWorld(
+          world.systemRef<PhysicsWorldSystem>().physicsWorld(),
+          world.systemRef<VoxelWorld>())
 {
-
 }
 
-VfxManager & HailstormManager::vfxManager()
-{
-    return m_vfxManager;
-}
+VfxManager & HailstormManager::vfxManager() { return m_vfxManager; }
 
 void HailstormManager::addBullet(HailstormBullet bullet)
 {

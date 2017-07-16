@@ -1,9 +1,6 @@
 #include "EmitterRotationStrategy.h"
 
-glm::quat EmitterRotationStrategy::generateOrientation() const
-{
-    return {};
-}
+glm::quat EmitterRotationStrategy::generateOrientation() const { return {}; }
 
 VfxParticleOrientationType EmitterViewBillboardStrategy::orientationType() const
 {

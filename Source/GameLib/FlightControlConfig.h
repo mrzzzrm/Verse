@@ -18,8 +18,7 @@ struct FlightControlDirection
     float maxSpeed = 0.0f;
 };
 
-class FlightControlConfig:
-    public Component<FlightControlConfig>
+class FlightControlConfig : public Component<FlightControlConfig>
 {
     DELIBERATION_COMPONENT_NAME("FlightControlConfig")
 public:

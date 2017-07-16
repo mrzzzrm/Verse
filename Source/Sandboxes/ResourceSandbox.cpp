@@ -2,40 +2,28 @@
 
 #include <Deliberation/Platform/Application.h>
 
-#include "SandboxApplication.h"
 #include "EquipmentPrototype.h"
+#include "SandboxApplication.h"
 
 using namespace deliberation;
 
-class ResourceSandbox:
-    public SandboxApplication
+class ResourceSandbox : public SandboxApplication
 {
 public:
-    ResourceSandbox():
-        SandboxApplication("NpcSandbox")
-    {
-
-    }
+    ResourceSandbox() : SandboxApplication("NpcSandbox") {}
 
     void onSandboxStartup() override
     {
         std::ifstream i("Data/Prototypes/Drone.json");
-        Json j;
+        Json          j;
         i >> j;
-        
+
         EquipmentPrototype equipmentPrototype(j["Equipment"]);
     }
 
-    void onSandboxUpdate(float seconds) override
-    {
-    }
+    void onSandboxUpdate(float seconds) override {}
 
-    void onSandboxRender() override
-    {
-    }
+    void onSandboxRender() override {}
 };
 
-int main(int argc, char *argv[])
-{
-    return ResourceSandbox().run(argc, argv);
-}
+int main(int argc, char * argv[]) { return ResourceSandbox().run(argc, argv); }

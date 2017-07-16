@@ -2,13 +2,14 @@
 
 #include <Deliberation/ECS/Entity.h>
 
-static void from_json(const Json& j, FlightControlComponent & component)
+static void from_json(const Json & j, FlightControlComponent & component)
 {
     component.acceleration = j[0];
     component.maxSpeed = j[1];
 }
 
-void FlightControlConfigPrototype::updateComponent(FlightControlConfig & component) 
+void FlightControlConfigPrototype::updateComponent(
+    FlightControlConfig & component)
 {
     component.horizontal = m_newJson["Horizontal"];
     component.vertical = m_newJson["Vertical"];

@@ -2,8 +2,8 @@
 
 #include <Deliberation/Core/Assert.h>
 
-EmitterRandomLifetime::EmitterRandomLifetime(float min, float max):
-    m_dist(min, max)
+EmitterRandomLifetime::EmitterRandomLifetime(float min, float max)
+    : m_dist(min, max)
 {
     Assert(max >= min, "");
 }

@@ -14,9 +14,13 @@ public:
     void setDestination(const glm::vec3 & destination);
     void setStopAtDestination(bool stopAtDestination);
 
-    void update(RigidBody & body, NpcFlightControl & flightControl, const FlightControlConfig & config, float seconds);
+    void update(
+        RigidBody &                 body,
+        NpcFlightControl &          flightControl,
+        const FlightControlConfig & config,
+        float                       seconds);
 
 private:
-    boost::optional<glm::vec3>      m_destination;
-    bool                            m_stopAtDestination = true;
+    boost::optional<glm::vec3> m_destination;
+    bool                       m_stopAtDestination = true;
 };

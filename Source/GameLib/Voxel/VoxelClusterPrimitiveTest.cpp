@@ -2,14 +2,14 @@
 
 #include "VoxelRigidBodyPayload.h"
 
-RayCastVoxelClusterIntersection::RayCastVoxelClusterIntersection(std::shared_ptr<RigidBody> body):
-    RayCastIntersection(body)
+RayCastVoxelClusterIntersection::RayCastVoxelClusterIntersection(
+    std::shared_ptr<RigidBody> body)
+    : RayCastIntersection(body)
 {
-
 }
 
-std::unique_ptr<RayCastIntersection> VoxelClusterPrimitiveTest::lineTest(const Ray3D & ray,
-                                                                         std::shared_ptr<RigidBody> body) const
+std::unique_ptr<RayCastIntersection> VoxelClusterPrimitiveTest::lineTest(
+    const Ray3D & ray, std::shared_ptr<RigidBody> body) const
 {
     auto shape = body->shape();
 
@@ -20,7 +20,8 @@ std::unique_ptr<RayCastIntersection> VoxelClusterPrimitiveTest::lineTest(const R
     {
         auto & entity = body->entity();
 
-        auto intersection = std::make_unique<RayCastVoxelClusterIntersection>(body);
+        auto intersection =
+            std::make_unique<RayCastVoxelClusterIntersection>(body);
         intersection->voxel = voxel;
 
         return std::unique_ptr<RayCastIntersection>(std::move(intersection));

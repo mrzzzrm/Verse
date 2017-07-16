@@ -16,7 +16,8 @@ public:
 class EmitterIntensityStrategy
 {
 public:
-    static constexpr float NO_FURTHER_EMISSIONS = std::numeric_limits<float>::max();
+    static constexpr float NO_FURTHER_EMISSIONS =
+        std::numeric_limits<float>::max();
 
 public:
     virtual ~EmitterIntensityStrategy() = default;
@@ -24,8 +25,7 @@ public:
     virtual std::shared_ptr<EmitterIntensityContext> createContext() const;
 };
 
-class EmitterNoisyIntensity:
-    public EmitterIntensityStrategy
+class EmitterNoisyIntensity : public EmitterIntensityStrategy
 {
 public:
     EmitterNoisyIntensity(float frequency, float standardDeviation);
@@ -33,17 +33,14 @@ public:
     float generateInterval(EmitterInstance & instance) const override;
 
 private:
-    mutable std::default_random_engine  m_engine;
-    mutable std::normal_distribution<float>
-                                m_dist;
+    mutable std::default_random_engine      m_engine;
+    mutable std::normal_distribution<float> m_dist;
 };
 
-class EmitterBurstIntensity:
-    public EmitterIntensityStrategy
+class EmitterBurstIntensity : public EmitterIntensityStrategy
 {
 public:
-    struct DrawContext:
-        public EmitterIntensityContext
+    struct DrawContext : public EmitterIntensityContext
     {
         u32 countdown = 0;
     };

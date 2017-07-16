@@ -11,26 +11,19 @@
 #include <Deliberation/Scene/Pipeline/RenderManager.h>
 #include <Deliberation/Scene/Texture/TextureLoader.h>
 
-#include "VoxelWorld.h"
 #include "ResourceManager.h"
+#include "VoxelWorld.h"
 
-VfxManager::VfxManager(RenderManager & renderManager,
-                       ResourceManager & resourceManager
-):
-    m_resourceManager(resourceManager)
+VfxManager::VfxManager(
+    RenderManager & renderManager, ResourceManager & resourceManager)
+    : m_resourceManager(resourceManager)
 {
     m_renderer = renderManager.addRenderer<VfxRenderer>();
 }
 
-VfxRenderer & VfxManager::renderer()
-{
-    return *m_renderer;
-}
+VfxRenderer & VfxManager::renderer() { return *m_renderer; }
 
-const VfxRenderer & VfxManager::renderer() const
-{
-    return *m_renderer;
-}
+const VfxRenderer & VfxManager::renderer() const { return *m_renderer; }
 
 VfxMeshId VfxManager::getOrCreateMeshId(ResourceId resourceId)
 {
@@ -38,10 +31,11 @@ VfxMeshId VfxManager::getOrCreateMeshId(ResourceId resourceId)
     if (iter == m_meshIdByResourceId.end())
     {
         const auto & mesh = m_resourceManager.mesh(resourceId);
-        const auto meshId = m_renderer->addMesh(mesh);
+        const auto   meshId = m_renderer->addMesh(mesh);
 
         bool success;
-        std::tie(iter, success) = m_meshIdByResourceId.emplace((size_t)resourceId, meshId);
+        std::tie(iter, success) =
+            m_meshIdByResourceId.emplace((size_t)resourceId, meshId);
         Assert(success, "");
     }
 
@@ -58,13 +52,15 @@ void VfxManager::removeParticle(VfxParticleId particle)
     m_renderer->removeParticle(particle);
 }
 
-void VfxManager::addEmitterInstance(std::shared_ptr<EmitterInstance> emitterInstance)
+void VfxManager::addEmitterInstance(
+    std::shared_ptr<EmitterInstance> emitterInstance)
 {
     const auto index = m_emitterInstances.emplace(emitterInstance);
     emitterInstance->setId({index});
 }
 
-void VfxManager::removeEmitterInstance(std::shared_ptr<EmitterInstance> emitterInstance)
+void VfxManager::removeEmitterInstance(
+    std::shared_ptr<EmitterInstance> emitterInstance)
 {
     m_emitterInstances.erase(emitterInstance->id().index);
 }
@@ -89,4 +85,3 @@ void VfxManager::update(float seconds)
     }
     m_deadEmitterInstances.clear();
 }
-

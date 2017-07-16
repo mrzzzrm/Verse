@@ -12,8 +12,7 @@ namespace deliberation
 class PhysicsWorld;
 }
 
-class HailstormManager final:
-    public System<HailstormManager>
+class HailstormManager final : public System<HailstormManager>
 {
 public:
     HailstormManager(World & world);
@@ -26,6 +25,6 @@ protected:
     void onGameUpdate(float seconds) override;
 
 private:
-    VfxManager              m_vfxManager;
-    HailstormPhysicsWorld   m_hailstormPhysicsWorld;
+    VfxManager            m_vfxManager;
+    HailstormPhysicsWorld m_hailstormPhysicsWorld;
 };

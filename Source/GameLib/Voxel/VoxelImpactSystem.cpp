@@ -10,20 +10,20 @@
 #include <Deliberation/ECS/World.h>
 
 #include "VoxelObject.h"
-#include "VoxelObjectPrototype.h"
 #include "VoxelObjectModification.h"
+#include "VoxelObjectPrototype.h"
 #include "VoxelWorld.h"
 
 void VoxelImpactSystem::process(
-    VoxelObject & voxelObject,
+    VoxelObject &      voxelObject,
     const glm::uvec3 & originVoxel,
-    float intensity,
-    float radius)
+    float              intensity,
+    float              radius)
 {
     auto & voxelWorld = voxelObject.voxelWorld();
 
     const auto maxDepth = (u32)(std::ceil(radius * 1.5f));
-    auto & voxelData = voxelObject.data();
+    auto &     voxelData = voxelObject.data();
 
     if (!voxelData->hasVoxel(originVoxel)) return;
 
@@ -31,12 +31,11 @@ void VoxelImpactSystem::process(
 
     std::unordered_set<glm::uvec3> currentDepthSet;
     std::unordered_set<glm::uvec3> nextDepthSet;
-    std::vector<glm::uvec3> voxelRemovals;
+    std::vector<glm::uvec3>        voxelRemovals;
 
     currentDepthSet.insert(originVoxel);
 
-    auto visit = [&] (u32 depth, const glm::ivec3 & voxel)
-    {
+    auto visit = [&](u32 depth, const glm::ivec3 & voxel) {
         const auto diffToOrigin = glm::abs(voxel - glm::ivec3(originVoxel));
         const auto manhattan = diffToOrigin.x + diffToOrigin.y + diffToOrigin.z;
 
@@ -55,7 +54,8 @@ void VoxelImpactSystem::process(
             const auto voxel = *iter;
             currentDepthSet.erase(iter);
 
-            const auto currentHealthPoints = voxelData->voxelHealthPoints(voxel);
+            const auto currentHealthPoints =
+                voxelData->voxelHealthPoints(voxel);
 
             if (intensity > currentHealthPoints)
             {
@@ -70,12 +70,15 @@ void VoxelImpactSystem::process(
             }
             else
             {
-                voxelObject.setVoxelHealthPoints(voxel, currentHealthPoints - intensity);
+                voxelObject.setVoxelHealthPoints(
+                    voxel, currentHealthPoints - intensity);
             }
         }
 
         std::swap(currentDepthSet, nextDepthSet);
     }
 
-    if (!voxelRemovals.empty()) voxelObject.removeVoxelsRaw(voxelRemovals, VoxelRemovalReason::Destruction);
+    if (!voxelRemovals.empty())
+        voxelObject.removeVoxelsRaw(
+            voxelRemovals, VoxelRemovalReason::Destruction);
 }

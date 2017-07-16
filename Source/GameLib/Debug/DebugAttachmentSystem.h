@@ -2,8 +2,8 @@
 
 #include <Deliberation/ECS/System.h>
 
-#include <Deliberation/Scene/Pipeline/RenderManager.h>
 #include <Deliberation/Scene/Debug/DebugGeometryNode.h>
+#include <Deliberation/Scene/Pipeline/RenderManager.h>
 
 #include "GameLib.h"
 
@@ -14,10 +14,10 @@ class DebugGeometryNode;
 
 class Attachment;
 
-class DebugAttachmentSystem:
-    public System<DebugAttachmentSystem> {
+class DebugAttachmentSystem : public System<DebugAttachmentSystem>
+{
 public:
-    DebugAttachmentSystem(World &world);
+    DebugAttachmentSystem(World & world);
 
     bool enabled() const { return m_enabled; }
 
@@ -28,15 +28,19 @@ public:
 protected:
     void onFrameUpdate(float seconds) override;
 
-    void updateSphere(DebugSphereInstance &sphere, const std::shared_ptr<Attachment> &attachment,
-                      const Transform3D &transform);
+    void updateSphere(
+        DebugSphereInstance &               sphere,
+        const std::shared_ptr<Attachment> & attachment,
+        const Transform3D &                 transform);
 
-    void
-    updatePose(DebugPoseInstance &pose, const std::shared_ptr<Attachment> &attachment, const Transform3D &transform);
+    void updatePose(
+        DebugPoseInstance &                 pose,
+        const std::shared_ptr<Attachment> & attachment,
+        const Transform3D &                 transform);
 
 private:
-    bool m_enabled = false;
+    bool                               m_enabled = false;
     std::shared_ptr<DebugGeometryNode> m_visibleNode;
     std::shared_ptr<DebugGeometryNode> m_obscuredNode;
-    size_t m_numAllocatedPrimitives = 0;
+    size_t                             m_numAllocatedPrimitives = 0;
 };

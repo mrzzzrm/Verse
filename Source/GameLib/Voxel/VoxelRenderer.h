@@ -10,14 +10,12 @@ namespace deliberation
 {
 class Program;
 class Texture;
-}
+} // namespace deliberation
 
-class VoxelRenderer:
-    public SingleNodeRenderer
+class VoxelRenderer : public SingleNodeRenderer
 {
 public:
-    VoxelRenderer(RenderManager & renderManager,
-                  const Texture & envMap);
+    VoxelRenderer(RenderManager & renderManager, const Texture & envMap);
 
     void addVoxelObject(std::shared_ptr<VoxelObject> voxelObject);
     void removeVoxelObject(std::shared_ptr<VoxelObject> voxelObject);
@@ -25,6 +23,6 @@ public:
     void render() override;
 
 private:
-    std::vector<std::shared_ptr<VoxelObject>>   m_objects;
-    u64                                         m_uidIncrementor = 0;
+    std::vector<std::shared_ptr<VoxelObject>> m_objects;
+    u64                                       m_uidIncrementor = 0;
 };

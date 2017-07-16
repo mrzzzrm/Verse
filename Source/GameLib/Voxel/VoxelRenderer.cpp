@@ -2,11 +2,10 @@
 
 #include <Deliberation/Scene/Pipeline/RenderPhase.h>
 
-VoxelRenderer::VoxelRenderer(RenderManager & renderManager,
-              const Texture & envMap):
-    SingleNodeRenderer(renderManager, RenderPhase::GBuffer)
+VoxelRenderer::VoxelRenderer(
+    RenderManager & renderManager, const Texture & envMap)
+    : SingleNodeRenderer(renderManager, RenderPhase::GBuffer)
 {
-
 }
 
 void VoxelRenderer::addVoxelObject(std::shared_ptr<VoxelObject> voxelObject)
@@ -22,7 +21,8 @@ void VoxelRenderer::addVoxelObject(std::shared_ptr<VoxelObject> voxelObject)
 
 void VoxelRenderer::removeVoxelObject(std::shared_ptr<VoxelObject> voxelObject)
 {
-    const auto iter = std::find(m_objects.begin(), m_objects.end(), voxelObject);
+    const auto iter =
+        std::find(m_objects.begin(), m_objects.end(), voxelObject);
     Assert(iter != m_objects.end(), "");
 
     m_objects.erase(iter);
@@ -30,5 +30,6 @@ void VoxelRenderer::removeVoxelObject(std::shared_ptr<VoxelObject> voxelObject)
 
 void VoxelRenderer::render()
 {
-    for (auto & object : m_objects) object->render();
+    for (auto & object : m_objects)
+        object->render();
 }

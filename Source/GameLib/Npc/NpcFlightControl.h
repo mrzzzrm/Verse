@@ -6,31 +6,33 @@
 
 #include <Deliberation/ECS/Component.h>
 
-#include "GameLib.h"
 #include "FlightControlConfig.h"
+#include "GameLib.h"
 
 namespace deliberation
 {
-
 class RigidBody;
-
 }
 
-class NpcFlightControl final:
-    public Component<NpcFlightControl>
+class NpcFlightControl final : public Component<NpcFlightControl>
 {
-DELIBERATION_COMPONENT_NAME("NpcFlightControl")
+    DELIBERATION_COMPONENT_NAME("NpcFlightControl")
 public:
     const glm::vec3 & localLinearAcceleration() const;
     const glm::vec3 & localAngularAccelertion() const;
 
     void setLocalLinearAcceleration(const glm::vec3 & localLinearAcceleration);
-    void setLocalAngularAccceleration(const glm::vec3 & localAngularAccelertion);
+    void
+    setLocalAngularAccceleration(const glm::vec3 & localAngularAccelertion);
 
-    void update(RigidBody & body, const FlightControlConfig & config, float seconds);
+    void
+    update(RigidBody & body, const FlightControlConfig & config, float seconds);
 
-    glm::vec3 correctiveAcceleration(float requiredCorretion, float acceleration, float seconds,
-                                     const glm::vec3 & direction) const;
+    glm::vec3 correctiveAcceleration(
+        float             requiredCorretion,
+        float             acceleration,
+        float             seconds,
+        const glm::vec3 & direction) const;
 
 private:
     glm::vec3 m_localLinearAcceleration;

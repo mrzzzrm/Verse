@@ -2,11 +2,10 @@
 
 #include <Deliberation/ECS/ComponentPrototype.h>
 
-#include "HullComponent.h"
 #include "GameLib.h"
+#include "HullComponent.h"
 
-class HullPrototype:
-    public ComponentPrototype<HullComponent>
+class HullPrototype : public ComponentPrototype<HullComponent>
 {
 public:
     void updateComponent(HullComponent & hull)

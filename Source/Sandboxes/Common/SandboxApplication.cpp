@@ -7,13 +7,13 @@
 //
 //#include "VfxSystem.h"
 //
-//SandboxApplication::SandboxApplication(const std::string & name):
+// SandboxApplication::SandboxApplication(const std::string & name):
 //    Application(name)
 //{
 //
 //}
 //
-//void SandboxApplication::onStartup()
+// void SandboxApplication::onStartup()
 //{
 //    m_physicsWorld.narrowphase().registerPrimitiveTest((int)::CollisionShapeType::VoxelCluster,
 //                                                       std::make_unique<VoxelClusterPrimitiveTest>());
@@ -23,7 +23,8 @@
 //
 //    m_camera.setPosition({0.0f, 200.0f, 300.0f});
 //    m_camera.setOrientation(glm::quat({-1.0f, 0.0f, 0.0f}));
-//    m_camera.setAspectRatio((float)drawContext().backbuffer().width() / drawContext().backbuffer().height());
+//    m_camera.setAspectRatio((float)drawContext().backbuffer().width() /
+//    drawContext().backbuffer().height());
 //
 //    m_navigator.reset(m_camera, input(), 150.0f);
 //
@@ -42,9 +43,11 @@
 //    auto skyboxCubemapBinary = TextureLoader(skyboxPaths).load();
 //    auto skyboxCubemap = drawContext().createTexture(skyboxCubemapBinary);
 //
-//    m_skyboxRenderer = std::make_shared<SkyboxRenderer>(drawContext(), m_camera, skyboxCubemap);
+//    m_skyboxRenderer = std::make_shared<SkyboxRenderer>(drawContext(),
+//    m_camera, skyboxCubemap);
 //
-////    m_voxelWorld.reset(drawContext(), m_physicsWorld, m_camera, skyboxCubemap);
+////    m_voxelWorld.reset(drawContext(), m_physicsWorld, m_camera,
+/// skyboxCubemap);
 //
 //    m_clear = drawContext().createClear();
 //
@@ -59,7 +62,8 @@
 //    m_world.addSystem<PhysicsWorldSystem>(m_physicsWorld);
 //    //m_world.addSystem<VoxelWorld>(m_camera, );
 //    m_world.addSystem<NpcControllerSystem>();
-//    m_hailstormManager = m_world.addSystem<HailstormManager>(drawContext(), m_camera, m_physicsWorld, *m_voxelWorld);
+//    m_hailstormManager = m_world.addSystem<HailstormManager>(drawContext(),
+//    m_camera, m_physicsWorld, *m_voxelWorld);
 //    m_world.addSystem<VoxelClusterSplitSystem>();
 //    m_world.addSystem<VfxSystem>(*m_vfxManager);
 //    //m_world.addSystem<NpcDebugRendererSystem>(drawContext(), m_camera);
@@ -70,9 +74,10 @@
 //    onSandboxStartup();
 //}
 //
-//void SandboxApplication::onFrame(float seconds)
+// void SandboxApplication::onFrame(float seconds)
 //{
-//    auto physicsSimulationSeconds = m_physicsWorld.nextSimulationStepSeconds(seconds);
+//    auto physicsSimulationSeconds =
+//    m_physicsWorld.nextSimulationStepSeconds(seconds);
 //
 //    if (EpsilonGt(physicsSimulationSeconds, 0.0f))
 //    {

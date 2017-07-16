@@ -4,13 +4,12 @@
 
 #include <Deliberation/Core/Json.h>
 
-#include <Deliberation/ECS/Entity.h>
 #include <Deliberation/ECS/ComponentPrototype.h>
+#include <Deliberation/ECS/Entity.h>
 
 #include "CoriolisComponent.h"
 
-class CoriolisPrototype:
-    public ComponentPrototype<CoriolisComponent>
+class CoriolisPrototype : public ComponentPrototype<CoriolisComponent>
 {
 public:
     void updateComponent(CoriolisComponent & coriolis) override

@@ -18,12 +18,15 @@ void LaunchDefenseBehaviour::onBehaviourUpdate(float seconds)
 
     auto launchPose = dockingPoint->worldPose();
 
-    auto & prototypeManager = m_entity.world().system<VersePrototypeSystem>()->manager();
+    auto & prototypeManager =
+        m_entity.world().system<VersePrototypeSystem>()->manager();
 
-    auto npcEntity = prototypeManager->createEntity({"Drone", "Npc", "Pirate"}, "StationDefense" +
-        std::to_string(m_numLaunched));
+    auto npcEntity = prototypeManager->createEntity(
+        {"Drone", "Npc", "Pirate"},
+        "StationDefense" + std::to_string(m_numLaunched));
 
-    npcEntity.component<Transform3DComponent>().value() = Transform3D::fromPose(launchPose);
+    npcEntity.component<Transform3DComponent>().value() =
+        Transform3D::fromPose(launchPose);
 
     m_numLaunched++;
     m_lastLaunchedMillis = CurrentMillis();

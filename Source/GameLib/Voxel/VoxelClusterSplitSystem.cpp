@@ -11,26 +11,26 @@
 
 #include "ColorPalette.h"
 #include "Components.h"
-#include "VoxelObjectPrototype.h"
 #include "VoxelObject.h"
-#include "VoxelWorld.h"
-#include "VoxelRigidBodyPayload.h"
 #include "VoxelObjectModification.h"
+#include "VoxelObjectPrototype.h"
+#include "VoxelRigidBodyPayload.h"
+#include "VoxelWorld.h"
 
-VoxelClusterSplitSystem::VoxelClusterSplitSystem(World & world):
-    Base(world, ComponentFilter::requires<VoxelObject, RigidBodyComponent>())
+VoxelClusterSplitSystem::VoxelClusterSplitSystem(World & world)
+    : Base(world, ComponentFilter::requires<VoxelObject, RigidBodyComponent>())
 {
-
 }
 
 void VoxelClusterSplitSystem::onEntityGameUpdate(Entity & entity, float seconds)
 {
-
 }
 
-void VoxelClusterSplitSystem::onEvent(const VoxelObjectModification & modification)
+void VoxelClusterSplitSystem::onEvent(
+    const VoxelObjectModification & modification)
 {
-    m_modifiedVoxelObjects.insert(modification.entity.component<VoxelObject>().shared_from_this());
+    m_modifiedVoxelObjects.insert(
+        modification.entity.component<VoxelObject>().shared_from_this());
 }
 
 void VoxelClusterSplitSystem::onCreated()
@@ -57,8 +57,11 @@ void VoxelClusterSplitSystem::onGameUpdate(float seconds)
 
         Assert(
             !splits.empty() || originalVoxelData->numVoxels() == 0,
-            entity.name() + ": there has to be one split, the object itself, by definition. Remaining voxels: " +
-            std::to_string(originalVoxelData->numVoxels()));
+            entity.name() +
+                ": there has to be one split, the object itself, by "
+                "definition. "
+                "Remaining voxels: " +
+                std::to_string(originalVoxelData->numVoxels()));
 
         if (splits.size() <= 1) continue;
 
@@ -78,61 +81,81 @@ void VoxelClusterSplitSystem::onGameUpdate(float seconds)
 
             for (const auto & voxel : split.voxels)
             {
-                const auto colorIndex = originalVoxelData->voxelColorIndex(voxel);
-                const auto healthPoints = originalVoxelData->voxelHealthPoints(voxel);
+                const auto colorIndex =
+                    originalVoxelData->voxelColorIndex(voxel);
+                const auto healthPoints =
+                    originalVoxelData->voxelHealthPoints(voxel);
                 Voxel splitVoxel(voxel - split.llf, colorIndex, healthPoints);
 
                 splitVoxels.emplace_back(splitVoxel);
             }
 
-            auto splitPalette = std::make_shared<ColorPalette>(voxelWorld.drawContext(),
-                                                               originalVoxelData->palette()->colors());
+            auto splitPalette = std::make_shared<ColorPalette>(
+                voxelWorld.drawContext(),
+                originalVoxelData->palette()->colors());
 
             const auto splitSize = split.urb - split.llf + 1u;
-            auto splitVoxelData = std::make_shared<VoxelObjectVoxelData>(originalVoxelObject.data()->voxelWorld(),
-                                                splitPalette,
-                                                splitSize);
+            auto       splitVoxelData = std::make_shared<VoxelObjectVoxelData>(
+                originalVoxelObject.data()->voxelWorld(),
+                splitPalette,
+                splitSize);
             splitVoxelData->addVoxelsRaw(std::move(splitVoxels));
 
-            auto splitEntity = world().createEntity("Split");
+            auto   splitEntity = world().createEntity("Split");
             auto & splitVoxelObject = splitEntity.addComponent<VoxelObject>();
             splitVoxelObject.setVoxelData(splitVoxelData);
 
-            auto rigidBodyPayload = std::make_shared<VoxelRigidBodyPayload>(splitVoxelObject.shared_from_this());
-            auto splitBody = std::make_shared<RigidBody>(splitVoxelObject.data()->shape());
+            auto rigidBodyPayload = std::make_shared<VoxelRigidBodyPayload>(
+                splitVoxelObject.shared_from_this());
+            auto splitBody =
+                std::make_shared<RigidBody>(splitVoxelObject.data()->shape());
             splitBody->setEntity(splitEntity);
             splitBody->adjustCenterOfMass();
 
-            auto scale = entity.component<Transform3DComponent>().value().scale();
+            auto scale =
+                entity.component<Transform3DComponent>().value().scale();
 
-            const auto relativeCenterOfMass = splitBody->shape()->centerOfMass() + glm::vec3(split.llf) * scale /*+ glm::vec3(0.5f) */-
-                                              originalBody->shape()->centerOfMass();
+            const auto relativeCenterOfMass =
+                splitBody->shape()->centerOfMass() +
+                glm::vec3(split.llf) * scale /*+ glm::vec3(0.5f) */ -
+                originalBody->shape()->centerOfMass();
 
-//            std::cout << "originalBody->transform().position(): " << originalBody->transform().position() << std::endl;
-//            std::cout << "splitBody->shape()->centerOfMass(): " << splitBody->shape()->centerOfMass() << std::endl;
-//            std::cout << "originalBody->shape()->centerOfMass(): " << originalBody->shape()->centerOfMass() << std::endl;
-//            std::cout << "split.llf: " << split.llf << std::endl;
-//            std::cout << "RelativeCenterOfMass: " << relativeCenterOfMass << std::endl;
+            //            std::cout << "originalBody->transform().position(): "
+            //            << originalBody->transform().position() << std::endl;
+            //            std::cout
+            //            << "splitBody->shape()->centerOfMass(): " <<
+            //            splitBody->shape()->centerOfMass() << std::endl;
+            //            std::cout
+            //            << "originalBody->shape()->centerOfMass(): " <<
+            //            originalBody->shape()->centerOfMass() << std::endl;
+            //            std::cout << "split.llf: " << split.llf << std::endl;
+            //            std::cout << "RelativeCenterOfMass: " <<
+            //            relativeCenterOfMass << std::endl;
 
-            const auto splitPosition = originalBody->transform().position() +
-                                       originalBody->transform().orientation() * relativeCenterOfMass;
-//            std::cout << "splitPosition: " << splitPosition << std::endl;
+            const auto splitPosition =
+                originalBody->transform().position() +
+                originalBody->transform().orientation() * relativeCenterOfMass;
+            //            std::cout << "splitPosition: " << splitPosition <<
+            //            std::endl;
 
-            auto & transform = splitEntity.addComponent<Transform3DComponent>().value();
+            auto & transform =
+                splitEntity.addComponent<Transform3DComponent>().value();
             transform.setCenter(splitBody->shape()->centerOfMass());
             transform.setPosition(splitPosition);
             transform.setOrientation(originalBody->transform().orientation());
             transform.setScale(originalBody->transform().scale());
             splitVoxelObject.setTransform(transform);
 
-            splitBody->setLinearVelocity(
-                originalBody->localVelocity(originalBody->transform().pointLocalToWorld(originalBody->transform().center() + relativeCenterOfMass) -
-                                            originalBody->transform().position()));
+            splitBody->setLinearVelocity(originalBody->localVelocity(
+                originalBody->transform().pointLocalToWorld(
+                    originalBody->transform().center() + relativeCenterOfMass) -
+                originalBody->transform().position()));
             splitBody->setAngularVelocity(originalBody->angularVelocity());
 
             splitEntity.addComponent<RigidBodyComponent>(splitBody);
 
-            originalVoxelObject.removeVoxelsRaw(split.voxels, VoxelRemovalReason::Split);
+            originalVoxelObject.removeVoxelsRaw(
+                split.voxels, VoxelRemovalReason::Split);
         }
     }
     m_modifiedVoxelObjects.clear();

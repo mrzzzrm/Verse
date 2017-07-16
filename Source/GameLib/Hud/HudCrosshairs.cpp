@@ -1,7 +1,7 @@
 #include "HudCrosshairs.h"
 
-#include <Deliberation/Core/Math/Trajectory.h>
 #include <Deliberation/Core/Math/PrimitiveIntersection.h>
+#include <Deliberation/Core/Math/Trajectory.h>
 
 #include <Deliberation/Draw/DrawContext.h>
 
@@ -22,15 +22,15 @@
 #include "VoxelObject.h"
 #include "Weapon.h"
 
-HudCrosshairs::HudCrosshairs(Hud & hud):
-    HudLayer(hud),
-    m_drawContext(hud.world().systemRef<ApplicationSystem>().drawContext()),
-    m_playerSystem(hud.world().systemRef<PlayerSystem>()),
-    m_renderManager(hud.world().systemRef<RenderSystem>().renderManager())
+HudCrosshairs::HudCrosshairs(Hud & hud)
+    : HudLayer(hud)
+    , m_drawContext(hud.world().systemRef<ApplicationSystem>().drawContext())
+    , m_playerSystem(hud.world().systemRef<PlayerSystem>())
+    , m_renderManager(hud.world().systemRef<RenderSystem>().renderManager())
 {
     auto & resourceManager = hud.world().systemRef<ResourceManager>();
-    auto mesh = resourceManager.mesh(R::UiCrosshairMesh);
-    auto program = resourceManager.program(R::HudElement);
+    auto   mesh = resourceManager.mesh(R::UiCrosshairMesh);
+    auto   program = resourceManager.program(R::HudElement);
 
     m_draw = m_drawContext.createDraw(program);
     m_draw.setIndices(mesh.indices());
@@ -39,13 +39,16 @@ HudCrosshairs::HudCrosshairs(Hud & hud):
     m_draw.setAttribute("Flip", glm::vec2(1.0f));
     m_draw.setAttribute("ElementColor", glm::vec3(0.5f, 0.4f, 1.0f));
     m_draw.state().setDepthState(DepthState::disabledR());
-    m_draw.state().setBlendState({BlendEquation::Add, BlendFactor::SourceAlpha, BlendFactor::OneMinusSourceAlpha});
+    m_draw.state().setBlendState({BlendEquation::Add,
+                                  BlendFactor::SourceAlpha,
+                                  BlendFactor::OneMinusSourceAlpha});
     m_viewportSizeUniform = m_draw.uniform("ViewportSize");
 }
 
-void HudCrosshairs::update(float seconds) 
+void HudCrosshairs::update(float seconds)
 {
-    const auto halfExtent = glm::vec2(32.0f) / glm::vec2(m_drawContext.backbuffer().size());
+    const auto halfExtent =
+        glm::vec2(32.0f) / glm::vec2(m_drawContext.backbuffer().size());
     setHalfExtent(halfExtent);
 
     auto & player = m_playerSystem.player();
@@ -53,7 +56,8 @@ void HudCrosshairs::update(float seconds)
 
     if (player.isValid() && playerTarget.isValid())
     {
-        const auto & targetBody = *playerTarget.component<RigidBodyComponent>().value();
+        const auto & targetBody =
+            *playerTarget.component<RigidBodyComponent>().value();
 
         const auto targetPosition = targetBody.transform().position();
         const auto targetVelocity = targetBody.linearVelocity();
@@ -65,17 +69,23 @@ void HudCrosshairs::update(float seconds)
 
         bool success;
         m_trajectory = CalculateTrajectory(
-            body.transform().position(), body.linearVelocity(),
-            bulletSpeed, targetPosition, targetVelocity, success);
+            body.transform().position(),
+            body.linearVelocity(),
+            bulletSpeed,
+            targetPosition,
+            targetVelocity,
+            success);
 
-        const auto ray = Ray3D(m_renderManager.mainCamera().position(), m_trajectory);
+        const auto ray =
+            Ray3D(m_renderManager.mainCamera().position(), m_trajectory);
         const auto nearPlane = m_renderManager.mainCamera().nearPlane();
 
         bool hit;
-        auto nearPlanePosition = Rect3DRay3DIntersectionPoint(nearPlane, ray, hit);
+        auto nearPlanePosition =
+            Rect3DRay3DIntersectionPoint(nearPlane, ray, hit);
         if (hit)
         {
-            setPosition(nearPlanePosition * 2.0f  - 1.0f);
+            setPosition(nearPlanePosition * 2.0f - 1.0f);
         }
 
         setVisible(hit);
@@ -86,7 +96,7 @@ void HudCrosshairs::update(float seconds)
     }
 }
 
-void HudCrosshairs::render() 
+void HudCrosshairs::render()
 {
     if (!visible()) return;
 
@@ -102,7 +112,7 @@ void HudCrosshairs::render()
             m_draw.setAttribute("ElementPosition", position());
             m_draw.render();
         }
-    }  
+    }
 }
 
 void HudCrosshairs::onMouseButtonPressed(MouseButtonEvent & event)
@@ -114,15 +124,17 @@ void HudCrosshairs::onMouseButtonPressed(MouseButtonEvent & event)
 
     if (!playerTarget.isValid() || !player.isValid()) return;
 
-    const auto & targetBody = *playerTarget.component<RigidBodyComponent>().value();
+    const auto & targetBody =
+        *playerTarget.component<RigidBodyComponent>().value();
 
-    auto & equipment = player.component<Equipment>();
+    auto &       equipment = player.component<Equipment>();
     const auto & body = *player.component<RigidBodyComponent>().value();
 
     const auto & targetPosition = targetBody.transform().position();
     const auto & targetVelocity = targetBody.linearVelocity();
 
-    const auto & equipmentTransform = player.component<Transform3DComponent>().value();
+    const auto & equipmentTransform =
+        player.component<Transform3DComponent>().value();
 
     equipment.setFireRequestTargetForAllHardpoints(
         equipmentTransform,

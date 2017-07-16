@@ -17,34 +17,31 @@ enum class VoxelRemovalReason
 
 struct VoxelObjectModification
 {
-    static VoxelObjectModification split(const Entity & entity,
-                                           const std::vector<glm::uvec3> & voxels)
+    static VoxelObjectModification
+    split(const Entity & entity, const std::vector<glm::uvec3> & voxels)
     {
         auto modification = VoxelObjectModification(entity);
         modification.splits = voxels;
         return modification;
     }
 
-    static VoxelObjectModification destruction(const Entity & entity,
-                                           const std::vector<glm::uvec3> & voxels)
+    static VoxelObjectModification
+    destruction(const Entity & entity, const std::vector<glm::uvec3> & voxels)
     {
         auto modification = VoxelObjectModification(entity);
         modification.destructions = voxels;
         return modification;
     }
 
-    static VoxelObjectModification addition(const Entity & entity,
-                                            const std::vector<Voxel> & additions)
+    static VoxelObjectModification
+    addition(const Entity & entity, const std::vector<Voxel> & additions)
     {
         auto modification = VoxelObjectModification(entity);
         modification.additions = additions;
         return modification;
     }
 
-    VoxelObjectModification(const Entity & entity):
-        entity(entity)
-    {
-    }
+    VoxelObjectModification(const Entity & entity) : entity(entity) {}
 
     Entity                  entity;
     std::vector<Voxel>      additions;

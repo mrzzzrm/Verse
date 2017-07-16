@@ -14,18 +14,19 @@ class HailstormManager;
 
 struct WeaponConfig
 {
-    float       cooldown = 0.0f;
-    VfxMeshId   meshID = 0;
-    float       bulletSpeed = 1.0f;
-    float       bulletLifetime = 1.0f;
+    float     cooldown = 0.0f;
+    VfxMeshId meshID = 0;
+    float     bulletSpeed = 1.0f;
+    float     bulletLifetime = 1.0f;
 };
 
 class Weapon final
 {
 public:
-    Weapon(const WeaponConfig & config,
-           HailstormManager & hailstormManager,
-           VoxelObjectWorldUID creatorUID);
+    Weapon(
+        const WeaponConfig & config,
+        HailstormManager &   hailstormManager,
+        VoxelObjectWorldUID  creatorUID);
 
     const WeaponConfig & config() const;
 
@@ -34,17 +35,21 @@ public:
 
     void setPose(const Pose3D & pose);
 
-    void update(float seconds, const EquipmentUpdateContext & context, const Pose3D & weaponPose, float maxAngle);
+    void update(
+        float                          seconds,
+        const EquipmentUpdateContext & context,
+        const Pose3D &                 weaponPose,
+        float                          maxAngle);
 
 private:
     WeaponConfig        m_config;
     HailstormManager &  m_hailstormManager;
     VoxelObjectWorldUID m_creatorUID;
 
-    Pose3D              m_pose;
+    Pose3D m_pose;
 
-    bool                m_fireRequestActive = false;
-    glm::vec3           m_fireRequestDirection;
+    bool      m_fireRequestActive = false;
+    glm::vec3 m_fireRequestDirection;
 
-    float               m_cooldown = 0.0f;
+    float m_cooldown = 0.0f;
 };

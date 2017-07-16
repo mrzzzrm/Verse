@@ -6,11 +6,8 @@
 #include "GameLib.h"
 #include "HudProxy.h"
 
-class HudProxyPrototype:
-    public ComponentPrototype<HudProxy>
+class HudProxyPrototype : public ComponentPrototype<HudProxy>
 {
 public:
-    void updateComponent(HudProxy & hudProxy) override
-    {
-    }
+    void updateComponent(HudProxy & hudProxy) override {}
 };

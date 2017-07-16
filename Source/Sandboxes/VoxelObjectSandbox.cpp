@@ -6,21 +6,16 @@
 #include <Deliberation/Scene/Camera3D.h>
 #include <Deliberation/Scene/Debug/DebugCameraNavigator3D.h>
 
+#include "VoxelClusterPrimitiveTest.h"
 #include "VoxelRenderable.h"
 #include "VoxelWorld.h"
-#include "VoxelClusterPrimitiveTest.h"
 
 using namespace deliberation;
 
-class VoxelObjectSandbox:
-    public Application
+class VoxelObjectSandbox : public Application
 {
 public:
-    VoxelObjectSandbox():
-        Application("VoxelObjectSandbox")
-    {
-
-    }
+    VoxelObjectSandbox() : Application("VoxelObjectSandbox") {}
 
     void onStartup() override
     {
@@ -28,7 +23,9 @@ public:
 
         m_camera.setPosition({0.0f, 0.0f, 10.0f});
         m_camera.setOrientation(glm::quat({-0.0f, 0.0f, 0.0f}));
-        m_camera.setAspectRatio((float)drawContext().backbuffer().width() / drawContext().backbuffer().height());
+        m_camera.setAspectRatio(
+            (float)drawContext().backbuffer().width() /
+            drawContext().backbuffer().height());
 
         m_voxelData.reset(*m_voxelWorld, glm::uvec3(2, 1, 1));
 
@@ -72,24 +69,22 @@ public:
     }
 
 private:
-    Camera3D                m_camera;
-    Clear                   m_clear;
+    Camera3D m_camera;
+    Clear    m_clear;
 
-    Optional<VoxelObjectVoxelData>
-                            m_voxelData;
+    Optional<VoxelObjectVoxelData> m_voxelData;
 
-    Optional<VoxelObject>   m_object0;
-    Optional<VoxelObject>   m_object1;
+    Optional<VoxelObject> m_object0;
+    Optional<VoxelObject> m_object1;
 
-    PhysicsWorld            m_physicsWorld;
+    PhysicsWorld m_physicsWorld;
 
-    Optional<VoxelWorld>    m_voxelWorld;
+    Optional<VoxelWorld> m_voxelWorld;
 
-    Optional<DebugCameraNavigator3D>
-                            m_navigator;
+    Optional<DebugCameraNavigator3D> m_navigator;
 };
 
-int main(int argc, char *argv[])
+int main(int argc, char * argv[])
 {
     return VoxelObjectSandbox().run(argc, argv);
 }

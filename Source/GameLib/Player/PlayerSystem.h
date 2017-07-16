@@ -23,19 +23,18 @@ class Input;
 class Camera3D;
 class PhysicsWorld;
 class World;
-}
+} // namespace deliberation
 
-class PlayerSystem:
-    public std::enable_shared_from_this<PlayerSystem>,
-    public System<PlayerSystem>,
-    public InputLayer
+class PlayerSystem : public std::enable_shared_from_this<PlayerSystem>,
+                     public System<PlayerSystem>,
+                     public InputLayer
 {
 public:
     PlayerSystem(World & world);
 
-    Entity & player() { return m_player; }
+    Entity &       player() { return m_player; }
     const Entity & player() const { return m_player; }
-    Entity & playerTarget() { return m_playerTarget; }
+    Entity &       playerTarget() { return m_playerTarget; }
     const Entity & playerTarget() const { return m_playerTarget; }
 
     void setPlayerTarget(Entity & entity) { m_playerTarget = entity; }
@@ -66,18 +65,18 @@ private:
     };
 
 private:
-    Input &                 m_input;
-    PhysicsWorld &          m_physicsWorld;
+    Input &        m_input;
+    PhysicsWorld & m_physicsWorld;
 
-    CameraMode              m_cameraMode;
-    DebugCameraNavigator3D  m_navigator;
-    CameraDolly3D           m_cameraDolly;
+    CameraMode             m_cameraMode;
+    DebugCameraNavigator3D m_navigator;
+    CameraDolly3D          m_cameraDolly;
 
-    Entity                  m_player;
-    Entity                  m_playerTarget;
+    Entity m_player;
+    Entity m_playerTarget;
 
-    glm::vec3               m_linearThrust;
-    glm::vec3               m_angularThrust;
+    glm::vec3 m_linearThrust;
+    glm::vec3 m_angularThrust;
 
-    //DebugGeometryNode   m_debugGeometryRenderer;
+    // DebugGeometryNode   m_debugGeometryRenderer;
 };

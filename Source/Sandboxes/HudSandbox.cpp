@@ -5,9 +5,9 @@
 #include <Deliberation/Physics/PhysicsWorld.h>
 #include <Deliberation/Platform/Application.h>
 #include <Deliberation/Scene/Camera3D.h>
-#include <Deliberation/Scene/UVSphere.h>
 #include <Deliberation/Scene/Debug/DebugCameraNavigator3D.h>
 #include <Deliberation/Scene/Debug/DebugGroundPlaneRenderer.h>
+#include <Deliberation/Scene/UVSphere.h>
 
 #include "HudButton.h"
 #include "HudEntityMarkersRenderer.h"
@@ -16,12 +16,12 @@
 
 using namespace deliberation;
 
-class HudSandbox:
-    public VerseApplication
+class HudSandbox : public VerseApplication
 {
 public:
-    HudSandbox():
-        VerseApplication("HudSandbox", VerseApplicationSystemInitMode::NoSystems)
+    HudSandbox()
+        : VerseApplication(
+              "HudSandbox", VerseApplicationSystemInitMode::NoSystems)
     {
     }
 
@@ -31,7 +31,8 @@ public:
 
         auto resourceManager = m_world.addSystem<ResourceManager>();
 
-        m_hudEntityMarkersRenderer = std::make_shared<HudEntityMarkersRenderer>(drawContext(), *resourceManager);
+        m_hudEntityMarkersRenderer = std::make_shared<HudEntityMarkersRenderer>(
+            drawContext(), *resourceManager);
 
         {
             auto button = std::make_shared<HudButton>();
@@ -48,9 +49,7 @@ public:
         }
     }
 
-    void onApplicationUpdate(float seconds) override
-    {
-    }
+    void onApplicationUpdate(float seconds) override {}
 
     void onApplicationRender() override
     {
@@ -58,12 +57,8 @@ public:
     }
 
 private:
-
-    std::shared_ptr<HudEntityMarkersRenderer>   m_hudEntityMarkersRenderer;
-    std::vector<std::shared_ptr<HudButton>>     m_entityMarkers;
+    std::shared_ptr<HudEntityMarkersRenderer> m_hudEntityMarkersRenderer;
+    std::vector<std::shared_ptr<HudButton>>   m_entityMarkers;
 };
 
-int main(int argc, char *argv[])
-{
-    return HudSandbox().run(argc, argv);
-}
+int main(int argc, char * argv[]) { return HudSandbox().run(argc, argv); }

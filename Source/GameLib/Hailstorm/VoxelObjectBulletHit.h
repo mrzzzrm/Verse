@@ -10,11 +10,12 @@ class VoxelObject;
 
 struct VoxelObjectBulletHit
 {
-    VoxelObjectBulletHit(const Entity & entity, const glm::uvec3 & voxel):
-        entity(entity), voxel(voxel)
-    {}
+    VoxelObjectBulletHit(const Entity & entity, const glm::uvec3 & voxel)
+        : entity(entity), voxel(voxel)
+    {
+    }
 
-    Entity      entity;
-    glm::uvec3  voxel;
-    float       damage = 0.0f;
+    Entity     entity;
+    glm::uvec3 voxel;
+    float      damage = 0.0f;
 };

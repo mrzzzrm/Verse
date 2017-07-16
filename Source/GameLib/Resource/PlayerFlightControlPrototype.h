@@ -6,8 +6,8 @@
 #include "GameLib.h"
 #include "PlayerFlightControl.h"
 
-class PlayerFlightControlPrototype:
-    public ComponentPrototype<PlayerFlightControl>
+class PlayerFlightControlPrototype
+    : public ComponentPrototype<PlayerFlightControl>
 {
 public:
     void updateComponent(PlayerFlightControl & playerFlightControl) override;

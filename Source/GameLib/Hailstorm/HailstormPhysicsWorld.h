@@ -25,7 +25,7 @@ public:
      * Bullets destroyed during the last update() call
      * @return
      */
-    const std::vector<HailstormBulletId> & destroyedBullets() const;
+    const std::vector<HailstormBulletId> &    destroyedBullets() const;
     const std::vector<VoxelObjectBulletHit> & voxelObjectBulletHits() const;
 
     void addBullet(const HailstormBullet & bullet);
@@ -33,11 +33,11 @@ public:
     void update(float seconds);
 
 private:
-    VoxelWorld &                            m_voxelWorld;
-    PhysicsWorld &                          m_physicsWorld;
+    VoxelWorld &   m_voxelWorld;
+    PhysicsWorld & m_physicsWorld;
 
-    SparseVector<HailstormBullet>           m_bullets;
-    std::vector<HailstormBulletId>          m_destroyedBullets;
+    SparseVector<HailstormBullet>  m_bullets;
+    std::vector<HailstormBulletId> m_destroyedBullets;
 
-    std::vector<VoxelObjectBulletHit>       m_voxelObjectBulletHits;
+    std::vector<VoxelObjectBulletHit> m_voxelObjectBulletHits;
 };

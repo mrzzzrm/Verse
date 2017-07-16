@@ -3,10 +3,10 @@
 #include <cmath>
 
 #include <Deliberation/Core/Assert.h>
-#include <Deliberation/Core/StreamUtils.h>
 #include <Deliberation/Core/Math/FloatUtils.h>
 #include <Deliberation/Core/Math/MathUtils.h>
 #include <Deliberation/Core/Math/Transform3D.h>
+#include <Deliberation/Core/StreamUtils.h>
 
 #include <Deliberation/Physics/RigidBody.h>
 
@@ -20,81 +20,113 @@ const glm::vec3 & NpcFlightControl::localAngularAccelertion() const
     return m_localAngularAccelertion;
 }
 
-void NpcFlightControl::setLocalLinearAcceleration(const glm::vec3 & localLinearAcceleration)
+void NpcFlightControl::setLocalLinearAcceleration(
+    const glm::vec3 & localLinearAcceleration)
 {
     m_localLinearAcceleration = localLinearAcceleration;
 }
 
-void NpcFlightControl::setLocalAngularAccceleration(const glm::vec3 & localAngularAccelertion)
+void NpcFlightControl::setLocalAngularAccceleration(
+    const glm::vec3 & localAngularAccelertion)
 {
     m_localAngularAccelertion = localAngularAccelertion;
 }
 
-void NpcFlightControl::update(RigidBody & body, const FlightControlConfig & config, float seconds)
+void NpcFlightControl::update(
+    RigidBody & body, const FlightControlConfig & config, float seconds)
 {
     /**
      * Correct linear acceleration
      */
-    const auto localLinearVelocity = body.transform().directionWorldToLocal(body.linearVelocity());
+    const auto localLinearVelocity =
+        body.transform().directionWorldToLocal(body.linearVelocity());
 
-    const auto correctLinearAccelerationOnAxis = [&] (
-        const float currentSpeed, float & currentAcceleration,
-        const float maxSpeed, const float maxAcceleration)
-    {
-        if (EpsilonGt(std::abs(currentSpeed), maxSpeed))
-        {
-            const auto requiredCorrection = std::abs(currentSpeed) - maxSpeed;
-            const auto feasibleCorrection = maxAcceleration * seconds;
-            const auto appliedCorrectionFactor = std::min(requiredCorrection / feasibleCorrection, 1.0f);
+    const auto correctLinearAccelerationOnAxis =
+        [&](const float currentSpeed,
+            float &     currentAcceleration,
+            const float maxSpeed,
+            const float maxAcceleration) {
+            if (EpsilonGt(std::abs(currentSpeed), maxSpeed))
+            {
+                const auto requiredCorrection =
+                    std::abs(currentSpeed) - maxSpeed;
+                const auto feasibleCorrection = maxAcceleration * seconds;
+                const auto appliedCorrectionFactor =
+                    std::min(requiredCorrection / feasibleCorrection, 1.0f);
 
-            currentAcceleration = appliedCorrectionFactor *
-                maxAcceleration *
-                -Sign(currentSpeed);
-        }
-    };
+                currentAcceleration = appliedCorrectionFactor *
+                                      maxAcceleration * -Sign(currentSpeed);
+            }
+        };
 
-    correctLinearAccelerationOnAxis(localLinearVelocity.x, m_localLinearAcceleration.x,
-                                    config.horizontal.maxSpeed, config.horizontal.acceleration);
+    correctLinearAccelerationOnAxis(
+        localLinearVelocity.x,
+        m_localLinearAcceleration.x,
+        config.horizontal.maxSpeed,
+        config.horizontal.acceleration);
 
-    correctLinearAccelerationOnAxis(localLinearVelocity.y, m_localLinearAcceleration.y,
-                                    config.vertical.maxSpeed, config.vertical.acceleration);
+    correctLinearAccelerationOnAxis(
+        localLinearVelocity.y,
+        m_localLinearAcceleration.y,
+        config.vertical.maxSpeed,
+        config.vertical.acceleration);
 
     if (localLinearVelocity.z > 0.0f)
     {
-        correctLinearAccelerationOnAxis(localLinearVelocity.z, m_localLinearAcceleration.z,
-                                        config.backward.maxSpeed, config.forward.acceleration);
+        correctLinearAccelerationOnAxis(
+            localLinearVelocity.z,
+            m_localLinearAcceleration.z,
+            config.backward.maxSpeed,
+            config.forward.acceleration);
     }
     else
     {
-        correctLinearAccelerationOnAxis(localLinearVelocity.z, m_localLinearAcceleration.z,
-                                        config.forward.maxSpeed, config.backward.acceleration);
+        correctLinearAccelerationOnAxis(
+            localLinearVelocity.z,
+            m_localLinearAcceleration.z,
+            config.forward.maxSpeed,
+            config.backward.acceleration);
     }
 
     /**
      * Correct angular acceleration
      */
-    const auto localAngularVelocity =  body.transform().directionWorldToLocal(body.angularVelocity());
+    const auto localAngularVelocity =
+        body.transform().directionWorldToLocal(body.angularVelocity());
     const auto localAngularSpeed = glm::length(localAngularVelocity);
 
-    if (EpsilonGt(localAngularSpeed, 0.0f) && EpsilonGt(localAngularSpeed, config.angular.maxSpeed))
+    if (EpsilonGt(localAngularSpeed, 0.0f) &&
+        EpsilonGt(localAngularSpeed, config.angular.maxSpeed))
     {
-        m_localAngularAccelertion = correctiveAcceleration(localAngularSpeed - config.angular.maxSpeed,
-                                                           config.angular.acceleration, seconds,
-                                                           -glm::normalize(localAngularVelocity));
+        m_localAngularAccelertion = correctiveAcceleration(
+            localAngularSpeed - config.angular.maxSpeed,
+            config.angular.acceleration,
+            seconds,
+            -glm::normalize(localAngularVelocity));
     }
 
     /**
      * Apply accelerations
      */
-    body.setLinearVelocity(body.linearVelocity() + body.transform().directionLocalToWorld(m_localLinearAcceleration) * seconds);
-    body.setAngularVelocity(body.angularVelocity() + body.transform().directionLocalToWorld(m_localAngularAccelertion) * seconds);
+    body.setLinearVelocity(
+        body.linearVelocity() +
+        body.transform().directionLocalToWorld(m_localLinearAcceleration) *
+            seconds);
+    body.setAngularVelocity(
+        body.angularVelocity() +
+        body.transform().directionLocalToWorld(m_localAngularAccelertion) *
+            seconds);
 }
 
-glm::vec3 NpcFlightControl::correctiveAcceleration(float requiredCorrection, float acceleration, float seconds,
-                                                   const glm::vec3 & direction) const
+glm::vec3 NpcFlightControl::correctiveAcceleration(
+    float             requiredCorrection,
+    float             acceleration,
+    float             seconds,
+    const glm::vec3 & direction) const
 {
     const auto feasibleCorrection = acceleration * seconds;
-    const auto appliedCorrectionFactor = std::min(requiredCorrection / feasibleCorrection, 1.0f);
+    const auto appliedCorrectionFactor =
+        std::min(requiredCorrection / feasibleCorrection, 1.0f);
 
     return direction * appliedCorrectionFactor * acceleration;
 }

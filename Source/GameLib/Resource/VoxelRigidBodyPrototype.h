@@ -7,23 +7,24 @@
 #include <Deliberation/Core/Json.h>
 #include <Deliberation/Core/Math/Pose3D.h>
 
-#include <Deliberation/ECS/World.h>
 #include <Deliberation/ECS/Component.h>
-#include <Deliberation/ECS/Components.h>
 #include <Deliberation/ECS/ComponentPrototype.h>
+#include <Deliberation/ECS/Components.h>
+#include <Deliberation/ECS/World.h>
 
 #include "GameLib.h"
 #include "VoxelWorld.h"
 
-class VoxelRigidBodyComponent:
-    public Component<VoxelRigidBodyComponent>
+class VoxelRigidBodyComponent : public Component<VoxelRigidBodyComponent>
 {
     DELIBERATION_COMPONENT_NAME("VoxelRigidBody")
 };
 
-class VoxelRigidBodyPrototype final:
-    public ComponentPrototype<VoxelRigidBodyComponent>
+class VoxelRigidBodyPrototype final
+    : public ComponentPrototype<VoxelRigidBodyComponent>
 {
 public:
-    void updateComponent(VoxelRigidBodyComponent & rigidBodyComponent) override {}
+    void updateComponent(VoxelRigidBodyComponent & rigidBodyComponent) override
+    {
+    }
 };

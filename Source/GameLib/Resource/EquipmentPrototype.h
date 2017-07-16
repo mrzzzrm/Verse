@@ -10,19 +10,19 @@
 #include <Deliberation/ECS/ComponentPrototype.h>
 #include <Deliberation/ECS/Entity.h>
 
+#include "Attachment.h"
 #include "Equipment.h"
 #include "GameLib.h"
-#include "Attachment.h"
 
 class VfxManager;
 
-class EquipmentPrototype final:
-    public ComponentPrototype<Equipment>
+class EquipmentPrototype final : public ComponentPrototype<Equipment>
 {
 public:
-    EquipmentPrototype(const std::shared_ptr<VfxManager> & vfxManager):
-        m_vfxManager(vfxManager)
-    {}
+    EquipmentPrototype(const std::shared_ptr<VfxManager> & vfxManager)
+        : m_vfxManager(vfxManager)
+    {
+    }
 
     void updateComponent(Equipment & equipment) override;
 

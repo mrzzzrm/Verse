@@ -19,7 +19,7 @@ void EquipmentPrototype::updateComponent(Equipment & equipment)
 
     if (m_newJson.count("Engines") > 0)
     {
-        for (const auto &obj : m_newJson["Engines"])
+        for (const auto & obj : m_newJson["Engines"])
         {
             EngineSlotDesc desc;
             loadSlotDesc(obj, desc);
@@ -33,7 +33,7 @@ void EquipmentPrototype::updateComponent(Equipment & equipment)
 
     if (m_newJson.count("Hardpoints") > 0)
     {
-        for (const auto &obj : m_newJson["Hardpoints"])
+        for (const auto & obj : m_newJson["Hardpoints"])
         {
             HardpointDesc desc;
             loadSlotDesc(obj, desc);
@@ -79,7 +79,8 @@ void EquipmentPrototype::initComponent(Equipment & equipment)
     equipment.setVfxManager(m_vfxManager);
 }
 
-void EquipmentPrototype::loadSlotDesc(const Json & obj, AttachmentDesc & slot) const
+void EquipmentPrototype::loadSlotDesc(
+    const Json & obj, AttachmentDesc & slot) const
 {
     slot.voxel = obj["Voxel"];
     std::swap(slot.voxel.y, slot.voxel.z);
@@ -96,7 +97,9 @@ void EquipmentPrototype::loadSlotDesc(const Json & obj, AttachmentDesc & slot) c
         const auto forwardIter = obj.find("Forward");
         const auto upIter = obj.find("Up");
 
-        Assert((forwardIter == obj.end()) == (upIter == obj.end()), "Either supply Forward AND Up, or neither");
+        Assert(
+            (forwardIter == obj.end()) == (upIter == obj.end()),
+            "Either supply Forward AND Up, or neither");
 
         glm::vec3 forward = *forwardIter;
         glm::vec3 up = *upIter;

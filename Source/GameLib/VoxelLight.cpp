@@ -8,16 +8,15 @@
 #include "ColorPalette.h"
 #include "VoxelObject.h"
 
-VoxelLight::VoxelLight(const VoxelLightDesc & desc):
-    Attachment(desc),
-    m_desc(desc)
+VoxelLight::VoxelLight(const VoxelLightDesc & desc)
+    : Attachment(desc), m_desc(desc)
 {
-
 }
 
 void VoxelLight::onEnabled()
 {
-    auto & pointLightRenderer = m_entity.world().systemRef<PointLightSystem>().pointLightRenderer();
+    auto & pointLightRenderer =
+        m_entity.world().systemRef<PointLightSystem>().pointLightRenderer();
     auto & voxelObject = m_entity.component<VoxelObject>();
 
     const auto colorIndex = voxelObject.data()->voxelColorIndex(voxel());
@@ -35,7 +34,8 @@ void VoxelLight::onEnabled()
 
 void VoxelLight::onDisabled()
 {
-    auto & pointLightRenderer = m_entity.world().systemRef<PointLightSystem>().pointLightRenderer();
+    auto & pointLightRenderer =
+        m_entity.world().systemRef<PointLightSystem>().pointLightRenderer();
 
     pointLightRenderer->removePointLight(m_pointLight);
 }
@@ -45,9 +45,10 @@ void VoxelLight::onGameUpdate(float seconds)
     m_noiseInput += seconds * 6.0f;
 
     auto noise = std::sin(m_noiseInput);
-    auto intensity = (m_color + m_color * noise * 0.7f)  * m_desc.intensity;
+    auto intensity = (m_color + m_color * noise * 0.7f) * m_desc.intensity;
 
-    auto & pointLightRenderer = m_entity.world().systemRef<PointLightSystem>().pointLightRenderer();
+    auto & pointLightRenderer =
+        m_entity.world().systemRef<PointLightSystem>().pointLightRenderer();
     auto & voxelObject = m_entity.component<VoxelObject>();
 
     auto & pointLight = pointLightRenderer->pointLight(m_pointLight);

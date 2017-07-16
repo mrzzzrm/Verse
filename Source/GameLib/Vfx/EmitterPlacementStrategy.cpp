@@ -2,10 +2,10 @@
 
 #include <Deliberation/Core/Math/Random.h>
 
-EmitterGaussianSphericalPlacement::EmitterGaussianSphericalPlacement(float radius, float standardDeviation):
-    m_dist(radius, standardDeviation)
+EmitterGaussianSphericalPlacement::EmitterGaussianSphericalPlacement(
+    float radius, float standardDeviation)
+    : m_dist(radius, standardDeviation)
 {
-
 }
 
 glm::vec3 EmitterGaussianSphericalPlacement::generatePosition() const
@@ -13,10 +13,10 @@ glm::vec3 EmitterGaussianSphericalPlacement::generatePosition() const
     return RandomInSphere() * m_dist(m_engine);
 }
 
-EmitterGaussianCircularPlacement::EmitterGaussianCircularPlacement(float radius, float standardDeviation):
-    m_dist(radius, standardDeviation)
+EmitterGaussianCircularPlacement::EmitterGaussianCircularPlacement(
+    float radius, float standardDeviation)
+    : m_dist(radius, standardDeviation)
 {
-
 }
 
 glm::vec3 EmitterGaussianCircularPlacement::generatePosition() const
