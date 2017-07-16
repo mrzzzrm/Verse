@@ -66,7 +66,7 @@ private:
     };
 
 private:
-    Input &             m_input;
+    Input &                 m_input;
     PhysicsWorld &          m_physicsWorld;
 
     CameraMode              m_cameraMode;

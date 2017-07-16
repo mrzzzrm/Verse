@@ -16,7 +16,7 @@ EquipmentSystem::EquipmentSystem(World & world):
 
 void EquipmentSystem::onEvent(const VoxelObjectModification & voxelObjectModification)
 {
-    auto entity = m_world.entityById(voxelObjectModification.object->entityId());
+    auto entity = voxelObjectModification.entity;
 
     if (!entity.hasComponent<Equipment>()) return;
 

@@ -32,13 +32,11 @@ public:
     std::shared_ptr<ColorPalette> & palette() { return m_palette; }
     const std::shared_ptr<ColorPalette> & palette() const { return m_palette; }
 
-    void setScale(float scale);
-
     void addVoxel(const Voxel & voxel, bool visible);
     void removeVoxel(const glm::uvec3 & voxel, bool visible);
     void updateVoxelVisibility(const glm::uvec3 & voxel, bool visible);
 
-    void schedule(const Pose3D & pose) const;
+    void render(const Transform3D & transform) const;
 
     std::string toString() const;
 
@@ -80,13 +78,12 @@ protected:
     std::vector<Node>               m_nodes;
     std::vector<ChunkWrapper>       m_chunks;
     RandomColorGenerator            m_colorGenerator;
-    float                           m_scale = 1.0f;
 
     mutable bool                    m_drawInitialized = false;
     mutable Draw                    m_draw;
     mutable Buffer                  m_vertexBuffer;
     mutable Uniform                 m_transformUniform;
+    mutable Uniform                 m_orientationUniform;
     mutable Uniform                 m_viewUniform;
     mutable Uniform                 m_projectionUniform;
-    mutable Uniform                 m_scaleUniform;
 };

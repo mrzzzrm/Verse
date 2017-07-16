@@ -32,9 +32,7 @@ public:
 
     std::shared_ptr<VoxelRenderChunk> clone();
 
-    bool updateVertices(float scale);
-
-    void schedule(const Pose3D & pose, float scale) const;
+    bool updateVertices();
 
 private:
     VoxelCluster<u32>   m_cluster;

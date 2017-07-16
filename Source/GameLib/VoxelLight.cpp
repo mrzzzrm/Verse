@@ -51,7 +51,7 @@ void VoxelLight::onGameUpdate(float seconds)
     auto & voxelObject = m_entity.component<VoxelObject>();
 
     auto & pointLight = pointLightRenderer->pointLight(m_pointLight);
-    pointLight.position = voxelObject.pose().poseLocalToWorld(localPose()).pointLocalToWorld(voxel());
+    pointLight.position = worldPose().position();
     pointLight.intensity = intensity;
 
     const auto colorIndex = voxelObject.data()->voxelColorIndex(voxel());

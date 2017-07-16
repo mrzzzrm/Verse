@@ -93,7 +93,9 @@ void VoxelClusterSplitSystem::onGameUpdate(float seconds)
             splitBody->setEntity(splitEntity);
             splitBody->adjustCenterOfMass();
 
-            const auto relativeCenterOfMass = splitBody->shape()->centerOfMass() + glm::vec3(split.llf) * originalVoxelObject.scale() /*+ glm::vec3(0.5f) */-
+            auto scale = entity.component<Transform3DComponent>().value().scale();
+
+            const auto relativeCenterOfMass = splitBody->shape()->centerOfMass() + glm::vec3(split.llf) * scale /*+ glm::vec3(0.5f) */-
                                               originalBody->shape()->centerOfMass();
 
 //            std::cout << "originalBody->transform().position(): " << originalBody->transform().position() << std::endl;
@@ -111,7 +113,7 @@ void VoxelClusterSplitSystem::onGameUpdate(float seconds)
             transform.setPosition(splitPosition);
             transform.setOrientation(originalBody->transform().orientation());
             transform.setScale(originalBody->transform().scale());
-            splitVoxelObject.setPose(Pose3D::fromTransform(transform));
+            splitVoxelObject.setTransform(transform);
 
             splitBody->setLinearVelocity(
                 originalBody->localVelocity(originalBody->transform().pointLocalToWorld(originalBody->transform().center() + relativeCenterOfMass) -

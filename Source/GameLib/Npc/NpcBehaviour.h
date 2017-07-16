@@ -7,4 +7,5 @@
 class NpcBehaviour:
     public Component<NpcBehaviour>
 {
+DELIBERATION_COMPONENT_NAME("NpcBehaviour")
 };

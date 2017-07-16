@@ -32,8 +32,6 @@ public:
     float mass() const override;
     glm::vec3 centerOfMass() const override;
 
-    void setScale(float scale);
-
     void updateVoxel(const glm::uvec3 & voxel, bool set);
 
     bool lineCast(const Transform3D & transform, const Ray3D & ray, glm::uvec3 & voxel) const;
@@ -94,5 +92,4 @@ private:
     mutable u32         m_absIXY = 0;
     mutable u32         m_absIXZ = 0;
     mutable u32         m_absIYZ = 0;
-    float               m_scale = 1.0f;
 };

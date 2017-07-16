@@ -21,6 +21,7 @@ struct FlightControlDirection
 class FlightControlConfig:
     public Component<FlightControlConfig>
 {
+    DELIBERATION_COMPONENT_NAME("FlightControlConfig")
 public:
     FlightControlComponent forward;
     FlightControlComponent backward;

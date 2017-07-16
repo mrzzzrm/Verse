@@ -1,14 +1,7 @@
-[
-    {
-        "Component": "HudProxy"
-    },
-    {
-        "Component": "VoxelObject",
-        "VoxelCluster": "Block2x2x2",
-        "Scale": 1
-    },
-    {
-        "Component": "VoxelRigidBody"
+{
+    "Components": {
+        "Transform3D": {},
+        "VoxelObject": { "VoxelCluster": "Block2x2x2"},
+        "VoxelRigidBody": {}
     }
-]
-
+}

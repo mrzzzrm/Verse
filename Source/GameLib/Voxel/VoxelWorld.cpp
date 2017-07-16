@@ -83,7 +83,6 @@ void VoxelWorld::onEntityAdded(Entity & entity)
     auto & voxelObject = entity.component<VoxelObject>();
     auto & transform = entity.component<Transform3DComponent>().value();
 
-    voxelObject.setScale(transform.scale());
     m_renderer->addVoxelObject(voxelObject.shared_from_this());
 }
 
@@ -106,12 +105,7 @@ void VoxelWorld::onEntityGameUpdate(Entity & entity, float seconds)
         auto & transform = entity.component<Transform3DComponent>().value();
         auto & object = entity.component<VoxelObject>();
 
-        Pose3D pose;
-        pose.setOrientation(transform.orientation());
-        pose.setPosition(transform.position());
-        pose.setCenter(transform.center());
-
-        object.setPose(pose);
+        object.setTransform(transform);
     }
 }
 
@@ -121,11 +115,12 @@ void VoxelWorld::onGameUpdate(float seconds)
      * Process VoxelObjectModifications
      */
     auto & splitSystem = world().systemRef<VoxelClusterSplitSystem>();
-    for (const auto & modification : m_objectModifications)
+    for (auto & modification : m_objectModifications)
     {
-        splitSystem.onVoxelObjectModified(modification.object);
-        modification.object->addVoxelsRaw(modification.additions);
-        modification.object->removeVoxelsRaw(modification.removals);
+        auto & voxelObject = modification.entity.component<VoxelObject>();
+        splitSystem.onVoxelObjectModified(voxelObject.shared_from_this());
+        voxelObject.addVoxelsRaw(modification.additions);
+        voxelObject.removeVoxelsRaw(modification.removals);
     }
     m_objectModifications.clear();
 

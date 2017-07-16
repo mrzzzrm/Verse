@@ -9,6 +9,7 @@
 class Allegiance:
     public Component<Allegiance>
 {
+    DELIBERATION_COMPONENT_NAME("Allegiance")
 public:
     const std::string & faction() const;
     void setFaction(const std::string & faction) {

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <limits>
+
 #include <Deliberation/ECS/System.h>
 #include <Deliberation/ECS/World.h>
 
@@ -31,4 +33,7 @@ private:
     float           m_fps;
     Entity          m_selectedEntity;
     std::pair<EntityId, ComponentTypeId> m_selectedComponent;
+    size_t          m_selectedSystem = std::numeric_limits<size_t>::max();
+    std::string     m_selectedEntityPrototype;
+    std::string     m_selectedComponentPrototype;
 };

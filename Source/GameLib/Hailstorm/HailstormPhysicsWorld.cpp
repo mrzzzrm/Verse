@@ -85,7 +85,7 @@ void HailstormPhysicsWorld::update(float seconds)
                     m_voxelObjectModifications.emplace_back(std::move(modification));
                 }
 
-                m_voxelObjectBulletHits.emplace_back(voxelObject.shared_from_this(), voxelClusterIntersection.voxel);
+                m_voxelObjectBulletHits.emplace_back(entity, voxelClusterIntersection.voxel);
 
                 auto localHitPoint = glm::vec3(voxelClusterIntersection.voxel);
                 auto relativeHitPoint = body->transform().pointLocalToWorld(localHitPoint) -

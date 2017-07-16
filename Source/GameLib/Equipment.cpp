@@ -101,6 +101,8 @@ void Equipment::addAttachment(const std::shared_ptr<Attachment> & attachment)
     m_attachmentByVoxel.emplace(attachment->voxel(), attachment);
     attachment->setEntity(Entity(*(World*)m_world, entityId()));
     attachment->setEnabled(true);
+    attachment->setIndex(m_attachments.size());
+    m_attachments.emplace_back(attachment);
 }
 
 void Equipment::update(float seconds, const EquipmentUpdateContext & context)

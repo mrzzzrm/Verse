@@ -77,11 +77,6 @@ const VoxelHull & VoxelObjectVoxelData::hull() const
     return m_hull;
 }
 
-float VoxelObjectVoxelData::scale() const
-{
-    return m_scale;
-}
-
 bool VoxelObjectVoxelData::hasVoxel(const glm::ivec3 & voxel) const
 {
     return m_colorIndices.contains(voxel) && m_colorIndices.test(voxel);
@@ -100,13 +95,6 @@ float VoxelObjectVoxelData::voxelHealthPoints(const glm::uvec3 & voxel) const
 void VoxelObjectVoxelData::setVoxelHealthPoints(const glm::uvec3 & voxel, float healthPoints)
 {
     m_healthPoints.set(voxel, healthPoints);
-}
-
-void VoxelObjectVoxelData::setScale(float scale)
-{
-    m_scale = scale;
-    m_renderable.setScale(scale);
-    m_shape->setScale(scale);
 }
 
 void VoxelObjectVoxelData::addVoxelsRaw(std::vector<Voxel> voxels)

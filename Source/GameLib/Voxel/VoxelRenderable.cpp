@@ -105,11 +105,6 @@ VoxelRenderable::VoxelRenderable(VoxelWorld & voxelWorld,
     m_chunks.resize(numChunks);
 }
 
-void VoxelRenderable::setScale(float scale)
-{
-    m_scale = scale;
-}
-
 void VoxelRenderable::addVoxel(const Voxel & voxel, bool visible)
 {
     addVoxelToNode(0, voxel, visible);
@@ -125,7 +120,7 @@ void VoxelRenderable::updateVoxelVisibility(const glm::uvec3 & voxel, bool visib
     updateVoxelVisibilityInNode(0, voxel, visible);
 }
 
-void VoxelRenderable::schedule(const Pose3D & pose) const
+void VoxelRenderable::render(const Transform3D & transform) const
 {
     //ScopeProfiler scopeProfiler("VoxelRenderable::schedule()");
 
@@ -148,9 +143,8 @@ void VoxelRenderable::schedule(const Pose3D & pose) const
 
         m_transformUniform = m_draw.uniform("Transform");
         m_viewUniform = m_draw.uniform("View");
+        m_orientationUniform = m_draw.uniform("Orientation");
         m_projectionUniform = m_draw.uniform("Projection");
-        m_scaleUniform = m_draw.uniform("Scale");
-
         m_drawInitialized = true;
     }
 
@@ -169,7 +163,7 @@ void VoxelRenderable::schedule(const Pose3D & pose) const
     {
         if (!chunk.chunk) continue;
 
-        if (chunk.chunk->updateVertices(m_scale)) verticesChanged = true;
+        if (chunk.chunk->updateVertices()) verticesChanged = true;
 
         numVertices += chunk.chunk->vertices().count();
     }
@@ -208,8 +202,8 @@ void VoxelRenderable::schedule(const Pose3D & pose) const
 
         m_viewUniform.set(camera.view());
         m_projectionUniform.set(camera.projection());
-        m_transformUniform.set(pose.matrix());
-        m_scaleUniform.set(m_scale);
+        m_transformUniform.set(transform.matrix());
+        m_orientationUniform.set(glm::mat4_cast(transform.orientation()));
 
         m_draw.render();
     }

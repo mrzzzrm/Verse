@@ -3,6 +3,8 @@ set(target GameLib)
 add_library(${target}
     STATIC
 
+    Debug/DebugAttachmentSystem.cpp
+    Debug/DebugAttachmentSystem.h
     Debug/DebugOverlay.cpp
     Debug/DebugOverlay.h
 
@@ -81,6 +83,8 @@ add_library(${target}
     Resource/VoxelObjectPrototype.h
     Resource/VersePrototypeManager.cpp
     Resource/VersePrototypeManager.h
+    Resource/VersePrototypeSystem.cpp
+    Resource/VersePrototypeSystem.h
 
     Vfx/Emitter.cpp
     Vfx/Emitter.h

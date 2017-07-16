@@ -10,14 +10,12 @@ class VersePrototypeSystem:
     public System<VersePrototypeSystem>
 {
 public:
-    VersePrototypeSystem(World & world):
-        Base(world),
-        m_manager(std::make_shared<VersePrototypeManager>(world, GameDataPath("Data/Prototypes/list.json")))
-    {
-        m_manager->reloadList();
-    }
+    VersePrototypeSystem(World & world);
 
     const std::shared_ptr<VersePrototypeManager> & manager() const { return m_manager; }
+
+    void onCreated() override;
+    void onRemoved() override;
 
 private:
     std::shared_ptr<VersePrototypeManager> m_manager;

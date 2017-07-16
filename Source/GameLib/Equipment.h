@@ -38,6 +38,8 @@ struct EquipmentUpdateContext
 class Equipment final:
     public Component<Equipment>
 {
+    DELIBERATION_COMPONENT_NAME("Equipment")
+
 public:
     const std::shared_ptr<VfxManager> & vfxManager() const { return m_vfxManager; }
     void setVfxManager(const std::shared_ptr<VfxManager> & vfxManager) { m_vfxManager = vfxManager; }
@@ -45,6 +47,7 @@ public:
     const std::vector<std::shared_ptr<Hardpoint>> & hardpoints() const;
     const std::vector<std::shared_ptr<EngineSlot>> & engineSlots() const;
     const std::vector<std::shared_ptr<DockingPoint>> & dockingPoints() const { return m_dockingPoints; }
+    const std::vector<std::shared_ptr<Attachment>> & attachments() const { return m_attachments; }
 
     /**
      * @return Bullet speed to be used for predictive aiming
@@ -76,6 +79,7 @@ private:
     std::vector<std::shared_ptr<EngineSlot>>    m_engineSlots;
     std::vector<std::shared_ptr<DockingPoint>>  m_dockingPoints;
 
+    std::vector<std::shared_ptr<Attachment>>    m_attachments;
     std::unordered_map<glm::uvec3, std::shared_ptr<Attachment>>
                                                 m_attachmentByVoxel;
 };

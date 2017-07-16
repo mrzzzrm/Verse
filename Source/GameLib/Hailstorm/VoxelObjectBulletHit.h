@@ -2,16 +2,18 @@
 
 #include <memory>
 
+#include <Deliberation/ECS/Entity.h>
+
 #include "GameLib.h"
 
 class VoxelObject;
 
 struct VoxelObjectBulletHit
 {
-    VoxelObjectBulletHit(std::shared_ptr<VoxelObject> object, const glm::uvec3 & voxel):
-        object(object), voxel(voxel)
+    VoxelObjectBulletHit(const Entity & entity, const glm::uvec3 & voxel):
+        entity(entity), voxel(voxel)
     {}
 
-    std::shared_ptr<VoxelObject>    object;
-    glm::uvec3                      voxel;
+    Entity      entity;
+    glm::uvec3  voxel;
 };

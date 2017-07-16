@@ -16,6 +16,7 @@
 #include <Deliberation/Scene/Debug/DebugGroundPlaneRenderer.h>
 #include <Deliberation/Scene/Debug/DebugGeometryRenderer.h>
 #include <Deliberation/Scene/Debug/DebugGeometryNode.h>
+#include <Deliberation/Scene/Pipeline/RenderSystem.h>
 #include <Deliberation/Scene/UVSphere.h>
 
 #include <Deliberation/Deliberation.h>
@@ -58,10 +59,20 @@ public:
     void onApplicationStartup() override {
         auto & prototypeManager = m_world.systemRef<VersePrototypeSystem>().manager();
 
-        m_level = std::make_shared<Level>(prototypeManager, GameDataPath("Data/Levels/level0.json"));
+        m_level = std::make_shared<Level>(prototypeManager, GameDataPath("Data/Levels/DebugAttachments.json"));
         m_level->reload();
 
         prototypeManager->updateEntities();
+
+        auto debugGroundPlaneRenderer = m_world.systemRef<RenderSystem>().renderManager().addRenderer<DebugGroundPlaneRenderer>();
+        debugGroundPlaneRenderer->setQuadSize(1.0f);
+        debugGroundPlaneRenderer->setSize(500.0f);
+        debugGroundPlaneRenderer->setRadius(250.0f);
+        debugGroundPlaneRenderer->setRenderToGBuffer(true);
+
+        auto debugNode = m_world.system<RenderSystem>()->debugGeometryRenderer()->addNode();
+        auto & pose = debugNode->addPose(Pose3D::atPosition({0.0f, 0.0f, 0.0f}));
+        pose.setTransform(Transform3D::withScale(10.0f));
     }
 
 private:

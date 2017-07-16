@@ -28,7 +28,7 @@ struct VoxelObjectModification
     }
 
     VoxelObjectModification(const Entity & entity):
-        object(object)
+        entity(entity)
     {
     }
 

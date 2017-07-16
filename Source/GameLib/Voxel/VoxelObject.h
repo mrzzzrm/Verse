@@ -31,17 +31,16 @@ struct VoxelObjectID
 class VoxelObject final:
     public Component<VoxelObject>
 {
+DELIBERATION_COMPONENT_NAME("VoxelObject")
 public:
     VoxelWorld & voxelWorld() const { Assert((bool)m_voxelData, ""); return m_voxelData->voxelWorld(); }
     const VoxelObjectID & id() const;
-    const Pose3D & pose() const;
+    const Transform3D & transform() const { return m_transform; }
     const std::shared_ptr<VoxelObjectVoxelData> & data() const { return m_voxelData; }
-    float scale() const;
 
-    void setVoxelData(const std::shared_ptr<VoxelObjectVoxelData> & voxelData) { m_voxelData = voxelData; }
+    void setVoxelData(const std::shared_ptr<VoxelObjectVoxelData> & voxelData);
     void setId(VoxelObjectID id);
-    void setPose(const Pose3D & pose);
-    void setScale(float scale);
+    void setTransform(const Transform3D & transform) { m_transform = transform; }
     void setInvincible(bool invincible) { m_invincible = invincible; }
     void setCrucialVoxel(const boost::optional<glm::uvec3> & crucialVoxel);
 
@@ -56,12 +55,12 @@ public:
     std::vector<glm::uvec3> processImpact(const glm::uvec3 & voxel, float intensity, float radius);
     void performSplitDetection() { m_voxelData->splitDetector().performSplitDetection(); }
 
-    void schedule();
+    void render();
 
 private:
     std::shared_ptr<VoxelObjectVoxelData>   m_voxelData;
     VoxelObjectID                           m_id;
-    Pose3D                                  m_pose;
+    Transform3D                             m_transform;
     bool                                    m_invincible = false;
     boost::optional<glm::uvec3>             m_crucialVoxel;
 };

@@ -4,6 +4,8 @@
 
 #include <Deliberation/Core/IntTypes.h>
 
+#include "GameLib.h"
+
 struct Voxel
 {
     Voxel() = default;

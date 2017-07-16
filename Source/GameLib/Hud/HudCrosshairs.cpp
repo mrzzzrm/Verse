@@ -118,13 +118,11 @@ void HudCrosshairs::onMouseButtonPressed(MouseButtonEvent & event)
 
     auto & equipment = player.component<Equipment>();
     const auto & body = *player.component<RigidBodyComponent>().value();
-    const auto & voxelObject = player.component<VoxelObject>();
 
     const auto & targetPosition = targetBody.transform().position();
     const auto & targetVelocity = targetBody.linearVelocity();
 
-    Transform3D equipmentTransform = body.transform();
-    equipmentTransform.setScale(voxelObject.scale());
+    const auto & equipmentTransform = player.component<Transform3DComponent>().value();
 
     equipment.setFireRequestTargetForAllHardpoints(
         equipmentTransform,

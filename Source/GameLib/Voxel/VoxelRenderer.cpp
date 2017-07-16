@@ -30,5 +30,5 @@ void VoxelRenderer::removeVoxelObject(std::shared_ptr<VoxelObject> voxelObject)
 
 void VoxelRenderer::render()
 {
-    for (auto & object : m_objects) object->schedule();
+    for (auto & object : m_objects) object->render();
 }

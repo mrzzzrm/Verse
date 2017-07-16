@@ -22,9 +22,9 @@ Pose3D Attachment::worldPose() const
 
     const auto & transform = m_entity.component<Transform3DComponent>().value();
     Pose3D pose = m_desc.pose;
-    pose.setPosition(pose.position() + glm::vec3(m_desc.voxel));
+    pose.setPosition(pose.position() + glm::vec3(m_desc.voxel) + glm::vec3(0.5f));
 
-    return Pose3D::fromTransform(transform).poseLocalToWorld(pose);
+    return Pose3D::fromTransformedPose(transform, pose);
 }
 
 size_t Attachment::index() const

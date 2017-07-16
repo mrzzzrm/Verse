@@ -12,6 +12,8 @@ class AbstractBehaviour;
 class BehaviourComponent:
     public Component<BehaviourComponent>
 {
+    DELIBERATION_COMPONENT_NAME("Behaviour")
+
 public:
     const std::vector<std::shared_ptr<AbstractBehaviour>> & behaviours() const { return m_behaviours; }
 

@@ -19,6 +19,7 @@ class RigidBody;
 class  PlayerFlightControl final:
     public Component<PlayerFlightControl>
 {
+    DELIBERATION_COMPONENT_NAME("PlayerFlightControl")
 public:
     const glm::vec3 & linearThrust() const;
     const glm::vec3 & angularThrust() const;

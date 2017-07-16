@@ -15,6 +15,7 @@ class NpcFlightControl;
 class NpcController final:
     public Component<NpcController>
 {
+DELIBERATION_COMPONENT_NAME("NpcController")
 public:
     NpcSteering & steering();
     const NpcSteering & steering() const;

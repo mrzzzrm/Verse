@@ -4,4 +4,6 @@
 
 class HudProxy:
     public Component<HudProxy>
-{};
+{
+    DELIBERATION_COMPONENT_NAME("HUD")
+};

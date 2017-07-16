@@ -79,6 +79,8 @@ void VfxSystem::onEvent(const VoxelObjectModification & modification)
 
     for (const auto & voxel : modification.removals)
     {
+        std::cout << "Smoke for voxel " << voxel << std::endl;
+
         const auto position = transform.pointLocalToWorld(glm::vec3(voxel));
 
         auto emitterInstance = std::make_shared<EmitterInstance>(m_smokeEmitter);
@@ -90,7 +92,9 @@ void VfxSystem::onEvent(const VoxelObjectModification & modification)
 
 void VfxSystem::onEvent(const VoxelObjectBulletHit & hit)
 {
-    const auto position = hit.object->pose().pointLocalToWorld(glm::vec3(hit.voxel) * hit.object->scale());
+    const auto & transform = hit.entity.component<Transform3DComponent>().value();
+
+    const auto position = transform.pointLocalToWorld(glm::vec3(hit.voxel));
 
     auto emitterInstance = std::make_shared<EmitterInstance>(m_smokeEmitter);
     emitterInstance->setBasePose(Pose3D::atPosition(position));

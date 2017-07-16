@@ -17,7 +17,9 @@
 
 class VoxelRigidBodyComponent:
     public Component<VoxelRigidBodyComponent>
-{};
+{
+    DELIBERATION_COMPONENT_NAME("VoxelRigidBody")
+};
 
 class VoxelRigidBodyPrototype final:
     public ComponentPrototype<VoxelRigidBodyComponent>

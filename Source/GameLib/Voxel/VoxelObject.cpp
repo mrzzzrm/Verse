@@ -10,29 +10,14 @@ const VoxelObjectID & VoxelObject::id() const
     return m_id;
 }
 
-const Pose3D & VoxelObject::pose() const
+void VoxelObject::setVoxelData(const std::shared_ptr<VoxelObjectVoxelData> & voxelData)
 {
-    return m_pose;
-};
-
-float VoxelObject::scale() const
-{
-    return m_voxelData->scale();
+    m_voxelData = voxelData;
 }
 
 void VoxelObject::setId(VoxelObjectID id)
 {
     m_id = id;
-}
-
-void VoxelObject::setPose(const Pose3D & pose)
-{
-    m_pose = pose;
-}
-
-void VoxelObject::setScale(float scale)
-{
-    m_voxelData->setScale(scale);
 }
 
 void VoxelObject::setCrucialVoxel(const boost::optional<glm::uvec3> & crucialVoxel)
@@ -50,7 +35,7 @@ void VoxelObject::addVoxelsRaw(const std::vector<Voxel> & voxels)
 {
     m_voxelData->addVoxelsRaw(voxels);
 
-    VoxelObjectModification modification(shared_from_this());
+    VoxelObjectModification modification(((World*)world())->entityById(entityId()));
     modification.additions = voxels;
 
     publishEvent(modification);
@@ -60,7 +45,7 @@ void VoxelObject::removeVoxelsRaw(const std::vector<glm::uvec3> & voxels)
 {
     m_voxelData->removeVoxelsRaw(voxels);
 
-    VoxelObjectModification modification(shared_from_this());
+    VoxelObjectModification modification(((World*)world())->entityById(entityId()));
     modification.removals = voxels;
 
     if (m_crucialVoxel)
@@ -82,7 +67,7 @@ std::vector<glm::uvec3> VoxelObject::processImpact(const glm::uvec3 & voxel, flo
     return VoxelImpactSystem().process(*this, voxel, intensity, radius);
 }
 
-void VoxelObject::schedule()
+void VoxelObject::render()
 {
-    m_voxelData->renderTree().schedule(m_pose);
+    m_voxelData->renderTree().render(m_transform);
 }

@@ -113,7 +113,7 @@ std::shared_ptr<VoxelRenderChunk> VoxelRenderChunk::clone()
     return std::make_shared<VoxelRenderChunk>(*this);
 }
 
-bool VoxelRenderChunk::updateVertices(float scale)
+bool VoxelRenderChunk::updateVertices()
 {
     if (m_voxelCount == 0 || m_numVisibleVoxels == 0)
     {

@@ -152,9 +152,7 @@ void PlayerSystem::onMouseButtonDown(MouseStateEvent & event)
         auto & body = *m_player.component<RigidBodyComponent>().value();
 
         auto & equipment = m_player.component<Equipment>();
-        Transform3D equipmentTransform = body.transform();
-
-        equipmentTransform.setScale(m_player.component<VoxelObject>().scale());
+        const auto & equipmentTransform = m_player.component<Transform3DComponent>().value();
 
         equipment.setFireRequestTargetForAllHardpoints(
             equipmentTransform,
@@ -166,6 +164,10 @@ void PlayerSystem::onMouseButtonDown(MouseStateEvent & event)
 
 void PlayerSystem::onMouseMotion(MouseMotionEvent &event)
 {
+    auto & renderManager = world().systemRef<RenderSystem>().renderManager();
+    AimHelper aimHelper(renderManager.mainCamera(), m_physicsWorld);
+    aimHelper.getTarget(m_input.mousePosition());
+
     if (m_cameraMode == CameraMode::FreeFlight)
     {
         m_navigator.onMouseMotion(event);

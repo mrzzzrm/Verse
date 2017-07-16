@@ -8,10 +8,14 @@
 #include <Deliberation/Draw/Framebuffer.h>
 
 #include <Deliberation/ECS/Systems/ApplicationSystem.h>
+#include <Deliberation/ECS/ComponentPrototype.h>
 
 #include <Deliberation/ImGui/ImGuiSystem.h>
+#include <Resource/VersePrototypeSystem.h>
 
 #include "HailstormManager.h"
+#include "VersePrototypeManager.h"
+#include "VersePrototypeSystem.h"
 
 DebugOverlay::DebugOverlay(World & world, DrawContext & context):
     Base(world),
@@ -106,6 +110,77 @@ void DebugOverlay::onFrameUpdate(float seconds)
                 {
                     ImGui::Text("No entity selected");
                 }
+
+                ImGui::NextColumn();
+                ImGui::Columns(1);
+            }
+
+            if (ImGui::CollapsingHeader("Systems"))
+            {
+                ImGui::Columns(2, "System columns");
+
+                for (const auto & pair : world().systems())
+                {
+                    auto & system = pair.second;
+                    if (!system) continue;
+                    if (ImGui::Selectable(system->name().c_str(), m_selectedSystem == pair.first))
+                    {
+                        m_selectedSystem = pair.first;
+                    }
+                }
+                ImGui::NextColumn();
+
+                if (world().systems().contains(m_selectedSystem)) {
+                    world().systems().at(m_selectedSystem)->renderImGui();
+                }
+
+                ImGui::NextColumn();
+                ImGui::Columns(1);
+            }
+
+            if (ImGui::CollapsingHeader("Prototypes"))
+            {
+                ImGui::Columns(3, "Prototype columns");
+
+                auto & prototypeManager = world().systemRef<VersePrototypeSystem>().manager();
+
+                for (auto & pair : prototypeManager->entityPrototypeByKey())
+                {
+                    if (ImGui::Selectable(pair.first.c_str(), m_selectedEntityPrototype == pair.first))
+                    {
+                        m_selectedEntityPrototype = pair.first;
+                    }
+                }
+                ImGui::NextColumn();
+
+                auto entityPrototypeIter = prototypeManager->entityPrototypeByKey().find(m_selectedEntityPrototype);
+                if (entityPrototypeIter != prototypeManager->entityPrototypeByKey().end())
+                {
+                    auto & entityPrototype = entityPrototypeIter->second;
+                    for (const auto & componentPrototype : entityPrototype->componentPrototypes())
+                    {
+                        if (ImGui::Selectable(componentPrototype->name().c_str(), m_selectedComponentPrototype == componentPrototype->name()))
+                        {
+                            m_selectedComponentPrototype = componentPrototype->name();
+                        }
+                    }
+                }
+
+                ImGui::NextColumn();
+                if (entityPrototypeIter != prototypeManager->entityPrototypeByKey().end())
+                {
+                    auto & entityPrototype = entityPrototypeIter->second;
+                    for (const auto & componentPrototype : entityPrototype->componentPrototypes())
+                    {
+                        if (componentPrototype->name() == m_selectedComponentPrototype)
+                        {
+                            ImGui::TextWrapped("%s", componentPrototype->json().dump().c_str());
+                        }
+                    }
+                }
+
+                ImGui::NextColumn();
+                ImGui::Columns(1);
             }
 
             ImGui::PopStyleVar();

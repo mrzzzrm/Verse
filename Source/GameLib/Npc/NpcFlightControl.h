@@ -19,6 +19,7 @@ class RigidBody;
 class NpcFlightControl final:
     public Component<NpcFlightControl>
 {
+DELIBERATION_COMPONENT_NAME("NpcFlightControl")
 public:
     const glm::vec3 & localLinearAcceleration() const;
     const glm::vec3 & localAngularAccelertion() const;

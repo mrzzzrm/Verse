@@ -106,3 +106,36 @@ TEST_F(VoxelShapeTreeTest, RayCast)
     ASSERT_TRUE(shape3x2x1->lineCast({}, Ray3D(glm::vec3(3.5f, 0.5f, 0.5f), glm::vec3(-30.0f, 0.0f, 0.0f)), voxel));
     ASSERT_EQ(voxel, glm::uvec3(2, 0, 0));
 }
+
+TEST_F(VoxelShapeTreeTest, RayCastWithScale)
+{
+    glm::uvec3 voxel;
+
+    Transform3D transform;
+    transform.setScale(2.0f);
+
+    EXPECT_FALSE(shape1x1x1->lineCast(transform, Ray3D(glm::vec3(-0.6f, 0.5f, -0.5f), glm::vec3(0.0f, 0.0f, 10.0f)), voxel));
+    EXPECT_FALSE(shape1x1x1->lineCast(transform, Ray3D(glm::vec3(2.6f, 0.5f, -0.5f), glm::vec3(0.0f, 0.0f, 10.0f)), voxel));
+    EXPECT_TRUE(shape1x1x1->lineCast(transform, Ray3D(glm::vec3(1.5f, 0.5f, -0.5f), glm::vec3(0.0f, 0.0f, 10.0f)), voxel));
+    EXPECT_EQ(voxel, glm::uvec3(0, 0, 0));
+
+    EXPECT_FALSE(shape2x1x1->lineCast(transform, Ray3D(glm::vec3(-0.6f, 0.5f, -0.1f), glm::vec3(0.0f, 0.0f, 10.0f)), voxel));
+    EXPECT_TRUE(shape2x1x1->lineCast(transform, Ray3D(glm::vec3(1.0f, 1.0f, -0.1f), glm::vec3(0.0f, 0.0f, 10.0f)), voxel));
+    EXPECT_EQ(voxel, glm::uvec3(0, 0, 0));
+    EXPECT_TRUE(shape2x1x1->lineCast(transform, Ray3D(glm::vec3(1.5f, 0.5f, -0.1f), glm::vec3(0.0f, 0.0f, 10.0f)), voxel));
+    EXPECT_EQ(voxel, glm::uvec3(0, 0, 0));
+    EXPECT_TRUE(shape2x1x1->lineCast(transform, Ray3D(glm::vec3(3.0f, 0.5f, -0.1f), glm::vec3(0.0f, 0.0f, 10.0f)), voxel));
+    EXPECT_EQ(voxel, glm::uvec3(1, 0, 0));
+
+    ASSERT_FALSE(shape3x2x1->lineCast(transform, Ray3D(glm::vec3(-0.8f, 1.0f, -0.1f), glm::vec3(0.0f, 0.0f, 10.0f)), voxel));
+    ASSERT_TRUE(shape3x2x1->lineCast(transform, Ray3D(glm::vec3(1.0f, 1.0f, -0.1f), glm::vec3(0.0f, 0.0f, 10.0f)), voxel));
+    ASSERT_EQ(voxel, glm::uvec3(0, 0, 0));
+    ASSERT_TRUE(shape3x2x1->lineCast(transform, Ray3D(glm::vec3(3.0f, 1.0f, -0.1f), glm::vec3(0.0f, 0.0f, 10.0f)), voxel));
+    ASSERT_EQ(voxel, glm::uvec3(1, 0, 0));
+    ASSERT_TRUE(shape3x2x1->lineCast(transform, Ray3D(glm::vec3(1.0f, 3.0f, -0.1f), glm::vec3(0.0f, 0.0f, 10.0f)), voxel));
+    ASSERT_EQ(voxel, glm::uvec3(0, 1, 0));
+    ASSERT_FALSE(shape3x2x1->lineCast(transform, Ray3D(glm::vec3(3.0f, 3.0f, -0.1f), glm::vec3(0.0f, 0.0f, 10.0f)), voxel));
+
+    ASSERT_TRUE(shape3x2x1->lineCast(transform, Ray3D(glm::vec3(7.0f, 1.0f, 0.5f), glm::vec3(-30.0f, 0.0f, 0.0f)), voxel));
+    ASSERT_EQ(voxel, glm::uvec3(2, 0, 0));
+}

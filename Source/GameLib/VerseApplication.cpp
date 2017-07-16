@@ -12,6 +12,7 @@
 #include <Voxel/VoxelPhysicsSystem.h>
 
 #include "BehaviourSystem.h"
+#include "DebugAttachmentSystem.h"
 #include "VersePrototypeManager.h"
 #include "VersePrototypeSystem.h"
 #include "EquipmentSystem.h"
@@ -79,6 +80,7 @@ void VerseApplication::onStartup()
         m_world.addSystem<BehaviourSystem>();
         m_world.addSystem<VersePrototypeSystem>();
         m_world.addSystem<VoxelPhysicsSystem>();
+        m_world.addSystem<DebugAttachmentSystem>();
 
         auto & renderManager = m_world.systemRef<RenderSystem>().renderManager();
         renderManager.addRenderer<AmbientLightRenderer>();
