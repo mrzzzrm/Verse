@@ -1,6 +1,6 @@
 {
     "Components": {
-        "Transform3D": { "Scale": 2 },
+        "Transform3D": { "Scale": 20 },
         "VoxelObject": { "VoxelCluster": "Factory2" },
         "VoxelRigidBody": {},
         "Equipment": {

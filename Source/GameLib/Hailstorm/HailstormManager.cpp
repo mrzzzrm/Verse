@@ -36,11 +36,6 @@ void HailstormManager::onGameUpdate(float seconds)
     m_vfxManager.update(seconds);
     m_hailstormPhysicsWorld.update(seconds);
 
-    for (const auto & modification : m_hailstormPhysicsWorld.voxelObjectModifications())
-    {
-        world().events()->publishEvent(modification);
-    }
-
     for (const auto & hit : m_hailstormPhysicsWorld.voxelObjectBulletHits())
     {
         world().events()->publishEvent(hit);

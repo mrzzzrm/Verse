@@ -28,6 +28,16 @@ void VoxelClusterSplitSystem::onEntityGameUpdate(Entity & entity, float seconds)
 
 }
 
+void VoxelClusterSplitSystem::onEvent(const VoxelObjectModification & modification)
+{
+    m_modifiedVoxelObjects.insert(modification.entity.component<VoxelObject>().shared_from_this());
+}
+
+void VoxelClusterSplitSystem::onCreated()
+{
+    subscribeEvent<VoxelObjectModification>();
+}
+
 void VoxelClusterSplitSystem::onGameUpdate(float seconds)
 {
     auto & voxelWorld = world().systemRef<VoxelWorld>();
@@ -122,7 +132,7 @@ void VoxelClusterSplitSystem::onGameUpdate(float seconds)
 
             splitEntity.addComponent<RigidBodyComponent>(splitBody);
 
-            originalVoxelObject.removeVoxelsRaw(split.voxels);
+            originalVoxelObject.removeVoxelsRaw(split.voxels, VoxelRemovalReason::Split);
         }
     }
     m_modifiedVoxelObjects.clear();

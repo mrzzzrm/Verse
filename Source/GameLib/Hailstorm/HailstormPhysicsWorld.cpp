@@ -23,11 +23,6 @@ const std::vector<HailstormBulletId> & HailstormPhysicsWorld::destroyedBullets()
     return m_destroyedBullets;
 }
 
-const std::vector<VoxelObjectModification> & HailstormPhysicsWorld::voxelObjectModifications() const
-{
-    return m_voxelObjectModifications;
-}
-
 const std::vector<VoxelObjectBulletHit> & HailstormPhysicsWorld::voxelObjectBulletHits() const
 {
     return m_voxelObjectBulletHits;
@@ -42,7 +37,6 @@ void HailstormPhysicsWorld::addBullet(const HailstormBullet & bullet)
 void HailstormPhysicsWorld::update(float seconds)
 {
     m_destroyedBullets.clear();
-    m_voxelObjectModifications.clear();
     m_voxelObjectBulletHits.clear();
 
     auto currentMillis = CurrentMillis();
@@ -75,15 +69,7 @@ void HailstormPhysicsWorld::update(float seconds)
                 }
 
                 auto & voxelObject = entity.component<VoxelObject>();
-                auto voxels = voxelObject.processImpact(voxelClusterIntersection.voxel, 100, 2);
-
-                if (!voxels.empty())
-                {
-                    VoxelObjectModification modification(entity);
-                    modification.removals = std::move(voxels);
-
-                    m_voxelObjectModifications.emplace_back(std::move(modification));
-                }
+                voxelObject.processImpact(voxelClusterIntersection.voxel, 100, 2);
 
                 m_voxelObjectBulletHits.emplace_back(entity, voxelClusterIntersection.voxel);
 

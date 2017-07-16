@@ -6,6 +6,7 @@
 #include <Deliberation/ECS/System.h>
 
 #include "GameLib.h"
+#include "VoxelObjectModification.h"
 
 class VoxelObject;
 
@@ -15,7 +16,9 @@ class VoxelClusterSplitSystem:
 public:
     VoxelClusterSplitSystem(World & world);
 
-    void onVoxelObjectModified(const std::shared_ptr<VoxelObject> & object) { m_modifiedVoxelObjects.insert(object); }
+    void onEvent(const VoxelObjectModification & modification);
+
+    void onCreated() override;
 
 protected:
     void onEntityGameUpdate(Entity & entity, float seconds) override;

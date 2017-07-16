@@ -77,10 +77,8 @@ void VfxSystem::onEvent(const VoxelObjectModification & modification)
 {
     auto & transform = modification.entity.component<Transform3DComponent>().value();
 
-    for (const auto & voxel : modification.removals)
+    for (const auto & voxel : modification.destructions)
     {
-        std::cout << "Smoke for voxel " << voxel << std::endl;
-
         const auto position = transform.pointLocalToWorld(glm::vec3(voxel));
 
         auto emitterInstance = std::make_shared<EmitterInstance>(m_smokeEmitter);

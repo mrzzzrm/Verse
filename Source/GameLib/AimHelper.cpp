@@ -40,8 +40,6 @@ AimHelperResult AimHelper::getTarget(const glm::vec2 & mouse)
 
             auto & transform = intersection.body->entity().component<Transform3DComponent>().value();
 
-            std::cout << "Aiming at voxel " << voxelClusterIntersection.voxel << std::endl;
-
             result.pointOfImpact = transform.pointLocalToWorld(glm::vec3(voxelClusterIntersection.voxel));
             result.hit = true;
             result.body = intersection.body;

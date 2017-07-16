@@ -13,6 +13,7 @@
 #include "GameLib.h"
 #include "VoxelDefines.h"
 #include "VoxelObjectVoxelData.h"
+#include "VoxelObjectModification.h"
 
 namespace deliberation
 {
@@ -50,9 +51,9 @@ public:
      * Perform no checks whether the voxels already exist or whether the cells are empty
      */
     void addVoxelsRaw(const std::vector<Voxel> & voxels);
-    void removeVoxelsRaw(const std::vector<glm::uvec3> & voxels);
+    void removeVoxelsRaw(const std::vector<glm::uvec3> & voxels, VoxelRemovalReason reason);
 
-    std::vector<glm::uvec3> processImpact(const glm::uvec3 & voxel, float intensity, float radius);
+    void processImpact(const glm::uvec3 & voxel, float intensity, float radius);
     void performSplitDetection() { m_voxelData->splitDetector().performSplitDetection(); }
 
     void render();

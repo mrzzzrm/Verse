@@ -41,12 +41,13 @@ void VoxelObject::addVoxelsRaw(const std::vector<Voxel> & voxels)
     publishEvent(modification);
 }
 
-void VoxelObject::removeVoxelsRaw(const std::vector<glm::uvec3> & voxels)
+void VoxelObject::removeVoxelsRaw(const std::vector<glm::uvec3> & voxels, VoxelRemovalReason reason)
 {
     m_voxelData->removeVoxelsRaw(voxels);
 
     VoxelObjectModification modification(((World*)world())->entityById(entityId()));
-    modification.removals = voxels;
+    if (reason == VoxelRemovalReason::Destruction) modification.destructions = voxels;
+    else modification.splits = voxels;
 
     if (m_crucialVoxel)
     {
@@ -60,11 +61,11 @@ void VoxelObject::removeVoxelsRaw(const std::vector<glm::uvec3> & voxels)
     publishEvent(modification);
 }
 
-std::vector<glm::uvec3> VoxelObject::processImpact(const glm::uvec3 & voxel, float intensity, float radius)
+void VoxelObject::processImpact(const glm::uvec3 & voxel, float intensity, float radius)
 {
-    if (m_invincible) return {};
+    if (m_invincible) return;
 
-    return VoxelImpactSystem().process(*this, voxel, intensity, radius);
+    VoxelImpactSystem().process(*this, voxel, intensity, radius);
 }
 
 void VoxelObject::render()

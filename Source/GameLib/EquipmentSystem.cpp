@@ -22,13 +22,16 @@ void EquipmentSystem::onEvent(const VoxelObjectModification & voxelObjectModific
 
     auto & equipment = entity.component<Equipment>();
 
-    for (const auto & voxel : voxelObjectModification.removals)
+    auto forEachRemoval = [&] (auto & voxel)
     {
         auto it = equipment.m_attachmentByVoxel.find(voxel);
-        if (it == equipment.m_attachmentByVoxel.end()) continue;
+        if (it == equipment.m_attachmentByVoxel.end()) return;
 
         it->second->setEnabled(false);
-    }
+    };
+
+    for (const auto & voxel : voxelObjectModification.destructions) forEachRemoval(voxel);
+    for (const auto & voxel : voxelObjectModification.splits) forEachRemoval(voxel);
 }
 
 void EquipmentSystem::onCreated()

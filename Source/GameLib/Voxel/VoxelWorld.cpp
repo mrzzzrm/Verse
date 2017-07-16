@@ -51,11 +51,6 @@ const Texture & VoxelWorld::envMap() const
     return m_envMap;
 }
 
-void VoxelWorld::addVoxelObjectModification(VoxelObjectModification && voxelObjectModification)
-{
-    m_objectModifications.emplace_back(std::move(voxelObjectModification));
-}
-
 void VoxelWorld::onCrucialVoxelDestroyed(VoxelObject & voxelObject)
 {
     auto originalEntity = world().entityByIndex(voxelObject.entityIndex());
@@ -111,19 +106,5 @@ void VoxelWorld::onEntityGameUpdate(Entity & entity, float seconds)
 
 void VoxelWorld::onGameUpdate(float seconds)
 {
-    /**
-     * Process VoxelObjectModifications
-     */
-    auto & splitSystem = world().systemRef<VoxelClusterSplitSystem>();
-    for (auto & modification : m_objectModifications)
-    {
-        auto & voxelObject = modification.entity.component<VoxelObject>();
-        splitSystem.onVoxelObjectModified(voxelObject.shared_from_this());
-        voxelObject.addVoxelsRaw(modification.additions);
-        voxelObject.removeVoxelsRaw(modification.removals);
-    }
-    m_objectModifications.clear();
-
-
 
 }

@@ -42,8 +42,6 @@ public:
     const Program & program() const;
     const Texture & envMap() const;
 
-    void addVoxelObjectModification(VoxelObjectModification && voxelObjectModification);
-
     void onCrucialVoxelDestroyed(VoxelObject & voxelObject);
 
 protected:
@@ -59,6 +57,4 @@ private:
     Texture                                     m_envMap;
     VoxelClusterMarchingCubesTriangulation      m_marchingCubesTriangulation;
     Program                                     m_program;
-
-    std::vector<VoxelObjectModification>        m_objectModifications;
 };
