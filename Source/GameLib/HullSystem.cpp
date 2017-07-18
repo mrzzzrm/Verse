@@ -2,6 +2,7 @@
 
 #include "HullComponent.h"
 #include "VoxelObjectBulletHit.h"
+#include "VoxelObject.h"
 
 HullSystem::HullSystem(World & world)
     : Base(world, ComponentFilter::requires<VoxelObject, HullComponent>())
@@ -12,6 +13,8 @@ void HullSystem::onCreated() { subscribeEvent<VoxelObjectBulletHit>(); }
 
 void HullSystem::onEvent(const VoxelObjectBulletHit & hit)
 {
+    if (!hit.entity.hasComponent<HullComponent>()) return;
+
     auto &     hull = hit.entity.component<HullComponent>();
     const auto prevHealth = hull.health();
 
@@ -19,6 +22,7 @@ void HullSystem::onEvent(const VoxelObjectBulletHit & hit)
 
     if (prevHealth != 0.0f && hull.health() == 0)
     {
-        hit.entity.scheduleRemoval();
+        auto entity = hit.entity;
+        entity.scheduleRemoval();
     }
 }

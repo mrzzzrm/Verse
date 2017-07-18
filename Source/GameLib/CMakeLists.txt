@@ -191,6 +191,8 @@ add_library(${target}
     FlightControlConfig.h
     Hardpoint.cpp
     Hardpoint.h
+    HullSystem.cpp
+    HullSystem.h
     Attachment.cpp
     Attachment.h
     GameLib.cpp

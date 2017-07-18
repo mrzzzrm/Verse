@@ -4,6 +4,8 @@
 
 #include <Deliberation/ECS/Entity.h>
 
+#include "GameLib.h"
+
 struct FactionChangeEvent
 {
     FactionChangeEvent(

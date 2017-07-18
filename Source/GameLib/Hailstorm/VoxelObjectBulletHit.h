@@ -2,6 +2,8 @@
 
 #include <memory>
 
+#include <glm/glm.hpp>
+
 #include <Deliberation/ECS/Entity.h>
 
 #include "GameLib.h"

@@ -3,6 +3,7 @@
 #include <Deliberation/ECS/System.h>
 
 #include "GameLib.h"
+#include "VoxelObjectBulletHit.h"
 
 class HullSystem : public System<HullSystem>
 {
