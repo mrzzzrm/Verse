@@ -20,14 +20,14 @@
 #include "VoxelWorld.h"
 
 VoxelRenderChunk::VoxelRenderChunk(
-    VoxelRenderable &           voxelRenderChunkTree,
+    VoxelRenderable &           renderable,
     const glm::uvec3 &          position,
     const glm::uvec3 &          size,
     const glm::uvec3 &          llfRender,
     const glm::uvec3 &          urbRender,
     const Optional<glm::vec3> & colorOverride)
     : m_cluster(size)
-    , m_renderable(voxelRenderChunkTree)
+    , m_renderable(renderable)
     , m_marchingCubes(
           m_renderable.voxelWorld().marchingCubesTriangulation(),
           m_cluster,

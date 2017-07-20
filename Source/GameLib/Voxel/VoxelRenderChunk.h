@@ -19,7 +19,7 @@ class VoxelRenderChunk final
 {
 public:
     VoxelRenderChunk(
-        VoxelRenderable &           voxelRenderChunkTree,
+        VoxelRenderable &           renderable,
         const glm::uvec3 &          position,
         const glm::uvec3 &          size,
         const glm::uvec3 &          llfRender,
