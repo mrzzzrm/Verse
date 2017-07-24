@@ -32,8 +32,8 @@
 #include "Hardpoint.h"
 #include "Player/PlayerFlightControl.h"
 #include "VerseApplication.h"
-#include "VersePrototypeManager.h"
-#include "VersePrototypeSystem.h"
+#include "VerseEntityPrototypeManager.h"
+#include "VerseEntityPrototypeSystem.h"
 #include "VfxRenderer.h"
 #include "VoxReader.h"
 #include "VoxelClusterContact.h"
@@ -53,7 +53,7 @@ public:
     void onApplicationStartup() override
     {
         auto & prototypeManager =
-            m_world.systemRef<VersePrototypeSystem>().manager();
+            m_world.systemRef<VerseEntityPrototypeSystem>().manager();
 
         m_level = std::make_shared<Level>(
             prototypeManager, GameDataPath("Data/Levels/level0.json"));

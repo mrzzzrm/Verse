@@ -9,7 +9,7 @@
 #include <Deliberation/ECS/Systems/SkyboxSystem.h>
 
 #include <Deliberation/ImGui/ImGuiSystem.h>
-#include <Voxel/VoxelPhysicsSystem.h>
+#include <Deliberation/Resource/PrototypeSystem.h>
 
 #include "BehaviourSystem.h"
 #include "CoriolisSystem.h"
@@ -21,10 +21,12 @@
 #include "NpcBehaviourSystem.h"
 #include "PlayerSystem.h"
 #include "ResourceManager.h"
-#include "VersePrototypeManager.h"
-#include "VersePrototypeSystem.h"
+#include "VerseEntityPrototypeManager.h"
+#include "VerseEntityPrototypeSystem.h"
 #include "VerseRenderManager.h"
 #include "VfxSystem.h"
+#include "VersePrototypeSystem.h"
+#include "VerseResourceManager.h"
 #include "VoxelClusterSplitSystem.h"
 #include "VoxelPhysicsSystem.h"
 
@@ -65,7 +67,7 @@ void VerseApplication::onStartup()
         m_world.addSystem<DebugPointLightSystem>(
             pointLightSystem->pointLightRenderer());
         m_world.addSystem<SkyboxSystem>(m_skyboxCubemap);
-        m_world.addSystem<ResourceManager>();
+        m_world.addSystem<VerseResourceManager>();
         m_physicsWorldSystem =
             m_world.addSystem<PhysicsWorldSystem>(m_physicsWorld);
         m_world.addSystem<VoxelClusterSplitSystem>();
@@ -82,10 +84,11 @@ void VerseApplication::onStartup()
         m_world.addSystem<ImGuiSystem>();
         m_world.addSystem<Hud>();
         m_world.addSystem<BehaviourSystem>();
-        m_world.addSystem<VersePrototypeSystem>();
+        m_world.addSystem<VerseEntityPrototypeSystem>();
         m_world.addSystem<VoxelPhysicsSystem>();
         m_world.addSystem<DebugAttachmentSystem>();
         m_world.addSystem<HullSystem>();
+        m_world.addSystem<VersePrototypeSystem>();
 
         auto & renderManager =
             m_world.systemRef<RenderSystem>().renderManager();

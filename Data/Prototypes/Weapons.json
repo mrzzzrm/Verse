@@ -1,0 +1,16 @@
+{
+  "WeaponA": {
+    "Bullet": "<GameDataPath>/Data/VoxelClusters/bullet0.vox",
+    "Lifetime": 600,
+    "Speed": 900,
+    "Frequency": 1.5,
+    "Damage": 150
+  },
+  "WeaponB": {
+    "Bullet": "<GameDataPath>/Data/VoxelClusters/bullet0.vox",
+    "Lifetime": 600,
+    "Speed": 900,
+    "Frequency": 2.5,
+    "Damage": 190
+  }
+}

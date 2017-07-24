@@ -4,7 +4,7 @@
 #include <Deliberation/ECS/World.h>
 
 #include "Equipment.h"
-#include "VersePrototypeSystem.h"
+#include "VerseEntityPrototypeSystem.h"
 
 void LaunchDefenseBehaviour::onBehaviourUpdate(float seconds)
 {
@@ -19,7 +19,7 @@ void LaunchDefenseBehaviour::onBehaviourUpdate(float seconds)
     auto launchPose = dockingPoint->worldPose();
 
     auto & prototypeManager =
-        m_entity.world().system<VersePrototypeSystem>()->manager();
+        m_entity.world().system<VerseEntityPrototypeSystem>()->manager();
 
     auto npcEntity = prototypeManager->createEntity(
         {"Drone", "Npc", "Pirate"},

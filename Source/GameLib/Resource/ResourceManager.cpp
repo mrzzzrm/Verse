@@ -16,6 +16,11 @@ ResourceManager::ResourceManager(World & world)
     : Base(world)
     , m_drawContext(world.systemRef<ApplicationSystem>().drawContext())
 {
+
+}
+
+void ResourceManager::registerBuildIns()
+{
     /**
      * Init base particle got nowhere else to put this right now
      */
@@ -47,17 +52,17 @@ ResourceManager::ResourceManager(World & world)
                 .load();
         const auto texture = m_drawContext.createTexture(textureBinary);
 
-        MeshData mesh(std::move(vertices), std::move(indicesBlob), {texture});
-        m_meshByResourceId.emplace(
-            (size_t)R::ParticleMesh, std::make_shared<MeshData>(mesh));
+        auto meshData = std::make_shared<MeshData>(std::move(vertices), std::move(indicesBlob), std::vector<Texture>{texture});
+
+        addResource<std::shared_ptr<MeshData>>("buildin:BaseParticle", std::move(meshData));
     }
 
     /**
      * Init bullet particle
      */
     {
-        auto mesh = std::make_shared<MeshData>(UVSphere(5, 5).generateMesh2());
-        m_meshByResourceId.emplace((size_t)R::BulletMesh, mesh);
+        auto meshData = std::make_shared<MeshData>(UVSphere(5, 5).generateMesh2());
+        addResource<std::shared_ptr<MeshData>>("buildin:Bullet", std::move(meshData));
     }
 
     /**
@@ -132,7 +137,7 @@ ResourceManager::ResourceManager(World & world)
             std::make_shared<MeshData>(mesh));
     }
 
-    auto & context = world.systemRef<ApplicationSystem>().drawContext();
+    auto & context = m_world.systemRef<ApplicationSystem>().drawContext();
 
     {
         auto program = m_drawContext.createProgram(
@@ -142,7 +147,7 @@ ResourceManager::ResourceManager(World & world)
     }
 }
 
-const MeshData & ResourceManager::mesh(ResourceId resourceId) const
+const MeshData & ResourceManager::mesh(::ResourceId resourceId) const
 {
     const auto iter = m_meshByResourceId.find((size_t)resourceId);
     Assert(
@@ -152,7 +157,7 @@ const MeshData & ResourceManager::mesh(ResourceId resourceId) const
     return *iter->second;
 }
 
-const Program & ResourceManager::program(ResourceId resourceId) const
+const Program & ResourceManager::program(::ResourceId resourceId) const
 {
     const auto iter = m_programByResourceId.find((size_t)resourceId);
     Assert(

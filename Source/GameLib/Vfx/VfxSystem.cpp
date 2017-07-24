@@ -23,6 +23,8 @@ VfxSystem::VfxSystem(World & world)
           world.systemRef<RenderSystem>().renderManager(),
           world.systemRef<ResourceManager>()))
 {
+    auto particleToken = world.systemRef<ResourceManager>().resourceToken<std::shared_ptr<MeshData>>("buildin:BaseParticle");
+
     {
         auto lifetime = std::make_shared<EmitterRandomLifetime>(0.4, 0.8f);
         auto placement = std::make_shared<EmitterFixedPlacement>();
@@ -36,7 +38,7 @@ VfxSystem::VfxSystem(World & world)
 
         m_blastEmitter = std::make_shared<Emitter>(
             *m_vfxManager,
-            m_vfxManager->getOrCreateMeshId(R::ParticleMesh),
+            m_vfxManager->getOrCreateMeshId(particleToken),
             velocity,
             rotation,
             placement,
@@ -60,7 +62,7 @@ VfxSystem::VfxSystem(World & world)
 
         m_smokeEmitter = std::make_shared<Emitter>(
             *m_vfxManager,
-            m_vfxManager->getOrCreateMeshId(R::ParticleMesh),
+            m_vfxManager->getOrCreateMeshId(particleToken),
             velocity,
             rotation,
             placement,

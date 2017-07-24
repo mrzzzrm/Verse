@@ -4,6 +4,7 @@
 
 #include <Deliberation/Core/Optional.h>
 #include <Deliberation/Core/SparseVector.h>
+#include <Deliberation/Resource/ResourceToken.h>
 
 #include "EmitterInstance.h"
 #include "R.h"
@@ -21,7 +22,7 @@ public:
     VfxRenderer &       renderer();
     const VfxRenderer & renderer() const;
 
-    VfxMeshId getOrCreateMeshId(ResourceId resourceId);
+    VfxMeshId getOrCreateMeshId(const ResourceToken & resourceToken);
 
     VfxParticleId addParticle(VfxParticle particle);
     void          removeParticle(VfxParticleId particle);

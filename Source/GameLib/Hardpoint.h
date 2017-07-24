@@ -14,12 +14,13 @@ class Weapon;
 struct HardpointDesc : AttachmentDesc
 {
     float maxAngle = 0.0f;
+    std::vector<std::string> compatibleWeapons;
 };
 
 class Hardpoint final : public Attachment
 {
 public:
-    Hardpoint(const HardpointDesc & desc);
+    explicit Hardpoint(const HardpointDesc & desc);
 
     const std::shared_ptr<Weapon> & weapon() const;
 

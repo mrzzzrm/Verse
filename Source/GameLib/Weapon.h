@@ -8,27 +8,19 @@
 #include "R.h"
 #include "VfxManager.h"
 #include "VoxelDefines.h"
+#include "WeaponPrototype.h"
 
 struct EquipmentUpdateContext;
 class HailstormManager;
-
-struct WeaponConfig
-{
-    float     cooldown = 0.0f;
-    VfxMeshId meshID = 0;
-    float     bulletSpeed = 1.0f;
-    float     bulletLifetime = 1.0f;
-};
 
 class Weapon final
 {
 public:
     Weapon(
-        const WeaponConfig & config,
-        HailstormManager &   hailstormManager,
-        VoxelObjectWorldUID  creatorUID);
+        const std::shared_ptr<const WeaponPrototype> & prototype,
+        HailstormManager &   hailstormManager);
 
-    const WeaponConfig & config() const;
+    const std::shared_ptr<const WeaponPrototype> & prototype() const { return m_prototype; }
 
     void clearFireRequest() { m_fireRequestActive = false; }
     void setFireRequest(const glm::vec3 & direction);
@@ -42,11 +34,9 @@ public:
         float                          maxAngle);
 
 private:
-    WeaponConfig        m_config;
-    HailstormManager &  m_hailstormManager;
-    VoxelObjectWorldUID m_creatorUID;
-
-    Pose3D m_pose;
+    std::shared_ptr<const WeaponPrototype>    m_prototype;
+    HailstormManager &                        m_hailstormManager;
+    Pose3D                                    m_pose;
 
     bool      m_fireRequestActive = false;
     glm::vec3 m_fireRequestDirection;

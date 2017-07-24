@@ -25,8 +25,7 @@ class PhysicsWorld;
 class World;
 } // namespace deliberation
 
-class PlayerSystem : public std::enable_shared_from_this<PlayerSystem>,
-                     public System<PlayerSystem>,
+class PlayerSystem : public System<PlayerSystem>,
                      public InputLayer
 {
 public:

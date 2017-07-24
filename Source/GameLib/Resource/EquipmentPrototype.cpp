@@ -3,9 +3,11 @@
 #include <Deliberation/Core/Assert.h>
 #include <Deliberation/Core/Json.h>
 #include <Deliberation/Core/StreamUtils.h>
+#include <Deliberation/Resource/PrototypeSystem.h>
 
 #include "Equipment.h"
 #include "Hardpoint.h"
+#include "HailstormManager.h"
 
 void EquipmentPrototype::updateComponent(Equipment & equipment)
 {
@@ -39,10 +41,27 @@ void EquipmentPrototype::updateComponent(Equipment & equipment)
             loadSlotDesc(obj, desc);
 
             desc.maxAngle = obj["MaxAngle"];
+            if (obj.count("CompatibleWeapons") > 0)
+            {
+                for (auto & weaponName : obj["CompatibleWeapons"])
+                {
+                    desc.compatibleWeapons.emplace_back(weaponName.get<std::string>());
+                }
+            }
 
             auto hardpoint = std::make_shared<Hardpoint>(desc);
             equipment.m_hardpoints.emplace_back(hardpoint);
             equipment.addAttachment(hardpoint);
+
+            if (desc.compatibleWeapons.size() > 0)
+            {
+                auto weaponPrototype =
+                    world().systemRef<PrototypeSystem>().manager()->prototype<WeaponPrototype>(desc.compatibleWeapons[0]);
+                auto & hailstormManager =
+                    world().systemRef<HailstormManager>();
+                Assert(static_cast<bool>(weaponPrototype), "");
+                hardpoint->setWeapon(std::make_shared<Weapon>(weaponPrototype, hailstormManager));
+            }
         }
     }
 

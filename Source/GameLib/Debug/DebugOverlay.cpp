@@ -11,11 +11,11 @@
 #include <Deliberation/ECS/Systems/ApplicationSystem.h>
 
 #include <Deliberation/ImGui/ImGuiSystem.h>
-#include <Resource/VersePrototypeSystem.h>
+#include <Resource/VerseEntityPrototypeSystem.h>
 
 #include "HailstormManager.h"
-#include "VersePrototypeManager.h"
-#include "VersePrototypeSystem.h"
+#include "VerseEntityPrototypeManager.h"
+#include "VerseEntityPrototypeSystem.h"
 
 DebugOverlay::DebugOverlay(World & world, DrawContext & context)
     : Base(world)
@@ -162,7 +162,7 @@ void DebugOverlay::onFrameUpdate(float seconds)
                 ImGui::Columns(3, "Prototype columns");
 
                 auto & prototypeManager =
-                    world().systemRef<VersePrototypeSystem>().manager();
+                    world().systemRef<VerseEntityPrototypeSystem>().manager();
 
                 for (auto & pair : prototypeManager->entityPrototypeByKey())
                 {

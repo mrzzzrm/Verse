@@ -1,4 +1,4 @@
-#include "VersePrototypeManager.h"
+#include "VerseEntityPrototypeManager.h"
 
 #include <fstream>
 
@@ -22,9 +22,9 @@
 
 #include "BehaviourSystem.h"
 
-VersePrototypeManager::VersePrototypeManager(
+VerseEntityPrototypeManager::VerseEntityPrototypeManager(
     World & world, const std::string & listPath)
-    : PrototypeManager(world, listPath)
+    : EntityPrototypeManager(world, listPath)
 {
     auto   voxelWorld = m_world.system<VoxelWorld>();
     auto & vfxManager = m_world.systemRef<VfxSystem>().manager();

@@ -1,29 +1,21 @@
 #include <iostream>
 
-#include <Deliberation/Platform/Application.h>
+#include "ResourceManager.h"
 
-#include "EquipmentPrototype.h"
-#include "SandboxApplication.h"
-
-using namespace deliberation;
-
-class ResourceSandbox : public SandboxApplication
+struct Foo
 {
-public:
-    ResourceSandbox() : SandboxApplication("NpcSandbox") {}
-
-    void onSandboxStartup() override
-    {
-        std::ifstream i("Data/Prototypes/Drone.json");
-        Json          j;
-        i >> j;
-
-        EquipmentPrototype equipmentPrototype(j["Equipment"]);
-    }
-
-    void onSandboxUpdate(float seconds) override {}
-
-    void onSandboxRender() override {}
+    int i = 1;
 };
 
-int main(int argc, char * argv[]) { return ResourceSandbox().run(argc, argv); }
+
+int main(int argc, char * argv[]) {
+    World world;
+    auto resourceManager = world.addSystem<ResourceManager>();
+    resourceManager->setLoader<std::vector<Foo>>([](const auto & path) {
+        std::vector<Foo> f(2);
+        return f;
+    });
+
+    resourceManager->resource<std::vector<Foo>>("hello");
+    return 0;
+}

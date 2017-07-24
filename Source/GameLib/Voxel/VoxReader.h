@@ -35,9 +35,10 @@ public:
     };
 
     using Palette = std::array<u32, 256>;
+    using VoxelModels = std::vector<VoxelModel>;
 
 public:
-    std::vector<VoxelModel> read(const std::string & path);
+    VoxelModels read(const std::string & path);
 
 private:
     Chunk         readChunkHeader(std::ifstream & file);

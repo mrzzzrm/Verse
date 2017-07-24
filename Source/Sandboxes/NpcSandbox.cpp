@@ -66,7 +66,7 @@ public:
     void onSandboxStartup() override
     {
         {
-            std::ifstream equipmentPrototypeFile("Data/Prototypes/Ship.json");
+            std::ifstream equipmentPrototypeFile("Data/EntityPrototypes/Ship.json");
 
             Json obj;
             equipmentPrototypeFile >> obj;

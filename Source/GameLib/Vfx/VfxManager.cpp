@@ -25,17 +25,17 @@ VfxRenderer & VfxManager::renderer() { return *m_renderer; }
 
 const VfxRenderer & VfxManager::renderer() const { return *m_renderer; }
 
-VfxMeshId VfxManager::getOrCreateMeshId(ResourceId resourceId)
+VfxMeshId VfxManager::getOrCreateMeshId(const ResourceToken & resourceToken)
 {
-    auto iter = m_meshIdByResourceId.find((size_t)resourceId);
+    auto iter = m_meshIdByResourceId.find((size_t)resourceToken.id());
     if (iter == m_meshIdByResourceId.end())
     {
-        const auto & mesh = m_resourceManager.mesh(resourceId);
-        const auto   meshId = m_renderer->addMesh(mesh);
+        const auto & mesh = m_resourceManager.resource<std::shared_ptr<MeshData>>(resourceToken);
+        const auto   meshId = m_renderer->addMesh(*mesh);
 
         bool success;
         std::tie(iter, success) =
-            m_meshIdByResourceId.emplace((size_t)resourceId, meshId);
+            m_meshIdByResourceId.emplace((size_t)resourceToken.id(), meshId);
         Assert(success, "");
     }
 

@@ -27,7 +27,7 @@ VfxRenderBatch::VfxRenderBatch(
                                           {"DeathScale", Type_Float}});
     if (orientationType == VfxParticleOrientationType::World)
     {
-        instanceDataLayout.addField({"BirthOrientation", Type_Vec4});
+        instanceDataLayout.addField({"BirthOrientation", Type_Mat3});
     }
 
     m_instances = LayoutedBlob(instanceDataLayout, 0);
@@ -43,7 +43,7 @@ VfxRenderBatch::VfxRenderBatch(
 
     if (orientationType == VfxParticleOrientationType::World)
     {
-        m_birthOrientations = m_instances.field<glm::vec4>("BirthOrientation");
+        m_birthOrientations = m_instances.field<glm::mat3>("BirthOrientation");
     }
 
     m_instanceBuffer =
@@ -167,14 +167,14 @@ void VfxRenderBatch::render()
         case VfxParticleOrientationType::ViewBillboard:
             orientationTypeUniform.set(
                 (int)VfxParticleOrientationType::ViewBillboard);
-            m_draw.setAttribute("BirthOrientation", glm::vec4(0.0f));
+            m_draw.setAttribute("BirthOrientation", glm::mat3(1.0f));
             break;
 
         default: Fail("");
         }
 
         m_draw.addVertices(m_meshData.vertices());
-        m_draw.setIndices(m_meshData.indices());
+        if (!m_meshData.indices().empty()) m_draw.setIndices(m_meshData.indices());
         m_draw.addInstanceBuffer(m_instanceBuffer, 1);
         m_draw.setUniformBuffer("Globals", m_renderer.globalsBuffer());
         m_draw.state().setBlendState(
@@ -210,13 +210,7 @@ void VfxRenderBatch::addInstanceInSlot(
 
     if (m_orientationType == VfxParticleOrientationType::World)
     {
-        glm::vec4 birthOrientation(
-            particle.birthOrientation.x,
-            particle.birthOrientation.y,
-            particle.birthOrientation.z,
-            particle.birthOrientation.w);
-
-        m_birthOrientations[index] = birthOrientation;
+        m_birthOrientations[index] = glm::mat3_cast(particle.birthOrientation);
     }
 
     m_instanceBuffer.upload(m_instances);

@@ -18,8 +18,7 @@ class HudButton;
 class HudElement;
 class PlayerSystem;
 
-class Hud : public std::enable_shared_from_this<Hud>,
-            public System<Hud>,
+class Hud : public System<Hud>,
             public InputLayer
 {
 public:

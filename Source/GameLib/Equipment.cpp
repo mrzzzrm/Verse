@@ -30,7 +30,7 @@ float Equipment::bulletSpeed() const
         const auto & weapon = m_hardpoints[h]->weapon();
         if (!weapon) continue;
 
-        bulletSpeed = weapon->config().bulletSpeed;
+        bulletSpeed = weapon->prototype()->speed();
         break;
     }
 
@@ -64,7 +64,7 @@ void Equipment::setFireRequestTargetForAllHardpoints(
         const auto hardpointPosition =
             equipmentTransform.pointLocalToWorld(glm::vec3(hardpoint->voxel()));
 
-        const auto bulletSpeed = weapon->config().bulletSpeed;
+        const auto bulletSpeed = weapon->prototype()->speed();
 
         bool success;
         auto trajectory = CalculateTrajectory(

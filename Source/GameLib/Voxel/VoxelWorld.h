@@ -28,8 +28,7 @@ class VoxelObject;
 class VoxelObjectID;
 class VoxelObjectModification;
 
-class VoxelWorld final : public System<VoxelWorld>,
-                         public std::enable_shared_from_this<VoxelWorld>
+class VoxelWorld final : public System<VoxelWorld>
 {
 public:
     VoxelWorld(World & world, const Texture & envMap);

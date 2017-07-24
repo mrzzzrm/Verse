@@ -3,8 +3,6 @@
 enum class R
 {
     None,
-    BulletMesh,
-    ParticleMesh,
     UiCrosshairMesh,
     HudEntityMarkerUpperLeft,
     HudElement

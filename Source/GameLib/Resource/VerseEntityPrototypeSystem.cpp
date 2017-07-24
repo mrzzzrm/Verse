@@ -1,18 +1,18 @@
-#include "VersePrototypeSystem.h"
+#include "VerseEntityPrototypeSystem.h"
 
 #include <Deliberation/ImGui/ImGuiSystem.h>
 
 constexpr const char * RELOAD_PROTOTYPES_CONTROL = "Reload Prototypes";
 
-VersePrototypeSystem::VersePrototypeSystem(World & world)
+VerseEntityPrototypeSystem::VerseEntityPrototypeSystem(World & world)
     : Base(world)
-    , m_manager(std::make_shared<VersePrototypeManager>(
-          world, GameDataPath("Data/Prototypes/list.json")))
+    , m_manager(std::make_shared<VerseEntityPrototypeManager>(
+          world, GameDataPath("Data/EntityPrototypes/list.json")))
 {
     m_manager->reloadList();
 }
 
-void VersePrototypeSystem::onCreated()
+void VerseEntityPrototypeSystem::onCreated()
 {
     auto & imGuiSystem = world().systemRef<ImGuiSystem>();
     imGuiSystem.addControlItem(RELOAD_PROTOTYPES_CONTROL, [&]() {
@@ -21,7 +21,7 @@ void VersePrototypeSystem::onCreated()
     });
 }
 
-void VersePrototypeSystem::onRemoved()
+void VerseEntityPrototypeSystem::onRemoved()
 {
     auto & imGuiSystem = world().systemRef<ImGuiSystem>();
     imGuiSystem.removeControlItem(RELOAD_PROTOTYPES_CONTROL);

@@ -15,7 +15,7 @@ in uint Birth;
 in uint Lifetime;
 in vec4 BirthRGBA;
 in vec4 DeathRGBA;
-in vec4 BirthOrientation;
+in mat3 BirthOrientation;
 in float BirthScale;
 in float DeathScale;
 
@@ -46,7 +46,7 @@ void main()
 
     if (OrientationType == 0) // World
     {
-        vertexPosition = BirthOrientation.xyz * 0.0001f  + scaledPosition + particleCenter;
+        vertexPosition = BirthOrientation * scaledPosition + particleCenter;
     }
     else if (OrientationType == 1) // ViewBillboard
     {

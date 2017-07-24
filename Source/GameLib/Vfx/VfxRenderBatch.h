@@ -67,7 +67,7 @@ private:
     TypedBlobValueAccessor<u32>       m_births;
     TypedBlobValueAccessor<glm::vec4> m_birthRGBAs;
     TypedBlobValueAccessor<glm::vec4> m_deathRGBAs;
-    TypedBlobValueAccessor<glm::vec4> m_birthOrientations;
+    TypedBlobValueAccessor<glm::mat3> m_birthOrientations;
     TypedBlobValueAccessor<float>     m_birthScales;
     TypedBlobValueAccessor<float>     m_deathScales;
 

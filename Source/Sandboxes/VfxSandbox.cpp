@@ -59,6 +59,8 @@ public:
                 glm::vec4{0.4f, 0.4f, 0.4f, 0.0f});
             auto size = std::make_shared<EmitterSizeOverLifetime>(3.0f, 7.0f);
 
+            auto
+
             m_emitterSmoke = std::make_shared<Emitter>(
                 m_world.systemRef<VfxSystem>().manager(),
                 m_world.systemRef<VfxSystem>().manager().getOrCreateMeshId(

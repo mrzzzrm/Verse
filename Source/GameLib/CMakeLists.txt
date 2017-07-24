@@ -64,7 +64,7 @@ add_library(${target}
     Resource/BehaviourPrototype.cpp
     Resource/BehaviourPrototype.h
     Resource/CoriolisPrototype.h
-    Resource/VersePrototypeSystem.h
+    Resource/VerseEntityPrototypeSystem.h
     Resource/EquipmentPrototype.cpp
     Resource/EquipmentPrototype.h
     Resource/FlightControlConfigPrototype.cpp
@@ -76,15 +76,18 @@ add_library(${target}
     Resource/PlayerFlightControlPrototype.h
     Resource/ResourceManager.cpp
     Resource/ResourceManager.h
+    Resource/ResourceManager.inl
     Resource/R.h
     Resource/VoxelRigidBodyPrototype.cpp
     Resource/VoxelRigidBodyPrototype.h
     Resource/VoxelObjectPrototype.cpp
     Resource/VoxelObjectPrototype.h
-    Resource/VersePrototypeManager.cpp
-    Resource/VersePrototypeManager.h
-    Resource/VersePrototypeSystem.cpp
-    Resource/VersePrototypeSystem.h
+    Resource/VerseEntityPrototypeManager.cpp
+    Resource/VerseEntityPrototypeManager.h
+    Resource/VerseEntityPrototypeSystem.cpp
+    Resource/VerseEntityPrototypeSystem.h
+    Resource/VerseResourceManager.cpp
+    Resource/VerseResourceManager.h
 
     Vfx/Emitter.cpp
     Vfx/Emitter.h
@@ -137,6 +140,8 @@ add_library(${target}
     Voxel/VoxelHull.h
     Voxel/VoxelImpactSystem.cpp
     Voxel/VoxelImpactSystem.h
+    Voxel/VoxelMeshLoader.cpp
+    Voxel/VoxelMeshLoader.h
     Voxel/VoxelPhysicsSystem.cpp
     Voxel/VoxelPhysicsSystem.h
     Voxel/VoxelObject.cpp
@@ -207,7 +212,10 @@ add_library(${target}
     VoxelLight.h
     Weapon.cpp
     Weapon.h
-    )
+    WeaponPrototype.cpp
+    WeaponPrototype.h
+    VersePrototypeSystem.cpp
+    VersePrototypeSystem.h)
 
 target_include_directories(${target}
     PUBLIC

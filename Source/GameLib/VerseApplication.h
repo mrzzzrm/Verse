@@ -55,10 +55,9 @@
 
 namespace deliberation
 {
+class EntityPrototypeManager;
 class PhysicsWorldSystem;
 }
-
-class EntityPrototypeManager;
 
 enum class VerseApplicationSystemInitMode
 {

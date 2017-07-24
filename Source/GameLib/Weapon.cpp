@@ -7,24 +7,21 @@
 #include "Equipment.h"
 #include "HailstormBullet.h"
 #include "HailstormManager.h"
+#include "ResourceManager.h"
 
 Weapon::Weapon(
-    const WeaponConfig & config,
-    HailstormManager &   hailstormManager,
-    VoxelObjectWorldUID  creatorUID)
-    : m_config(config)
+    const std::shared_ptr<const WeaponPrototype> & prototype,
+    HailstormManager &   hailstormManager)
+    : m_prototype(prototype)
     , m_hailstormManager(hailstormManager)
-    , m_creatorUID(creatorUID)
 {
 }
-
-const WeaponConfig & Weapon::config() const { return m_config; }
 
 void Weapon::setFireRequest(const glm::vec3 & direction)
 {
     Assert(EpsilonEq(glm::length2(direction), 1.0f), "Normalize direction!")
 
-        m_fireRequestActive = true;
+    m_fireRequestActive = true;
     m_fireRequestDirection = direction;
 }
 
@@ -64,23 +61,28 @@ void Weapon::update(
 
         if (angle <= maxAngle && angle > 0.0f)
         {
+            auto & world = m_hailstormManager.world();
+
             VfxParticle particle(
-                m_config.meshID,
+                m_prototype->vfxMeshId(),
                 origin,
-                m_fireRequestDirection * m_config.bulletSpeed +
+                m_fireRequestDirection * m_prototype->speed() +
                     context.linearVelocity,
                 baseMillis + ((TimestampMillis)(timeAccumulator * 1000.0f)),
-                m_config.bulletLifetime * 1000);
+                static_cast<DurationMillis>(m_prototype->lifetime() * 1000));
 
             particle.birthRGBA = glm::vec4(1.0f);
             particle.deathRGBA = glm::vec4(1.0f);
 
             particle.orientationType = VfxParticleOrientationType::World;
+            particle.birthOrientation = intermediatePose.orientation();
 
             HailstormBullet bullet(particle, 50.0f, 3, context.entity.id());
 
             m_hailstormManager.addBullet(bullet);
-            m_cooldown = m_config.cooldown;
+
+            Assert(m_prototype->frequency() != 0.0f, "");
+            m_cooldown = 1.0f / m_prototype->frequency();
         }
         else
         {

@@ -12,8 +12,10 @@
             ],
 
             "Hardpoints": [
-                {"Voxel": [0, 1, 3], "Orientation": [0, 0, 0], "MaxAngle": 0.6 },
-                {"Voxel": [7, 1, 3], "Orientation": [0, 0, 0], "MaxAngle": 0.6}
+                {"Voxel": [0, 1, 3], "Orientation": [0, 0, 0], "MaxAngle": 0.6,
+                    "CompatibleWeapons": ["WeaponA"] },
+                {"Voxel": [7, 1, 3], "Orientation": [0, 0, 0], "MaxAngle": 0.6,
+                    "CompatibleWeapons": ["WeaponA"]}
             ]
         },
         "FlightControlConfig": {
