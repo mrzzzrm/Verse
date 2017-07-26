@@ -64,10 +64,11 @@ void VoxelWorld::onCrucialVoxelDestroyed(VoxelObject & voxelObject)
         world().createEntity("Remnant of '" + originalEntity.name() + "'");
     auto & remnantVoxelObject = remnant.addComponent<VoxelObject>();
     remnantVoxelObject.setVoxelData(remnantVoxelData);
+    auto & transform3DComponent = remnant.addComponent<Transform3DComponent>();
+    transform3DComponent.value() = originalEntity.component<Transform3DComponent>().value();
 
     auto remnantRigidBody =
         std::make_shared<RigidBody>(voxelObject.data()->shape());
-    remnantRigidBody->setTransform(originalRigidBody->transform());
     remnant.addComponent<RigidBodyComponent>(remnantRigidBody);
 
     originalEntity.scheduleRemoval();

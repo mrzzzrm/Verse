@@ -1,0 +1,21 @@
+[
+  {
+    "LID": "player",
+    "Name": "Player",
+    "Bases": [
+      "Player", "Ship"
+    ],
+    "Components": {
+      "Transform3D": {
+        "Position": [0, 0, 100]
+      }
+    }
+  },
+
+  {
+    "LID": "testDrone",
+    "Bases": [
+      "Drone", "Npc"
+    ]
+  }
+]

@@ -82,8 +82,6 @@ add_library(${target}
     Resource/VoxelRigidBodyPrototype.h
     Resource/VoxelObjectPrototype.cpp
     Resource/VoxelObjectPrototype.h
-    Resource/VerseEntityPrototypeManager.cpp
-    Resource/VerseEntityPrototypeManager.h
     Resource/VerseEntityPrototypeSystem.cpp
     Resource/VerseEntityPrototypeSystem.h
     Resource/VerseResourceManager.cpp

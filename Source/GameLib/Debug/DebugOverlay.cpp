@@ -14,7 +14,6 @@
 #include <Resource/VerseEntityPrototypeSystem.h>
 
 #include "HailstormManager.h"
-#include "VerseEntityPrototypeManager.h"
 #include "VerseEntityPrototypeSystem.h"
 
 DebugOverlay::DebugOverlay(World & world, DrawContext & context)

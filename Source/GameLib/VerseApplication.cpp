@@ -5,6 +5,7 @@
 #include <Deliberation/Scene/Lighting/PointLightRenderer.h>
 #include <Deliberation/Scene/Texture/TextureLoader.h>
 
+#include <Deliberation/ECS/LevelSystem.h>
 #include <Deliberation/ECS/Systems/ApplicationSystem.h>
 #include <Deliberation/ECS/Systems/SkyboxSystem.h>
 
@@ -21,7 +22,6 @@
 #include "NpcBehaviourSystem.h"
 #include "PlayerSystem.h"
 #include "ResourceManager.h"
-#include "VerseEntityPrototypeManager.h"
 #include "VerseEntityPrototypeSystem.h"
 #include "VerseRenderManager.h"
 #include "VfxSystem.h"
@@ -89,6 +89,7 @@ void VerseApplication::onStartup()
         m_world.addSystem<DebugAttachmentSystem>();
         m_world.addSystem<HullSystem>();
         m_world.addSystem<VersePrototypeSystem>();
+        m_world.addSystem<LevelSystem>(GameDataPath("Data/Levels/WreckageSandbox.json"));
 
         auto & renderManager =
             m_world.systemRef<RenderSystem>().renderManager();

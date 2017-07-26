@@ -33,6 +33,7 @@ void VoxelObjectPrototype::initComponent(VoxelObject & voxelObject)
             if (iter != m_newJson.end())
             {
                 glm::uvec3 crucialVoxel = *iter;
+                std::swap(crucialVoxel.y, crucialVoxel.z);
                 voxelObject.setCrucialVoxel(crucialVoxel);
             }
         }
