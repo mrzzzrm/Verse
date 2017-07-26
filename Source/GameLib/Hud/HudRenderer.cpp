@@ -5,7 +5,7 @@
 #include "Hud.h"
 
 HudRenderer::HudRenderer(RenderManager & renderManager, Hud & hud)
-    : SingleNodeRenderer(renderManager, RenderPhase::PostAlpha), m_hud(hud)
+    : SingleNodeRenderer(renderManager, RenderPhase::PreOverlay), m_hud(hud)
 {
 }
 

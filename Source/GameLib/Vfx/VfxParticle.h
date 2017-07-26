@@ -11,14 +11,6 @@
 #include "VfxDefines.h"
 #include "VoxelDefines.h"
 
-enum class VfxParticleOrientationType
-{
-    World = 0,
-    ViewBillboard = 1,
-
-    _Count_
-};
-
 struct VfxParticleId
 {
     VfxParticleId() = default;
@@ -31,13 +23,12 @@ struct VfxParticleId
 struct VfxParticle
 {
     VfxParticle(
-        VfxMeshId         meshID,
         const glm::vec3 & origin,
         const glm::vec3 & velocity,
         TimestampMillis   birth,
         DurationMillis    lifetime);
 
-    VfxMeshId       meshId;
+    size_t          renderBatchIndex = INVALID_VFX_RENDER_BATCH_INDEX;
     glm::vec3       origin;
     glm::vec3       velocity;
     DurationMillis  lifetime = 0;
@@ -49,8 +40,6 @@ struct VfxParticle
     float birthScale = 1.0f;
     float deathScale = 1.0f;
 
-    VfxParticleOrientationType orientationType =
-        VfxParticleOrientationType::World;
     glm::quat birthOrientation;
 };
 

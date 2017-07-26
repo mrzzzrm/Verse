@@ -23,8 +23,9 @@ class VfxRenderBatch
 public:
     VfxRenderBatch(
         VfxRenderer &              renderer,
-        const MeshData &           mesh,
-        VfxParticleOrientationType orientationType);
+        const std::shared_ptr<MeshData> & meshData,
+        VfxParticleOrientationType orientationType,
+        RenderPhase renderPhase);
 
     size_t addInstance(const VfxParticle & particle);
     void   removeInstance(size_t index);
@@ -49,8 +50,9 @@ private:
 private:
     VfxRenderer & m_renderer;
 
-    MeshData                   m_meshData;
+    std::shared_ptr<MeshData>  m_meshData;
     VfxParticleOrientationType m_orientationType;
+    RenderPhase                m_renderPhase;
 
     Draw   m_draw;
     bool   m_drawDirty = true;

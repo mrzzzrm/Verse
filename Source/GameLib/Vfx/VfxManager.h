@@ -24,7 +24,7 @@ public:
 
     VfxMeshId getOrCreateMeshId(const ResourceToken & resourceToken);
 
-    VfxParticleId addParticle(VfxParticle particle);
+    VfxParticleId addParticle(const VfxParticle & particle);
     void          removeParticle(VfxParticleId particle);
 
     void addEmitterInstance(std::shared_ptr<EmitterInstance> emitterInstance);
@@ -32,6 +32,10 @@ public:
     removeEmitterInstance(std::shared_ptr<EmitterInstance> emitterInstance);
 
     void update(float seconds);
+
+private:
+    // Make sure particle meshes have RGBA colors.
+    static std::shared_ptr<MeshData> processMesh(const std::shared_ptr<MeshData> & inputMesh);
 
 private:
     ResourceManager &            m_resourceManager;

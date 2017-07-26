@@ -76,19 +76,23 @@ void HudCrosshairs::update(float seconds)
             targetVelocity,
             success);
 
-        const auto ray =
-            Ray3D(m_renderManager.mainCamera().position(), m_trajectory);
-        const auto nearPlane = m_renderManager.mainCamera().nearPlane();
+        if (success) {
+            const auto ray =
+                Ray3D(m_renderManager.mainCamera().position(), m_trajectory);
+            const auto nearPlane = m_renderManager.mainCamera().nearPlane();
 
-        bool hit;
-        auto nearPlanePosition =
-            Rect3DRay3DIntersectionPoint(nearPlane, ray, hit);
-        if (hit)
+            bool hit;
+            auto nearPlanePosition =
+                Rect3DRay3DIntersectionPoint(nearPlane, ray, hit);
+            if (hit) {
+                setPosition(nearPlanePosition * 2.0f - 1.0f);
+            }
+
+            setVisible(hit);
+        } else
         {
-            setPosition(nearPlanePosition * 2.0f - 1.0f);
+            setVisible(false);
         }
-
-        setVisible(hit);
     }
     else
     {

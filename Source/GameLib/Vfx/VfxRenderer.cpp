@@ -9,27 +9,22 @@
 #include <Deliberation/Scene/Pipeline/RenderManager.h>
 #include <Deliberation/Scene/Pipeline/RenderNode.h>
 
-class VfxAlphaRenderNode : public RenderNode
+struct VfxRenderNode : public RenderNode
 {
-public:
-    VfxAlphaRenderNode(VfxRenderer & renderer)
-        : RenderNode(renderer.renderManager()), m_renderer(renderer)
+    explicit VfxRenderNode(RenderManager & renderManager)
+        : RenderNode(renderManager)
     {
     }
 
     void render() override
     {
-        m_renderer.m_viewProjectionGlobal[0] =
-            m_renderManager.mainCamera().viewProjection();
-        m_renderer.m_timeGlobal[0] = CurrentMillis();
-
-        m_renderer.m_globalsBuffer.upload(m_renderer.m_globals);
-
-        for (auto & batch : m_renderer.m_batches)
-            batch.second->render();
+        for (auto & batch : m_batches)
+        {
+            batch->render();
+        }
     }
 
-    VfxRenderer & m_renderer;
+    std::vector<std::shared_ptr<VfxRenderBatch>> m_batches;
 };
 
 VfxRenderer::VfxRenderer(RenderManager & renderManager)
@@ -45,58 +40,96 @@ VfxRenderer::VfxRenderer(RenderManager & renderManager)
         m_program.interface().uniformBlockRef("Globals").layout();
 
     m_globals = LayoutedBlob(globalsDataLayout, 1);
-    m_viewProjectionGlobal = m_globals.field<glm::mat4>("ViewProjection");
+    m_viewGlobal = m_globals.field<glm::mat4>("View");
+    m_projectionGlobal = m_globals.field<glm::mat4>("Projection");
     m_timeGlobal = m_globals.field<uint32_t>("Time");
 
     m_globalsBuffer = drawContext.createBuffer(globalsDataLayout);
+
+    // Create RenderNodes
+    // TODO() remove casts once switching to modern stdlib
+    m_renderNodesByRenderPhase[(std::underlying_type<RenderPhase>::type)RenderPhase::GBuffer] =
+        std::make_shared<VfxRenderNode>(renderManager);
+    m_renderNodesByRenderPhase[(std::underlying_type<RenderPhase>::type)RenderPhase::Alpha] =
+        std::make_shared<VfxRenderNode>(renderManager);
 }
 
 const Program & VfxRenderer::program() { return m_program; }
 
 const Buffer & VfxRenderer::globalsBuffer() const { return m_globalsBuffer; }
 
-VfxMeshId VfxRenderer::addMesh(const MeshData & mesh)
+size_t VfxRenderer::getOrCreateBatchIndex(const VfxBatchKey & key)
 {
-    m_batches.emplace(
-        batchIndex(m_meshIdCounter, VfxParticleOrientationType::World),
-        std::make_unique<VfxRenderBatch>(
-            *this, mesh, VfxParticleOrientationType::World));
-    m_batches.emplace(
-        batchIndex(m_meshIdCounter, VfxParticleOrientationType::ViewBillboard),
-        std::make_unique<VfxRenderBatch>(
-            *this, mesh, VfxParticleOrientationType::ViewBillboard));
+    auto iter = m_batchIndexByKey.find(key);
+    if (iter != m_batchIndexByKey.end()) return iter->second;
 
-    return m_meshIdCounter++;
+    const auto batchIndex = m_batches.size();
+
+    m_batchIndexByKey.emplace(key, batchIndex);
+
+    /**
+     * Build VfxRenderBatch
+     */
+    const auto meshId = std::get<0>(key);
+    Assert(meshId < m_meshData.size(), "MeshID not registered " + std::to_string(meshId));
+
+    const auto & meshData = m_meshData[meshId];
+    const auto renderPhase = std::get<1>(key);
+    const auto orientationType = std::get<2>(key);
+
+    auto batch = std::make_shared<VfxRenderBatch>(*this, meshData, orientationType, renderPhase);
+
+    m_batches.emplace_back(batch);
+
+    // Add batch to respective node
+    const auto iter2 = m_renderNodesByRenderPhase.find((std::underlying_type<RenderPhase>::type)renderPhase);
+    Assert(iter2 != m_renderNodesByRenderPhase.end(),
+           "No such RenderNode for RenderPhase '" + RenderPhaseToString(renderPhase) + "'");
+
+    iter2->second->m_batches.emplace_back(batch);
+
+    return batchIndex;
+}
+
+VfxMeshId VfxRenderer::addMesh(const std::shared_ptr<MeshData> & mesh)
+{
+    m_meshData.emplace_back(mesh);
+    return m_meshData.size() - 1;
 }
 
 VfxParticleId VfxRenderer::addParticle(const VfxParticle & particle)
 {
-    const auto batchIndex =
-        this->batchIndex(particle.meshId, particle.orientationType);
+    Assert(particle.renderBatchIndex < m_batches.size(),
+           "Batch index out of range " + std::to_string(particle.renderBatchIndex));
 
-    Assert(m_batches.contains(batchIndex), "MeshID not registered");
-    const auto index = m_batches[batchIndex]->addInstance(particle);
+    const auto index = m_batches[particle.renderBatchIndex]->addInstance(particle);
 
-    return {index, batchIndex};
+    return {index, particle.renderBatchIndex};
 }
 
 void VfxRenderer::removeParticle(const VfxParticleId & particle)
 {
-    Assert(
-        m_batches.contains(particle.renderBatchIndex), "MeshID not registered");
+    Assert(particle.renderBatchIndex < m_batches.size(), "Batch index out of range " + std::to_string(particle.renderBatchIndex));
 
     m_batches[particle.renderBatchIndex]->removeInstance(particle.index);
 }
 
-void VfxRenderer::registerRenderNodes()
+void VfxRenderer::onRegisterRenderNodes()
 {
-    m_renderManager.registerRenderNode(
-        std::make_shared<VfxAlphaRenderNode>(*this), RenderPhase::Alpha);
+    for (auto & pair : m_renderNodesByRenderPhase)
+    {
+        // TODO Remove cast when switching to modern stdlib
+        m_renderManager.registerRenderNode(pair.second, (RenderPhase)pair.first);
+    }
 }
 
-size_t VfxRenderer::batchIndex(
-    VfxMeshId meshId, VfxParticleOrientationType orientationType) const
+void VfxRenderer::onBeforeRender()
 {
-    return (int)VfxParticleOrientationType::_Count_ * meshId +
-           (int)orientationType;
+    m_viewGlobal[0] =
+        m_renderManager.mainCamera().view();
+    m_projectionGlobal[0] =
+        m_renderManager.mainCamera().projection();
+    m_timeGlobal[0] = CurrentMillis();
+
+    m_globalsBuffer.upload(m_globals);
 }

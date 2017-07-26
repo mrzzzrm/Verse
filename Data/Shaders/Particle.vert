@@ -2,7 +2,8 @@
 
 uniform Globals
 {
-    mat4 ViewProjection;
+    mat4 View;
+    mat4 Projection;
     uint Time;
 };
 
@@ -22,11 +23,13 @@ in float DeathScale;
 in vec3 Position;
 in vec2 UV;
 in vec3 Normal;
+in vec4 Color;
 
 out vec3 f_Normal;
 out vec2 f_UV;
 out vec4 f_RGBA;
 out float f_NormalisedAge;
+out vec3 f_PositionVS;
 
 void main()
 {
@@ -53,11 +56,13 @@ void main()
         vertexPosition = (ViewBillboardRotation * scaledPosition) + particleCenter;
     }
 
-	vec4 transformed = ViewProjection * vec4(vertexPosition, 1.0f);
+    vec3 positionVS = (View * vec4(vertexPosition, 1.0f)).xyz;
+	vec4 transformed = Projection * vec4(positionVS, 1.0f);
 
 	gl_Position = transformed;
 	f_Normal = Normal;
-	f_RGBA = mix(BirthRGBA, DeathRGBA, f_NormalisedAge);
+	f_RGBA = mix(BirthRGBA, DeathRGBA, f_NormalisedAge) * Color;
 	f_UV = UV;
+	f_PositionVS = positionVS;
 }
 

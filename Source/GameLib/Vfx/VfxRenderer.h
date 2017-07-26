@@ -1,6 +1,8 @@
 #pragma once
 
+#include <map>
 #include <memory>
+#include <type_traits>
 
 #include <Deliberation/Core/LinearMap.h>
 #include <Deliberation/Core/SparseVector.h>
@@ -24,34 +26,41 @@ class DrawContext;
 
 } // namespace deliberation
 
+class VfxRenderNode;
+
 class VfxRenderer : public Renderer
 {
 public:
-    VfxRenderer(RenderManager & renderManager);
+    explicit VfxRenderer(RenderManager & renderManager);
 
     const Program & program();
     const Buffer &  globalsBuffer() const;
 
-    VfxMeshId addMesh(const MeshData & mesh);
+    size_t getOrCreateBatchIndex(const VfxBatchKey & key);
+
+    VfxMeshId addMesh(const std::shared_ptr<MeshData> & mesh);
 
     VfxParticleId addParticle(const VfxParticle & particle);
     void          removeParticle(const VfxParticleId & particle);
 
-    void registerRenderNodes() override;
+    void onRegisterRenderNodes() override;
+
+    void onBeforeRender() override;
 
 private:
-    friend class VfxAlphaRenderNode;
+    friend class VfxRenderNode;
 
 private:
-    size_t batchIndex(
-        VfxMeshId meshId, VfxParticleOrientationType orientationType) const;
-
-private:
-    LinearMap<std::unique_ptr<VfxRenderBatch>> m_batches;
-    size_t                                     m_meshIdCounter = 0;
+    std::vector<std::shared_ptr<VfxRenderBatch>> m_batches;
+    std::map<VfxBatchKey, size_t>                m_batchIndexByKey;
+    std::vector<std::shared_ptr<MeshData>>       m_meshData;
+    // TODO() remove underlying type when switching std libs
+    std::unordered_map<std::underlying_type<RenderPhase>::type, std::shared_ptr<VfxRenderNode>>
+                                                 m_renderNodesByRenderPhase;
 
     LayoutedBlob                      m_globals;
-    TypedBlobValueAccessor<glm::mat4> m_viewProjectionGlobal;
+    TypedBlobValueAccessor<glm::mat4> m_viewGlobal;
+    TypedBlobValueAccessor<glm::mat4> m_projectionGlobal;
     TypedBlobValueAccessor<uint32_t>  m_timeGlobal;
 
     Program m_program;

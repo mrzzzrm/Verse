@@ -31,7 +31,8 @@ VfxMeshId VfxManager::getOrCreateMeshId(const ResourceToken & resourceToken)
     if (iter == m_meshIdByResourceId.end())
     {
         const auto & mesh = m_resourceManager.resource<std::shared_ptr<MeshData>>(resourceToken);
-        const auto   meshId = m_renderer->addMesh(*mesh);
+        const auto   processedMesh = processMesh(mesh);
+        const auto   meshId = m_renderer->addMesh(processedMesh);
 
         bool success;
         std::tie(iter, success) =
@@ -42,7 +43,7 @@ VfxMeshId VfxManager::getOrCreateMeshId(const ResourceToken & resourceToken)
     return iter->second;
 }
 
-VfxParticleId VfxManager::addParticle(VfxParticle particle)
+VfxParticleId VfxManager::addParticle(const VfxParticle & particle)
 {
     return m_renderer->addParticle(particle);
 }
@@ -84,4 +85,52 @@ void VfxManager::update(float seconds)
         m_emitterInstances.erase(index);
     }
     m_deadEmitterInstances.clear();
+}
+
+std::shared_ptr<MeshData> VfxManager::processMesh(const std::shared_ptr<MeshData> & inputMesh)
+{
+    const auto & inputVertices = inputMesh->vertices();
+    const auto & inputLayout = inputVertices.layout();
+
+    if (!inputLayout.hasField("Color") || inputLayout.field("Color").type() == Type_Vec4) return inputMesh;
+
+    DataLayout outputLayout;
+    for (const auto & inputField : inputLayout.fields()) {
+        if (inputField.name() == "Color") outputLayout.addField(DataLayoutField::Desc("Color", Type_Vec4));
+        else outputLayout.addField(inputField.desc());
+    }
+
+    LayoutedBlob outputVertices(outputLayout, inputVertices.count());
+
+    for (size_t f = 0; f < inputLayout.fields().size(); f++)
+    {
+        const auto & inputLayoutField = inputLayout.field(f);
+
+        if (inputLayoutField.name() == "Color")
+        {
+            Assert(inputLayoutField.type() == Type_Vec3, "Only conversion from vec3 supported right now");
+
+            auto inputIterator = inputVertices.citerator<glm::vec3>(inputLayoutField);
+            auto outputIterator = outputVertices.iterator<glm::vec4>(outputLayout.field(f));
+
+            for (size_t v = 0; v < inputVertices.count(); v++)
+            {
+                outputIterator.put(glm::vec4{inputIterator.get(), 1.0f});
+            }
+        }
+        else
+        {
+            const auto inputField = inputVertices.field(inputLayoutField);
+            auto outputField = outputVertices.field(outputLayout.field(f));
+
+            for (size_t v = 0; v < inputVertices.count(); v++)
+            {
+                outputField[v] = inputField[v];
+            }
+        }
+    }
+
+    auto outputMesh = std::make_shared<MeshData>(std::move(outputVertices), LayoutedBlob(inputMesh->indices()));
+
+    return outputMesh;
 }

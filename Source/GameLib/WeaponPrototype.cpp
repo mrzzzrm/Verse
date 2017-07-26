@@ -26,4 +26,6 @@ void WeaponPrototype::reload(const Json & json)
     m_speed = json["Speed"];
     m_frequency = json["Frequency"];
     m_damage = json["Damage"];
+
+    m_vfxRenderBatchIndex = INVALID_VFX_RENDER_BATCH_INDEX;
 }

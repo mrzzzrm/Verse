@@ -3,6 +3,7 @@
 #include <glm/gtx/vector_angle.hpp>
 
 #include <Deliberation/Core/Math/Trajectory.h>
+#include <Deliberation/Scene/Pipeline/RenderPhase.h>
 
 #include "Equipment.h"
 #include "HailstormBullet.h"
@@ -63,18 +64,27 @@ void Weapon::update(
         {
             auto & world = m_hailstormManager.world();
 
+            if (m_prototype->vfxRenderBatchIndex() == INVALID_VFX_RENDER_BATCH_INDEX)
+            {
+                auto renderBatchKey = VfxBatchKey(m_prototype->vfxMeshId(), RenderPhase::GBuffer,
+                                                  VfxParticleOrientationType::World);
+                auto renderBatchIndex = m_hailstormManager.vfxManager().renderer().getOrCreateBatchIndex(renderBatchKey);
+                m_prototype->setVfxRenderBatchIndex(renderBatchIndex);
+            }
+
+            const auto velocity = m_fireRequestDirection * m_prototype->speed() +
+                                  context.linearVelocity;
+
             VfxParticle particle(
-                m_prototype->vfxMeshId(),
                 origin,
-                m_fireRequestDirection * m_prototype->speed() +
-                    context.linearVelocity,
+                velocity,
                 baseMillis + ((TimestampMillis)(timeAccumulator * 1000.0f)),
                 static_cast<DurationMillis>(m_prototype->lifetime() * 1000));
 
+            particle.renderBatchIndex = m_prototype->vfxRenderBatchIndex();
             particle.birthRGBA = glm::vec4(1.0f);
             particle.deathRGBA = glm::vec4(1.0f);
 
-            particle.orientationType = VfxParticleOrientationType::World;
             particle.birthOrientation = intermediatePose.orientation();
 
             HailstormBullet bullet(particle, 50.0f, 3, context.entity.id());

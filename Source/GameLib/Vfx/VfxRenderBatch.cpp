@@ -13,9 +13,10 @@
 
 VfxRenderBatch::VfxRenderBatch(
     VfxRenderer &              renderer,
-    const MeshData &           mesh,
-    VfxParticleOrientationType orientationType)
-    : m_renderer(renderer), m_meshData(mesh), m_orientationType(orientationType)
+    const std::shared_ptr<MeshData> & meshData,
+    VfxParticleOrientationType orientationType,
+    RenderPhase renderPhase)
+    : m_renderer(renderer), m_meshData(meshData), m_orientationType(orientationType), m_renderPhase(renderPhase)
 {
     auto instanceDataLayout = DataLayout({{"Origin", Type_Vec3},
                                           {"Velocity", Type_Vec3},
@@ -127,11 +128,11 @@ void VfxRenderBatch::render()
 
     if (m_drawDirty)
     {
-        m_draw = m_renderer.drawContext().createDraw(m_renderer.program());
+        m_draw = m_renderer.drawContext().createDraw(m_renderer.program(), DrawPrimitive::Triangles, "VfxRenderBatch");
 
-        const auto & vertexLayout = m_meshData.vertices().layout();
+        const auto & vertexLayout = m_meshData->vertices().layout();
         Assert(
-            vertexLayout.hasField("UV") == !m_meshData.textures().empty(), "");
+            vertexLayout.hasField("UV") == !m_meshData->textures().empty(), "");
 
         /**
          * Texturing setup
@@ -149,8 +150,25 @@ void VfxRenderBatch::render()
         }
         else
         {
-            m_draw.sampler("Texture").setTexture(m_meshData.textures()[0]);
+            m_draw.sampler("Texture").setTexture(m_meshData->textures()[0]);
         }
+
+        /**
+         * Color - either use vertex supplied color or (1,1,1,1)
+         */
+        if (!vertexLayout.hasField("Color"))
+        {
+            m_draw.setAttribute("Color", glm::vec4(1.0f));
+        }
+
+        /**
+         * Normals - either use vertex supplied normal or (0,0,0)
+         */
+        if (!vertexLayout.hasField("Normal"))
+        {
+            m_draw.setAttribute("Normal", glm::vec3(1.0f));
+        }
+
 
         /**
          * Orientation setup
@@ -173,15 +191,36 @@ void VfxRenderBatch::render()
         default: Fail("");
         }
 
-        m_draw.addVertices(m_meshData.vertices());
-        if (!m_meshData.indices().empty()) m_draw.setIndices(m_meshData.indices());
+        m_draw.addVertices(m_meshData->vertices());
+        if (!m_meshData->indices().empty()) m_draw.setIndices(m_meshData->indices());
         m_draw.addInstanceBuffer(m_instanceBuffer, 1);
         m_draw.setUniformBuffer("Globals", m_renderer.globalsBuffer());
+        if (m_renderPhase == RenderPhase::Alpha)
+        {
         m_draw.state().setBlendState(
-            {BlendEquation::Add, BlendFactor::SourceAlpha, BlendFactor::One});
+            {BlendEquation::Add, BlendFactor::SourceAlpha, BlendFactor::OneMinusSourceAlpha});
+        }
         m_draw.state().setDepthState(
-            {DepthTest::LessOrEqual, DepthWrite::Enabled});
-        m_draw.setFramebuffer(m_renderer.renderManager().hdrBuffer());
+            {DepthTest::Enabled, DepthWrite::Enabled});
+
+        if (m_renderPhase == RenderPhase::Alpha)
+        {
+            auto binding = m_draw.framebufferBinding(m_renderer.renderManager().hdrBuffer());
+            binding.setMapping({"Color", "Hdr"});
+            binding.setMapping({"Normal", FramebufferBinding::DISCARD_FRAGMENT_OUTPUT});
+            binding.setMapping({"Position", FramebufferBinding::DISCARD_FRAGMENT_OUTPUT});
+            m_draw.setFramebufferBinding(binding);
+        }
+        else
+        {
+            Assert(m_renderPhase == RenderPhase::GBuffer, "Illegal RenderPhase " + RenderPhaseToString(m_renderPhase));
+            m_draw.setFramebuffer(m_renderer.renderManager().gbuffer());
+
+            auto binding = m_draw.framebufferBinding(m_renderer.renderManager().gbuffer());
+            binding.setMapping({"Color", "Diffuse"});
+
+            m_draw.setFramebufferBinding(binding);
+        }
 
         m_drawDirty = true;
     }

@@ -50,6 +50,15 @@ void Emitter::updateInstance(
     EmitterInstanceContext & context,
     float                    seconds)
 {
+    if (m_renderBatchIndex == INVALID_VFX_RENDER_BATCH_INDEX)
+    {
+        auto renderBatchKey = VfxBatchKey(m_meshID,
+                                          RenderPhase::Alpha,
+                                          m_rotation->orientationType());
+        m_renderBatchIndex =
+            m_vfxManager.renderer().getOrCreateBatchIndex(renderBatchKey);
+    }
+
     for (size_t c = 0; c < m_children.size(); c++)
     {
         m_children[c]->updateInstance(
@@ -80,13 +89,13 @@ void Emitter::updateInstance(
             CurrentMillis() + (TimestampMillis)(timeAccumulator * 1000);
 
         auto particle = VfxParticle(
-            m_meshID,
             position,
             intermediatePose.orientation() * m_velocity->generateVelocity(),
             birth,
             (DurationMillis)(m_lifetime->generateLifetime() * 1000));
 
-        particle.orientationType = m_rotation->orientationType();
+        particle.renderBatchIndex = m_renderBatchIndex;
+
         particle.birthOrientation = m_rotation->generateOrientation();
 
         const auto color = m_color->generate();
