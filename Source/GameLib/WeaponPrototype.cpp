@@ -27,5 +27,5 @@ void WeaponPrototype::reload(const Json & json)
     m_frequency = json["Frequency"];
     m_damage = json["Damage"];
 
-    m_vfxRenderBatchIndex = INVALID_VFX_RENDER_BATCH_INDEX;
+    m_vfxRenderBatchIndex = INVALID_VFX_MESH_RENDER_BATCH_INDEX;
 }

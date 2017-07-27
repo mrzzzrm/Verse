@@ -1,4 +1,4 @@
-#include "VfxRenderBatch.h"
+#include "VfxMeshRenderBatch.h"
 
 #include <Deliberation/Core/LayoutedBlobElement.h>
 #include <Deliberation/Core/Math/Pose3D.h>
@@ -9,10 +9,10 @@
 #include <Deliberation/Scene/Pipeline/RenderManager.h>
 #include <Deliberation/Scene/Texture/TextureLoader.h>
 
-#include "VfxRenderer.h"
+#include "VfxMeshRenderer.h"
 
-VfxRenderBatch::VfxRenderBatch(
-    VfxRenderer &              renderer,
+VfxMeshRenderBatch::VfxMeshRenderBatch(
+    VfxMeshRenderer &              renderer,
     const std::shared_ptr<MeshData> & meshData,
     VfxParticleOrientationType orientationType,
     RenderPhase renderPhase)
@@ -51,22 +51,10 @@ VfxRenderBatch::VfxRenderBatch(
         m_renderer.drawContext().createBuffer(instanceDataLayout);
 }
 
-size_t VfxRenderBatch::addInstance(const VfxParticle & particle)
+size_t VfxMeshRenderBatch::addInstance(const VfxParticle & particle)
 {
     if (m_freeInstanceSlots.empty())
     {
-        /**
-         * Try to fetch from deathQueue
-         */
-        if (!m_deathQueue.empty())
-        {
-            const auto & nextDeath = m_deathQueue.top();
-            if (nextDeath.timeOfDeath < CurrentMillis())
-            {
-                m_deathQueue.pop();
-                m_freeInstanceSlots.push(nextDeath.slot);
-            }
-        }
 
         if (m_freeInstanceSlots.empty())
         {
@@ -97,7 +85,7 @@ size_t VfxRenderBatch::addInstance(const VfxParticle & particle)
     return index;
 }
 
-void VfxRenderBatch::removeInstance(size_t index)
+void VfxMeshRenderBatch::removeInstance(size_t index)
 {
     Assert(index < m_instances.count(), "");
 
@@ -108,18 +96,11 @@ void VfxRenderBatch::removeInstance(size_t index)
     m_freeInstanceSlots.push(index);
 }
 
-void VfxRenderBatch::update(float seconds)
+void VfxMeshRenderBatch::update(float seconds)
 {
-    const auto & nextDeath = m_deathQueue.top();
-
-    if (nextDeath.timeOfDeath > CurrentMillis())
-    {
-        m_deathQueue.pop();
-        removeInstance(nextDeath.slot);
-    }
 }
 
-void VfxRenderBatch::render()
+void VfxMeshRenderBatch::render()
 {
     if (m_instances.empty())
     {
@@ -128,7 +109,7 @@ void VfxRenderBatch::render()
 
     if (m_drawDirty)
     {
-        m_draw = m_renderer.drawContext().createDraw(m_renderer.program(), DrawPrimitive::Triangles, "VfxRenderBatch");
+        m_draw = m_renderer.drawContext().createDraw(m_renderer.program(), DrawPrimitive::Triangles, "VfxMeshRenderBatch");
 
         const auto & vertexLayout = m_meshData->vertices().layout();
         Assert(
@@ -235,7 +216,7 @@ void VfxRenderBatch::render()
     m_draw.render();
 }
 
-void VfxRenderBatch::addInstanceInSlot(
+void VfxMeshRenderBatch::addInstanceInSlot(
     const VfxParticle & particle, size_t index)
 {
     m_origins[index] = particle.origin;
@@ -253,16 +234,4 @@ void VfxRenderBatch::addInstanceInSlot(
     }
 
     m_instanceBuffer.upload(m_instances);
-    m_deathQueue.emplace(particle.birth + particle.lifetime, index);
-}
-
-VfxRenderBatch::DeathEntry::DeathEntry(TimestampMillis timeOfDeath, size_t slot)
-    : timeOfDeath(timeOfDeath), slot(slot)
-{
-}
-
-bool VfxRenderBatch::DeathEntry::
-     operator<(const VfxRenderBatch::DeathEntry & rhs) const
-{
-    return timeOfDeath > rhs.timeOfDeath;
 }

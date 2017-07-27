@@ -9,7 +9,8 @@
 #include "EmitterInstance.h"
 #include "R.h"
 #include "VfxParticle.h"
-#include "VfxRenderer.h"
+#include "VfxMeshRenderer.h"
+#include "VfxPointLightManager.h"
 
 class ResourceManager;
 
@@ -19,13 +20,13 @@ public:
     VfxManager(
         RenderManager & renderManager, ResourceManager & resourceManager);
 
-    VfxRenderer &       renderer();
-    const VfxRenderer & renderer() const;
+    VfxMeshRenderer &       renderer();
+    const VfxMeshRenderer & renderer() const;
 
     VfxMeshId getOrCreateMeshId(const ResourceToken & resourceToken);
 
     VfxParticleId addParticle(const VfxParticle & particle);
-    void          removeParticle(VfxParticleId particle);
+    void          removeParticle(const VfxParticleId & particleId);
 
     void addEmitterInstance(std::shared_ptr<EmitterInstance> emitterInstance);
     void
@@ -34,16 +35,25 @@ public:
     void update(float seconds);
 
 private:
+    struct DeathEntry
+    {
+        TimestampMillis timeOfDeath;
+        VfxParticleId   id;
+
+        DeathEntry(TimestampMillis timeOfDeath, const VfxParticleId & id);
+        bool operator<(const DeathEntry & rhs) const;
+    };
+
+private:
     // Make sure particle meshes have RGBA colors.
     static std::shared_ptr<MeshData> processMesh(const std::shared_ptr<MeshData> & inputMesh);
 
 private:
-    ResourceManager &            m_resourceManager;
-    std::shared_ptr<VfxRenderer> m_renderer;
-
-    std::unordered_map<size_t, VfxMeshId> m_meshIdByResourceId;
-
-    SparseVector<std::shared_ptr<EmitterInstance>> m_emitterInstances;
-
-    std::vector<size_t> m_deadEmitterInstances;
+    ResourceManager &                               m_resourceManager;
+    std::shared_ptr<VfxMeshRenderer>                m_meshRenderer;
+    std::shared_ptr<VfxPointLightManager>          m_pointLightRenderer;
+    std::unordered_map<size_t, VfxMeshId>           m_meshIdByResourceId;
+    SparseVector<std::shared_ptr<EmitterInstance>>  m_emitterInstances;
+    std::vector<size_t>                             m_deadEmitterInstances;
+    std::priority_queue<DeathEntry>                 m_deathQueue;
 };

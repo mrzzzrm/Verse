@@ -94,6 +94,7 @@ void VerseApplication::onStartup()
         auto & renderManager =
             m_world.systemRef<RenderSystem>().renderManager();
         renderManager.addRenderer<AmbientLightRenderer>();
+        renderManager.addRenderer<PointLightRenderer>();
         renderManager.addRenderer<BloomRenderer>();
         renderManager.addRenderer<SsaoRenderer>();
         renderManager.addRenderer<HdrRenderer>();

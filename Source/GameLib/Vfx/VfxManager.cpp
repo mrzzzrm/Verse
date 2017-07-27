@@ -10,6 +10,7 @@
 
 #include <Deliberation/Scene/Pipeline/RenderManager.h>
 #include <Deliberation/Scene/Texture/TextureLoader.h>
+#include <Deliberation/Scene/Lighting/PointLightRenderer.h>
 
 #include "ResourceManager.h"
 #include "VoxelWorld.h"
@@ -18,12 +19,13 @@ VfxManager::VfxManager(
     RenderManager & renderManager, ResourceManager & resourceManager)
     : m_resourceManager(resourceManager)
 {
-    m_renderer = renderManager.addRenderer<VfxRenderer>();
+    m_meshRenderer = renderManager.addRenderer<VfxMeshRenderer>();
+    m_pointLightRenderer = std::make_shared<VfxPointLightManager>(renderManager.renderer<PointLightRenderer>());
 }
 
-VfxRenderer & VfxManager::renderer() { return *m_renderer; }
+VfxMeshRenderer & VfxManager::renderer() { return *m_meshRenderer; }
 
-const VfxRenderer & VfxManager::renderer() const { return *m_renderer; }
+const VfxMeshRenderer & VfxManager::renderer() const { return *m_meshRenderer; }
 
 VfxMeshId VfxManager::getOrCreateMeshId(const ResourceToken & resourceToken)
 {
@@ -32,7 +34,7 @@ VfxMeshId VfxManager::getOrCreateMeshId(const ResourceToken & resourceToken)
     {
         const auto & mesh = m_resourceManager.resource<std::shared_ptr<MeshData>>(resourceToken);
         const auto   processedMesh = processMesh(mesh);
-        const auto   meshId = m_renderer->addMesh(processedMesh);
+        const auto   meshId = m_meshRenderer->addMesh(processedMesh);
 
         bool success;
         std::tie(iter, success) =
@@ -45,12 +47,28 @@ VfxMeshId VfxManager::getOrCreateMeshId(const ResourceToken & resourceToken)
 
 VfxParticleId VfxManager::addParticle(const VfxParticle & particle)
 {
-    return m_renderer->addParticle(particle);
+    VfxParticleId particleId;
+    particleId.meshRenderBatchIndex = particle.meshRenderBatchIndex;
+    particleId.meshRenderBatchSlot = m_meshRenderer->addParticle(particle);
+
+    if (particle.pointLight)
+    {
+        particleId.particlePointLight = m_pointLightRenderer->addParticlePointLight(particle, *particle.pointLight);
+    }
+
+    m_deathQueue.emplace(particle.birth + particle.lifetime, particleId);
+
+    return particleId;
 }
 
-void VfxManager::removeParticle(VfxParticleId particle)
+void VfxManager::removeParticle(const VfxParticleId & particleId)
 {
-    m_renderer->removeParticle(particle);
+    m_meshRenderer->removeParticle(particleId);
+
+    if (particleId.particlePointLight != INVALID_SIZE_T)
+    {
+        m_pointLightRenderer->removeParticlePointLight(particleId.particlePointLight);
+    }
 }
 
 void VfxManager::addEmitterInstance(
@@ -68,6 +86,8 @@ void VfxManager::removeEmitterInstance(
 
 void VfxManager::update(float seconds)
 {
+    m_pointLightRenderer->update(seconds);
+
     for (size_t e = 0; e < m_emitterInstances.capacity(); e++)
     {
         if (!m_emitterInstances.contains(e)) continue;
@@ -85,6 +105,24 @@ void VfxManager::update(float seconds)
         m_emitterInstances.erase(index);
     }
     m_deadEmitterInstances.clear();
+
+    /**
+     * Remove expired particles
+     */
+    while (!m_deathQueue.empty())
+    {
+        const auto & nextDeath = m_deathQueue.top();
+
+        if (CurrentMillis() > nextDeath.timeOfDeath)
+        {
+            m_deathQueue.pop();
+            removeParticle(nextDeath.id);
+        }
+        else
+        {
+            break;
+        }
+    }
 }
 
 std::shared_ptr<MeshData> VfxManager::processMesh(const std::shared_ptr<MeshData> & inputMesh)
@@ -133,4 +171,16 @@ std::shared_ptr<MeshData> VfxManager::processMesh(const std::shared_ptr<MeshData
     auto outputMesh = std::make_shared<MeshData>(std::move(outputVertices), LayoutedBlob(inputMesh->indices()));
 
     return outputMesh;
+}
+
+
+VfxManager::DeathEntry::DeathEntry(TimestampMillis timeOfDeath, const VfxParticleId & id)
+    : timeOfDeath(timeOfDeath), id(id)
+{
+}
+
+bool VfxManager::DeathEntry::
+operator<(const VfxManager::DeathEntry & rhs) const
+{
+    return timeOfDeath > rhs.timeOfDeath;
 }

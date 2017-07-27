@@ -1,4 +1,4 @@
-#include "VfxRenderer.h"
+#include "VfxMeshRenderer.h"
 
 #include <Deliberation/Core/Assert.h>
 
@@ -24,10 +24,10 @@ struct VfxRenderNode : public RenderNode
         }
     }
 
-    std::vector<std::shared_ptr<VfxRenderBatch>> m_batches;
+    std::vector<std::shared_ptr<VfxMeshRenderBatch>> m_batches;
 };
 
-VfxRenderer::VfxRenderer(RenderManager & renderManager)
+VfxMeshRenderer::VfxMeshRenderer(RenderManager & renderManager)
     : Renderer(renderManager)
 {
     auto & drawContext = renderManager.drawContext();
@@ -54,11 +54,11 @@ VfxRenderer::VfxRenderer(RenderManager & renderManager)
         std::make_shared<VfxRenderNode>(renderManager);
 }
 
-const Program & VfxRenderer::program() { return m_program; }
+const Program & VfxMeshRenderer::program() { return m_program; }
 
-const Buffer & VfxRenderer::globalsBuffer() const { return m_globalsBuffer; }
+const Buffer & VfxMeshRenderer::globalsBuffer() const { return m_globalsBuffer; }
 
-size_t VfxRenderer::getOrCreateBatchIndex(const VfxBatchKey & key)
+size_t VfxMeshRenderer::getOrCreateBatchIndex(const VfxBatchKey & key)
 {
     auto iter = m_batchIndexByKey.find(key);
     if (iter != m_batchIndexByKey.end()) return iter->second;
@@ -77,7 +77,7 @@ size_t VfxRenderer::getOrCreateBatchIndex(const VfxBatchKey & key)
     const auto renderPhase = std::get<1>(key);
     const auto orientationType = std::get<2>(key);
 
-    auto batch = std::make_shared<VfxRenderBatch>(*this, meshData, orientationType, renderPhase);
+    auto batch = std::make_shared<VfxMeshRenderBatch>(*this, meshData, orientationType, renderPhase);
 
     m_batches.emplace_back(batch);
 
@@ -91,30 +91,28 @@ size_t VfxRenderer::getOrCreateBatchIndex(const VfxBatchKey & key)
     return batchIndex;
 }
 
-VfxMeshId VfxRenderer::addMesh(const std::shared_ptr<MeshData> & mesh)
+VfxMeshId VfxMeshRenderer::addMesh(const std::shared_ptr<MeshData> & mesh)
 {
     m_meshData.emplace_back(mesh);
     return m_meshData.size() - 1;
 }
 
-VfxParticleId VfxRenderer::addParticle(const VfxParticle & particle)
+size_t VfxMeshRenderer::addParticle(const VfxParticle & particle)
 {
-    Assert(particle.renderBatchIndex < m_batches.size(),
-           "Batch index out of range " + std::to_string(particle.renderBatchIndex));
+    Assert(particle.meshRenderBatchIndex < m_batches.size(),
+           "Batch index out of range " + std::to_string(particle.meshRenderBatchIndex));
 
-    const auto index = m_batches[particle.renderBatchIndex]->addInstance(particle);
-
-    return {index, particle.renderBatchIndex};
+    return m_batches[particle.meshRenderBatchIndex]->addInstance(particle);
 }
 
-void VfxRenderer::removeParticle(const VfxParticleId & particle)
+void VfxMeshRenderer::removeParticle(const VfxParticleId & particle)
 {
-    Assert(particle.renderBatchIndex < m_batches.size(), "Batch index out of range " + std::to_string(particle.renderBatchIndex));
+    Assert(particle.meshRenderBatchIndex < m_batches.size(), "Batch index out of range " + std::to_string(particle.meshRenderBatchIndex));
 
-    m_batches[particle.renderBatchIndex]->removeInstance(particle.index);
+    m_batches[particle.meshRenderBatchIndex]->removeInstance(particle.meshRenderBatchSlot);
 }
 
-void VfxRenderer::onRegisterRenderNodes()
+void VfxMeshRenderer::onRegisterRenderNodes()
 {
     for (auto & pair : m_renderNodesByRenderPhase)
     {
@@ -123,7 +121,7 @@ void VfxRenderer::onRegisterRenderNodes()
     }
 }
 
-void VfxRenderer::onBeforeRender()
+void VfxMeshRenderer::onBeforeRender()
 {
     m_viewGlobal[0] =
         m_renderManager.mainCamera().view();

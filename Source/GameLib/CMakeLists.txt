@@ -110,12 +110,15 @@ add_library(${target}
     Vfx/VfxEffect.h
     Vfx/VfxManager.cpp
     Vfx/VfxManager.h
+    Vfx/VfxPointLight.h
+    Vfx/VfxPointLightManager.cpp
+    Vfx/VfxPointLightManager.h
     Vfx/VfxParticle.h
     Vfx/VfxParticle.inl
-    Vfx/VfxRenderBatch.cpp
-    Vfx/VfxRenderBatch.h
-    Vfx/VfxRenderer.cpp
-    Vfx/VfxRenderer.h
+    Vfx/VfxMeshRenderBatch.cpp
+    Vfx/VfxMeshRenderBatch.h
+    Vfx/VfxMeshRenderer.cpp
+    Vfx/VfxMeshRenderer.h
     Vfx/VfxSystem.cpp
     Vfx/VfxSystem.h
 

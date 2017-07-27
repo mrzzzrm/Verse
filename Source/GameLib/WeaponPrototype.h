@@ -38,5 +38,5 @@ private:
     float       m_damage = 0.0f;
 
     // The first weapon encountering this unset will need to set it. Reset whenever the Prototype changes
-    mutable     size_t m_vfxRenderBatchIndex = INVALID_VFX_RENDER_BATCH_INDEX;
+    mutable     size_t m_vfxRenderBatchIndex = INVALID_VFX_MESH_RENDER_BATCH_INDEX;
 };

@@ -2,22 +2,27 @@
 
 #include <limits>
 
+#include <boost/optional.hpp>
+
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 
 #include <Deliberation/Core/Chrono.h>
+#include <Deliberation/Core/IntTypes.h>
+
+#include <Deliberation/Scene/Lighting/PointLightRenderer.h>
 
 #include "GameLib.h"
 #include "VfxDefines.h"
+#include "VfxPointLight.h"
 #include "VoxelDefines.h"
 
+// TODO compress this
 struct VfxParticleId
 {
-    VfxParticleId() = default;
-    VfxParticleId(size_t index, size_t renderBatchIndex);
-
-    size_t index = 0;
-    size_t renderBatchIndex = 0;
+    size_t meshRenderBatchSlot = INVALID_SIZE_T;
+    size_t meshRenderBatchIndex = INVALID_SIZE_T;
+    size_t particlePointLight = INVALID_SIZE_T;
 };
 
 struct VfxParticle
@@ -28,7 +33,7 @@ struct VfxParticle
         TimestampMillis   birth,
         DurationMillis    lifetime);
 
-    size_t          renderBatchIndex = INVALID_VFX_RENDER_BATCH_INDEX;
+    size_t          meshRenderBatchIndex = INVALID_VFX_MESH_RENDER_BATCH_INDEX;
     glm::vec3       origin;
     glm::vec3       velocity;
     DurationMillis  lifetime = 0;
@@ -41,6 +46,8 @@ struct VfxParticle
     float deathScale = 1.0f;
 
     glm::quat birthOrientation;
+
+    boost::optional<VfxPointLightDesc> pointLight;
 };
 
 #include "VfxParticle.inl"

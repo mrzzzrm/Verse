@@ -50,7 +50,7 @@ void Emitter::updateInstance(
     EmitterInstanceContext & context,
     float                    seconds)
 {
-    if (m_renderBatchIndex == INVALID_VFX_RENDER_BATCH_INDEX)
+    if (m_renderBatchIndex == INVALID_VFX_MESH_RENDER_BATCH_INDEX)
     {
         auto renderBatchKey = VfxBatchKey(m_meshID,
                                           RenderPhase::Alpha,
@@ -94,7 +94,7 @@ void Emitter::updateInstance(
             birth,
             (DurationMillis)(m_lifetime->generateLifetime() * 1000));
 
-        particle.renderBatchIndex = m_renderBatchIndex;
+        particle.meshRenderBatchIndex = m_renderBatchIndex;
 
         particle.birthOrientation = m_rotation->generateOrientation();
 

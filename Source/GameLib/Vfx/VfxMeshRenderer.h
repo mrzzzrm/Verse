@@ -15,7 +15,7 @@
 
 #include "VfxDefines.h"
 #include "VfxParticle.h"
-#include "VfxRenderBatch.h"
+#include "VfxMeshRenderBatch.h"
 
 #include "GameLib.h"
 
@@ -28,10 +28,10 @@ class DrawContext;
 
 class VfxRenderNode;
 
-class VfxRenderer : public Renderer
+class VfxMeshRenderer : public Renderer
 {
 public:
-    explicit VfxRenderer(RenderManager & renderManager);
+    explicit VfxMeshRenderer(RenderManager & renderManager);
 
     const Program & program();
     const Buffer &  globalsBuffer() const;
@@ -40,7 +40,7 @@ public:
 
     VfxMeshId addMesh(const std::shared_ptr<MeshData> & mesh);
 
-    VfxParticleId addParticle(const VfxParticle & particle);
+    size_t addParticle(const VfxParticle & particle);
     void          removeParticle(const VfxParticleId & particle);
 
     void onRegisterRenderNodes() override;
@@ -51,7 +51,7 @@ private:
     friend class VfxRenderNode;
 
 private:
-    std::vector<std::shared_ptr<VfxRenderBatch>> m_batches;
+    std::vector<std::shared_ptr<VfxMeshRenderBatch>> m_batches;
     std::map<VfxBatchKey, size_t>                m_batchIndexByKey;
     std::vector<std::shared_ptr<MeshData>>       m_meshData;
     // TODO() remove underlying type when switching std libs

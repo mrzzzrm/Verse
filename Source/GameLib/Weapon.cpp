@@ -64,7 +64,7 @@ void Weapon::update(
         {
             auto & world = m_hailstormManager.world();
 
-            if (m_prototype->vfxRenderBatchIndex() == INVALID_VFX_RENDER_BATCH_INDEX)
+            if (m_prototype->vfxRenderBatchIndex() == INVALID_VFX_MESH_RENDER_BATCH_INDEX)
             {
                 auto renderBatchKey = VfxBatchKey(m_prototype->vfxMeshId(), RenderPhase::GBuffer,
                                                   VfxParticleOrientationType::World);
@@ -81,11 +81,13 @@ void Weapon::update(
                 baseMillis + ((TimestampMillis)(timeAccumulator * 1000.0f)),
                 static_cast<DurationMillis>(m_prototype->lifetime() * 1000));
 
-            particle.renderBatchIndex = m_prototype->vfxRenderBatchIndex();
+            particle.meshRenderBatchIndex = m_prototype->vfxRenderBatchIndex();
             particle.birthRGBA = glm::vec4(1.0f);
             particle.deathRGBA = glm::vec4(1.0f);
 
             particle.birthOrientation = intermediatePose.orientation();
+
+            particle.pointLight = VfxPointLightDesc{10.0f};
 
             HailstormBullet bullet(particle, 50.0f, 3, context.entity.id());
 

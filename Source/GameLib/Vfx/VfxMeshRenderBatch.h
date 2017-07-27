@@ -16,13 +16,13 @@
 
 #include "GameLib.h"
 
-class VfxRenderer;
+class VfxMeshRenderer;
 
-class VfxRenderBatch
+class VfxMeshRenderBatch
 {
 public:
-    VfxRenderBatch(
-        VfxRenderer &              renderer,
+    VfxMeshRenderBatch(
+        VfxMeshRenderer &              renderer,
         const std::shared_ptr<MeshData> & meshData,
         VfxParticleOrientationType orientationType,
         RenderPhase renderPhase);
@@ -35,20 +35,10 @@ public:
     void render();
 
 private:
-    struct DeathEntry
-    {
-        TimestampMillis timeOfDeath;
-        size_t          slot;
-
-        DeathEntry(TimestampMillis timeOfDeath, size_t slot);
-        bool operator<(const DeathEntry & rhs) const;
-    };
-
-private:
     void addInstanceInSlot(const VfxParticle & bullet, size_t index);
 
 private:
-    VfxRenderer & m_renderer;
+    VfxMeshRenderer & m_renderer;
 
     std::shared_ptr<MeshData>  m_meshData;
     VfxParticleOrientationType m_orientationType;
@@ -74,8 +64,4 @@ private:
     TypedBlobValueAccessor<float>     m_deathScales;
 
     std::stack<size_t> m_freeInstanceSlots;
-
-    LinearMap<size_t> m_instanceIndexByBulletID;
-
-    std::priority_queue<DeathEntry> m_deathQueue;
 };

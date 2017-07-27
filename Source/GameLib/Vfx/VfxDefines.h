@@ -17,6 +17,6 @@ enum class VfxParticleOrientationType
 using VfxMeshId = u32;
 
 constexpr VfxMeshId INVALID_VFX_MESH_ID = std::numeric_limits<VfxMeshId>::max();
-constexpr size_t INVALID_VFX_RENDER_BATCH_INDEX = std::numeric_limits<size_t>::max();
+constexpr size_t INVALID_VFX_MESH_RENDER_BATCH_INDEX = std::numeric_limits<size_t>::max();
 
 using VfxBatchKey = std::tuple<size_t /*MeshId*/, RenderPhase, VfxParticleOrientationType>;

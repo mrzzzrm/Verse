@@ -52,7 +52,7 @@ public:
 private:
     VfxManager &                              m_vfxManager;
     VfxMeshId                                 m_meshID;
-    size_t                                    m_renderBatchIndex = INVALID_VFX_RENDER_BATCH_INDEX;
+    size_t                                    m_renderBatchIndex = INVALID_VFX_MESH_RENDER_BATCH_INDEX;
     std::shared_ptr<EmitterVelocityStrategy>  m_velocity;
     std::shared_ptr<EmitterRotationStrategy>  m_rotation;
     std::shared_ptr<EmitterPlacementStrategy> m_placement;
