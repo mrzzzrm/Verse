@@ -24,11 +24,13 @@ public:
     VfxMeshRenderBatch(
         VfxMeshRenderer &              renderer,
         const std::shared_ptr<MeshData> & meshData,
+        bool dlightEnabled,
         VfxParticleOrientationType orientationType,
         RenderPhase renderPhase);
 
     size_t addInstance(const VfxParticle & particle);
     void   removeInstance(size_t index);
+    void   disengageInstance(size_t index);
 
     void update(float seconds);
 
@@ -41,6 +43,7 @@ private:
     VfxMeshRenderer & m_renderer;
 
     std::shared_ptr<MeshData>  m_meshData;
+    bool                       m_dlightEnabled = false;
     VfxParticleOrientationType m_orientationType;
     RenderPhase                m_renderPhase;
 
@@ -48,7 +51,6 @@ private:
     bool   m_drawDirty = true;
     Buffer m_instanceBuffer;
     Buffer m_vertexBuffer;
-    Buffer m_indexBuffer;
 
     Uniform m_viewBillboardRotation;
 

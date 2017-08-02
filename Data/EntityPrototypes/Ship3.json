@@ -1,0 +1,39 @@
+{
+  "Components": {
+    "Transform3D": {},
+    "VoxelObject": {
+      "VoxelCluster": "Ship3",
+      "CrucialVoxel": [
+        11,
+        12,
+        6
+      ]
+    },
+    "VoxelRigidBody": {},
+    "FlightControlConfig": {
+      "Forward": [
+        130.0,
+        100.0
+      ],
+      "Backward": [
+        20.0,
+        60.0
+      ],
+      "Horizontal": [
+        20.0,
+        60.0
+      ],
+      "Vertical": [
+        20.0,
+        60.0
+      ],
+      "Angular": [
+        3.0,
+        2.0
+      ]
+    },
+    "VoxelMaterial": {
+      "Palette": "Palette0"
+    }
+  }
+}

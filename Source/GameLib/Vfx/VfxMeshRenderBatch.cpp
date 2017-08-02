@@ -14,9 +14,11 @@
 VfxMeshRenderBatch::VfxMeshRenderBatch(
     VfxMeshRenderer &              renderer,
     const std::shared_ptr<MeshData> & meshData,
+    bool dlightEnabled,
     VfxParticleOrientationType orientationType,
     RenderPhase renderPhase)
-    : m_renderer(renderer), m_meshData(meshData), m_orientationType(orientationType), m_renderPhase(renderPhase)
+    : m_renderer(renderer), m_meshData(meshData), m_dlightEnabled(dlightEnabled),
+      m_orientationType(orientationType), m_renderPhase(renderPhase)
 {
     auto instanceDataLayout = DataLayout({{"Origin", Type_Vec3},
                                           {"Velocity", Type_Vec3},
@@ -87,13 +89,17 @@ size_t VfxMeshRenderBatch::addInstance(const VfxParticle & particle)
 
 void VfxMeshRenderBatch::removeInstance(size_t index)
 {
+    disengageInstance(index);
+    m_freeInstanceSlots.push(index);
+}
+
+void VfxMeshRenderBatch::disengageInstance(size_t index)
+{
     Assert(index < m_instances.count(), "");
 
     m_lifetimes[index] = 0;
     m_births[index] = 0;
-    m_instanceBuffer.upload(m_instances);
-
-    m_freeInstanceSlots.push(index);
+    m_instanceBuffer.upload(m_instances); // TODO does this have to happen every time?
 }
 
 void VfxMeshRenderBatch::update(float seconds)
@@ -183,8 +189,11 @@ void VfxMeshRenderBatch::render()
         }
         m_draw.state().setDepthState(
             {DepthTest::Enabled, DepthWrite::Enabled});
+        m_draw.uniform("DLightEnabled").set(m_dlightEnabled);
+        m_draw.uniform("DLightDirection").set(glm::normalize(glm::vec3(0.1f, 1.0f, 0.2f)));
+        m_draw.uniform("DLightColor").set(glm::vec3(0.8, 0.7f, 0.7f));
 
-        if (m_renderPhase == RenderPhase::Alpha)
+        if (m_renderPhase == RenderPhase::Alpha || m_renderPhase == RenderPhase::Forward)
         {
             auto binding = m_draw.framebufferBinding(m_renderer.renderManager().hdrBuffer());
             binding.setMapping({"Color", "Hdr"});

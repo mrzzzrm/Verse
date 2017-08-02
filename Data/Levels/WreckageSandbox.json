@@ -7,7 +7,7 @@
     ],
     "Components": {
       "Transform3D": {
-        "Position": [0, 0, 100]
+        "Position": [0, 0, 200]
       }
     }
   },
@@ -15,7 +15,7 @@
   {
     "LID": "testDrone",
     "Bases": [
-      "Drone", "Npc"
+      "Ship3", "Npc"
     ]
   }
 ]

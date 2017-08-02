@@ -1,0 +1,11 @@
+{
+  "Gun00": {
+    "BrightnessScale": 5.0
+  },
+  "Engine00": {
+    "BrightnessScale": 7.0
+  },
+  "Cockpit00": {
+    "BrightnessScale": 3.5
+  }
+}

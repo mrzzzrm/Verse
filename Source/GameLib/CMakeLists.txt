@@ -78,14 +78,16 @@ add_library(${target}
     Resource/ResourceManager.h
     Resource/ResourceManager.inl
     Resource/R.h
-    Resource/VoxelRigidBodyPrototype.cpp
-    Resource/VoxelRigidBodyPrototype.h
-    Resource/VoxelObjectPrototype.cpp
-    Resource/VoxelObjectPrototype.h
     Resource/VerseEntityPrototypeSystem.cpp
     Resource/VerseEntityPrototypeSystem.h
     Resource/VerseResourceManager.cpp
     Resource/VerseResourceManager.h
+    Resource/VoxelMaterialComponentPrototype.cpp
+    Resource/VoxelMaterialComponentPrototype.h
+    Resource/VoxelRigidBodyPrototype.cpp
+    Resource/VoxelRigidBodyPrototype.h
+    Resource/VoxelObjectPrototype.cpp
+    Resource/VoxelObjectPrototype.h
 
     Vfx/Emitter.cpp
     Vfx/Emitter.h
@@ -113,6 +115,7 @@ add_library(${target}
     Vfx/VfxPointLight.h
     Vfx/VfxPointLightManager.cpp
     Vfx/VfxPointLightManager.h
+    Vfx/VfxParticle.cpp
     Vfx/VfxParticle.h
     Vfx/VfxParticle.inl
     Vfx/VfxMeshRenderBatch.cpp
@@ -141,6 +144,14 @@ add_library(${target}
     Voxel/VoxelHull.h
     Voxel/VoxelImpactSystem.cpp
     Voxel/VoxelImpactSystem.h
+    Voxel/VoxelMaterialComponent.cpp
+    Voxel/VoxelMaterialComponent.h
+    Voxel/VoxelMaterialPalettePrototype.cpp
+    Voxel/VoxelMaterialPalettePrototype.h
+    Voxel/VoxelMaterialPrototype.cpp
+    Voxel/VoxelMaterialPrototype.h
+    Voxel/VoxelMaterialSystem.cpp
+    Voxel/VoxelMaterialSystem.h
     Voxel/VoxelMeshLoader.cpp
     Voxel/VoxelMeshLoader.h
     Voxel/VoxelPhysicsSystem.cpp

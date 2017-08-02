@@ -21,5 +21,5 @@ struct Voxel
 
     glm::uvec3 cell;
     u32        colorIndex;
-    float      healthPoints;
+    float      healthPoints = 1.0f;
 };

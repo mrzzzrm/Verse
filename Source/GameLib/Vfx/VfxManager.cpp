@@ -2,6 +2,7 @@
 
 #include <Deliberation/Core/DataLayout.h>
 #include <Deliberation/Core/LayoutedBlob.h>
+#include <Deliberation/Core/Math/AABB.h>
 
 #include <Deliberation/ECS/World.h>
 
@@ -33,7 +34,8 @@ VfxMeshId VfxManager::getOrCreateMeshId(const ResourceToken & resourceToken)
     if (iter == m_meshIdByResourceId.end())
     {
         const auto & mesh = m_resourceManager.resource<std::shared_ptr<MeshData>>(resourceToken);
-        const auto   processedMesh = processMesh(mesh);
+        auto   processedMesh = processMesh(mesh);
+        centerMesh(processedMesh);
         const auto   meshId = m_meshRenderer->addMesh(processedMesh);
 
         bool success;
@@ -45,14 +47,12 @@ VfxMeshId VfxManager::getOrCreateMeshId(const ResourceToken & resourceToken)
     return iter->second;
 }
 
-VfxParticleId VfxManager::addParticle(const VfxParticle & particle)
-{
+VfxParticleId VfxManager::addParticle(const VfxParticle & particle) {
     VfxParticleId particleId;
     particleId.meshRenderBatchIndex = particle.meshRenderBatchIndex;
     particleId.meshRenderBatchSlot = m_meshRenderer->addParticle(particle);
 
-    if (particle.pointLight)
-    {
+    if (particle.pointLight) {
         particleId.particlePointLight = m_pointLightRenderer->addParticlePointLight(particle, *particle.pointLight);
     }
 
@@ -61,13 +61,13 @@ VfxParticleId VfxManager::addParticle(const VfxParticle & particle)
     return particleId;
 }
 
-void VfxManager::removeParticle(const VfxParticleId & particleId)
+void VfxManager::disengageParticle(const VfxParticleId &particleId)
 {
-    m_meshRenderer->removeParticle(particleId);
+    m_meshRenderer->disengageParticle(particleId);
 
     if (particleId.particlePointLight != INVALID_SIZE_T)
     {
-        m_pointLightRenderer->removeParticlePointLight(particleId.particlePointLight);
+        m_pointLightRenderer->disengageParticlePointLight(particleId.particlePointLight);
     }
 }
 
@@ -115,8 +115,16 @@ void VfxManager::update(float seconds)
 
         if (CurrentMillis() > nextDeath.timeOfDeath)
         {
-            m_deathQueue.pop();
-            removeParticle(nextDeath.id);
+            const auto & particleId = nextDeath.id;
+
+            m_meshRenderer->removeParticle(particleId);
+
+            if (particleId.particlePointLight != INVALID_SIZE_T)
+            {
+                m_pointLightRenderer->removeParticlePointLight(particleId.particlePointLight);
+            }
+
+            m_deathQueue.pop(); // Do this AFTER removing the particle, otherwise ref into queue will be invalid
         }
         else
         {
@@ -125,9 +133,36 @@ void VfxManager::update(float seconds)
     }
 }
 
+void VfxManager::centerMesh(std::shared_ptr<MeshData> inputMesh)
+{
+    auto & vertices = inputMesh->vertices();
+    Assert(!vertices.empty(), "");
+
+    /**
+     * Find bounds
+     */
+    auto positions = vertices.iterator<glm::vec3>("Position");
+    auto firstPosition = positions.get();
+    AABB bounds(firstPosition, firstPosition);
+    for (size_t v = 1; v < vertices.count(); v++)
+    {
+        bounds.enlargeToContain(positions.get());
+    }
+
+    /**
+     * Offset
+     */
+    auto offset = -bounds.center();
+    positions = vertices.iterator<glm::vec3>("Position");
+    for (size_t v = 0; v < vertices.count(); v++)
+    {
+        positions.put(positions.peek() + offset);
+    }
+}
+
 std::shared_ptr<MeshData> VfxManager::processMesh(const std::shared_ptr<MeshData> & inputMesh)
 {
-    const auto & inputVertices = inputMesh->vertices();
+    auto & inputVertices = inputMesh->vertices();
     const auto & inputLayout = inputVertices.layout();
 
     if (!inputLayout.hasField("Color") || inputLayout.field("Color").type() == Type_Vec4) return inputMesh;
@@ -146,14 +181,14 @@ std::shared_ptr<MeshData> VfxManager::processMesh(const std::shared_ptr<MeshData
 
         if (inputLayoutField.name() == "Color")
         {
-            Assert(inputLayoutField.type() == Type_Vec3, "Only conversion from vec3 supported right now");
+            Assert(inputLayoutField.type() == Type_U8Vec4, "Only conversion from Type_U8Vec4 supported right now");
 
-            auto inputIterator = inputVertices.citerator<glm::vec3>(inputLayoutField);
+            auto inputIterator = inputVertices.citerator<glm::u8vec4>(inputLayoutField);
             auto outputIterator = outputVertices.iterator<glm::vec4>(outputLayout.field(f));
 
             for (size_t v = 0; v < inputVertices.count(); v++)
             {
-                outputIterator.put(glm::vec4{inputIterator.get(), 1.0f});
+                outputIterator.put(glm::vec4{glm::vec4(inputIterator.get()) / glm::vec4(255.0f)});
             }
         }
         else

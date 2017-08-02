@@ -42,6 +42,13 @@ void VfxPointLightManager::removeParticlePointLight(size_t index)
     m_pointLights.erase(index);
 }
 
+void VfxPointLightManager::disengageParticlePointLight(size_t index)
+{
+    auto & particlePointLight = m_pointLights[index];
+    auto & pointLight = m_pointLightRenderer->pointLight(particlePointLight.pointLight);
+    pointLight.active = false;
+}
+
 void VfxPointLightManager::update(float seconds)
 {
     for (auto & particlePointLight : m_pointLights)

@@ -35,13 +35,13 @@ std::shared_ptr<MeshData> VoxelMeshLoader::load(const std::string & path)
 
     auto layout = DataLayout({{"Position", Type_Vec3},
                               {"Normal", Type_Vec3},
-                              {"Color", Type_Vec3}});
+                              {"Color", Type_U8Vec4}});
 
     LayoutedBlob vertices(layout, palettedVertices.count());
 
     auto outPositions = vertices.iterator<glm::vec3>("Position");
     auto outNormals = vertices.iterator<glm::vec3>("Normal");
-    auto outColors = vertices.iterator<glm::vec3>("Color");
+    auto outColors = vertices.iterator<glm::u8vec4>("Color");
 
     auto inPositions = palettedVertices.iterator<glm::vec3>("Position");
     auto inNormals = palettedVertices.iterator<glm::vec3>("Normal");

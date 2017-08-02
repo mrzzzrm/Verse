@@ -53,6 +53,7 @@ void Emitter::updateInstance(
     if (m_renderBatchIndex == INVALID_VFX_MESH_RENDER_BATCH_INDEX)
     {
         auto renderBatchKey = VfxBatchKey(m_meshID,
+                                          false,
                                           RenderPhase::Alpha,
                                           m_rotation->orientationType());
         m_renderBatchIndex =

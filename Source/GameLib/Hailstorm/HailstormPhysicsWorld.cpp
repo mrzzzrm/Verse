@@ -38,6 +38,7 @@ void HailstormPhysicsWorld::addBullet(const HailstormBullet & bullet)
 void HailstormPhysicsWorld::update(float seconds)
 {
     m_destroyedBullets.clear();
+    m_expiredBullets.clear();
     m_voxelObjectBulletHits.clear();
 
     auto currentMillis = CurrentMillis();
@@ -54,7 +55,7 @@ void HailstormPhysicsWorld::update(float seconds)
 
         if (currentMillis > bullet.particle.birth + bullet.particle.lifetime)
         {
-            m_destroyedBullets.emplace_back(bullet.id);
+            m_expiredBullets.emplace_back(bullet.id);
             continue;
         }
 
@@ -103,7 +104,14 @@ void HailstormPhysicsWorld::update(float seconds)
             });
     }
 
+    /**
+     * Remove expired and destroyed bullets
+     */
     for (const auto & bullet : m_destroyedBullets)
+    {
+        m_bullets.erase(bullet.physicsIndex);
+    }
+    for (const auto & bullet : m_expiredBullets)
     {
         m_bullets.erase(bullet.physicsIndex);
     }

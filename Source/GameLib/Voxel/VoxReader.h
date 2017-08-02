@@ -30,7 +30,7 @@ public:
     {
         glm::u32vec3               size;
         std::vector<PalettedVoxel> palettedVoxels;
-        std::vector<glm::vec3>     palette;
+        std::vector<glm::u8vec4>   palette;
         std::vector<Voxel>         voxels;
     };
 

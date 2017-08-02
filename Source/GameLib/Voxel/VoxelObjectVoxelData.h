@@ -34,7 +34,6 @@ public:
     const VoxelRenderable &             renderTree() const;
     const std::shared_ptr<VoxelShape> & shape() const;
     const VoxelHull &                   hull() const;
-    float                               scale() const;
     size_t                      numVoxels() const { return m_numVoxels; }
     VoxelClusterSplitDetector & splitDetector() { return m_splitDetector; }
     const VoxelClusterSplitDetector & splitDetector() const
@@ -52,7 +51,6 @@ public:
     float voxelHealthPoints(const glm::uvec3 & voxel) const;
 
     void setVoxelHealthPoints(const glm::uvec3 & voxel, float healthPoints);
-    void setScale(float scale);
 
     void addVoxelsRaw(std::vector<Voxel> voxels);
     void removeVoxelsRaw(std::vector<glm::uvec3> voxels);

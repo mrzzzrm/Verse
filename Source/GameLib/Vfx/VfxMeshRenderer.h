@@ -41,7 +41,18 @@ public:
     VfxMeshId addMesh(const std::shared_ptr<MeshData> & mesh);
 
     size_t addParticle(const VfxParticle & particle);
-    void          removeParticle(const VfxParticleId & particle);
+
+    /**
+     * Physically removes the particle, should only be called from VfxManager
+     * @param particleId
+     */
+    void   removeParticle(const VfxParticleId & particleId);
+
+    /**
+     * Hides the particle until it expires
+     * @param particleId
+     */
+    void   disengageParticle(const VfxParticleId & particleId);
 
     void onRegisterRenderNodes() override;
 

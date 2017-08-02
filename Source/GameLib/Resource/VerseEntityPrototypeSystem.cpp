@@ -22,6 +22,7 @@
 #include "VoxelRigidBodyPrototype.h"
 
 #include "BehaviourSystem.h"
+#include "VoxelMaterialComponentPrototype.h"
 
 constexpr const char * RELOAD_PROTOTYPES_CONTROL = "Reload Prototypes";
 
@@ -55,6 +56,8 @@ void VerseEntityPrototypeSystem::onCreated()
     m_manager->registerComponentPrototype<Transform3DComponentPrototype>("Transform3D");
     m_manager->registerComponentPrototype<BehaviourPrototype>(
         "Behaviour", behaviourManager);
+    m_manager->registerComponentPrototype<VoxelMaterialComponentPrototype>(
+        "VoxelMaterial");
     
     auto & imGuiSystem = world().systemRef<ImGuiSystem>();
     imGuiSystem.addControlItem(RELOAD_PROTOTYPES_CONTROL, [&]() {

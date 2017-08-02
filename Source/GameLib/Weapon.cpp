@@ -64,12 +64,15 @@ void Weapon::update(
         {
             auto & world = m_hailstormManager.world();
 
-            if (m_prototype->vfxRenderBatchIndex() == INVALID_VFX_MESH_RENDER_BATCH_INDEX)
+            /**
+             * Lazily init render batch
+             */
+            if (m_prototype->vfxMeshRenderBatchIndex() == INVALID_VFX_MESH_RENDER_BATCH_INDEX)
             {
-                auto renderBatchKey = VfxBatchKey(m_prototype->vfxMeshId(), RenderPhase::GBuffer,
+                auto renderBatchKey = VfxBatchKey(m_prototype->vfxMeshId(), true, RenderPhase::Forward,
                                                   VfxParticleOrientationType::World);
                 auto renderBatchIndex = m_hailstormManager.vfxManager().renderer().getOrCreateBatchIndex(renderBatchKey);
-                m_prototype->setVfxRenderBatchIndex(renderBatchIndex);
+                m_prototype->setVfxMeshRenderBatchIndex(renderBatchIndex);
             }
 
             const auto velocity = m_fireRequestDirection * m_prototype->speed() +
@@ -81,13 +84,15 @@ void Weapon::update(
                 baseMillis + ((TimestampMillis)(timeAccumulator * 1000.0f)),
                 static_cast<DurationMillis>(m_prototype->lifetime() * 1000));
 
-            particle.meshRenderBatchIndex = m_prototype->vfxRenderBatchIndex();
+            particle.meshRenderBatchIndex = m_prototype->vfxMeshRenderBatchIndex();
             particle.birthRGBA = glm::vec4(1.0f);
             particle.deathRGBA = glm::vec4(1.0f);
 
             particle.birthOrientation = intermediatePose.orientation();
 
-            particle.pointLight = VfxPointLightDesc{10.0f};
+            particle.pointLight = VfxPointLightDesc{1000.0f};
+            particle.birthScale = m_prototype->scale();
+            particle.birthScale = m_prototype->scale();
 
             HailstormBullet bullet(particle, 50.0f, 3, context.entity.id());
 

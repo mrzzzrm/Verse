@@ -186,7 +186,7 @@ std::vector<VoxReader::VoxelModel> VoxReader::read(const std::string & path)
         for (auto & voxel : voxelModel.palettedVoxels)
         {
             voxelModel.voxels.emplace_back(
-                voxel.position, voxel.colorIndex, 1.0f);
+                voxel.position, voxel.colorIndex, 200.0f);
         }
 
         // Generate palette
@@ -195,10 +195,11 @@ std::vector<VoxReader::VoxelModel> VoxReader::read(const std::string & path)
         {
             auto color = (*palette)[i];
 
-            glm::vec3 colorv;
-            colorv.x = (float)(color & 0xFF) / 255.0f;
-            colorv.y = (float)((color >> 8) & 0xFF) / 255.0f;
-            colorv.z = (float)((color >> 16) & 0xFF) / 255.0f;
+            glm::u8vec4 colorv;
+            colorv.x = (u8)(color & 0xFF);
+            colorv.y = (u8)((color >> 8) & 0xFF);
+            colorv.z = (u8)((color >> 16) & 0xFF);
+            colorv.w = 255;
 
             voxelModel.palette[i] = colorv;
         }

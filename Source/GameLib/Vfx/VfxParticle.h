@@ -20,9 +20,26 @@
 // TODO compress this
 struct VfxParticleId
 {
+    static size_t uidCounter;
+
+    size_t uid = INVALID_SIZE_T;
     size_t meshRenderBatchSlot = INVALID_SIZE_T;
     size_t meshRenderBatchIndex = INVALID_SIZE_T;
     size_t particlePointLight = INVALID_SIZE_T;
+
+    VfxParticleId(): uid(uidCounter++) {}
+
+    friend std::ostream & operator<<(std::ostream & o, const VfxParticleId & particleId) {
+        o << "{" << particleId.uid << " | " << particleId.meshRenderBatchSlot << ", "
+          << particleId.meshRenderBatchIndex << ", ";
+
+        if (particleId.particlePointLight == INVALID_SIZE_T) o << "no pointlight";
+        else o << particleId.particlePointLight;
+
+        o << "}";
+
+        return o;
+    }
 };
 
 struct VfxParticle

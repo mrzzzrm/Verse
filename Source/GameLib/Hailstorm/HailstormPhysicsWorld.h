@@ -37,7 +37,12 @@ private:
     PhysicsWorld & m_physicsWorld;
 
     SparseVector<HailstormBullet>  m_bullets;
+    /**
+     * Separate lists, because destroyed bullets need to be removed from Vfx, for expired bullets this will happen
+     * automatically (and removing a bullet twice shouldn't happen)
+     */
     std::vector<HailstormBulletId> m_destroyedBullets;
+    std::vector<HailstormBulletId> m_expiredBullets;
 
     std::vector<VoxelObjectBulletHit> m_voxelObjectBulletHits;
 };

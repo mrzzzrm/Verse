@@ -1,0 +1,28 @@
+{
+  "Entities": [
+    {
+      "LID": "player",
+      "Name": "Player",
+      "Bases": [
+        "Player", "Ship"
+      ],
+      "Components": {
+        "Transform3D": {
+          "Position": [0, 0, 1700]
+        }
+      }
+    }
+  ],
+
+  "Actions": [
+    {
+      "Name": "SpawnAsteroidField",
+      "Params": {
+        "Size": [2000, 400, 2000],
+        "NumAsteroids": 200,
+        "MinScale": 3.0,
+        "MaxScale": 12.0
+      }
+    }
+  ]
+}

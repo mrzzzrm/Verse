@@ -13,7 +13,7 @@ WeaponPrototype::WeaponPrototype(const std::weak_ptr<PrototypeManager> &prototyp
     AbstractPrototype(prototypeManager)
 {}
 
-void WeaponPrototype::reload(const Json & json)
+void WeaponPrototype::onReload(const Json & json)
 {
     auto & world = prototypeManagerRef().world();
     auto & resourceManager = world.systemRef<ResourceManager>();
@@ -26,6 +26,7 @@ void WeaponPrototype::reload(const Json & json)
     m_speed = json["Speed"];
     m_frequency = json["Frequency"];
     m_damage = json["Damage"];
+    m_scale = json["Scale"];
 
-    m_vfxRenderBatchIndex = INVALID_VFX_MESH_RENDER_BATCH_INDEX;
+    m_vfxMeshRenderBatchIndex = INVALID_VFX_MESH_RENDER_BATCH_INDEX;
 }

@@ -21,6 +21,7 @@ public:
 
     size_t addParticlePointLight(const VfxParticle & particle, const VfxPointLightDesc & particlePointLight);
     void removeParticlePointLight(size_t index);
+    void disengageParticlePointLight(size_t index);
 
     void update(float seconds);
 

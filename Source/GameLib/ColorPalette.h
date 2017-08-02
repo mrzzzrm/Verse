@@ -1,8 +1,10 @@
 #pragma once
 
+#include <unordered_map>
 #include <vector>
 
 #include <glm/glm.hpp>
+#include <glm/gtx/hash.hpp>
 
 #include <Deliberation/Core/IntTypes.h>
 
@@ -19,17 +21,31 @@ class ColorPalette final
 {
 public:
     ColorPalette(
-        DrawContext & drawContext, const std::vector<glm::vec3> & colors);
+        DrawContext & drawContext,
+        const std::vector<glm::u8vec4> & colors);
 
-    const std::vector<glm::vec3> & colors() const { return m_colors; }
-    const Buffer &                 colorBuffer() const { return m_buffer; }
+    const std::vector<glm::u8vec4> & colors() const { return m_colors; }
+    const Buffer &                   colorBuffer() const { return m_colorBuffer; }
 
-    void setColor(u32 index, const glm::vec3 & color);
+    const std::vector<float> & brightnessScales() const { return m_brightnessScales; }
+    const Buffer &             brightnessScaleBuffer() const { return m_brightnessScaleBuffer; }
+
+    const std::unordered_multimap<glm::u8vec3, u32> & getOrCreateIndicesByColor() const;
+
+    void setColor(u32 index, const glm::u8vec4 & color);
+    void setBrightnessScale(u32 index, float scale);
 
     void sync();
 
 private:
-    std::vector<glm::vec3> m_colors;
-    bool                   m_colorsDirty = true;
-    Buffer                 m_buffer;
+    std::vector<glm::u8vec4>    m_colors;
+    bool                        m_colorsDirty = true;
+    Buffer                      m_colorBuffer;
+
+    std::vector<float>          m_brightnessScales;
+    bool                        m_brightnessScalesDirty = true;
+    Buffer                      m_brightnessScaleBuffer;
+
+    mutable std::unordered_multimap<glm::u8vec3, u32>
+                                m_indicesByColor;
 };

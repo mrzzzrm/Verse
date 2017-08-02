@@ -52,6 +52,8 @@ VfxMeshRenderer::VfxMeshRenderer(RenderManager & renderManager)
         std::make_shared<VfxRenderNode>(renderManager);
     m_renderNodesByRenderPhase[(std::underlying_type<RenderPhase>::type)RenderPhase::Alpha] =
         std::make_shared<VfxRenderNode>(renderManager);
+    m_renderNodesByRenderPhase[(std::underlying_type<RenderPhase>::type)RenderPhase::Forward] =
+        std::make_shared<VfxRenderNode>(renderManager);
 }
 
 const Program & VfxMeshRenderer::program() { return m_program; }
@@ -74,10 +76,11 @@ size_t VfxMeshRenderer::getOrCreateBatchIndex(const VfxBatchKey & key)
     Assert(meshId < m_meshData.size(), "MeshID not registered " + std::to_string(meshId));
 
     const auto & meshData = m_meshData[meshId];
-    const auto renderPhase = std::get<1>(key);
-    const auto orientationType = std::get<2>(key);
+    const auto dlightEnabled = std::get<1>(key);
+    const auto renderPhase = std::get<2>(key);
+    const auto orientationType = std::get<3>(key);
 
-    auto batch = std::make_shared<VfxMeshRenderBatch>(*this, meshData, orientationType, renderPhase);
+    auto batch = std::make_shared<VfxMeshRenderBatch>(*this, meshData, dlightEnabled, orientationType, renderPhase);
 
     m_batches.emplace_back(batch);
 
@@ -105,11 +108,18 @@ size_t VfxMeshRenderer::addParticle(const VfxParticle & particle)
     return m_batches[particle.meshRenderBatchIndex]->addInstance(particle);
 }
 
-void VfxMeshRenderer::removeParticle(const VfxParticleId & particle)
+void VfxMeshRenderer::removeParticle(const VfxParticleId & particleId)
 {
-    Assert(particle.meshRenderBatchIndex < m_batches.size(), "Batch index out of range " + std::to_string(particle.meshRenderBatchIndex));
+    Assert(particleId.meshRenderBatchIndex < m_batches.size(), "Batch index out of range " + std::to_string(particleId.meshRenderBatchIndex));
 
-    m_batches[particle.meshRenderBatchIndex]->removeInstance(particle.meshRenderBatchSlot);
+    m_batches[particleId.meshRenderBatchIndex]->removeInstance(particleId.meshRenderBatchSlot);
+}
+
+void VfxMeshRenderer::disengageParticle(const VfxParticleId & particleId)
+{
+    Assert(particleId.meshRenderBatchIndex < m_batches.size(), "Batch index out of range " + std::to_string(particleId.meshRenderBatchIndex));
+
+    m_batches[particleId.meshRenderBatchIndex]->disengageInstance(particleId.meshRenderBatchSlot);
 }
 
 void VfxMeshRenderer::onRegisterRenderNodes()

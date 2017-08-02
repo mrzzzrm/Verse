@@ -26,7 +26,12 @@ public:
     VfxMeshId getOrCreateMeshId(const ResourceToken & resourceToken);
 
     VfxParticleId addParticle(const VfxParticle & particle);
-    void          removeParticle(const VfxParticleId & particleId);
+
+    /**
+     * Will not physically remove the particle, this only happens when it expires, and will hide it until then
+     * @param particleId
+     */
+    void          disengageParticle(const VfxParticleId & particleId);
 
     void addEmitterInstance(std::shared_ptr<EmitterInstance> emitterInstance);
     void
@@ -47,11 +52,12 @@ private:
 private:
     // Make sure particle meshes have RGBA colors.
     static std::shared_ptr<MeshData> processMesh(const std::shared_ptr<MeshData> & inputMesh);
+    static void centerMesh(std::shared_ptr<MeshData> inputMesh);
 
 private:
     ResourceManager &                               m_resourceManager;
     std::shared_ptr<VfxMeshRenderer>                m_meshRenderer;
-    std::shared_ptr<VfxPointLightManager>          m_pointLightRenderer;
+    std::shared_ptr<VfxPointLightManager>           m_pointLightRenderer;
     std::unordered_map<size_t, VfxMeshId>           m_meshIdByResourceId;
     SparseVector<std::shared_ptr<EmitterInstance>>  m_emitterInstances;
     std::vector<size_t>                             m_deadEmitterInstances;

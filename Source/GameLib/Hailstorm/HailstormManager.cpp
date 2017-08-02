@@ -43,6 +43,6 @@ void HailstormManager::onGameUpdate(float seconds)
 
     for (auto & bullet : m_hailstormPhysicsWorld.destroyedBullets())
     {
-        m_vfxManager.removeParticle(bullet.particleId);
+        m_vfxManager.disengageParticle(bullet.particleId);
     }
 }

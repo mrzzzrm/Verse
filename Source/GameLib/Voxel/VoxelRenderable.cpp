@@ -163,7 +163,8 @@ void VoxelRenderable::render(const Transform3D & transform) const
                                   .systemRef<RenderSystem>()
                                   .renderManager()
                                   .gbuffer());
-        m_draw.setBufferTexture("Palette", m_palette->colorBuffer());
+        m_draw.setBufferTexture("ColorPalette", m_palette->colorBuffer());
+        m_draw.setBufferTexture("BrightnessScalePalette", m_palette->brightnessScaleBuffer());
 
         m_transformUniform = m_draw.uniform("Transform");
         m_viewUniform = m_draw.uniform("View");

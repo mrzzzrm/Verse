@@ -19,16 +19,18 @@ class WeaponPrototype:
 public:
     explicit WeaponPrototype(const std::weak_ptr<PrototypeManager> &prototypeManager);
 
-    size_t vfxRenderBatchIndex() const { return m_vfxRenderBatchIndex; }
-    void setVfxRenderBatchIndex(size_t vfxBatchIndex) const { m_vfxRenderBatchIndex = vfxBatchIndex; }
+    size_t vfxMeshRenderBatchIndex() const { return m_vfxMeshRenderBatchIndex; }
+    void setVfxMeshRenderBatchIndex(size_t vfxBatchIndex) const { m_vfxMeshRenderBatchIndex = vfxBatchIndex; }
 
     VfxMeshId vfxMeshId() const { return m_vfxMeshId; }
     float lifetime() const { return m_lifetime; }
     float speed() const { return m_speed; }
     float frequency() const { return m_frequency; }
     float damage() const { return m_damage; }
+    float scale() const { return m_scale; }
 
-    void reload(const Json & json);
+protected:
+    void onReload(const Json & json) override;
 
 private:
     VfxMeshId   m_vfxMeshId = INVALID_VFX_MESH_ID;
@@ -36,7 +38,8 @@ private:
     float       m_speed = 0.0f;
     float       m_frequency = 0.0f;
     float       m_damage = 0.0f;
+    float       m_scale = 0.0f;
 
     // The first weapon encountering this unset will need to set it. Reset whenever the Prototype changes
-    mutable     size_t m_vfxRenderBatchIndex = INVALID_VFX_MESH_RENDER_BATCH_INDEX;
+    mutable     size_t m_vfxMeshRenderBatchIndex = INVALID_VFX_MESH_RENDER_BATCH_INDEX;
 };
