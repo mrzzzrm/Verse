@@ -58,6 +58,31 @@ void ResourceManager::registerBuildIns()
     }
 
     /**
+     * Init Square Buildin
+     */
+    {
+        const auto layout =
+            DataLayout{"Position", Type_Vec3};
+
+        LayoutedBlob vertices(layout, 4);
+        auto         positions = vertices.field<glm::vec3>("Position");
+
+        positions.assign({glm::vec3(-0.5f, -0.5f, 0.0f),
+                          glm::vec3(0.5f, -0.5f, 0.0f),
+                          glm::vec3(0.5f, 0.5f, 0.0f),
+                          glm::vec3(-0.5f, 0.5f, 0.0f)});
+
+        LayoutedBlob indicesBlob(DataLayout("Index", Type_U32), 6);
+        auto         indices = indicesBlob.field<u32>("Index");
+
+        indices.assign({0, 1, 3, 1, 2, 3});
+
+        auto meshData = std::make_shared<MeshData>(std::move(vertices), std::move(indicesBlob));
+
+        addResource<std::shared_ptr<MeshData>>("buildin:OpaqueSquare", std::move(meshData));
+    }
+
+    /**
      * Init bullet particle
      */
     {

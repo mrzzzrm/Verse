@@ -1,6 +1,6 @@
 #include "Engine.h"
 
-Engine::Engine(std::shared_ptr<Emitter> emitter)
+Engine::Engine(std::shared_ptr<const Emitter> emitter)
     : m_emitterInstance(std::make_shared<EmitterInstance>(emitter))
 {
 }

@@ -23,6 +23,8 @@ public:
     VfxMeshRenderer &       renderer();
     const VfxMeshRenderer & renderer() const;
 
+    const SparseVector<std::shared_ptr<EmitterInstance>> & emitterInstances() const { return m_emitterInstances; }
+
     VfxMeshId getOrCreateMeshId(const ResourceToken & resourceToken);
 
     VfxParticleId addParticle(const VfxParticle & particle);
@@ -36,6 +38,11 @@ public:
     void addEmitterInstance(std::shared_ptr<EmitterInstance> emitterInstance);
     void
     removeEmitterInstance(std::shared_ptr<EmitterInstance> emitterInstance);
+
+    /**
+     * Call after Emitter Prototypes have changed
+     */
+    void rebuildEmitterInstances();
 
     void update(float seconds);
 

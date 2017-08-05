@@ -49,7 +49,7 @@ void DebugAttachmentSystem::onFrameUpdate(float /*seconds*/)
         const auto   entity = world().entityById(entityEntry.id);
         const auto & equipment = entity.component<Equipment>();
 
-        for (const auto attachment : equipment.attachments())
+        for (const auto & attachment : equipment.attachments())
         {
             auto transform = Transform3D::fromPose(attachment->worldPose());
             transform.setScale(
@@ -108,7 +108,7 @@ void DebugAttachmentSystem::updatePose(
 {
     auto transform2 = transform;
 
-    transform2.setScale(transform.scale() * 2.0f);
+    transform2.setScale(transform.scale() * 20.0f);
     pose.setTransform(transform);
     pose.setVisible(true);
 }

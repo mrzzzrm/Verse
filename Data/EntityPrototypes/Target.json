@@ -1,0 +1,8 @@
+{
+  "Components": {
+    "VoxelObject": {
+      "VoxelCluster": "Target"
+    },
+    "VoxelRigidBody": {}
+  }
+}

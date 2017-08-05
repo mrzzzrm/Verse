@@ -6,12 +6,14 @@
 #include <glm/glm.hpp>
 
 #include <Deliberation/Core/Math/Pose3D.h>
+#include <Deliberation/Resource/AbstractPrototype.h>
 
 #include "EmitterColorStrategy.h"
 #include "EmitterInstance.h"
 #include "EmitterIntensityStrategy.h"
 #include "EmitterLifetimeStrategy.h"
 #include "EmitterPlacementStrategy.h"
+#include "EmitterOrientationStrategy.h"
 #include "EmitterRotationStrategy.h"
 #include "EmitterSizeStrategy.h"
 #include "EmitterVelocityStrategy.h"
@@ -20,48 +22,45 @@
 
 class VfxManager;
 
-class Emitter final
+class Emitter final:
+    public AbstractPrototype
 {
 public:
-    Emitter(
-        VfxManager &                              vfxManager,
-        VfxMeshId                                 meshID,
-        std::shared_ptr<EmitterVelocityStrategy>  velocity,
-        std::shared_ptr<EmitterRotationStrategy>  rotation,
-        std::shared_ptr<EmitterPlacementStrategy> placement,
-        std::shared_ptr<EmitterIntensityStrategy> intensity,
-        std::shared_ptr<EmitterLifetimeStrategy>  lifetime,
-        std::shared_ptr<EmitterColorStrategy>     color,
-        std::shared_ptr<EmitterSizeStrategy>      size,
-        const Pose3D &                            pose = Pose3D());
+    explicit Emitter(const std::weak_ptr<PrototypeManager> &prototypeManager = {});
 
     const std::shared_ptr<EmitterIntensityStrategy> & intensity() const;
 
     Pose3D & pose();
     void     setPose(const Pose3D & pose);
 
-    const std::vector<std::shared_ptr<Emitter>> & children() const;
+    const std::vector<std::shared_ptr<const Emitter>> & children() const;
 
-    void addChild(std::shared_ptr<Emitter> child);
+    void addChild(std::shared_ptr<const Emitter> child);
 
     void updateInstance(
+        VfxManager & vfxManager,
         EmitterInstance &        emitterInstance,
         EmitterInstanceContext & context,
-        float                    seconds);
+        float                    seconds) const;
+
+protected:
+    void onReload(const Json & json) override;
 
 private:
-    VfxManager &                              m_vfxManager;
-    VfxMeshId                                 m_meshID;
-    size_t                                    m_renderBatchIndex = INVALID_VFX_MESH_RENDER_BATCH_INDEX;
+    VfxMeshId                                 m_meshID = INVALID_VFX_MESH_ID;
+    mutable size_t                            m_meshRenderBatchIndex = INVALID_VFX_MESH_RENDER_BATCH_INDEX;
+    // Does it emit particles itself or is it only a collection of children?
+    bool                                      m_hasStrategies = false;
     std::shared_ptr<EmitterVelocityStrategy>  m_velocity;
-    std::shared_ptr<EmitterRotationStrategy>  m_rotation;
+    std::shared_ptr<EmitterOrientationStrategy>  m_orientation;
     std::shared_ptr<EmitterPlacementStrategy> m_placement;
     std::shared_ptr<EmitterIntensityStrategy> m_intensity;
     std::shared_ptr<EmitterLifetimeStrategy>  m_lifetime;
     std::shared_ptr<EmitterColorStrategy>     m_color;
     std::shared_ptr<EmitterSizeStrategy>      m_size;
+    std::shared_ptr<EmitterRotationStrategy>  m_rotation;
 
     Pose3D m_pose;
 
-    std::vector<std::shared_ptr<Emitter>> m_children;
+    std::vector<std::shared_ptr<const Emitter>> m_children;
 };

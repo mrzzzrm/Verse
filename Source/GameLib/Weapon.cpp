@@ -3,6 +3,7 @@
 #include <glm/gtx/vector_angle.hpp>
 
 #include <Deliberation/Core/Math/Trajectory.h>
+#include <Deliberation/Physics/RigidBody.h>
 #include <Deliberation/Scene/Pipeline/RenderPhase.h>
 
 #include "Equipment.h"
@@ -76,7 +77,7 @@ void Weapon::update(
             }
 
             const auto velocity = m_fireRequestDirection * m_prototype->speed() +
-                                  context.linearVelocity;
+                                  context.body->linearVelocity();
 
             VfxParticle particle(
                 origin,
@@ -95,6 +96,7 @@ void Weapon::update(
             particle.birthScale = m_prototype->scale();
 
             HailstormBullet bullet(particle, 50.0f, 3, context.entity.id());
+            bullet.explosionEmitter = m_prototype->explosionEmitter();
 
             m_hailstormManager.addBullet(bullet);
 

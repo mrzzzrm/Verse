@@ -73,11 +73,8 @@ deliberation::ResourceId ResourceManager::ResourceContainer<ResourceType>::getOr
     if (iter == resourceIdByPath.end()) {
         auto resolvedPath = path;
 
-        std::cout << resolvedPath << std::endl;
         StringReplace(resolvedPath, "<GameDataPath>", GameDataPath());
-        std::cout << resolvedPath << std::endl;
         StringReplace(resolvedPath, "<DeliberationDataPath>", DeliberationDataPath());
-        std::cout << resolvedPath << std::endl << std::endl;
 
         auto resource = loader(resolvedPath);
         return addResource(path, std::move(resource));

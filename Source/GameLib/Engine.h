@@ -9,7 +9,7 @@
 class Engine final
 {
 public:
-    Engine(std::shared_ptr<Emitter> emitter);
+    Engine(std::shared_ptr<const Emitter> emitter);
 
     const std::shared_ptr<EmitterInstance> emitterInstance() const;
 

@@ -11,6 +11,8 @@
 
 #include "ResourceManager.h"
 #include "VoxelWorld.h"
+#include "VoxelObjectBulletHit.h"
+#include "VfxSystem.h"
 
 HailstormManager::HailstormManager(World & world)
     : Base(world)
@@ -30,6 +32,30 @@ void HailstormManager::addBullet(HailstormBullet bullet)
     bullet.id.particleId = m_vfxManager.addParticle(bullet.particle);
     m_hailstormPhysicsWorld.addBullet(bullet);
 }
+
+void HailstormManager::onCreated()
+{
+    subscribeEvent<VoxelObjectBulletHit>();
+}
+
+void HailstormManager::onEvent(const VoxelObjectBulletHit & hit)
+{
+    auto & vfxManager = world().systemRef<VfxSystem>().manager();
+
+    const auto & transform =
+        hit.entity.component<Transform3DComponent>().value();
+
+    const auto position = transform.pointLocalToWorld(glm::vec3(hit.voxel));
+
+    if (hit.bullet.explosionEmitter)
+    {
+        auto emitterInstance = std::make_shared<EmitterInstance>(hit.bullet.explosionEmitter);
+        emitterInstance->setBasePose(Pose3D::atPosition(position));
+
+        vfxManager->addEmitterInstance(emitterInstance);
+    }
+}
+
 
 void HailstormManager::onGameUpdate(float seconds)
 {

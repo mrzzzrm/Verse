@@ -83,7 +83,7 @@ void HailstormPhysicsWorld::update(float seconds)
                         voxelClusterIntersection.voxel, 100, 2);
 
                     m_voxelObjectBulletHits.emplace_back(
-                        entity, voxelClusterIntersection.voxel);
+                        entity, voxelClusterIntersection.voxel, bullet);
 
                     auto localHitPoint =
                         glm::vec3(voxelClusterIntersection.voxel);

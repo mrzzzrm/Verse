@@ -17,14 +17,16 @@
 #include "NpcControllerPrototype.h"
 #include "PlayerFlightControl.h"
 #include "PlayerFlightControlPrototype.h"
+#include "VfxComponentPrototype.h"
 #include "VfxSystem.h"
 #include "VoxelObjectPrototype.h"
 #include "VoxelRigidBodyPrototype.h"
 
 #include "BehaviourSystem.h"
+#include "VersePrototypeSystem.h"
 #include "VoxelMaterialComponentPrototype.h"
 
-constexpr const char * RELOAD_PROTOTYPES_CONTROL = "Reload Prototypes";
+constexpr const char * RELOAD_PROTOTYPES_CONTROL = "Reload Entity Prototypes";
 
 VerseEntityPrototypeSystem::VerseEntityPrototypeSystem(World & world)
     : EntityPrototypeSystem(world, GameDataPath("Data/EntityPrototypes/list.json"))
@@ -58,9 +60,17 @@ void VerseEntityPrototypeSystem::onCreated()
         "Behaviour", behaviourManager);
     m_manager->registerComponentPrototype<VoxelMaterialComponentPrototype>(
         "VoxelMaterial");
+    m_manager->registerComponentPrototype<VfxComponentPrototype>(
+        "VfxComponent");
     
     auto & imGuiSystem = world().systemRef<ImGuiSystem>();
     imGuiSystem.addControlItem(RELOAD_PROTOTYPES_CONTROL, [&]() {
+        auto prototypeSystem = world().system<VersePrototypeSystem>();
+        if (prototypeSystem)
+        {
+            prototypeSystem->reload();
+        }
+
         auto levelSystem = world().system<LevelSystem>();
         if (levelSystem)
         {

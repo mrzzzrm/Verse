@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Deliberation/ECS/System.h>
+#include <Deliberation/Resource/PrototypesReloadedEvent.h>
 
 #include "GameLib.h"
 
@@ -12,6 +13,9 @@ class VoxelMaterialSystem:
 {
 public:
     VoxelMaterialSystem(World & world);
+
+    void onCreated() override;
+    void onEvent(const PrototypesReloadedEvent & event);
 
 protected:
     void onEntityGameUpdate(Entity & entity, float seconds) override;

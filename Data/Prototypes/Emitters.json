@@ -1,0 +1,70 @@
+{
+  "Engine000": {
+    "Children": ["EngineBeam000", "EngineBeam001", "EngineBeam002"]
+  },
+  "EngineBeam000": {
+    "Strategies": {
+      "Mesh": "buildin:OpaqueSquare",
+      "Lifetime": ["RandomLifetime", [0.5, 0.9]],
+      "Placement": ["Fixed", {}],
+      "Velocity": ["Cone", [0.2, 60, 110]],
+      "Intensity": ["Noisy", [125, 2]],
+      "Orientation": ["ViewBillboard", {}],
+      "Color": ["OverLifetime", [[6.0, 3.5, 0.0, 0.8], [1.0, 0.6, 0.5, 0.0]]],
+      "Size": ["OverLifetime", [1.4, 0.2]],
+      "Rotation": ["Billboard", [-3.0, 3.0]]
+    }
+  },
+  "EngineBeam001": {
+    "Strategies": {
+      "Mesh": "buildin:OpaqueSquare",
+      "Lifetime": ["RandomLifetime", [3.4, 5.8]],
+      "Placement": ["Fixed", {}],
+      "Velocity": ["Cone", [0.04, 30, 40]],
+      "Intensity": ["Noisy", [25, 2]],
+      "Orientation": ["ViewBillboard", {}],
+      "Color": ["OverLifetime", [[2.0, 1.5, 1.0, 0.2], [1.0, 1.0, 1.0, 0.0]]],
+      "Size": ["OverLifetime", [1.4, 0.2]],
+      "Rotation": ["Billboard", [-15.0, 15.0]]
+    }
+  },
+  "EngineBeam002": {
+    "Strategies": {
+      "Mesh": "buildin:OpaqueSquare",
+      "Lifetime": ["RandomLifetime", [1.4, 1.8]],
+      "Placement": ["Fixed", {}],
+      "Velocity": ["Cone", [0.04, 13, 20]],
+      "Intensity": ["Noisy", [5, 2]],
+      "Orientation": ["ViewBillboard", {}],
+      "Color": ["OverLifetime", [[4.0, 2.5, 0.0, 0.8], [4.0, 2.5, 0.0, 0.0]]],
+      "Size": ["OverLifetime", [0.2, 3.4]],
+      "Rotation": ["Billboard", [-14.0, 14.0]]
+    }
+  },
+  "MostBasicEmitter": {
+    "Strategies": {
+      "Mesh": "buildin:OpaqueSquare",
+      "Lifetime": ["RandomLifetime", [5.0, 5.0]],
+      "Placement": ["Fixed", {}],
+      "Velocity": ["Fixed", [2.0, 2.0]],
+      "Intensity": ["Fixed", [2]],
+      "Orientation": ["ViewBillboard", {}],
+      "Color": ["OverLifetime", [[4.0, 2.5, 0.0, 0.8], [4.0, 2.5, 0.0, 0.0]]],
+      "Size": ["Fixed", [1.0]],
+      "Rotation": ["None", {}]
+    }
+  },
+  "BulletExplosion000": {
+    "Strategies": {
+      "Mesh": "buildin:OpaqueSquare",
+      "Lifetime": ["RandomLifetime", [0.2, 0.4]],
+      "Placement": ["Fixed", {}],
+      "Velocity": ["AnyDirection", [40.0, 70.0]],
+      "Intensity": ["BurstIntensity", [30, 0]],
+      "Orientation": ["ViewBillboard", {}],
+      "Color": ["OverLifetime", [[1.0, 2.5, 10.0, 0.8], [10.0, 10.0, 10.0, 0.1]]],
+      "Size": ["OverLifetime", [1.2, 0.0]],
+      "Rotation": ["Billboard", [-5, 5]]
+    }
+  }
+}

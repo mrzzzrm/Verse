@@ -51,12 +51,11 @@ void EquipmentSystem::onEntityGameUpdate(Entity & entity, float seconds)
     auto & equipment = entity.component<Equipment>();
 
     EquipmentUpdateContext equipmentUpdateContext;
+    equipmentUpdateContext.body = body;
     equipmentUpdateContext.targetPose = Pose3D(
         body->transform().position(),
         body->transform().orientation(),
         body->transform().center());
-    equipmentUpdateContext.linearVelocity = body->linearVelocity();
-    equipmentUpdateContext.angularVelocity = body->angularVelocity();
     equipmentUpdateContext.entity = entity;
 
     equipment.update(seconds, equipmentUpdateContext);

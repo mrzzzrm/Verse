@@ -6,6 +6,8 @@
 #include "Engine.h"
 #include "GameLib.h"
 
+class EquipmentUpdateContext;
+
 struct EngineSlotDesc : AttachmentDesc
 {
 };
@@ -24,6 +26,8 @@ public:
     {
         m_vfxManager = vfxManager;
     }
+
+    void onGameUpdate(float seconds, const EquipmentUpdateContext & context) override;
 
 private:
     void onDisabled() override;

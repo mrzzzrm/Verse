@@ -84,6 +84,14 @@ void VfxManager::removeEmitterInstance(
     m_emitterInstances.erase(emitterInstance->id().index);
 }
 
+void VfxManager::rebuildEmitterInstances()
+{
+    for (auto & emitterInstance : m_emitterInstances)
+    {
+        emitterInstance->restart();
+    }
+}
+
 void VfxManager::update(float seconds)
 {
     m_pointLightRenderer->update(seconds);
@@ -94,7 +102,7 @@ void VfxManager::update(float seconds)
 
         auto & emitterInstance = m_emitterInstances[e];
 
-        emitterInstance->update(seconds);
+        emitterInstance->update(*this, seconds);
         emitterInstance->setBasePose(emitterInstance->targetPose());
 
         if (emitterInstance->isDead()) m_deadEmitterInstances.emplace_back(e);

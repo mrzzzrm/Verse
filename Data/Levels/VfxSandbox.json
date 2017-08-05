@@ -1,0 +1,6 @@
+[
+{
+  "LID": "testDrone",
+  "Bases": ["Ship3", "Player"]
+}
+]

@@ -19,6 +19,7 @@ in vec4 DeathRGBA;
 in mat3 BirthOrientation;
 in float BirthScale;
 in float DeathScale;
+in vec4 AxisRotation; // (x,y,z) - UnitAxis, w - speed
 
 in vec3 Position;
 in vec2 UV;
@@ -31,8 +32,17 @@ out vec4 f_RGBA;
 out float f_NormalisedAge;
 out vec3 f_PositionVS;
 
+vec3 RodriguesRotation(vec3 p, vec4 axisAngle) {
+  return (
+    p * cos(axisAngle.w) + cross(axisAngle.xyz, p) *
+    sin(axisAngle.w) + axisAngle.xyz * dot(p, axisAngle.xyz) *
+    (1.0 - cos(axisAngle.w))
+  );
+}
+
 void main()
 {
+    float ageSeconds = float(Time - Birth) / 1000.0f;
 	f_NormalisedAge = min(float(Time - Birth) / Lifetime, 1.0f);
 
     if (f_NormalisedAge >= 1.0f) {
@@ -45,15 +55,19 @@ void main()
 
     vec3 particleCenter = Origin + (float(Time - Birth) / 1000.0f) * Velocity;
     vec3 vertexPosition;
-    vec3 scaledPosition = Position * scale;
+
+    vec4 axisAngle = AxisRotation;
+    axisAngle.w *= ageSeconds;
+
+    vec3 scaledRotatedPosition = RodriguesRotation(Position, axisAngle) * scale;
 
     if (OrientationType == 0) // World
     {
-        vertexPosition = BirthOrientation * scaledPosition + particleCenter;
+        vertexPosition = BirthOrientation * scaledRotatedPosition + particleCenter;
     }
     else if (OrientationType == 1) // ViewBillboard
     {
-        vertexPosition = (ViewBillboardRotation * scaledPosition) + particleCenter;
+        vertexPosition = (ViewBillboardRotation * scaledRotatedPosition) + particleCenter;
     }
 
     vec3 positionVS = (View * vec4(vertexPosition, 1.0f)).xyz;

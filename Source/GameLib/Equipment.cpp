@@ -122,6 +122,6 @@ void Equipment::update(float seconds, const EquipmentUpdateContext & context)
 
     for (auto & pair : m_attachmentByVoxel)
     {
-        pair.second->onGameUpdate(seconds);
+        pair.second->onGameUpdate(seconds, context);
     }
 }

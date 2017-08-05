@@ -12,6 +12,7 @@
 #include <Deliberation/ECS/Entity.h>
 
 #include "DockingPoint.h"
+#include "EquipmentUpdateContext.h"
 #include "EngineSlot.h"
 #include "GameLib.h"
 #include "Hardpoint.h"
@@ -26,14 +27,6 @@ class Pose3D;
 
 class VfxManager;
 class Weapon;
-
-struct EquipmentUpdateContext
-{
-    Pose3D    targetPose;
-    glm::vec3 angularVelocity;
-    glm::vec3 linearVelocity;
-    Entity    entity;
-};
 
 class Equipment final : public Component<Equipment>
 {

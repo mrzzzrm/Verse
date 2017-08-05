@@ -7,17 +7,19 @@
 #include <Deliberation/ECS/Entity.h>
 
 #include "GameLib.h"
+#include "HailstormBullet.h"
 
 class VoxelObject;
 
 struct VoxelObjectBulletHit
 {
-    VoxelObjectBulletHit(const Entity & entity, const glm::uvec3 & voxel)
-        : entity(entity), voxel(voxel)
+    VoxelObjectBulletHit(const Entity & entity, const glm::uvec3 & voxel, const HailstormBullet & bullet)
+        : entity(entity), voxel(voxel), bullet(bullet)
     {
     }
 
-    Entity     entity;
-    glm::uvec3 voxel;
-    float      damage = 0.0f;
+    Entity          entity;
+    glm::uvec3      voxel;
+    HailstormBullet bullet;
+    float           damage = 0.0f;
 };

@@ -63,6 +63,7 @@ struct VfxParticle
     float deathScale = 1.0f;
 
     glm::quat birthOrientation;
+    glm::vec4 axisRotation;
 
     boost::optional<VfxPointLightDesc> pointLight;
 };

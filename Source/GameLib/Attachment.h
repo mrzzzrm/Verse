@@ -8,6 +8,7 @@
 #include "GameLib.h"
 
 class Equipment;
+class EquipmentUpdateContext;
 
 struct AttachmentDesc
 {
@@ -32,7 +33,7 @@ public:
     void setEnabled(bool enabled);
     void setEntity(const Entity & entity);
 
-    virtual void onGameUpdate(float seconds) {}
+    virtual void onGameUpdate(float seconds, const EquipmentUpdateContext & context) {}
 
 protected:
     virtual void onEnabled() {}

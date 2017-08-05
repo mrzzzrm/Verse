@@ -89,6 +89,8 @@ add_library(${target}
     Resource/VoxelObjectPrototype.cpp
     Resource/VoxelObjectPrototype.h
 
+    Vfx/VfxDebugRenderer.cpp
+    Vfx/VfxDebugRenderer.h
     Vfx/Emitter.cpp
     Vfx/Emitter.h
     Vfx/EmitterColorStrategy.cpp
@@ -101,12 +103,17 @@ add_library(${target}
     Vfx/EmitterLifetimeStrategy.h
     Vfx/EmitterPlacementStrategy.cpp
     Vfx/EmitterPlacementStrategy.h
+    Vfx/EmitterOrientationStrategy.cpp
+    Vfx/EmitterOrientationStrategy.h
     Vfx/EmitterRotationStrategy.cpp
     Vfx/EmitterRotationStrategy.h
     Vfx/EmitterSizeStrategy.cpp
     Vfx/EmitterSizeStrategy.h
     Vfx/EmitterVelocityStrategy.cpp
     Vfx/EmitterVelocityStrategy.h
+    Vfx/VfxComponent.h
+    Vfx/VfxComponentPrototype.cpp
+    Vfx/VfxComponentPrototype.h
     Vfx/VfxDefines.h
     Vfx/VfxEffect.cpp
     Vfx/VfxEffect.h

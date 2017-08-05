@@ -1,8 +1,8 @@
 #include "EmitterRotationStrategy.h"
 
-glm::quat EmitterRotationStrategy::generateOrientation() const { return {}; }
+#include <Deliberation/Core/Math/Random.h>
 
-VfxParticleOrientationType EmitterViewBillboardStrategy::orientationType() const
+glm::vec4 EmitterBillboardRotation::generateRotation()
 {
-    return VfxParticleOrientationType::ViewBillboard;
+    return glm::vec4(0.0f, 0.0f, 1.0f, RandomFloat(m_minAngularSpeed, m_maxAngularSpeed));
 }

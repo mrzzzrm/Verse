@@ -15,7 +15,7 @@ public:
 protected:
     void onEnabled() override;
     void onDisabled() override;
-    void onGameUpdate(float seconds) override;
+    void onGameUpdate(float seconds, const EquipmentUpdateContext & context) override;
 
 private:
     VoxelLightDesc m_desc;

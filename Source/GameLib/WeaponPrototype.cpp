@@ -22,11 +22,21 @@ void WeaponPrototype::onReload(const Json & json)
     auto resourceToken = resourceManager.resourceToken<std::shared_ptr<MeshData>>(json["Bullet"]);
     m_vfxMeshId = hailstormManager.vfxManager().getOrCreateMeshId(resourceToken);
 
+    m_vfxMeshRenderBatchIndex = INVALID_VFX_MESH_RENDER_BATCH_INDEX;
+
     m_lifetime = json["Lifetime"];
     m_speed = json["Speed"];
     m_frequency = json["Frequency"];
     m_damage = json["Damage"];
     m_scale = json["Scale"];
 
-    m_vfxMeshRenderBatchIndex = INVALID_VFX_MESH_RENDER_BATCH_INDEX;
+    // Explosion Emitter
+    {
+        auto iter = json.find("Explosion");
+        if (iter != json.end())
+        {
+            m_explosionEmitter = prototypeManagerRef().getOrCreatePrototype<Emitter>(*iter);
+        }
+    }
+
 }

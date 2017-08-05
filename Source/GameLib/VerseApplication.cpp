@@ -91,7 +91,7 @@ void VerseApplication::onStartup()
         m_world.addSystem<HullSystem>();
         m_world.addSystem<VersePrototypeSystem>();
         m_world.addSystem<VoxelMaterialSystem>();
-        m_world.addSystem<LevelSystem>(GameDataPath("Data/Levels/WreckageSandbox.json")); // Do this last because it adds entities
+        m_world.addSystem<LevelSystem>(GameDataPath("Data/Levels/ShootingRange.json")); // Do this last because it adds entities
 
         auto & renderManager =
             m_world.systemRef<RenderSystem>().renderManager();

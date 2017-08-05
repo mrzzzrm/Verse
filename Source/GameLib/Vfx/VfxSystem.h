@@ -3,9 +3,11 @@
 #include <memory>
 
 #include <Deliberation/ECS/System.h>
+#include <Deliberation/Resource/PrototypesReloadedEvent.h>
 
 #include "GameLib.h"
 #include "VfxManager.h"
+#include "VfxDebugRenderer.h"
 
 namespace deliberation
 {
@@ -25,13 +27,14 @@ public:
     const std::shared_ptr<VfxManager> & manager() const { return m_vfxManager; }
 
     void onEvent(const VoxelObjectModification & modification);
-    void onEvent(const VoxelObjectBulletHit & hit);
+    void onEvent(const PrototypesReloadedEvent & event);
+
+    void onCreated() override;
 
 protected:
     void onGameUpdate(float seconds) override;
 
 private:
-    std::shared_ptr<VfxManager> m_vfxManager;
-    std::shared_ptr<Emitter>    m_blastEmitter;
-    std::shared_ptr<Emitter>    m_smokeEmitter;
+    std::shared_ptr<VfxDebugRenderer>     m_debugRenderer;
+    std::shared_ptr<VfxManager>         m_vfxManager;
 };

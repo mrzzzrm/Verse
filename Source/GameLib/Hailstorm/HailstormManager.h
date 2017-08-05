@@ -21,6 +21,10 @@ public:
 
     void addBullet(HailstormBullet bullet);
 
+    void onCreated() override;
+
+    void onEvent(const VoxelObjectBulletHit & hit);
+
 protected:
     void onGameUpdate(float seconds) override;
 

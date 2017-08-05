@@ -27,7 +27,8 @@ VfxMeshRenderBatch::VfxMeshRenderBatch(
                                           {"BirthRGBA", Type_Vec4},
                                           {"DeathRGBA", Type_Vec4},
                                           {"BirthScale", Type_Float},
-                                          {"DeathScale", Type_Float}});
+                                          {"DeathScale", Type_Float},
+                                          {"AxisRotation", Type_Vec4}});
     if (orientationType == VfxParticleOrientationType::World)
     {
         instanceDataLayout.addField({"BirthOrientation", Type_Mat3});
@@ -43,6 +44,7 @@ VfxMeshRenderBatch::VfxMeshRenderBatch(
     m_deathRGBAs = m_instances.field<glm::vec4>("DeathRGBA");
     m_birthScales = m_instances.field<float>("BirthScale");
     m_deathScales = m_instances.field<float>("DeathScale");
+    m_axisRotation = m_instances.field<glm::vec4>("AxisRotation");
 
     if (orientationType == VfxParticleOrientationType::World)
     {
@@ -187,8 +189,9 @@ void VfxMeshRenderBatch::render()
         m_draw.state().setBlendState(
             {BlendEquation::Add, BlendFactor::SourceAlpha, BlendFactor::OneMinusSourceAlpha});
         }
+        auto depthWrite = m_renderPhase == RenderPhase::Alpha ? DepthWrite::Disabled : DepthWrite::Enabled;
         m_draw.state().setDepthState(
-            {DepthTest::Enabled, DepthWrite::Enabled});
+            {DepthTest::Enabled, depthWrite});
         m_draw.uniform("DLightEnabled").set(m_dlightEnabled);
         m_draw.uniform("DLightDirection").set(glm::normalize(glm::vec3(0.1f, 1.0f, 0.2f)));
         m_draw.uniform("DLightColor").set(glm::vec3(0.8, 0.7f, 0.7f));
@@ -236,6 +239,7 @@ void VfxMeshRenderBatch::addInstanceInSlot(
     m_deathRGBAs[index] = particle.deathRGBA;
     m_birthScales[index] = particle.birthScale;
     m_deathScales[index] = particle.deathScale;
+    m_axisRotation[index] = particle.axisRotation;
 
     if (m_orientationType == VfxParticleOrientationType::World)
     {

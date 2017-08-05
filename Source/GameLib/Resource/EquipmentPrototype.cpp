@@ -8,9 +8,12 @@
 #include "Equipment.h"
 #include "Hardpoint.h"
 #include "HailstormManager.h"
+#include "VersePrototypeSystem.h"
 
 void EquipmentPrototype::updateComponent(Equipment & equipment)
 {
+    auto prototypeManager = world().systemRef<VersePrototypeSystem>().manager();
+
     /**
      * Clear Equipment
      */
@@ -30,6 +33,13 @@ void EquipmentPrototype::updateComponent(Equipment & equipment)
             engineSlot->setVfxManager(m_vfxManager);
             equipment.m_engineSlots.emplace_back(engineSlot);
             equipment.addAttachment(engineSlot);
+
+            const auto emitterName = obj.value("Emitter", "");
+            if (!emitterName.empty())
+            {
+                auto emitter = prototypeManager->prototype<Emitter>(emitterName);
+                engineSlot->setEngine(std::make_shared<Engine>(emitter));
+            }
         }
     }
 

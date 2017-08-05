@@ -9,6 +9,23 @@ VoxelMaterialSystem::VoxelMaterialSystem(World & world):
     Base(world, ComponentFilter::requires<VoxelMaterialComponent, VoxelObject>())
 {}
 
+void VoxelMaterialSystem::onCreated()
+{
+    subscribeEvent<PrototypesReloadedEvent>();
+}
+
+void VoxelMaterialSystem::onEvent(const PrototypesReloadedEvent & event)
+{
+    for (const auto & entityEntry : m_entities)
+    {
+        if (!entityEntry.active) continue;
+
+        auto entity = world().entity(entityEntry.id);
+        auto & voxelMaterialComponent = entity.component<VoxelMaterialComponent>();
+        voxelMaterialComponent.setCachedColorPalette({});
+    }
+}
+
 void VoxelMaterialSystem::onEntityGameUpdate(Entity & entity, float seconds)
 {
     auto & voxelObject = entity.component<VoxelObject>();

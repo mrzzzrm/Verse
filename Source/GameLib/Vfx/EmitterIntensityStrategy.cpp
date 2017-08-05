@@ -14,7 +14,7 @@ EmitterNoisyIntensity::EmitterNoisyIntensity(
 {
 }
 
-float EmitterNoisyIntensity::generateInterval(EmitterInstance & instance) const
+float EmitterNoisyIntensity::generateInterval(EmitterInstance & instance, EmitterInstanceContext & context) const
 {
     return std::max(0.0f, m_dist(m_engine));
 }
@@ -25,14 +25,14 @@ EmitterBurstIntensity::EmitterBurstIntensity(
 {
 }
 
-float EmitterBurstIntensity::generateInterval(EmitterInstance & instance) const
+float EmitterBurstIntensity::generateInterval(EmitterInstance & instance, EmitterInstanceContext & context) const
 {
-    auto context =
-        std::dynamic_pointer_cast<DrawContext>(instance.intensityContext());
+    auto intensityContext =
+        std::dynamic_pointer_cast<Context>(context.intensityContext);
 
-    if (context->countdown > 0)
+    if (intensityContext->countdown > 0)
     {
-        context->countdown--;
+        intensityContext->countdown--;
         return 0.0f;
     }
     else
@@ -44,7 +44,7 @@ float EmitterBurstIntensity::generateInterval(EmitterInstance & instance) const
 std::shared_ptr<EmitterIntensityContext>
 EmitterBurstIntensity::createContext() const
 {
-    auto context = std::make_shared<DrawContext>();
+    auto context = std::make_shared<Context>();
     context->countdown = (u32)m_dist(m_engine);
     return context;
 }

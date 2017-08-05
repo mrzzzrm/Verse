@@ -9,6 +9,34 @@
         6
       ]
     },
+    "Equipment": {
+      "Engines": [
+        {
+          "Voxel": [23, 35, 3],
+          "Orientation": [0, "PI",0],
+          "Emitter": "Engine000"
+        },
+        {
+          "Voxel": [14, 35, 3],
+          "Orientation": [0, "PI",0],
+          "Emitter": "Engine000"
+        }
+      ],
+      "Hardpoints": [
+        {
+          "Voxel": [10, 14, 3],
+          "Orientation": [0, 0, 0],
+          "MaxAngle": 0.6,
+          "CompatibleWeapons": ["WeaponA", "WeaponB"]
+        },
+        {
+          "Voxel": [27, 14, 3],
+          "Orientation": [0, 0, 0],
+          "MaxAngle": 0.6,
+          "CompatibleWeapons": ["WeaponA", "WeaponB"]
+        }
+      ]
+    },
     "VoxelRigidBody": {},
     "FlightControlConfig": {
       "Forward": [

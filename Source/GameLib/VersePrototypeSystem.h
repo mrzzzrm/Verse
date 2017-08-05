@@ -10,6 +10,8 @@ class VersePrototypeSystem:
 public:
     VersePrototypeSystem(World & world);
 
+    void reload();
+
     void onCreated() override;
 };
 

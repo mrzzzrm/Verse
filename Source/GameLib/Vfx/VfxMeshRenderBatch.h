@@ -64,6 +64,7 @@ private:
     TypedBlobValueAccessor<glm::mat3> m_birthOrientations;
     TypedBlobValueAccessor<float>     m_birthScales;
     TypedBlobValueAccessor<float>     m_deathScales;
+    TypedBlobValueAccessor<glm::vec4> m_axisRotation;
 
     std::stack<size_t> m_freeInstanceSlots;
 };

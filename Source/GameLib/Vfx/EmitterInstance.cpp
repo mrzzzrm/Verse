@@ -4,23 +4,10 @@
 
 #include "Emitter.h"
 
-EmitterInstance::EmitterInstance(std::shared_ptr<Emitter> emitter)
+EmitterInstance::EmitterInstance(std::shared_ptr<const Emitter> emitter)
     : m_emitter(emitter)
 {
-    std::function<void(EmitterInstanceContext & context, Emitter & emitter)>
-        buildContextTree = [&](EmitterInstanceContext & context,
-                               Emitter &                emitter) {
-            m_numActiveEmitters++;
-            context.children.resize(emitter.children().size());
-            for (size_t c = 0; c < emitter.children().size(); c++)
-            {
-                buildContextTree(context.children[c], *emitter.children()[c]);
-            }
-        };
-
-    buildContextTree(m_rootContext, *m_emitter);
-
-    m_intensityContext = emitter->intensity()->createContext();
+    restart();
 }
 
 EmitterInstance::~EmitterInstance() = default;
@@ -33,12 +20,6 @@ const EmitterInstanceId & EmitterInstance::id() const { return m_id; }
 
 bool EmitterInstance::isDead() const { return m_numActiveEmitters == 0; }
 
-const std::shared_ptr<EmitterIntensityContext> &
-EmitterInstance::intensityContext() const
-{
-    return m_intensityContext;
-}
-
 void EmitterInstance::setBasePose(const Pose3D & pose) { m_basePose = pose; }
 
 void EmitterInstance::setTargetPose(const Pose3D & pose)
@@ -48,9 +29,29 @@ void EmitterInstance::setTargetPose(const Pose3D & pose)
 
 void EmitterInstance::setId(const EmitterInstanceId & id) { m_id = id; }
 
-void EmitterInstance::update(float seconds)
+void EmitterInstance::update(VfxManager & vfxManager, float seconds)
 {
-    m_emitter->updateInstance(*this, m_rootContext, seconds);
+    m_emitter->updateInstance(vfxManager, *this, m_rootContext, seconds);
+}
+
+void EmitterInstance::restart()
+{
+    m_rootContext = EmitterInstanceContext();
+
+    m_numActiveEmitters = 0;
+    std::function<void(EmitterInstanceContext & context, const Emitter & emitter)>
+        buildContextTree = [&](EmitterInstanceContext & context,
+                               const Emitter &                emitter) {
+        m_numActiveEmitters++;
+        if (emitter.intensity()) context.intensityContext = emitter.intensity()->createContext();
+        context.children.resize(emitter.children().size());
+        for (size_t c = 0; c < emitter.children().size(); c++)
+        {
+            buildContextTree(context.children[c], *emitter.children()[c]);
+        }
+    };
+
+    buildContextTree(m_rootContext, *m_emitter);
 }
 
 void EmitterInstance::onEmitterDied()
