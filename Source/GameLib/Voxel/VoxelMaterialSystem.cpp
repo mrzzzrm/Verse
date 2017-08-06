@@ -26,7 +26,7 @@ void VoxelMaterialSystem::onEvent(const PrototypesReloadedEvent & event)
     }
 }
 
-void VoxelMaterialSystem::onEntityGameUpdate(Entity & entity, float seconds)
+void VoxelMaterialSystem::onEntityGameUpdate(Entity & entity, const UpdateFrame & updateFrame)
 {
     auto & voxelObject = entity.component<VoxelObject>();
 

@@ -27,7 +27,7 @@ void DebugAttachmentSystem::onCreated()
     m_obscuredNode->setDrawState(obscuredDrawState);
 }
 
-void DebugAttachmentSystem::onFrameUpdate(float /*seconds*/)
+void DebugAttachmentSystem::onFrameUpdate(const UpdateFrame & updateFrame)
 {
     auto & imGuiSystem = world().systemRef<ImGuiSystem>();
 

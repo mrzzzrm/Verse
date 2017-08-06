@@ -20,7 +20,7 @@ public:
         NpcController & controller,
         RigidBody &     body,
         Equipment &     equipment,
-        float           seconds) override;
+        const UpdateFrame & updateFrame) override;
 
 private:
     enum class Status

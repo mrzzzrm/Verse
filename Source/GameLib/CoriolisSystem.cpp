@@ -12,7 +12,7 @@ CoriolisSystem::CoriolisSystem(World & world)
 {
 }
 
-void CoriolisSystem::onEntityGameUpdate(Entity & entity, float seconds)
+void CoriolisSystem::onEntityGameUpdate(Entity & entity, const UpdateFrame & updateFrame)
 {
     auto & coriolis = entity.component<CoriolisComponent>();
     auto & body = entity.component<RigidBodyComponent>().value();

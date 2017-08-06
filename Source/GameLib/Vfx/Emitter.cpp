@@ -1,5 +1,6 @@
 #include "Emitter.h"
 
+#include <Deliberation/Core/UpdateFrame.h>
 #include <Deliberation/Resource/PrototypeManager.h>
 
 #include "ResourceManager.h"
@@ -35,14 +36,14 @@ void Emitter::updateInstance(
     VfxManager & vfxManager,
     EmitterInstance &        emitterInstance,
     EmitterInstanceContext & context,
-    float                    seconds) const
+    const UpdateFrame & updateFrame) const
 {
     Assert(m_children.size() == context.children.size(), "Update Instances when changing Emitters!");
 
     for (size_t c = 0; c < m_children.size(); c++)
     {
         m_children[c]->updateInstance(vfxManager,
-                                      emitterInstance, context.children[c], seconds);
+                                      emitterInstance, context.children[c], updateFrame);
     }
 
     if (!m_hasStrategies) return;
@@ -64,21 +65,21 @@ void Emitter::updateInstance(
     while (!context.dead)
     {
         const auto timeStep =
-            std::min(seconds - timeAccumulator, context.countdown);
+            std::min(updateFrame.gameSeconds() - timeAccumulator, context.countdown);
         timeAccumulator += timeStep;
         context.countdown -= timeStep;
 
         if (context.countdown > 0.0f) break;
 
         intermediatePose = emitterInstance.m_basePose.interpolated(
-            emitterInstance.m_targetPose, timeAccumulator / seconds);
+            emitterInstance.m_targetPose, timeAccumulator / updateFrame.gameSeconds());
 
         intermediatePose = intermediatePose.poseLocalToWorld(m_pose);
 
         const auto position =
             intermediatePose.position() + m_placement->generatePosition();
         const auto birth =
-            CurrentMillis() + (TimestampMillis)(timeAccumulator * 1000);
+            updateFrame.beginMicros()/1000 + (TimestampMillis)(timeAccumulator * 1000);
 
         auto particle = VfxParticle(
             position,

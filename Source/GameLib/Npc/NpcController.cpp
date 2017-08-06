@@ -14,7 +14,7 @@ void NpcController::update(
     RigidBody &                 body,
     NpcFlightControl &          flightControl,
     const FlightControlConfig & config,
-    float                       seconds)
+    const UpdateFrame & updateFrame)
 {
-    m_steering.update(body, flightControl, config, seconds);
+    m_steering.update(body, flightControl, config, updateFrame);
 }

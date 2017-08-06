@@ -29,7 +29,7 @@ HudEntityMarkers::HudEntityMarkers(
 {
 }
 
-void HudEntityMarkers::update(float seconds)
+void HudEntityMarkers::update(const UpdateFrame & updateFrame)
 {
     for (auto & pair : m_markersByEntity)
     {

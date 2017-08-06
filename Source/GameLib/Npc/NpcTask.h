@@ -7,6 +7,7 @@ class NpcController;
 
 namespace deliberation
 {
+class UpdateFrame;
 class RigidBody;
 }
 
@@ -18,5 +19,5 @@ public:
         NpcController & controller,
         RigidBody &     body,
         Equipment &     equipment,
-        float           seconds) = 0;
+        const UpdateFrame & updateFrame) = 0;
 };

@@ -30,7 +30,7 @@ public:
 
     void addBullet(const HailstormBullet & bullet);
 
-    void update(float seconds);
+    void update(const UpdateFrame & updateFrame);
 
 private:
     VoxelWorld &   m_voxelWorld;

@@ -59,10 +59,10 @@ void HailstormManager::onEvent(const VoxelObjectBulletHit & hit)
 }
 
 
-void HailstormManager::onGameUpdate(float seconds)
+void HailstormManager::onGameUpdate(const UpdateFrame & updateFrame)
 {
-    m_vfxManager.update(seconds);
-    m_hailstormPhysicsWorld.update(seconds);
+    m_vfxManager.update(updateFrame);
+    m_hailstormPhysicsWorld.update(updateFrame);
 
     for (const auto & hit : m_hailstormPhysicsWorld.voxelObjectBulletHits())
     {

@@ -3,6 +3,7 @@
 #include <cmath>
 
 #include <Deliberation/Core/Assert.h>
+#include <Deliberation/Core/UpdateFrame.h>
 #include <Deliberation/Core/Math/FloatUtils.h>
 #include <Deliberation/Core/Math/MathUtils.h>
 #include <Deliberation/Core/Math/Transform3D.h>
@@ -33,7 +34,7 @@ void NpcFlightControl::setLocalAngularAccceleration(
 }
 
 void NpcFlightControl::update(
-    RigidBody & body, const FlightControlConfig & config, float seconds)
+    RigidBody & body, const FlightControlConfig & config, const UpdateFrame & updateFrame)
 {
     /**
      * Correct linear acceleration
@@ -50,7 +51,7 @@ void NpcFlightControl::update(
             {
                 const auto requiredCorrection =
                     std::abs(currentSpeed) - maxSpeed;
-                const auto feasibleCorrection = maxAcceleration * seconds;
+                const auto feasibleCorrection = maxAcceleration * updateFrame.gameSeconds();
                 const auto appliedCorrectionFactor =
                     std::min(requiredCorrection / feasibleCorrection, 1.0f);
 
@@ -101,7 +102,7 @@ void NpcFlightControl::update(
         m_localAngularAccelertion = correctiveAcceleration(
             localAngularSpeed - config.angular.maxSpeed,
             config.angular.acceleration,
-            seconds,
+            updateFrame,
             -glm::normalize(localAngularVelocity));
     }
 
@@ -111,20 +112,20 @@ void NpcFlightControl::update(
     body.setLinearVelocity(
         body.linearVelocity() +
         body.transform().directionLocalToWorld(m_localLinearAcceleration) *
-            seconds);
+            updateFrame.gameSeconds());
     body.setAngularVelocity(
         body.angularVelocity() +
         body.transform().directionLocalToWorld(m_localAngularAccelertion) *
-            seconds);
+            updateFrame.gameSeconds());
 }
 
 glm::vec3 NpcFlightControl::correctiveAcceleration(
     float             requiredCorrection,
     float             acceleration,
-    float             seconds,
+    const UpdateFrame & updateFrame,
     const glm::vec3 & direction) const
 {
-    const auto feasibleCorrection = acceleration * seconds;
+    const auto feasibleCorrection = acceleration * updateFrame.gameSeconds();
     const auto appliedCorrectionFactor =
         std::min(requiredCorrection / feasibleCorrection, 1.0f);
 

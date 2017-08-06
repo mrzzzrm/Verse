@@ -47,7 +47,7 @@ public:
      */
     void rebuildEmitterInstances();
 
-    void update(float seconds);
+    void update(const UpdateFrame & updateFrame);
 
 private:
     struct DeathEntry

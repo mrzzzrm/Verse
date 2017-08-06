@@ -115,7 +115,6 @@ void VfxMeshRenderer::disengageParticle(const VfxParticleId & particleId)
 
 void VfxMeshRenderer::onRegisterRenderNodes()
 {
-
     for (auto & pair : m_renderNodesByRenderPhase)
     {
         // TODO Remove cast when switching to modern stdlib
@@ -129,7 +128,7 @@ void VfxMeshRenderer::onBeforeRender()
         m_renderManager.mainCamera().view();
     m_projectionGlobal[0] =
         m_renderManager.mainCamera().projection();
-    m_timeGlobal[0] = CurrentMillis();
+    m_timeGlobal[0] = m_currentMillis;
 
     m_globalsBuffer.upload(m_globals);
 }

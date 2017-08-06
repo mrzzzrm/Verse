@@ -36,6 +36,8 @@ public:
     const Program & program();
     const Buffer &  globalsBuffer() const;
 
+    void setCurrentMillis(TimestampMillis currentMillis) { m_currentMillis = currentMillis; }
+
     size_t getOrCreateBatchIndex(const VfxBatchKey & key);
 
     VfxMeshId addMesh(const std::shared_ptr<MeshData> & mesh);
@@ -76,4 +78,6 @@ private:
 
     Program m_program;
     Buffer  m_globalsBuffer;
+
+    TimestampMillis m_currentMillis = 0;
 };

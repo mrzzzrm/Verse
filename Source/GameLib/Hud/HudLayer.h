@@ -11,7 +11,7 @@ public:
 
     virtual ~HudLayer() = default;
 
-    virtual void update(float seconds) = 0;
+    virtual void update(const UpdateFrame & updateFrame) = 0;
     virtual void render() = 0;
 
 protected:

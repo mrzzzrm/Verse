@@ -10,5 +10,5 @@ public:
     NpcBehaviourSystem(World & world);
 
 protected:
-    void onEntityGameUpdate(Entity & entity, float seconds);
+    void onEntityGameUpdate(Entity & entity, const UpdateFrame & updateFrame);
 };

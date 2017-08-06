@@ -113,21 +113,21 @@ void Equipment::addAttachment(const std::shared_ptr<Attachment> & attachment)
     m_attachments.emplace_back(attachment);
 }
 
-void Equipment::postPhysicsUpdate(float seconds)
+void Equipment::postPhysicsUpdate(const UpdateFrame & updateFrame)
 {
     for (auto & attachment : m_attachments)
     {
-        attachment->onPostPhysicsUpdate(seconds);
+        attachment->onPostPhysicsUpdate(updateFrame);
     }
 }
 
-void Equipment::gameUpdate(float seconds, const EquipmentUpdateContext & context)
+void Equipment::gameUpdate(const UpdateFrame & updateFrame, const EquipmentUpdateContext & context)
 {
     for (auto & hardpoint : m_hardpoints)
-        hardpoint->update(seconds, context);
+        hardpoint->update(updateFrame, context);
 
     for (auto & pair : m_attachmentByVoxel)
     {
-        pair.second->onGameUpdate(seconds, context);
+        pair.second->onGameUpdate(updateFrame, context);
     }
 }

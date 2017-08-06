@@ -88,7 +88,7 @@ void VoxelWorld::onEntityRemoved(Entity & entity)
     m_renderer->removeVoxelObject(voxelObject.shared_from_this());
 }
 
-void VoxelWorld::onEntityGameUpdate(Entity & entity, float seconds)
+void VoxelWorld::onEntityGameUpdate(Entity & entity, const UpdateFrame & updateFrame)
 {
     auto & voxelObject = entity.component<VoxelObject>();
     if (voxelObject.data()->numVoxels() == 0)
@@ -105,4 +105,4 @@ void VoxelWorld::onEntityGameUpdate(Entity & entity, float seconds)
     }
 }
 
-void VoxelWorld::onGameUpdate(float seconds) {}
+void VoxelWorld::onGameUpdate(const UpdateFrame & updateFrame) {}

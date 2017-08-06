@@ -26,7 +26,7 @@ public:
         RigidBody &                 body,
         NpcFlightControl &          flightControl,
         const FlightControlConfig & config,
-        float                       seconds);
+        const UpdateFrame & updateFrame);
 
 private:
     NpcSteering              m_steering;

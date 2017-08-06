@@ -29,9 +29,9 @@ void EmitterInstance::setTargetPose(const Pose3D & pose)
 
 void EmitterInstance::setId(const EmitterInstanceId & id) { m_id = id; }
 
-void EmitterInstance::update(VfxManager & vfxManager, float seconds)
+void EmitterInstance::update(VfxManager & vfxManager, const UpdateFrame & updateFrame)
 {
-    m_emitter->updateInstance(vfxManager, *this, m_rootContext, seconds);
+    m_emitter->updateInstance(vfxManager, *this, m_rootContext, updateFrame);
 }
 
 void EmitterInstance::restart()

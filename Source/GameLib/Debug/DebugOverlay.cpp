@@ -25,7 +25,7 @@ DebugOverlay::DebugOverlay(World & world, DrawContext & context)
 
 void DebugOverlay::setFps(float fps) { m_fps = fps; }
 
-void DebugOverlay::onFrameUpdate(float seconds)
+void DebugOverlay::onFrameUpdate(const UpdateFrame & updateFrame)
 {
     auto imGuiSystem = world().system<ImGuiSystem>();
 

@@ -41,7 +41,7 @@ public:
         VfxManager & vfxManager,
         EmitterInstance &        emitterInstance,
         EmitterInstanceContext & context,
-        float                    seconds) const;
+        const UpdateFrame & updateFrame) const;
 
 protected:
     void onReload(const Json & json) override;

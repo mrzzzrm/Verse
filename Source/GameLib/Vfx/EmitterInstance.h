@@ -7,6 +7,11 @@
 #include "EmitterIntensityStrategy.h"
 #include "GameLib.h"
 
+namespace deliberation
+{
+class UpdateFrame;
+}
+
 class Emitter;
 class VfxManager;
 
@@ -43,7 +48,7 @@ public:
     void setVelocity(const glm::vec3 & velocity) { m_velocity = velocity; }
     void setId(const EmitterInstanceId & id);
 
-    void update(VfxManager & vfxManager, float seconds);
+    void update(VfxManager & vfxManager, const UpdateFrame & updateFrame);
 
     /**
      * Re-parse the emitter and build a new context tree. Will start the emitter instance anew and react on any changes

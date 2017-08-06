@@ -59,8 +59,8 @@ void VfxSystem::onCreated()
     subscribeEvent<PrototypesReloadedEvent>();
 }
 
-void VfxSystem::onGameUpdate(float seconds) {
-    m_vfxManager->update(seconds);
+void VfxSystem::onGameUpdate(const UpdateFrame & updateFrame) {
+    m_vfxManager->update(updateFrame);
 
     auto & imGuiSystem = world().systemRef<ImGuiSystem>();
     if (!imGuiSystem.showView("Debug VFX"))

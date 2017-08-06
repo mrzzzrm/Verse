@@ -15,7 +15,7 @@ class HudCrosshairs : public HudLayer, public HudElement
 public:
     HudCrosshairs(Hud & hud);
 
-    void update(float seconds) override;
+    void update(const UpdateFrame & updateFrame) override;
     void render() override;
 
     void onMouseButtonPressed(MouseButtonEvent & event) override;

@@ -4,6 +4,11 @@
 
 #include "GameLib.h"
 
+namespace deliberation
+{
+class UpdateFrame;
+}
+
 class AbstractBehaviour
 {
 public:
@@ -16,7 +21,7 @@ public:
     void           setEntity(const Entity & entity) { m_entity = entity; }
 
     virtual void onBehaviourStarted(){};
-    virtual void onBehaviourUpdate(float seconds){};
+    virtual void onBehaviourUpdate(const UpdateFrame & updateFrame){};
 
 protected:
     Entity      m_entity;

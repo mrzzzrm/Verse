@@ -18,7 +18,7 @@ public:
     void onEvent(const PrototypesReloadedEvent & event);
 
 protected:
-    void onEntityGameUpdate(Entity & entity, float seconds) override;
+    void onEntityGameUpdate(Entity & entity, const UpdateFrame & updateFrame) override;
     void onEntityAdded(Entity & entity) override;
 
 private:

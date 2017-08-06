@@ -18,7 +18,7 @@ public:
         NpcController & controller,
         RigidBody &     body,
         Equipment &     equipment,
-        float           seconds) override;
+        const UpdateFrame & updateFrame) override;
 
 private:
     bool      m_fireRequestEnabled = false;

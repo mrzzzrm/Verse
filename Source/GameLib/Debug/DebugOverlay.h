@@ -25,7 +25,7 @@ public:
     void setFps(float fps);
 
 protected:
-    void onFrameUpdate(float seconds) override;
+    void onFrameUpdate(const UpdateFrame & updateFrame) override;
 
 private:
     Application &                        m_application;

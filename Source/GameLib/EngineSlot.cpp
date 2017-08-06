@@ -26,7 +26,7 @@ void EngineSlot::onDisabled()
     m_vfxManager->removeEmitterInstance(m_engine->emitterInstance());
 }
 
-void EngineSlot::onPostPhysicsUpdate(float seconds)
+void EngineSlot::onPostPhysicsUpdate(const UpdateFrame & updateFrame)
 {
     if (m_engine)
     {
@@ -34,7 +34,7 @@ void EngineSlot::onPostPhysicsUpdate(float seconds)
     }
 }
 
-void EngineSlot::onGameUpdate(float seconds, const EquipmentUpdateContext & context)
+void EngineSlot::onGameUpdate(const UpdateFrame & updateFrame, const EquipmentUpdateContext & context)
 {
     if (m_engine)
     {

@@ -26,7 +26,7 @@ public:
     void removeParticlePointLight(size_t index);
     void disengageParticlePointLight(size_t index);
 
-    void update(float seconds);
+    void update(const UpdateFrame & updateFrame);
 
 private:
     std::shared_ptr<PointLightRenderer> m_pointLightRenderer;

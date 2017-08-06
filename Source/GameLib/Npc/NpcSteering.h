@@ -18,7 +18,7 @@ public:
         RigidBody &                 body,
         NpcFlightControl &          flightControl,
         const FlightControlConfig & config,
-        float                       seconds);
+        const UpdateFrame & updateFrame);
 
 private:
     boost::optional<glm::vec3> m_destination;

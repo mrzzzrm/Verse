@@ -11,6 +11,7 @@
 
 namespace deliberation
 {
+class UpdateFrame;
 class RigidBody;
 }
 
@@ -26,12 +27,12 @@ public:
     setLocalAngularAccceleration(const glm::vec3 & localAngularAccelertion);
 
     void
-    update(RigidBody & body, const FlightControlConfig & config, float seconds);
+    update(RigidBody & body, const FlightControlConfig & config, const UpdateFrame & updateFrame);
 
     glm::vec3 correctiveAcceleration(
         float             requiredCorretion,
         float             acceleration,
-        float             seconds,
+        const UpdateFrame & updateFrame,
         const glm::vec3 & direction) const;
 
 private:

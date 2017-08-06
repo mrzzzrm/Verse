@@ -24,12 +24,12 @@ void Hardpoint::setReferencePose(const Pose3D & referencePose)
 
 void Hardpoint::setWeapon(std::shared_ptr<Weapon> weapon) { m_weapon = weapon; }
 
-void Hardpoint::update(float seconds, const EquipmentUpdateContext & context)
+void Hardpoint::update(const UpdateFrame & updateFrame, const EquipmentUpdateContext & context)
 {
     if (!m_weapon) return;
     if (!m_enabled) return;
 
-    m_weapon->update(seconds, context, worldPose(), m_maxAngle);
+    m_weapon->update(updateFrame, context, worldPose(), m_maxAngle);
 }
 
 void Hardpoint::onDisabled() { std::cout << "Hardpoint disabled" << std::endl; }

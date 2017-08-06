@@ -45,13 +45,13 @@ void EquipmentSystem::onEntityAdded(Entity & entity)
 {
 }
 
-void EquipmentSystem::onEntityPostPhysicsUpdate(Entity & entity, float seconds)
+void EquipmentSystem::onEntityPostPhysicsUpdate(Entity & entity, const UpdateFrame & updateFrame)
 {
     auto & equipment = entity.component<Equipment>();
-    equipment.postPhysicsUpdate(seconds);
+    equipment.postPhysicsUpdate(updateFrame);
 }
 
-void EquipmentSystem::onEntityGameUpdate(Entity & entity, float seconds)
+void EquipmentSystem::onEntityGameUpdate(Entity & entity, const UpdateFrame & updateFrame)
 {
     auto   body = entity.component<RigidBodyComponent>().value();
     auto & equipment = entity.component<Equipment>();
@@ -60,5 +60,5 @@ void EquipmentSystem::onEntityGameUpdate(Entity & entity, float seconds)
     equipmentUpdateContext.body = body;
     equipmentUpdateContext.entity = entity;
 
-    equipment.gameUpdate(seconds, equipmentUpdateContext);
+    equipment.gameUpdate(updateFrame, equipmentUpdateContext);
 }

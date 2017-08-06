@@ -19,7 +19,7 @@ public:
 
 protected:
     void onEntityAdded(Entity & entity) override;
-    void onEntityGameUpdate(Entity & entity, float seconds) override;
+    void onEntityGameUpdate(Entity & entity, const UpdateFrame & updateFrame) override;
 
 protected:
     std::shared_ptr<BehaviourManager> m_manager;

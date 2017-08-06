@@ -6,9 +6,9 @@
 #include "Equipment.h"
 #include "VerseEntityPrototypeSystem.h"
 
-void LaunchDefenseBehaviour::onBehaviourUpdate(float seconds)
+void LaunchDefenseBehaviour::onBehaviourUpdate(const UpdateFrame & updateFrame)
 {
-    if (m_lastLaunchedMillis + 5000 > CurrentMillis()) return;
+    if (m_lastLaunchedMillis + 5000 > updateFrame.beginMicros()/1000) return;
     if (m_numLaunched >= 3) return;
 
     auto & equipment = m_entity.component<Equipment>();
@@ -29,5 +29,5 @@ void LaunchDefenseBehaviour::onBehaviourUpdate(float seconds)
         Transform3D::fromPose(launchPose);
 
     m_numLaunched++;
-    m_lastLaunchedMillis = CurrentMillis();
+    m_lastLaunchedMillis = updateFrame.beginMicros()/1000;
 };

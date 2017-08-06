@@ -2,6 +2,7 @@
 
 #include <glm/gtx/vector_angle.hpp>
 
+#include <Deliberation/Core/UpdateFrame.h>
 #include <Deliberation/Core/Math/Trajectory.h>
 #include <Deliberation/Physics/RigidBody.h>
 #include <Deliberation/Scene/Pipeline/RenderPhase.h>
@@ -30,11 +31,13 @@ void Weapon::setFireRequest(const glm::vec3 & direction)
 void Weapon::setPose(const Pose3D & pose) { m_pose = pose; }
 
 void Weapon::update(
-    float                          seconds,
+    const UpdateFrame & updateFrame,
     const EquipmentUpdateContext & context,
     const Pose3D &                 weaponPose,
     float                          maxAngle)
 {
+    auto seconds = updateFrame.gameSeconds();
+
     if (!m_fireRequestActive)
     {
         m_pose = weaponPose;
@@ -44,8 +47,7 @@ void Weapon::update(
 
     auto timeAccumulator = 0.0f;
 
-    auto baseMillis =
-        (CurrentMillis() - ((TimestampMillis)std::ceil(seconds * 1000.0f)));
+    auto baseMillis = updateFrame.beginMicros() / 1000;
 
     while (seconds > m_cooldown)
     {

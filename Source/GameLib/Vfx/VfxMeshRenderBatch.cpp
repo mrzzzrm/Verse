@@ -104,7 +104,7 @@ void VfxMeshRenderBatch::disengageInstance(size_t index)
     m_instanceBuffer.upload(m_instances); // TODO does this have to happen every time?
 }
 
-void VfxMeshRenderBatch::update(float seconds)
+void VfxMeshRenderBatch::update(const UpdateFrame & updateFrame)
 {
 }
 

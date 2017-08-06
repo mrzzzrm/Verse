@@ -25,8 +25,8 @@ public:
         m_vfxManager = vfxManager;
     }
 
-    void onPostPhysicsUpdate(float seconds) override;
-    void onGameUpdate(float seconds, const EquipmentUpdateContext & context) override;
+    void onPostPhysicsUpdate(const UpdateFrame & updateFrame) override;
+    void onGameUpdate(const UpdateFrame & updateFrame, const EquipmentUpdateContext & context) override;
 
 private:
     void onDisabled() override;

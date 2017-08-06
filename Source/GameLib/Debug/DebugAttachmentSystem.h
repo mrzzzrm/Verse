@@ -26,7 +26,7 @@ public:
     void onCreated() override;
 
 protected:
-    void onFrameUpdate(float seconds) override;
+    void onFrameUpdate(const UpdateFrame & updateFrame) override;
 
     void updateSphere(
         DebugSphereInstance &               sphere,

@@ -3,6 +3,7 @@
 #include <cmath>
 
 #include <Deliberation/Core/Assert.h>
+#include <Deliberation/Core/UpdateFrame.h>
 #include <Deliberation/Core/Math/MathUtils.h>
 #include <Deliberation/Core/Math/Transform3D.h>
 #include <Deliberation/Core/StreamUtils.h>
@@ -42,8 +43,11 @@ void PlayerFlightControl::setAngularThrust(const glm::vec3 & angularThrust)
 }
 
 void PlayerFlightControl::update(
-    RigidBody & body, FlightControlConfig & config, float seconds)
+    RigidBody & body, FlightControlConfig & config,
+    const UpdateFrame & updateFrame)
 {
+    const auto seconds = updateFrame.gameSeconds();
+
     /**
      * Control linear velocity
      */

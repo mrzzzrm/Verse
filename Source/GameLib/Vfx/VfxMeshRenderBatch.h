@@ -16,6 +16,11 @@
 
 #include "GameLib.h"
 
+namespace deliberation
+{
+class UpdateFrame;
+}
+
 class VfxMeshRenderer;
 
 class VfxMeshRenderBatch
@@ -32,7 +37,7 @@ public:
     void   removeInstance(size_t index);
     void   disengageInstance(size_t index);
 
-    void update(float seconds);
+    void update(const UpdateFrame & updateFrame);
 
     void render();
 

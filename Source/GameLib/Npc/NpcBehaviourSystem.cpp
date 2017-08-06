@@ -15,7 +15,7 @@ NpcBehaviourSystem::NpcBehaviourSystem(World & world)
 {
 }
 
-void NpcBehaviourSystem::onEntityGameUpdate(Entity & entity, float seconds)
+void NpcBehaviourSystem::onEntityGameUpdate(Entity & entity, const UpdateFrame & updateFrame)
 {
     auto & npcController = entity.component<NpcController>();
 

@@ -28,7 +28,7 @@ public:
     void setPose(const Pose3D & pose);
 
     void update(
-        float                          seconds,
+        const UpdateFrame & updateFrame,
         const EquipmentUpdateContext & context,
         const Pose3D &                 weaponPose,
         float                          maxAngle);

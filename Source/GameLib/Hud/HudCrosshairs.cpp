@@ -45,7 +45,7 @@ HudCrosshairs::HudCrosshairs(Hud & hud)
     m_viewportSizeUniform = m_draw.uniform("ViewportSize");
 }
 
-void HudCrosshairs::update(float seconds)
+void HudCrosshairs::update(const UpdateFrame & updateFrame)
 {
     const auto halfExtent =
         glm::vec2(32.0f) / glm::vec2(m_drawContext.backbuffer().size());

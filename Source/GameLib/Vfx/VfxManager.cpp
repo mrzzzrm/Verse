@@ -1,5 +1,6 @@
 #include "VfxManager.h"
 
+#include <Deliberation/Core/UpdateFrame.h>
 #include <Deliberation/Core/DataLayout.h>
 #include <Deliberation/Core/LayoutedBlob.h>
 #include <Deliberation/Core/Math/AABB.h>
@@ -92,9 +93,10 @@ void VfxManager::rebuildEmitterInstances()
     }
 }
 
-void VfxManager::update(float seconds)
+void VfxManager::update(const UpdateFrame & updateFrame)
 {
-    m_pointLightManager->update(seconds);
+    m_meshRenderer->setCurrentMillis(updateFrame.endMicros() / 1000);
+    m_pointLightManager->update(updateFrame);
 
     for (size_t e = 0; e < m_emitterInstances.capacity(); e++)
     {
@@ -102,7 +104,7 @@ void VfxManager::update(float seconds)
 
         auto & emitterInstance = m_emitterInstances[e];
 
-        emitterInstance->update(*this, seconds);
+        emitterInstance->update(*this, updateFrame);
         emitterInstance->setBasePose(emitterInstance->targetPose());
 
         if (emitterInstance->isDead()) m_deadEmitterInstances.emplace_back(e);
@@ -121,7 +123,7 @@ void VfxManager::update(float seconds)
     {
         const auto & nextDeath = m_deathQueue.top();
 
-        if (CurrentMillis() > nextDeath.timeOfDeath)
+        if (updateFrame.endMicros() / 1000 > nextDeath.timeOfDeath)
         {
             const auto & particleId = nextDeath.id;
 

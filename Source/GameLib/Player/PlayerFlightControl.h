@@ -11,6 +11,7 @@
 
 namespace deliberation
 {
+class UpdateFrame;
 class RigidBody;
 }
 
@@ -24,7 +25,7 @@ public:
     void setLinearThrust(const glm::vec3 & linearThrust);
     void setAngularThrust(const glm::vec3 & angularThrust);
 
-    void update(RigidBody & body, FlightControlConfig & config, float seconds);
+    void update(RigidBody & body, FlightControlConfig & config, const UpdateFrame & updateFrame);
 
 private:
     glm::vec3 m_linearThrust;

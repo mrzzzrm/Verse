@@ -7,6 +7,11 @@
 
 #include "GameLib.h"
 
+namespace deliberation
+{
+class UpdateFrame;
+}
+
 class Equipment;
 class EquipmentUpdateContext;
 
@@ -33,8 +38,8 @@ public:
     void setEnabled(bool enabled);
     void setEntity(const Entity & entity);
 
-    virtual void onPostPhysicsUpdate(float seconds) {}
-    virtual void onGameUpdate(float seconds, const EquipmentUpdateContext & context) {}
+    virtual void onPostPhysicsUpdate(const UpdateFrame & updateFrame) {}
+    virtual void onGameUpdate(const UpdateFrame & updateFrame, const EquipmentUpdateContext & context) {}
 
 protected:
     virtual void onEnabled() {}

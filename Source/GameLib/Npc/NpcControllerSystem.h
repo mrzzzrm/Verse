@@ -17,5 +17,5 @@ public:
 
 protected:
     void onEntityAdded(Entity & entity) override;
-    void onEntityPrePhysicsUpdate(Entity & entity, float seconds) override;
+    void onEntityPrePhysicsUpdate(Entity & entity, const UpdateFrame & updateFrame) override;
 };

@@ -22,7 +22,7 @@ VoxelClusterSplitSystem::VoxelClusterSplitSystem(World & world)
 {
 }
 
-void VoxelClusterSplitSystem::onEntityGameUpdate(Entity & entity, float seconds)
+void VoxelClusterSplitSystem::onEntityGameUpdate(Entity & entity, const UpdateFrame & updateFrame)
 {
 }
 
@@ -38,7 +38,7 @@ void VoxelClusterSplitSystem::onCreated()
     subscribeEvent<VoxelObjectModification>();
 }
 
-void VoxelClusterSplitSystem::onGameUpdate(float seconds)
+void VoxelClusterSplitSystem::onGameUpdate(const UpdateFrame & updateFrame)
 {
     auto & voxelWorld = world().systemRef<VoxelWorld>();
 

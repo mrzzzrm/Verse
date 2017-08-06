@@ -20,8 +20,8 @@ public:
     void onCreated() override;
 
 protected:
-    void onEntityGameUpdate(Entity & entity, float seconds) override;
-    void onGameUpdate(float seconds) override;
+    void onEntityGameUpdate(Entity & entity, const UpdateFrame & updateFrame) override;
+    void onGameUpdate(const UpdateFrame & updateFrame) override;
 
 private:
     std::set<std::shared_ptr<VoxelObject>> m_modifiedVoxelObjects;

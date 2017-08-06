@@ -57,11 +57,11 @@ public:
         m_object0->removeVoxels({glm::uvec3(0, 0, 0)});
     }
 
-    void onFrame(float seconds) override
+    void onFrame(const UpdateFrame & updateFrame) override
     {
         m_clear.render();
 
-        m_navigator->update(seconds);
+        m_navigator->update(updateFrame);
 
         m_clear.render();
         m_object0->schedule();

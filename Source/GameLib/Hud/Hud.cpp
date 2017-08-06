@@ -54,11 +54,11 @@ void Hud::removeElement(const std::shared_ptr<HudElement> & element)
     m_elements.erase(iter);
 }
 
-void Hud::onGameUpdate(float seconds)
+void Hud::onGameUpdate(const UpdateFrame & updateFrame)
 {
     for (auto & layer : m_layers)
     {
-        layer->update(seconds);
+        layer->update(updateFrame);
     }
 }
 

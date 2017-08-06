@@ -32,7 +32,7 @@ public:
     void onCreated() override;
 
 protected:
-    void onGameUpdate(float seconds) override;
+    void onGameUpdate(const UpdateFrame & updateFrame) override;
 
 private:
     std::shared_ptr<VfxDebugRenderer>     m_debugRenderer;

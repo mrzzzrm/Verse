@@ -49,7 +49,7 @@ public:
         }
     }
 
-    void onApplicationUpdate(float seconds) override {}
+    void onApplicationUpdate(const UpdateFrame & updateFrame) override {}
 
     void onApplicationRender() override
     {

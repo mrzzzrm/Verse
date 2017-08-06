@@ -111,6 +111,8 @@ void VerseApplication::onFrame(DurationMicros micros)
 {
     m_world.frameBegin();
 
+    m_updateFrame.setBeginMicros(m_updateFrame.beginMicros() + m_updateFrame.gameMicros());
+
     if (!m_gameplayPaused)
     {
         m_updateFrame.setGameMicros(micros);
@@ -122,15 +124,15 @@ void VerseApplication::onFrame(DurationMicros micros)
             m_physicsWorldSystem->updatePhysics(m_updateFrame);
             m_world.postPhysicsUpdate(m_updateFrame);
 
-            onApplicationPhysicsUpdate(m_updateFrame);
+            onApplicationPhysicsUpdate();
         }
         else
         {
-            m_physicsWorld.update(m_updateFrame);
+            m_physicsWorld.update(0.0f);
         }
 
         m_world.gameUpdate(m_updateFrame);
-        onApplicationUpdate(m_updateFrame);
+        onApplicationUpdate();
     }
     else
     {

@@ -17,7 +17,7 @@ void NpcControllerSystem::onEntityAdded(Entity & entity)
 }
 
 void NpcControllerSystem::onEntityPrePhysicsUpdate(
-    Entity & entity, float seconds)
+    Entity & entity, const UpdateFrame & updateFrame)
 {
     auto & body = *entity.component<RigidBodyComponent>().value();
     auto & equipment = entity.component<Equipment>();
@@ -27,8 +27,8 @@ void NpcControllerSystem::onEntityPrePhysicsUpdate(
 
     auto & task = npcController.task();
 
-    if (task) task->update(npcController, body, equipment, seconds);
+    if (task) task->update(npcController, body, equipment, updateFrame);
 
-    npcController.update(body, flightControl, flightControlConfig, seconds);
-    flightControl.update(body, flightControlConfig, seconds);
+    npcController.update(body, flightControl, flightControlConfig, updateFrame);
+    flightControl.update(body, flightControlConfig, updateFrame);
 }

@@ -24,7 +24,7 @@ void NpcAttackTask::update(
     NpcController & controller,
     RigidBody &     body,
     Equipment &     equipment,
-    float           seconds)
+    const UpdateFrame & updateFrame)
 {
     if (!m_target.isValid())
     {

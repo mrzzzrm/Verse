@@ -1,5 +1,7 @@
 #include "VfxPointLightManager.h"
 
+#include <Deliberation/Core/UpdateFrame.h>
+
 VfxPointLightManager::VfxPointLightManager(const std::shared_ptr<PointLightRenderer> & pointLightRenderer):
     m_pointLightRenderer(pointLightRenderer)
 {
@@ -49,12 +51,12 @@ void VfxPointLightManager::disengageParticlePointLight(size_t index)
     pointLight.active = false;
 }
 
-void VfxPointLightManager::update(float seconds)
+void VfxPointLightManager::update(const UpdateFrame & updateFrame)
 {
     for (auto & particlePointLight : m_pointLights)
     {
         auto & pointLight = m_pointLightRenderer->pointLight(particlePointLight.pointLight);
 
-        pointLight.position += particlePointLight.velocity * seconds;
+        pointLight.position += particlePointLight.velocity * updateFrame.gameSeconds();
     }
 }

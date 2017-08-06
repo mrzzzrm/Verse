@@ -5,6 +5,7 @@
 
 #include <glm/gtx/vector_angle.hpp>
 
+#include <Deliberation/Core/UpdateFrame.h>
 #include <Deliberation/Core/Math/FloatUtils.h>
 #include <Deliberation/Core/Math/MathUtils.h>
 #include <Deliberation/Core/Math/Pose3D.h>
@@ -29,13 +30,15 @@ void NpcSteering::update(
     RigidBody &                 body,
     NpcFlightControl &          flightControl,
     const FlightControlConfig & config,
-    float                       seconds)
+    const UpdateFrame & updateFrame)
 {
+    const auto seconds = updateFrame.gameSeconds();
+
     const auto destination =
         m_destination.value_or(body.transform().position());
 
     Transform3D predictedPose;
-    body.predictTransform(seconds, predictedPose);
+    body.predictTransform(updateFrame.gameSeconds(), predictedPose);
 
     const auto linearDeltaToDestination =
         destination - predictedPose.position();
@@ -95,7 +98,7 @@ void NpcSteering::update(
                 flightControl.correctiveAcceleration(
                     idealAngularSpeedCorrection,
                     config.angular.acceleration,
-                    seconds,
+                    updateFrame,
                     glm::normalize(idealAngularVelocityCorrection)));
         }
         else
@@ -156,7 +159,7 @@ void NpcSteering::update(
             flightControl.correctiveAcceleration(
                 idealLocalSpeedCorrection,
                 idealLocalVelocityCorrectionControl.acceleration,
-                seconds,
+                updateFrame,
                 glm::normalize(idealLocalVelocityCorrection)));
     }
     else

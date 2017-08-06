@@ -18,11 +18,11 @@ void BehaviourSystem::onEntityAdded(Entity & entity)
     }
 }
 
-void BehaviourSystem::onEntityGameUpdate(Entity & entity, float seconds)
+void BehaviourSystem::onEntityGameUpdate(Entity & entity, const UpdateFrame & updateFrame)
 {
     auto & behaviourComponent = entity.component<BehaviourComponent>();
     for (auto & behaviour : behaviourComponent.behaviours())
     {
-        behaviour->onBehaviourUpdate(seconds);
+        behaviour->onBehaviourUpdate(updateFrame);
     }
 }

@@ -3,6 +3,7 @@
 #include <map>
 #include <memory>
 
+#include <Deliberation/Core/UpdateFrame.h>
 #include <Deliberation/Draw/Buffer.h>
 #include <Deliberation/Draw/Draw.h>
 
@@ -31,7 +32,7 @@ public:
         const PhysicsWorld & physicsWorld,
         const Camera3D &     camera);
 
-    void update(float seconds) override;
+    void update(const UpdateFrame & updateFrame) override;
     void render() override;
 
 private:

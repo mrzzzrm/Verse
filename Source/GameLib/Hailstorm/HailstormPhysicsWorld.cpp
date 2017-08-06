@@ -1,6 +1,7 @@
 #include "HailstormPhysicsWorld.h"
 
 #include <Deliberation/Core/Chrono.h>
+#include <Deliberation/Core/UpdateFrame.h>
 #include <Deliberation/Core/Math/Ray3D.h>
 
 #include <Deliberation/Physics/NarrowphasePrimitiveTest.h>
@@ -35,18 +36,18 @@ void HailstormPhysicsWorld::addBullet(const HailstormBullet & bullet)
     m_bullets[index].id.physicsIndex = index;
 }
 
-void HailstormPhysicsWorld::update(float seconds)
+void HailstormPhysicsWorld::update(const UpdateFrame & updateFrame)
 {
     m_destroyedBullets.clear();
     m_expiredBullets.clear();
     m_voxelObjectBulletHits.clear();
 
-    auto currentMillis = CurrentMillis();
+    auto currentMillis = updateFrame.beginMicros() / 1000;
 
     for (auto & bullet : m_bullets)
     {
         float t0 = ((float)(currentMillis - bullet.particle.birth)) / 1000.0f;
-        float t1 = t0 + seconds;
+        float t1 = t0 + updateFrame.gameSeconds();
 
         auto a = bullet.particle.origin + bullet.particle.velocity * t0;
         auto b = bullet.particle.origin + bullet.particle.velocity * t1;

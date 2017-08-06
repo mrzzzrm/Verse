@@ -78,8 +78,8 @@ public:
 
 protected:
     virtual void onApplicationStartup(){};
-    virtual void onApplicationUpdate(float seconds){};
-    virtual void onApplicationPhysicsUpdate(float physicsSeconds){};
+    virtual void onApplicationUpdate(){};
+    virtual void onApplicationPhysicsUpdate(){};
 
 protected:
     VerseApplicationSystemInitMode m_systemInitMode;

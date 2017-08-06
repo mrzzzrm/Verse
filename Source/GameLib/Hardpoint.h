@@ -38,7 +38,7 @@ public:
 
     void setWeapon(std::shared_ptr<Weapon> weapon);
 
-    void update(float seconds, const EquipmentUpdateContext & context);
+    void update(const UpdateFrame & updateFrame, const EquipmentUpdateContext & context);
 
 protected:
     void onDisabled() override;
