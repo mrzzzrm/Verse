@@ -1,37 +1,10 @@
-[
-  {
-    "LID": "player",
-    "Name": "Player",
-    "Bases": [
-      "Player", "Ship"
-    ],
-    "Components": {
-      "Transform3D": {
-        "Position": [0, 0, -100],
-        "Orientation": [0, 2, 0]
-      }
+{
+  "Children": ["AsteroidField"],
+  "Entities": [
+    {
+      "LID": "player",
+      "Name": "PlayerShip",
+      "Bases": ["Ship3", "Player"]
     }
-  },
-
-  {
-    "LID": "asteroid000",
-    "Bases": [
-      "Asteroid00"
-    ]
-  },
-
-  {
-    "LID": "station000",
-    "Bases": [
-      "Factory2"
-    ],
-    "Components": {
-      "Transform3D": {
-        "Position": [1000, 0, 100]
-      },
-      "Behaviour": {
-        "LaunchDefense": {  }
-      }
-    }
-  }
-]
+  ]
+}

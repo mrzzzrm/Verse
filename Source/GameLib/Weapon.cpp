@@ -72,7 +72,7 @@ void Weapon::update(
             {
                 auto renderBatchKey = VfxBatchKey(m_prototype->vfxMeshId(), true, RenderPhase::Forward,
                                                   VfxParticleOrientationType::World);
-                auto renderBatchIndex = m_hailstormManager.vfxManager().renderer().getOrCreateBatchIndex(renderBatchKey);
+                auto renderBatchIndex = m_hailstormManager.vfxManager().meshRenderer().getOrCreateBatchIndex(renderBatchKey);
                 m_prototype->setVfxMeshRenderBatchIndex(renderBatchIndex);
             }
 

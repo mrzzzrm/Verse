@@ -91,7 +91,7 @@ void VerseApplication::onStartup()
         m_world.addSystem<HullSystem>();
         m_world.addSystem<VersePrototypeSystem>();
         m_world.addSystem<VoxelMaterialSystem>();
-        m_world.addSystem<LevelSystem>(GameDataPath("Data/Levels/ShootingRange.json")); // Do this last because it adds entities
+        m_world.addSystem<LevelSystem>(GameDataPath("Data/Levels/level0.json")); // Do this last because it adds entities
 
         auto & renderManager =
             m_world.systemRef<RenderSystem>().renderManager();
@@ -103,37 +103,43 @@ void VerseApplication::onStartup()
     }
 
     onApplicationStartup();
+
+    deliberation::DisableGLErrorChecks();
 }
 
-void VerseApplication::onFrame(float seconds)
+void VerseApplication::onFrame(DurationMicros micros)
 {
     m_world.frameBegin();
 
     if (!m_gameplayPaused)
     {
-        auto physicsSimulationSeconds =
-            m_physicsWorld.nextSimulationStepSeconds(seconds);
+        m_updateFrame.setGameMicros(micros);
+        m_updateFrame.setPhysicsSeconds(m_physicsWorld.nextSimulationStepSeconds(m_updateFrame.gameMicros()));
 
-        if (EpsilonGt(physicsSimulationSeconds, 0.0f))
+        if (m_updateFrame.physicsSeconds() > 0)
         {
-            m_world.prePhysicsUpdate(physicsSimulationSeconds);
-            m_physicsWorldSystem->updatePhysics(seconds);
-            m_world.postPhysicsUpdate(physicsSimulationSeconds);
+            m_world.prePhysicsUpdate(m_updateFrame);
+            m_physicsWorldSystem->updatePhysics(m_updateFrame);
+            m_world.postPhysicsUpdate(m_updateFrame);
 
-            onApplicationPhysicsUpdate(physicsSimulationSeconds);
+            onApplicationPhysicsUpdate(m_updateFrame);
         }
         else
         {
-            m_physicsWorld.update(seconds);
+            m_physicsWorld.update(m_updateFrame);
         }
 
-        m_world.gameUpdate(seconds);
-        onApplicationUpdate(seconds);
+        m_world.gameUpdate(m_updateFrame);
+        onApplicationUpdate(m_updateFrame);
+    }
+    else
+    {
+        m_updateFrame.setGameMicros(0);
     }
 
-    m_world.frameUpdate(seconds);
+    m_world.frameUpdate(m_updateFrame);
 
     m_world.systemRef<RenderSystem>().renderManager().render();
 
-    m_world.frameComplete(seconds);
+    m_world.frameComplete(m_updateFrame);
 }

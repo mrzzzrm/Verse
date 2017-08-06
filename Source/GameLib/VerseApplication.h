@@ -74,7 +74,7 @@ public:
             VerseApplicationSystemInitMode::AllSystems);
 
     void onStartup() final override;
-    void onFrame(float seconds) final override;
+    void onFrame(DurationMicros micros) final override;
 
 protected:
     virtual void onApplicationStartup(){};

@@ -20,8 +20,11 @@ public:
     VfxManager(
         RenderManager & renderManager, ResourceManager & resourceManager);
 
-    VfxMeshRenderer &       renderer();
-    const VfxMeshRenderer & renderer() const;
+    VfxMeshRenderer &       meshRenderer();
+    const VfxMeshRenderer & meshRenderer() const;
+
+    const std::shared_ptr<VfxPointLightManager> & pointLightManager() { return m_pointLightManager; }
+    std::shared_ptr<const VfxPointLightManager> pointLightManager() const { return m_pointLightManager; }
 
     const SparseVector<std::shared_ptr<EmitterInstance>> & emitterInstances() const { return m_emitterInstances; }
 
@@ -64,7 +67,7 @@ private:
 private:
     ResourceManager &                               m_resourceManager;
     std::shared_ptr<VfxMeshRenderer>                m_meshRenderer;
-    std::shared_ptr<VfxPointLightManager>           m_pointLightRenderer;
+    std::shared_ptr<VfxPointLightManager>           m_pointLightManager;
     std::unordered_map<size_t, VfxMeshId>           m_meshIdByResourceId;
     SparseVector<std::shared_ptr<EmitterInstance>>  m_emitterInstances;
     std::vector<size_t>                             m_deadEmitterInstances;

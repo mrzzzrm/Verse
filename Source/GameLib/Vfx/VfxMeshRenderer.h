@@ -55,8 +55,8 @@ public:
     void   disengageParticle(const VfxParticleId & particleId);
 
     void onRegisterRenderNodes() override;
-
     void onBeforeRender() override;
+    void onCreated() override;
 
 private:
     friend class VfxRenderNode;

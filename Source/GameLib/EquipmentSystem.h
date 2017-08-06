@@ -17,4 +17,5 @@ public:
 protected:
     void onEntityAdded(Entity & entity) override;
     void onEntityGameUpdate(Entity & entity, float seconds) override;
+    void onEntityPostPhysicsUpdate(Entity & entity, float seconds) override;
 };

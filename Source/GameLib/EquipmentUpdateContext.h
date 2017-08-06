@@ -13,7 +13,6 @@ class RigidBody;
 
 struct EquipmentUpdateContext
 {
-    Pose3D                      targetPose;
     std::shared_ptr<RigidBody> body;
     Entity    entity;
 };

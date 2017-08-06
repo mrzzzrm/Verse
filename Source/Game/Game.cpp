@@ -10,4 +10,6 @@ public:
     Game() : VerseApplication("Verse") {}
 };
 
-int main(int argc, char * argv[]) { return Game().run(argc, argv); }
+int main(int argc, char * argv[]) {
+    return Game().run(argc, argv);
+}

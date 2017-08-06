@@ -71,7 +71,8 @@ public:
 
     void addAttachment(const std::shared_ptr<Attachment> & attachment);
 
-    void update(float seconds, const EquipmentUpdateContext & context);
+    void postPhysicsUpdate(float seconds);
+    void gameUpdate(float seconds, const EquipmentUpdateContext & context);
 
 private:
     friend class EquipmentPrototype;

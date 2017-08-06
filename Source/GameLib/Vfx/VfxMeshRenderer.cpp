@@ -11,8 +11,8 @@
 
 struct VfxRenderNode : public RenderNode
 {
-    explicit VfxRenderNode(RenderManager & renderManager)
-        : RenderNode(renderManager)
+    explicit VfxRenderNode(VfxMeshRenderer & renderer)
+        : RenderNode(renderer.renderManager(), renderer.shared_from_this())
     {
     }
 
@@ -28,7 +28,7 @@ struct VfxRenderNode : public RenderNode
 };
 
 VfxMeshRenderer::VfxMeshRenderer(RenderManager & renderManager)
-    : Renderer(renderManager)
+    : Renderer(renderManager, "VfxMesh")
 {
     auto & drawContext = renderManager.drawContext();
 
@@ -45,15 +45,6 @@ VfxMeshRenderer::VfxMeshRenderer(RenderManager & renderManager)
     m_timeGlobal = m_globals.field<uint32_t>("Time");
 
     m_globalsBuffer = drawContext.createBuffer(globalsDataLayout);
-
-    // Create RenderNodes
-    // TODO() remove casts once switching to modern stdlib
-    m_renderNodesByRenderPhase[(std::underlying_type<RenderPhase>::type)RenderPhase::GBuffer] =
-        std::make_shared<VfxRenderNode>(renderManager);
-    m_renderNodesByRenderPhase[(std::underlying_type<RenderPhase>::type)RenderPhase::Alpha] =
-        std::make_shared<VfxRenderNode>(renderManager);
-    m_renderNodesByRenderPhase[(std::underlying_type<RenderPhase>::type)RenderPhase::Forward] =
-        std::make_shared<VfxRenderNode>(renderManager);
 }
 
 const Program & VfxMeshRenderer::program() { return m_program; }
@@ -124,6 +115,7 @@ void VfxMeshRenderer::disengageParticle(const VfxParticleId & particleId)
 
 void VfxMeshRenderer::onRegisterRenderNodes()
 {
+
     for (auto & pair : m_renderNodesByRenderPhase)
     {
         // TODO Remove cast when switching to modern stdlib
@@ -140,4 +132,16 @@ void VfxMeshRenderer::onBeforeRender()
     m_timeGlobal[0] = CurrentMillis();
 
     m_globalsBuffer.upload(m_globals);
+}
+
+void VfxMeshRenderer::onCreated()
+{
+    // Create RenderNodes
+    // TODO() remove casts once switching to modern stdlib
+    m_renderNodesByRenderPhase[(std::underlying_type<RenderPhase>::type)RenderPhase::GBuffer] =
+        std::make_shared<VfxRenderNode>(*this);
+    m_renderNodesByRenderPhase[(std::underlying_type<RenderPhase>::type)RenderPhase::Alpha] =
+        std::make_shared<VfxRenderNode>(*this);
+    m_renderNodesByRenderPhase[(std::underlying_type<RenderPhase>::type)RenderPhase::Forward] =
+        std::make_shared<VfxRenderNode>(*this);
 }

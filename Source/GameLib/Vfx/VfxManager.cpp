@@ -21,12 +21,12 @@ VfxManager::VfxManager(
     : m_resourceManager(resourceManager)
 {
     m_meshRenderer = renderManager.addRenderer<VfxMeshRenderer>();
-    m_pointLightRenderer = std::make_shared<VfxPointLightManager>(renderManager.renderer<PointLightRenderer>());
+    m_pointLightManager = std::make_shared<VfxPointLightManager>(renderManager.renderer<PointLightRenderer>());
 }
 
-VfxMeshRenderer & VfxManager::renderer() { return *m_meshRenderer; }
+VfxMeshRenderer & VfxManager::meshRenderer() { return *m_meshRenderer; }
 
-const VfxMeshRenderer & VfxManager::renderer() const { return *m_meshRenderer; }
+const VfxMeshRenderer & VfxManager::meshRenderer() const { return *m_meshRenderer; }
 
 VfxMeshId VfxManager::getOrCreateMeshId(const ResourceToken & resourceToken)
 {
@@ -53,7 +53,7 @@ VfxParticleId VfxManager::addParticle(const VfxParticle & particle) {
     particleId.meshRenderBatchSlot = m_meshRenderer->addParticle(particle);
 
     if (particle.pointLight) {
-        particleId.particlePointLight = m_pointLightRenderer->addParticlePointLight(particle, *particle.pointLight);
+        particleId.particlePointLight = m_pointLightManager->addParticlePointLight(particle, *particle.pointLight);
     }
 
     m_deathQueue.emplace(particle.birth + particle.lifetime, particleId);
@@ -67,7 +67,7 @@ void VfxManager::disengageParticle(const VfxParticleId &particleId)
 
     if (particleId.particlePointLight != INVALID_SIZE_T)
     {
-        m_pointLightRenderer->disengageParticlePointLight(particleId.particlePointLight);
+        m_pointLightManager->disengageParticlePointLight(particleId.particlePointLight);
     }
 }
 
@@ -94,7 +94,7 @@ void VfxManager::rebuildEmitterInstances()
 
 void VfxManager::update(float seconds)
 {
-    m_pointLightRenderer->update(seconds);
+    m_pointLightManager->update(seconds);
 
     for (size_t e = 0; e < m_emitterInstances.capacity(); e++)
     {
@@ -129,7 +129,7 @@ void VfxManager::update(float seconds)
 
             if (particleId.particlePointLight != INVALID_SIZE_T)
             {
-                m_pointLightRenderer->removeParticlePointLight(particleId.particlePointLight);
+                m_pointLightManager->removeParticlePointLight(particleId.particlePointLight);
             }
 
             m_deathQueue.pop(); // Do this AFTER removing the particle, otherwise ref into queue will be invalid

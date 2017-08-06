@@ -4,7 +4,7 @@
 
 VoxelRenderer::VoxelRenderer(
     RenderManager & renderManager, const Texture & envMap)
-    : SingleNodeRenderer(renderManager, RenderPhase::GBuffer)
+    : SingleNodeRenderer(renderManager, RenderPhase::GBuffer, "VoxelObjects")
 {
 }
 

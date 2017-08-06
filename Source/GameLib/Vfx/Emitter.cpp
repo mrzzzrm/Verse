@@ -54,7 +54,7 @@ void Emitter::updateInstance(
                                           RenderPhase::Alpha,
                                           m_orientation->orientationType());
         m_meshRenderBatchIndex =
-            vfxManager.renderer().getOrCreateBatchIndex(renderBatchKey);
+            vfxManager.meshRenderer().getOrCreateBatchIndex(renderBatchKey);
     }
 
     auto timeAccumulator = 0.0f;

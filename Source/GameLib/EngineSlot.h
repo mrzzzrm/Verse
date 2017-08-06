@@ -20,13 +20,12 @@ public:
     const std::shared_ptr<Engine> & engine() const;
     void setEngine(const std::shared_ptr<Engine> & engine);
 
-    void setTargetPose(const Pose3D & pose);
-
     void setVfxManager(const std::shared_ptr<VfxManager> & vfxManager)
     {
         m_vfxManager = vfxManager;
     }
 
+    void onPostPhysicsUpdate(float seconds) override;
     void onGameUpdate(float seconds, const EquipmentUpdateContext & context) override;
 
 private:

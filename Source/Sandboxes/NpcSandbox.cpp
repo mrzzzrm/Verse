@@ -166,7 +166,7 @@ public:
 
         auto bulletMesh = UVSphere(5, 5).generateMesh2();
         m_bulletMeshID =
-            m_hailstormManager->vfxManager().renderer().addMesh(bulletMesh);
+            m_hailstormManager->vfxManager().meshRenderer().addMesh(bulletMesh);
 
         auto npc0 = spawnNpc({-300.0f, 400.0f, 0.0f});
         auto npc1 = spawnNpc({0.0f, 150.0f, 0.0f});

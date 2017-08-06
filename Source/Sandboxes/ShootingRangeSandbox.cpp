@@ -75,7 +75,7 @@ public:
 
         auto bulletMesh = UVSphere(5, 5).generateMesh2();
         m_bulletMeshID =
-            hailstormManager->vfxManager().renderer().addMesh(bulletMesh);
+            hailstormManager->vfxManager().meshRenderer().addMesh(bulletMesh);
 
         WeaponConfig weaponConfig;
         weaponConfig.cooldown = 0.1f;

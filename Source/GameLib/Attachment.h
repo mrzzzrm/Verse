@@ -33,6 +33,7 @@ public:
     void setEnabled(bool enabled);
     void setEntity(const Entity & entity);
 
+    virtual void onPostPhysicsUpdate(float seconds) {}
     virtual void onGameUpdate(float seconds, const EquipmentUpdateContext & context) {}
 
 protected:

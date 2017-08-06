@@ -26,7 +26,7 @@
 #include "VersePrototypeSystem.h"
 #include "VoxelMaterialComponentPrototype.h"
 
-constexpr const char * RELOAD_PROTOTYPES_CONTROL = "Reload Entity Prototypes";
+constexpr const char * RELOAD_PROTOTYPES_CONTROL = "Reload Scene";
 
 VerseEntityPrototypeSystem::VerseEntityPrototypeSystem(World & world)
     : EntityPrototypeSystem(world, GameDataPath("Data/EntityPrototypes/list.json"))

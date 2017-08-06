@@ -23,6 +23,8 @@ HailstormManager::HailstormManager(World & world)
           world.systemRef<PhysicsWorldSystem>().physicsWorld(),
           world.systemRef<VoxelWorld>())
 {
+    m_vfxManager.meshRenderer().setName("HailstormVfxMesh");
+    m_vfxManager.pointLightManager()->pointLightRenderer()->setName("HailstormPointLights");
 }
 
 VfxManager & HailstormManager::vfxManager() { return m_vfxManager; }

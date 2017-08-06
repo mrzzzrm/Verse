@@ -1,18 +1,7 @@
-[
-    {
-        "Component": "HudProxy"
-    },
-    {
-        "Component": "VoxelObject",
-        "VoxelCluster": "Asteroid00",
-        "Scale": 5
-    },
-    {
-        "Component": "VoxelRigidBody"
-    },
-    {
-        "Component": "Coriolis",
-        "AngularVelocity": [-0.03, 0.02, 0.04]
+{
+    "Components": {
+        "Transform3D": { "Scale": 3 },
+        "VoxelObject": { "VoxelCluster": "Asteroid01"},
+        "VoxelRigidBody": {}
     }
-]
-
+}

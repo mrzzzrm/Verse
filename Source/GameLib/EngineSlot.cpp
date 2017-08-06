@@ -19,19 +19,19 @@ void EngineSlot::setEngine(const std::shared_ptr<Engine> & engine)
     m_vfxManager->addEmitterInstance(emitterInstance);
 }
 
-void EngineSlot::setTargetPose(const Pose3D & pose)
-{
-    if (m_engine)
-    {
-        m_engine->emitterInstance()->setTargetPose(worldPose());
-    }
-}
-
 void EngineSlot::onDisabled()
 {
     if (!m_engine) return;
 
     m_vfxManager->removeEmitterInstance(m_engine->emitterInstance());
+}
+
+void EngineSlot::onPostPhysicsUpdate(float seconds)
+{
+    if (m_engine)
+    {
+        m_engine->emitterInstance()->setTargetPose(worldPose());
+    }
 }
 
 void EngineSlot::onGameUpdate(float seconds, const EquipmentUpdateContext & context)

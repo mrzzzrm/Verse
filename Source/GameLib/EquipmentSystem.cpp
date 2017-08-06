@@ -45,6 +45,12 @@ void EquipmentSystem::onEntityAdded(Entity & entity)
 {
 }
 
+void EquipmentSystem::onEntityPostPhysicsUpdate(Entity & entity, float seconds)
+{
+    auto & equipment = entity.component<Equipment>();
+    equipment.postPhysicsUpdate(seconds);
+}
+
 void EquipmentSystem::onEntityGameUpdate(Entity & entity, float seconds)
 {
     auto   body = entity.component<RigidBodyComponent>().value();
@@ -52,11 +58,7 @@ void EquipmentSystem::onEntityGameUpdate(Entity & entity, float seconds)
 
     EquipmentUpdateContext equipmentUpdateContext;
     equipmentUpdateContext.body = body;
-    equipmentUpdateContext.targetPose = Pose3D(
-        body->transform().position(),
-        body->transform().orientation(),
-        body->transform().center());
     equipmentUpdateContext.entity = entity;
 
-    equipment.update(seconds, equipmentUpdateContext);
+    equipment.gameUpdate(seconds, equipmentUpdateContext);
 }
