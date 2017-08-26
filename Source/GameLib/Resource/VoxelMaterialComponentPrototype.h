@@ -8,5 +8,5 @@ class VoxelMaterialComponentPrototype:
     public ComponentPrototype<VoxelMaterialComponent>
 {
 public:
-    void updateComponent(VoxelMaterialComponent & voxelMaterialComponent) override;
+    void updateComponent(const Entity & entity, VoxelMaterialComponent & voxelMaterialComponent) override;
 };

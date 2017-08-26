@@ -11,7 +11,7 @@ VoxelObjectPrototype::VoxelObjectPrototype(
 {
 }
 
-void VoxelObjectPrototype::initComponent(VoxelObject & voxelObject)
+void VoxelObjectPrototype::initComponent(const Entity & entity, VoxelObject & voxelObject)
 {
     const auto voxelClusterName = m_newJson["VoxelCluster"].get<std::string>();
 

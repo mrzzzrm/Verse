@@ -23,8 +23,8 @@ class VoxelObjectPrototype final : public ComponentPrototype<VoxelObject>
 public:
     VoxelObjectPrototype(const std::shared_ptr<VoxelWorld> & voxelWorld);
 
-    void initComponent(VoxelObject & voxelObject) override;
-    void updateComponent(VoxelObject & voxelObject) override {}
+    void initComponent(const Entity & entity, VoxelObject & voxelObject) override;
+    void updateComponent(const Entity & entity, VoxelObject & voxelObject) override {}
 
 private:
     std::shared_ptr<VoxelWorld>           m_voxelWorld;

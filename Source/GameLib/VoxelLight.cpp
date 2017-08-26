@@ -1,5 +1,6 @@
 #include "VoxelLight.h"
 
+#include <Deliberation/Core/UpdateFrame.h>
 #include <Deliberation/Core/Noise.h>
 #include <Deliberation/ECS/World.h>
 
@@ -21,7 +22,7 @@ void VoxelLight::onEnabled()
 //
 //    const auto colorIndex = voxelObject.data()->voxelColorIndex(voxel());
 //
-//    m_color = voxelObject.data()->palette()->colors()[colorIndex];
+//    m_color = glm::vec3(voxelObject.data()->palette()->colors()[colorIndex]) / glm::vec3(255.0f);
 //    auto intensity = m_color * m_desc.intensity;
 //
 //    PointLight pointLight;
@@ -29,7 +30,7 @@ void VoxelLight::onEnabled()
 //
 //    m_pointLight = pointLightRenderer->addPointLight(pointLight);
 //
-//    voxelObject.data()->palette()->setColor(colorIndex, intensity);
+//    voxelObject.data()->palette()->setBrightnessScale(colorIndex, m_desc.intensity);
 }
 
 void VoxelLight::onDisabled()
@@ -42,19 +43,19 @@ void VoxelLight::onDisabled()
 
 void VoxelLight::onGameUpdate(const UpdateFrame & updateFrame, const EquipmentUpdateContext & context)
 {
-//    m_noiseInput += seconds * 6.0f;
-
+//    m_noiseInput += updateFrame.gameSeconds() * 6.0f;
+//
 //    auto noise = std::sin(m_noiseInput);
 //    auto intensity = (m_color + m_color * noise * 0.7f) * m_desc.intensity;
-
+//
 //    auto & pointLightRenderer =
 //        m_entity.world().systemRef<PointLightSystem>().pointLightRenderer();
 //    auto & voxelObject = m_entity.component<VoxelObject>();
-
+//
 //    auto & pointLight = pointLightRenderer->pointLight(m_pointLight);
 //    pointLight.position = worldPose().position();
 //    pointLight.intensity = intensity;
-
+//
 //    const auto colorIndex = voxelObject.data()->voxelColorIndex(voxel());
-//    voxelObject.data()->palette()->setColor(colorIndex, intensity);
+//    voxelObject.data()->palette()->setBrightnessScale(colorIndex, m_desc.intensity);
 }

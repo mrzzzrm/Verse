@@ -1,6 +1,6 @@
 {
     "Components": {
-        "Transform3D": { "Scale": 20 },
+        "Transform3D": { "Scale": 10 },
         "VoxelObject": { "VoxelCluster": "Factory2" },
         "VoxelRigidBody": {},
         "Equipment": {
@@ -10,7 +10,16 @@
                     "Forward": [0, 1, 0],
                     "Up": [-1, 0, 0]
                 }
+            ],
+            "VoxelLights": [
+                {
+                    "Voxel": [21, 71, 10],
+                    "Intensity": 12.0
+                }
             ]
+        },
+        "VoxelMaterial": {
+            "Palette": "Palette0"
         }
     }
 }

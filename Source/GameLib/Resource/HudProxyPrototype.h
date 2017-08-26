@@ -9,5 +9,5 @@
 class HudProxyPrototype : public ComponentPrototype<HudProxy>
 {
 public:
-    void updateComponent(HudProxy & hudProxy) override {}
+    void updateComponent(const Entity & entity, HudProxy & hudProxy) override {}
 };

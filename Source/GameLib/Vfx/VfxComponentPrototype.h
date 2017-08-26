@@ -9,5 +9,5 @@ class VfxComponentPrototype:
     public ComponentPrototype<VfxComponent>
 {
 public:
-    void updateComponent(VfxComponent & vfxComponent) override;
+    void updateComponent(const Entity & entity, VfxComponent & vfxComponent) override;
 };

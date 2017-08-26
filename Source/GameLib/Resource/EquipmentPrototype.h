@@ -24,10 +24,10 @@ public:
     {
     }
 
-    void updateComponent(Equipment & equipment) override;
+    void updateComponent(const Entity & entity, Equipment & equipment) override;
 
 protected:
-    void initComponent(Equipment & equipment) override;
+    void initComponent(const Entity & entity, Equipment & equipment) override;
 
 private:
     void loadSlotDesc(const Json & obj, AttachmentDesc & slot) const;

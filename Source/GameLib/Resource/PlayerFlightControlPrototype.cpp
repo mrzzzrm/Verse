@@ -5,6 +5,6 @@
 #include "PlayerFlightControl.h"
 
 void PlayerFlightControlPrototype::updateComponent(
-    PlayerFlightControl & playerFlightControl)
+    const Entity & entity, PlayerFlightControl & playerFlightControl)
 {
 }

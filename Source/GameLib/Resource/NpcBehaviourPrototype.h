@@ -8,5 +8,5 @@
 class NpcBehaviourPrototype : public ComponentPrototype<NpcBehaviour>
 {
 public:
-    void updateComponent(NpcBehaviour &) override {}
+    void updateComponent(const Entity & entity, NpcBehaviour &) override {}
 };

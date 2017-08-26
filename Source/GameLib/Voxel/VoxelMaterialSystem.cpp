@@ -58,8 +58,20 @@ void VoxelMaterialSystem::updateBrightnessScales(VoxelObject & voxelObject,
 
         const auto range = palette->getOrCreateIndicesByColor().equal_range(paletteColor);
         // TODO oh gosh, please get a proper format lib already
-        Assert(std::distance(range.first, range.second) == 1, "Multiple indices with the same color " +
-            std::to_string(paletteColor.x) + "," + std::to_string(paletteColor.y) + "," + std::to_string(paletteColor.z) + ": Brightness Scaling not supported");
+        if (std::distance(range.first, range.second) != 1)
+        {
+            std::cout << "No/Multiple indices with the same color [";
+
+            for (auto iter = range.first; iter != range.second; iter++)
+            {
+                std::cout << iter->second << " ";
+            }
+
+            std::cout << "]";
+
+            Fail(std::to_string(paletteColor.x) + "," + std::to_string(paletteColor.y) + "," +
+                     std::to_string(paletteColor.z) + ": Brightness Scaling not supported");
+        }
 
         const auto index = range.first->second;
 

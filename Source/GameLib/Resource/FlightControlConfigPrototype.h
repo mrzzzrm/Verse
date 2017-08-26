@@ -10,5 +10,5 @@ class FlightControlConfigPrototype
     : public ComponentPrototype<FlightControlConfig>
 {
 public:
-    void updateComponent(FlightControlConfig & component) override;
+    void updateComponent(const Entity & entity, FlightControlConfig & component) override;
 };

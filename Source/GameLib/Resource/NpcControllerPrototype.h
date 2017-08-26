@@ -9,5 +9,5 @@
 class NpcControllerPrototype : public ComponentPrototype<NpcController>
 {
 public:
-    void updateComponent(NpcController & npcController) override;
+    void updateComponent(const Entity & entity, NpcController & npcController) override;
 };

@@ -32,11 +32,12 @@ void VoxelObject::addVoxelsRaw(const std::vector<Voxel> & voxels)
 {
     m_voxelData->addVoxelsRaw(voxels);
 
-    VoxelObjectModification modification(
-        ((World *)world())->entityById(entityId()));
-    modification.additions = voxels;
-
-    publishEvent(modification);
+    // TODO-ECS
+//    VoxelObjectModification modification(
+//        ((World *)world())->entityById(entityId()));
+//    modification.additions = voxels;
+//
+//    publishEvent(modification);
 }
 
 void VoxelObject::removeVoxelsRaw(
@@ -44,24 +45,25 @@ void VoxelObject::removeVoxelsRaw(
 {
     m_voxelData->removeVoxelsRaw(voxels);
 
-    VoxelObjectModification modification(
-        ((World *)world())->entityById(entityId()));
-    if (reason == VoxelRemovalReason::Destruction)
-        modification.destructions = voxels;
-    else
-        modification.splits = voxels;
-
-    if (m_crucialVoxel)
-    {
-        auto crucialVoxel = *m_crucialVoxel;
-        for (const auto & voxel : voxels)
-        {
-            if (voxel == crucialVoxel)
-                voxelWorld().onCrucialVoxelDestroyed(*this);
-        }
-    }
-
-    publishEvent(modification);
+    // TODO-ECS
+//    VoxelObjectModification modification(
+//        ((World *)world())->entityById(entityId()));
+//    if (reason == VoxelRemovalReason::Destruction)
+//        modification.destructions = voxels;
+//    else
+//        modification.splits = voxels;
+//
+//    if (m_crucialVoxel)
+//    {
+//        auto crucialVoxel = *m_crucialVoxel;
+//        for (const auto & voxel : voxels)
+//        {
+//            if (voxel == crucialVoxel)
+//                voxelWorld().onCrucialVoxelDestroyed(*this);
+//        }
+//    }
+//
+//    publishEvent(modification);
 }
 
 void VoxelObject::processImpact(

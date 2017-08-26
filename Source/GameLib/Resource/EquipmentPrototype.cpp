@@ -10,7 +10,7 @@
 #include "HailstormManager.h"
 #include "VersePrototypeSystem.h"
 
-void EquipmentPrototype::updateComponent(Equipment & equipment)
+void EquipmentPrototype::updateComponent(const Entity & entity, Equipment & equipment)
 {
     auto prototypeManager = world().systemRef<VersePrototypeSystem>().manager();
 
@@ -103,7 +103,7 @@ void EquipmentPrototype::updateComponent(Equipment & equipment)
     }
 }
 
-void EquipmentPrototype::initComponent(Equipment & equipment)
+void EquipmentPrototype::initComponent(const Entity & entity, Equipment & equipment)
 {
     equipment.setVfxManager(m_vfxManager);
 }
@@ -130,11 +130,13 @@ void EquipmentPrototype::loadSlotDesc(
             (forwardIter == obj.end()) == (upIter == obj.end()),
             "Either supply Forward AND Up, or neither");
 
-        glm::vec3 forward = *forwardIter;
-        glm::vec3 up = *upIter;
+        if (forwardIter != obj.end()) {
+            glm::vec3 forward = *forwardIter;
+            glm::vec3 up = *upIter;
 
-        auto right = glm::cross(forward, up);
+            auto right = glm::cross(forward, up);
 
-        slot.pose.setOrientation(glm::quat_cast(glm::mat3(right, up, forward)));
+            slot.pose.setOrientation(glm::quat_cast(glm::mat3(right, up, forward)));
+        }
     }
 }
