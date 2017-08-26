@@ -10,5 +10,5 @@ class PlayerFlightControlPrototype
     : public ComponentPrototype<PlayerFlightControl>
 {
 public:
-    void updateComponent(PlayerFlightControl & playerFlightControl) override;
+    void updateComponent(const Entity & entity, PlayerFlightControl & playerFlightControl) override;
 };

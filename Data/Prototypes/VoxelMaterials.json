@@ -7,5 +7,14 @@
   },
   "Cockpit00": {
     "BrightnessScale": 3.1
+  },
+  "Window00": {
+    "BrightnessScale": 4.1
+  },
+  "SignalLight00": {
+    "BrightnessScale": 6.0
+  },
+  "ChemicalGlow00": {
+    "BrightnessScale": 4.0
   }
 }

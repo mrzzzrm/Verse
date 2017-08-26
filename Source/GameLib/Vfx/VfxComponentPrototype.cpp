@@ -5,7 +5,7 @@
 #include "VfxManager.h"
 #include "VfxSystem.h"
 
-void VfxComponentPrototype::updateComponent(VfxComponent & vfxComponent)
+void VfxComponentPrototype::updateComponent(const Entity & entity, VfxComponent & vfxComponent)
 {
     auto & prototypeManager = world().systemRef<PrototypeSystem>().manager();
     auto & vfxManager = world().systemRef<VfxSystem>().manager();

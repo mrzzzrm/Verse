@@ -12,7 +12,7 @@
 class CoriolisPrototype : public ComponentPrototype<CoriolisComponent>
 {
 public:
-    void updateComponent(CoriolisComponent & coriolis) override
+    void updateComponent(const Entity & entity, CoriolisComponent & coriolis) override
     {
         coriolis.setAngularVelocity(m_newJson["AngularVelocity"]);
     }

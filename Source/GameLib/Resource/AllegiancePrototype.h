@@ -12,7 +12,7 @@
 class AllegiancePrototype : public ComponentPrototype<Allegiance>
 {
 public:
-    void updateComponent(Allegiance & allegiance) override
+    void updateComponent(const Entity & entity, Allegiance & allegiance) override
     {
         std::cout << "Setting faction: " << allegiance.faction() << " -> "
                   << m_newJson["Faction"] << std::endl;

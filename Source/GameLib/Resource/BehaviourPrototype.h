@@ -11,7 +11,7 @@ class BehaviourPrototype : public ComponentPrototype<BehaviourComponent>
 public:
     BehaviourPrototype(const std::shared_ptr<BehaviourManager> & manager);
 
-    void updateComponent(BehaviourComponent & behaviourComponent) override;
+    void updateComponent(const Entity & entity, BehaviourComponent & behaviourComponent) override;
 
 private:
     std::shared_ptr<BehaviourManager> m_manager;

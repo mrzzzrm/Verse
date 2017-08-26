@@ -8,7 +8,7 @@
 class HullPrototype : public ComponentPrototype<HullComponent>
 {
 public:
-    void updateComponent(HullComponent & hull)
+    void updateComponent(const Entity & entity, HullComponent & hull)
     {
         hull.setHealth(m_newJson["Health"]);
     }

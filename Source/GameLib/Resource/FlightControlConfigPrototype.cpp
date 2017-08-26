@@ -9,7 +9,7 @@ static void from_json(const Json & j, FlightControlComponent & component)
 }
 
 void FlightControlConfigPrototype::updateComponent(
-    FlightControlConfig & component)
+    const Entity & entity, FlightControlConfig & component)
 {
     component.horizontal = m_newJson["Horizontal"];
     component.vertical = m_newJson["Vertical"];

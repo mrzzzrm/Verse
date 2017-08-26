@@ -5,6 +5,17 @@
       "LID": "player",
       "Name": "PlayerShip",
       "Bases": ["Ship3", "Player"]
+    },
+    {
+      "LID": "station",
+      "Name": "Station",
+      "Bases": ["Factory2"],
+      "Components": {
+        "Transform3D": {
+          "Position": [-600, 200, -1500],
+          "Orientation": [0, 0, 4]
+        }
+      }
     }
   ]
 }

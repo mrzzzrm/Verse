@@ -12,12 +12,9 @@ BehaviourPrototype::BehaviourPrototype(
 }
 
 void BehaviourPrototype::updateComponent(
-    BehaviourComponent & behaviourComponent)
+    const Entity & entity, BehaviourComponent & behaviourComponent)
 {
     Assert(m_newJson.is_object(), "");
-
-    auto entity = ((World *)behaviourComponent.world())
-                      ->entityById(behaviourComponent.entityId());
 
     for (const auto & pair : Json::iterator_wrapper(m_newJson))
     {

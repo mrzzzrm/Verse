@@ -24,7 +24,7 @@ class VoxelRigidBodyPrototype final
     : public ComponentPrototype<VoxelRigidBodyComponent>
 {
 public:
-    void updateComponent(VoxelRigidBodyComponent & rigidBodyComponent) override
+    void updateComponent(const Entity & entity, VoxelRigidBodyComponent & rigidBodyComponent) override
     {
     }
 };

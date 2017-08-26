@@ -116,7 +116,7 @@ void VerseApplication::onFrame(DurationMicros micros)
     if (!m_gameplayPaused)
     {
         m_updateFrame.setGameMicros(micros);
-        m_updateFrame.setPhysicsSeconds(m_physicsWorld.nextSimulationStepSeconds(m_updateFrame.gameMicros()));
+        m_updateFrame.setPhysicsSeconds(m_physicsWorld.nextSimulationStepSeconds(m_updateFrame.gameSeconds()));
 
         if (m_updateFrame.physicsSeconds() > 0)
         {

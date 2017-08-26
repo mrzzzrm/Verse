@@ -3,7 +3,7 @@
 #include <Deliberation/Resource/PrototypeSystem.h>
 #include <Deliberation/Resource/PrototypeManager.h>
 
-void VoxelMaterialComponentPrototype::updateComponent(VoxelMaterialComponent & voxelMaterialComponent)
+void VoxelMaterialComponentPrototype::updateComponent(const Entity & entity, VoxelMaterialComponent & voxelMaterialComponent)
 {
     auto oldPaletteName = m_json.empty() ? "" : m_json.value("Palette", "");
     auto newPaletteName = m_newJson.value("Palette", "");

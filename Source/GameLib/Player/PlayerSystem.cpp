@@ -39,7 +39,7 @@ PlayerSystem::PlayerSystem(World & world)
               Equipment>())
     , InputLayer(0)
     , m_input(world.systemRef<ApplicationSystem>().input())
-    , m_cameraMode(CameraMode::Normal)
+    , m_cameraMode(CameraMode::FreeFlight)
     , m_navigator(
           world.systemRef<RenderSystem>().renderManager().mainCamera(),
           m_input,
@@ -59,6 +59,8 @@ void PlayerSystem::onEntityAdded(Entity & entity)
 
     std::cout << "PlayerSystem: Player set to '" << m_player.name() << "'"
               << std::endl;
+
+    m_cameraMode = CameraMode::Normal;
 }
 
 void PlayerSystem::onEntityRemoved(Entity & entity) { m_player = Entity(); }
@@ -99,6 +101,11 @@ void PlayerSystem::onEntityGameUpdate(Entity & entity, const UpdateFrame & updat
             //            m_debugGeometryRenderer.sphere(0).setTransform(Transform3D::atPosition(result.pointOfImpact));
         }
     }
+    else if (m_cameraMode == CameraMode::FreeFlight)
+    {
+        flightControl.setLinearThrust({});
+        flightControl.setAngularThrust({});
+    }
 
     flightControl.update(body, flightControlConfig, updateFrame);
 }
@@ -122,7 +129,7 @@ void PlayerSystem::onEntityPostPhysicsUpdate(Entity & entity, const UpdateFrame 
 
         auto position = targetPose.pointLocalToWorld({});
 
-        m_cameraDolly.update(position, targetPose.orientation(), updateFrame.gameSeconds());
+        m_cameraDolly.update(position, targetPose.orientation(), updateFrame.physicsSeconds());
     }
 }
 
@@ -141,33 +148,33 @@ void PlayerSystem::onMouseButtonDown(MouseStateEvent & event)
 {
     if (!m_player.isValid()) return;
 
-    if (event.button(MouseButton::Left))
-    {
-        const auto & mouse = event.mousePosition();
+    if (m_cameraMode == CameraMode::Normal) {
+        if (event.button(MouseButton::Left)) {
+            const auto &mouse = event.mousePosition();
 
-        m_angularThrust.x = mouse.y;
-        m_angularThrust.y = -mouse.x;
-    }
+            m_angularThrust.x = mouse.y;
+            m_angularThrust.y = -mouse.x;
+        }
 
-    if (event.button(MouseButton::Right))
-    {
-        auto & renderManager =
-            world().systemRef<RenderSystem>().renderManager();
-        AimHelper aimHelper(renderManager.mainCamera(), m_physicsWorld);
+        if (event.button(MouseButton::Right)) {
+            auto &renderManager =
+                world().systemRef<RenderSystem>().renderManager();
+            AimHelper aimHelper(renderManager.mainCamera(), m_physicsWorld);
 
-        auto result = aimHelper.getTarget(m_input.mousePosition());
+            auto result = aimHelper.getTarget(m_input.mousePosition());
 
-        auto & body = *m_player.component<RigidBodyComponent>().value();
+            auto &body = *m_player.component<RigidBodyComponent>().value();
 
-        auto &       equipment = m_player.component<Equipment>();
-        const auto & equipmentTransform =
-            m_player.component<Transform3DComponent>().value();
+            auto &equipment = m_player.component<Equipment>();
+            const auto &equipmentTransform =
+                m_player.component<Transform3DComponent>().value();
 
-        equipment.setFireRequestTargetForAllHardpoints(
-            equipmentTransform,
-            body.linearVelocity(),
-            result.pointOfImpact,
-            glm::vec3(0.0f));
+            equipment.setFireRequestTargetForAllHardpoints(
+                equipmentTransform,
+                body.linearVelocity(),
+                result.pointOfImpact,
+                glm::vec3(0.0f));
+        }
     }
 }
 
