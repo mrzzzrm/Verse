@@ -1,5 +1,6 @@
 #include "HudCrosshairs.h"
 
+#include <Deliberation/Core/Math/Ray3D.h>
 #include <Deliberation/Core/Math/PrimitiveIntersection.h>
 #include <Deliberation/Core/Math/Trajectory.h>
 

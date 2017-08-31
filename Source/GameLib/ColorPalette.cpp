@@ -14,7 +14,7 @@ ColorPalette::ColorPalette(
 
 void ColorPalette::setColor(u32 index, const glm::u8vec4 & color)
 {
-    Assert(index < m_colors.size(), "");
+    Assert(index < m_colors.size());
     m_colors[index] = color;
     m_colorsDirty = true;
     m_indicesByColor.clear();
@@ -22,7 +22,7 @@ void ColorPalette::setColor(u32 index, const glm::u8vec4 & color)
 
 void ColorPalette::setBrightnessScale(u32 index, float scale)
 {
-    Assert(index < m_brightnessScales.size(), "");
+    Assert(index < m_brightnessScales.size());
     m_brightnessScales[index] = scale;
     m_brightnessScalesDirty = true;
 }

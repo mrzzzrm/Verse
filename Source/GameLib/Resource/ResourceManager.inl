@@ -31,7 +31,7 @@ const ResourceType & ResourceManager::resource(const ResourceToken & token)
     auto & container = containerRef<ResourceType>();
 
     auto iter = container.resourceById.find(token.id());
-    Assert(iter != container.resourceById.end(), "");
+    Assert(iter != container.resourceById.end());
 
     return iter->second;
 }
@@ -47,7 +47,7 @@ template<typename ResourceType>
 ResourceManager::ResourceContainer<ResourceType> & ResourceManager::containerRef()
 {
     const auto iter = m_resourceContainersByTypeID.find(TypeID::value<ResourceManager, ResourceType>());
-    Assert(iter != m_resourceContainersByTypeID.end(), std::string("Couldn't find container for '") + typeid(ResourceType).name() + "'");
+    AssertM(iter != m_resourceContainersByTypeID.end(), std::string("Couldn't find container for '") + typeid(ResourceType).name() + "'");
     return *std::static_pointer_cast<ResourceContainer<ResourceType>>(iter->second);
 }
 
@@ -56,7 +56,7 @@ deliberation::ResourceId ResourceManager::ResourceContainer<ResourceType>::addRe
                                                                                        ResourceType && resource)
 {
     auto iter = resourceIdByPath.find(path);
-    Assert(iter == resourceIdByPath.end(), "Resource '" + path + "' already exists");
+    AssertM(iter == resourceIdByPath.end(), "Resource '" + path + "' already exists");
 
     const auto id = idCounter;
     idCounter++;

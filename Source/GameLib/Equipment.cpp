@@ -81,13 +81,13 @@ void Equipment::setFireRequestTargetForAllHardpoints(
 
 void Equipment::setWeapon(size_t slot, std::shared_ptr<Weapon> weapon)
 {
-    Assert(slot < m_hardpoints.size(), "");
+    Assert(slot < m_hardpoints.size());
     m_hardpoints[slot]->setWeapon(weapon);
 }
 
 void Equipment::setEngine(size_t slot, std::shared_ptr<Engine> engine)
 {
-    Assert(slot < m_engineSlots.size(), "");
+    Assert(slot < m_engineSlots.size());
 
     auto & previousEngine = m_engineSlots[slot]->engine();
 

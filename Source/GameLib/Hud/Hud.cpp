@@ -49,7 +49,7 @@ void Hud::addElement(const std::shared_ptr<HudElement> & element)
 void Hud::removeElement(const std::shared_ptr<HudElement> & element)
 {
     const auto iter = std::find(m_elements.begin(), m_elements.end(), element);
-    Assert(iter != m_elements.end(), "No such button");
+    AssertM(iter != m_elements.end(), "No such button");
 
     m_elements.erase(iter);
 }

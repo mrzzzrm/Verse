@@ -32,4 +32,4 @@ void Hardpoint::update(const UpdateFrame & updateFrame, const EquipmentUpdateCon
     m_weapon->update(updateFrame, context, worldPose(), m_maxAngle);
 }
 
-void Hardpoint::onDisabled() { std::cout << "Hardpoint disabled" << std::endl; }
+void Hardpoint::onDisabled() {  }

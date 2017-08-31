@@ -97,7 +97,7 @@ void VfxMeshRenderBatch::removeInstance(size_t index)
 
 void VfxMeshRenderBatch::disengageInstance(size_t index)
 {
-    Assert(index < m_instances.count(), "");
+    Assert(index < m_instances.count());
 
     m_lifetimes[index] = 0;
     m_births[index] = 0;
@@ -120,7 +120,7 @@ void VfxMeshRenderBatch::render()
         m_draw = m_renderer.drawContext().createDraw(m_renderer.program(), DrawPrimitive::Triangles, "VfxMeshRenderBatch");
 
         const auto & vertexLayout = m_meshData->vertices().layout();
-        Assert(
+        AssertM(
             vertexLayout.hasField("UV") == !m_meshData->textures().empty(), "");
 
         /**
@@ -206,7 +206,7 @@ void VfxMeshRenderBatch::render()
         }
         else
         {
-            Assert(m_renderPhase == RenderPhase::GBuffer, "Illegal RenderPhase " + RenderPhaseToString(m_renderPhase));
+            AssertM(m_renderPhase == RenderPhase::GBuffer, "Illegal RenderPhase " + RenderPhaseToString(m_renderPhase));
             m_draw.setFramebuffer(m_renderer.renderManager().gbuffer());
 
             auto binding = m_draw.framebufferBinding(m_renderer.renderManager().gbuffer());

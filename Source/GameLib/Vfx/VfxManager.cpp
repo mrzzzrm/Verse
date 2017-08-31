@@ -42,7 +42,7 @@ VfxMeshId VfxManager::getOrCreateMeshId(const ResourceToken & resourceToken)
         bool success;
         std::tie(iter, success) =
             m_meshIdByResourceId.emplace((size_t)resourceToken.id(), meshId);
-        Assert(success, "");
+        Assert(success);
     }
 
     return iter->second;
@@ -146,7 +146,7 @@ void VfxManager::update(const UpdateFrame & updateFrame)
 void VfxManager::centerMesh(std::shared_ptr<MeshData> inputMesh)
 {
     auto & vertices = inputMesh->vertices();
-    Assert(!vertices.empty(), "");
+    Assert(!vertices.empty());
 
     /**
      * Find bounds
@@ -191,7 +191,7 @@ std::shared_ptr<MeshData> VfxManager::processMesh(const std::shared_ptr<MeshData
 
         if (inputLayoutField.name() == "Color")
         {
-            Assert(inputLayoutField.type() == Type_U8Vec4, "Only conversion from Type_U8Vec4 supported right now");
+            AssertM(inputLayoutField.type() == Type_U8Vec4, "Only conversion from Type_U8Vec4 supported right now");
 
             auto inputIterator = inputVertices.citerator<glm::u8vec4>(inputLayoutField);
             auto outputIterator = outputVertices.iterator<glm::vec4>(outputLayout.field(f));

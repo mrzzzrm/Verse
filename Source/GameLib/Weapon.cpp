@@ -22,7 +22,7 @@ Weapon::Weapon(
 
 void Weapon::setFireRequest(const glm::vec3 & direction)
 {
-    Assert(EpsilonEq(glm::length2(direction), 1.0f), "Normalize direction!")
+    AssertM(EpsilonEq(glm::length2(direction), 1.0f), "Normalize direction!")
 
     m_fireRequestActive = true;
     m_fireRequestDirection = direction;
@@ -102,7 +102,7 @@ void Weapon::update(
 
             m_hailstormManager.addBullet(bullet);
 
-            Assert(m_prototype->frequency() != 0.0f, "");
+            Assert(m_prototype->frequency() != 0.0f);
             m_cooldown = 1.0f / m_prototype->frequency();
         }
         else

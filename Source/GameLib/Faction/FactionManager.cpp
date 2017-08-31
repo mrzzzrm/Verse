@@ -39,7 +39,7 @@ void FactionManager::onCreated() { subscribeEvent<FactionChangeEvent>(); }
 void FactionManager::onEntityAdded(Entity & entity)
 {
     auto r = m_entities.emplace(entity.id());
-    Assert(r.second, "Entity " + entity.name() + " already in FactionManager");
+    AssertM(r.second, "Entity " + entity.name() + " already in FactionManager");
 
     const auto & allegiance = entity.component<Allegiance>();
     addEntityToFaction(entity, allegiance.faction());
@@ -48,7 +48,7 @@ void FactionManager::onEntityAdded(Entity & entity)
 void FactionManager::onEntityRemoved(Entity & entity)
 {
     auto r = m_entities.erase(entity.id());
-    Assert(r == 1, "Entity " + entity.name() + " not in FactionManager");
+    AssertM(r == 1, "Entity " + entity.name() + " not in FactionManager");
 
     const auto & allegiance = entity.component<Allegiance>();
     removeEntityFromFaction(entity, allegiance.faction());
@@ -59,7 +59,7 @@ void FactionManager::removeEntityFromFaction(
 {
     auto &     entities = m_entitiesByFaction[faction];
     const auto iter = std::find(entities.begin(), entities.end(), entity);
-    Assert(iter != entities.end(), "");
+    Assert(iter != entities.end());
     entities.erase(iter);
 }
 
@@ -68,6 +68,6 @@ void FactionManager::addEntityToFaction(
 {
     auto &     entities = m_entitiesByFaction[faction];
     const auto iter = std::find(entities.begin(), entities.end(), entity);
-    Assert(iter == entities.end(), "");
+    Assert(iter == entities.end());
     entities.emplace_back(entity);
 }

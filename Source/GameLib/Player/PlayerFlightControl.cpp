@@ -22,7 +22,7 @@ const glm::vec3 & PlayerFlightControl::angularThrust() const
 
 void PlayerFlightControl::setLinearThrust(const glm::vec3 & linearThrust)
 {
-    Assert(
+    AssertM(
         std::abs(linearThrust.x) <= 1.05f &&
             std::abs(linearThrust.y) <= 1.05f &&
             std::abs(linearThrust.z) <= 1.05f,
@@ -33,7 +33,7 @@ void PlayerFlightControl::setLinearThrust(const glm::vec3 & linearThrust)
 
 void PlayerFlightControl::setAngularThrust(const glm::vec3 & angularThrust)
 {
-    Assert(
+    AssertM(
         std::abs(angularThrust.x) <= 1.05f &&
             std::abs(angularThrust.y) <= 1.05f &&
             std::abs(angularThrust.z) <= 1.05f,

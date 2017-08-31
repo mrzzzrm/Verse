@@ -43,7 +43,7 @@ void VoxelClusterSplitDetector::removeVoxels(
         m_cluster.set(voxel, VoxelCluster<u32>::EMPTY_VOXEL);
     }
 
-    Assert(m_numVoxels >= voxels.size(), "");
+    Assert(m_numVoxels >= voxels.size());
     m_numVoxels -= voxels.size();
 }
 
@@ -95,8 +95,8 @@ void VoxelClusterSplitDetector::performSplitDetection()
         }
     }
 
-    Assert(!m_splits.empty() || m_numVoxels == 0, "");
-    Assert(m_currentFloodId - m_currentFloodBeginId == m_splits.size(), "");
+    Assert(!m_splits.empty() || m_numVoxels == 0);
+    Assert(m_currentFloodId - m_currentFloodBeginId == m_splits.size());
 }
 
 void VoxelClusterSplitDetector::flood(const glm::uvec3 & startVoxel)

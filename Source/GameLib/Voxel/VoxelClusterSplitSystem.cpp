@@ -55,7 +55,7 @@ void VoxelClusterSplitSystem::onGameUpdate(const UpdateFrame & updateFrame)
 
         const auto & splits = splitDetector.splits();
 
-        Assert(
+        AssertM(
             !splits.empty() || originalVoxelData->numVoxels() == 0,
             entity.name() +
                 ": there has to be one split, the object itself, by "
@@ -119,18 +119,6 @@ void VoxelClusterSplitSystem::onGameUpdate(const UpdateFrame & updateFrame)
                 splitBody->shape()->centerOfMass() +
                 glm::vec3(split.llf) * scale /*+ glm::vec3(0.5f) */ -
                 originalBody->shape()->centerOfMass();
-
-            //            std::cout << "originalBody->transform().position(): "
-            //            << originalBody->transform().position() << std::endl;
-            //            std::cout
-            //            << "splitBody->shape()->centerOfMass(): " <<
-            //            splitBody->shape()->centerOfMass() << std::endl;
-            //            std::cout
-            //            << "originalBody->shape()->centerOfMass(): " <<
-            //            originalBody->shape()->centerOfMass() << std::endl;
-            //            std::cout << "split.llf: " << split.llf << std::endl;
-            //            std::cout << "RelativeCenterOfMass: " <<
-            //            relativeCenterOfMass << std::endl;
 
             const auto splitPosition =
                 originalBody->transform().position() +

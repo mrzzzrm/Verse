@@ -33,7 +33,7 @@ class VoxelObject final : public Component<VoxelObject>
 public:
     VoxelWorld & voxelWorld() const
     {
-        Assert((bool)m_voxelData, "");
+        AssertM((bool)m_voxelData, "");
         return m_voxelData->voxelWorld();
     }
     const VoxelObjectID & id() const;

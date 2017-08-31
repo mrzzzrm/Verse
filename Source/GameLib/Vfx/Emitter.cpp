@@ -38,7 +38,7 @@ void Emitter::updateInstance(
     EmitterInstanceContext & context,
     const UpdateFrame & updateFrame) const
 {
-    Assert(m_children.size() == context.children.size(), "Update Instances when changing Emitters!");
+    AssertM(m_children.size() == context.children.size(), "Update Instances when changing Emitters!");
 
     for (size_t c = 0; c < m_children.size(); c++)
     {
@@ -119,7 +119,7 @@ void Emitter::updateInstance(
 
 void Emitter::onReload(const Json & json)
 {
-    Assert(json.is_object(), "Emitter JSON needs to be object:\n" + json.dump() + "\n");
+    AssertM(json.is_object(), "Emitter JSON needs to be object:\n" + json.dump() + "\n");
 
     // Strategies
     const auto strategiesIter = json.find("Strategies");

@@ -23,7 +23,7 @@ VoxelRenderable::VoxelRenderable(
     const glm::uvec3 &                    size)
     : m_voxelWorld(voxelWorld), m_palette(palette), m_size(size)
 {
-    Assert(m_size.x >= 0 && m_size.y >= 0 && m_size.z >= 0, "");
+    Assert(m_size.x >= 0 && m_size.y >= 0 && m_size.z >= 0);
 
     size_t numChunks = 0;
 
@@ -77,7 +77,7 @@ VoxelRenderable::VoxelRenderable(
                 auto separationIndex =
                     (llfRender[longestAxis] + urbRender[longestAxis]) / 2;
 
-                Assert(separationIndex != llfRender[longestAxis], "");
+                Assert(separationIndex != llfRender[longestAxis]);
 
                 /**
                  * Left child
@@ -322,14 +322,14 @@ void VoxelRenderable::removeVoxelFromNode(
 
     if (visible)
     {
-        Assert(node.numVisibleVoxels > 0, "");
+        Assert(node.numVisibleVoxels > 0);
         node.numVisibleVoxels--;
     }
 
     if (node.leaf)
     {
         auto & chunk = m_chunks[node.chunk];
-        Assert(!!chunk.chunk, "");
+        Assert(!!chunk.chunk);
 
         if (chunk.chunk.use_count() > 1) chunk.chunk = chunk.chunk->clone();
 
@@ -356,14 +356,14 @@ void VoxelRenderable::updateVoxelVisibilityInNode(
     }
     else
     {
-        Assert(node.numVisibleVoxels > 0, "");
+        Assert(node.numVisibleVoxels > 0);
         node.numVisibleVoxels--;
     }
 
     if (node.leaf)
     {
         auto & chunk = m_chunks[node.chunk];
-        Assert(!!chunk.chunk, "");
+        Assert(!!chunk.chunk);
 
         if (chunk.chunk.use_count() > 1) chunk.chunk = chunk.chunk->clone();
 

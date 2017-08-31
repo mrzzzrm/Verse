@@ -32,7 +32,7 @@ void VoxelHull::addVoxels(const std::vector<Voxel> & voxels)
     for (auto & voxel : voxels)
     {
         i32 index = m_cluster.voxelToIndex(voxel.cell + glm::uvec3(1));
-        Assert(m_cluster.get(index) ^ VOXEL_IS_SET_BIT, "Voxel already set");
+        AssertM(m_cluster.get(index) ^ VOXEL_IS_SET_BIT, "Voxel already set");
 
         m_cluster.set(
             index, m_cluster.get(index) | VOXEL_PENDING_BIT | VOXEL_IS_SET_BIT);
@@ -68,7 +68,7 @@ void VoxelHull::removeVoxels(const std::vector<glm::uvec3> & voxels)
     for (auto & voxel : voxels)
     {
         i32 index = m_cluster.voxelToIndex(voxel + glm::uvec3(1));
-        Assert(m_cluster.get(index) & VOXEL_IS_SET_BIT, "Voxel not set");
+        AssertM(m_cluster.get(index) & VOXEL_IS_SET_BIT, "Voxel not set");
 
         m_cluster.set(index, m_cluster.get(index) & VOXEL_COUNT_MASK);
 

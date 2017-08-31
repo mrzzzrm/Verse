@@ -1,5 +1,6 @@
 #include "VerseResourceManager.h"
 
+#include <Deliberation/Core/Log.h>
 #include <Deliberation/Core/StringUtils.h>
 #include <Deliberation/ECS/World.h>
 
@@ -24,7 +25,7 @@ void VerseResourceManager::onCreated()
     });
     setLoader<VoxReader::VoxelModels>([&] (const std::string & path) -> VoxReader::VoxelModels{
         auto models = VoxReader().read(path);
-        std::cout << "Loaded " << models.size() << " models";
+        Log->info("Loaded {} models", models.size());
         return models;
     });
 

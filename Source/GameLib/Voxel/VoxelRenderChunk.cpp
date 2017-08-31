@@ -68,7 +68,7 @@ VoxelRenderChunk::VoxelRenderChunk(const VoxelRenderChunk & other)
 
 void VoxelRenderChunk::addVoxel(const Voxel & voxel, bool visible)
 {
-    Assert(!m_cluster.test(voxel.cell), "Voxel already added");
+    AssertM(!m_cluster.test(voxel.cell), "Voxel already added");
 
     m_cluster.set(voxel.cell, voxel.colorIndex);
 
@@ -88,7 +88,7 @@ void VoxelRenderChunk::addVoxel(const Voxel & voxel, bool visible)
 
 void VoxelRenderChunk::removeVoxel(const glm::uvec3 & voxel, bool visible)
 {
-    Assert(m_cluster.test(voxel), "No voxel to remove");
+    AssertM(m_cluster.test(voxel), "No voxel to remove");
 
     m_cluster.set(voxel, decltype(m_cluster)::EMPTY_VOXEL);
 
@@ -97,7 +97,7 @@ void VoxelRenderChunk::removeVoxel(const glm::uvec3 & voxel, bool visible)
 
     if (visible)
     {
-        Assert(m_numVisibleVoxels > 0, "");
+        Assert(m_numVisibleVoxels > 0);
         m_numVisibleVoxels--;
     }
 
@@ -114,7 +114,7 @@ void VoxelRenderChunk::updateVoxelVisibility(
     }
     else
     {
-        Assert(m_numVisibleVoxels > 0, "");
+        Assert(m_numVisibleVoxels > 0);
         m_numVisibleVoxels--;
     }
 }

@@ -13,7 +13,7 @@ public:
     const std::string & faction() const;
     void                setFaction(const std::string & faction)
     {
-        Assert(!faction.empty(), "Empty faction only valid on initialization");
+        AssertM(!faction.empty(), "Empty faction only valid on initialization");
 
         World *            world = (World *)m_world;
         FactionChangeEvent event(

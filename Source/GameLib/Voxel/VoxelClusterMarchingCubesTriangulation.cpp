@@ -103,7 +103,7 @@ struct BaseTriangleIndex
 
     void rotate(uint x, uint y, uint z)
     {
-        Assert(a != VoxelClusterMarchingCubesTriangulation::INVALID_CORNER, "");
+        Assert(a != VoxelClusterMarchingCubesTriangulation::INVALID_CORNER);
 
         a = VoxelClusterMarchingCubesTriangulation::rotateEdge(a, x, y, z);
 
@@ -119,7 +119,7 @@ struct BaseTriangleIndex
 
     glm::vec3 toPosition() const
     {
-        Assert(a != VoxelClusterMarchingCubesTriangulation::INVALID_CORNER, "");
+        Assert(a != VoxelClusterMarchingCubesTriangulation::INVALID_CORNER);
 
         if (b != VoxelClusterMarchingCubesTriangulation::INVALID_CORNER)
         {

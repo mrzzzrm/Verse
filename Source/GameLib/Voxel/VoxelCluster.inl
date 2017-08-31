@@ -39,7 +39,7 @@
 // bool VoxelClusterIterator<T>::operator!=(const VoxelClusterIterator & rhs)
 // const
 //{
-//    Assert(&m_cluster == &rhs.m_cluster, "");
+//    Assert(&m_cluster == &rhs.m_cluster);
 //    return m_voxel != rhs.m_voxel;
 //}
 
@@ -90,7 +90,7 @@ void VoxelCluster<T>::set(const glm::uvec3 & voxel, const T & value)
 template<typename T>
 void VoxelCluster<T>::set(size_t index, const T & value)
 {
-    Assert(index < m_voxels.size(), "Voxel out of bounds");
+    AssertM(index < m_voxels.size(), "Voxel out of bounds");
     m_voxels[index] = value;
 }
 
@@ -104,21 +104,21 @@ T VoxelCluster<T>::get(const glm::uvec3 & voxel) const
 template<typename T>
 T VoxelCluster<T>::get(size_t index) const
 {
-    Assert(index < m_voxels.size(), "Voxel out of bounds");
+    AssertM(index < m_voxels.size(), "Voxel out of bounds");
     return m_voxels[index];
 }
 
 template<typename T>
 T & VoxelCluster<T>::getRef(size_t index)
 {
-    Assert(index < m_voxels.size(), "Voxel out of bounds");
+    AssertM(index < m_voxels.size(), "Voxel out of bounds");
     return m_voxels[index];
 }
 
 template<typename T>
 const T & VoxelCluster<T>::getRef(size_t index) const
 {
-    Assert(index < m_voxels.size(), "Voxel out of bounds");
+    AssertM(index < m_voxels.size(), "Voxel out of bounds");
     return m_voxels[index];
 }
 
@@ -165,7 +165,7 @@ template<typename T>
 size_t VoxelCluster<T>::voxelToIndex(const glm::uvec3 & voxel) const
 {
     auto result = voxel.x + voxel.y * m_size.x + voxel.z * m_size.x * m_size.y;
-    Assert(result < m_voxels.size(), "Voxel out of bounds");
+    AssertM(result < m_voxels.size(), "Voxel out of bounds");
     return result;
 }
 

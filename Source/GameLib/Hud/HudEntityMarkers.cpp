@@ -76,7 +76,7 @@ void HudEntityMarkers::update(const UpdateFrame & updateFrame)
                                   nearPlaneUp * radius;
         const auto upperRightNP =
             m_camera.projectToNearPlane(upperRightWS, inFrontOfCamera);
-        Assert(inFrontOfCamera, "");
+        Assert(inFrontOfCamera);
 
         std::shared_ptr<HudButton> button;
 

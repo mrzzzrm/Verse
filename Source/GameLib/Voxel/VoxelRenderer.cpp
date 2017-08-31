@@ -23,7 +23,7 @@ void VoxelRenderer::removeVoxelObject(std::shared_ptr<VoxelObject> voxelObject)
 {
     const auto iter =
         std::find(m_objects.begin(), m_objects.end(), voxelObject);
-    Assert(iter != m_objects.end(), "");
+    Assert(iter != m_objects.end());
 
     m_objects.erase(iter);
 }

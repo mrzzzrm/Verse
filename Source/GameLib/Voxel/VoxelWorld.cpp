@@ -2,6 +2,7 @@
 
 #include <algorithm>
 
+#include <Deliberation/Core/Log.h>
 #include <Deliberation/Core/ScopeProfiler.h>
 
 #include <Deliberation/Draw/DrawContext.h>
@@ -53,9 +54,7 @@ void VoxelWorld::onCrucialVoxelDestroyed(VoxelObject & voxelObject)
     const auto & originalRigidBody =
         originalEntity.component<RigidBodyComponent>().value();
 
-    std::cout << "Turning '" << originalEntity.name()
-              << "' to remnant because its crucial voxel was destroyed"
-              << std::endl;
+    Log->info("Turning '{}' to remnant because its crucial voxel was destroyed", originalEntity.name());
 
     auto remnantVoxelData = voxelObject.data();
     remnantVoxelData->setCrucialVoxel({});

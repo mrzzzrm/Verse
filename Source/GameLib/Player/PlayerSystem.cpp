@@ -1,5 +1,6 @@
 #include "PlayerSystem.h"
 
+#include <Deliberation/Core/Log.h>
 #include <Deliberation/Core/Math/PrimitiveIntersection.h>
 #include <Deliberation/Core/Math/Trajectory.h>
 #include <Deliberation/Core/StreamUtils.h>
@@ -54,11 +55,10 @@ void PlayerSystem::onFrameBegin() {}
 
 void PlayerSystem::onEntityAdded(Entity & entity)
 {
-    Assert(!m_player.isValid(), "Can't have 2 player identities");
+    AssertM(!m_player.isValid(), "Can't have 2 player identities");
     m_player = entity;
 
-    std::cout << "PlayerSystem: Player set to '" << m_player.name() << "'"
-              << std::endl;
+    Log->info("PlayerSystem: Player set to '{}'", m_player.name());
 
     m_cameraMode = CameraMode::Normal;
 }

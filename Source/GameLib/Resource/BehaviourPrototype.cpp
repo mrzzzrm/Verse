@@ -1,5 +1,6 @@
 #include "BehaviourPrototype.h"
 
+#include <Deliberation/Core/Log.h>
 #include <Deliberation/ECS/World.h>
 
 #include "AbstractBehaviour.h"
@@ -14,7 +15,9 @@ BehaviourPrototype::BehaviourPrototype(
 void BehaviourPrototype::updateComponent(
     const Entity & entity, BehaviourComponent & behaviourComponent)
 {
-    Assert(m_newJson.is_object(), "");
+    DELIBERATION_LOG_INNER_SCOPE("BehaviourPrototype")
+
+    Assert(m_newJson.is_object());
 
     for (const auto & pair : Json::iterator_wrapper(m_newJson))
     {
@@ -23,8 +26,7 @@ void BehaviourPrototype::updateComponent(
         auto behaviour = behaviourComponent.getBehaviourByName(behaviourName);
         if (!behaviour)
         {
-            std::cout << "BehaviourPrototype: Adding '" << behaviourName
-                      << "' to Entity '" << entity.name() << "'" << std::endl;
+            Log->info("Adding '{}' to Entity '{}'", behaviourName, entity.name());
 
             behaviour = m_manager->createBehaviour(behaviourName);
             behaviour->setEntity(entity);

@@ -124,7 +124,7 @@ void VoxelObjectVoxelData::addVoxelsRaw(std::vector<Voxel> voxels)
 
     for (auto & voxel : voxels)
     {
-        Assert(
+        AssertM(
             !m_colorIndices.test(voxel.cell),
             "Already contains voxel " + ToString(voxel.cell));
 
@@ -179,7 +179,7 @@ void VoxelObjectVoxelData::removeVoxelsRaw(std::vector<glm::uvec3> voxels)
 
     for (auto & voxel : voxels)
     {
-        Assert(
+        AssertM(
             m_colorIndices.test(voxel),
             "Doesn't contain voxel " + ToString(voxel));
 
@@ -200,7 +200,7 @@ void VoxelObjectVoxelData::removeVoxelsRaw(std::vector<glm::uvec3> voxels)
 
     m_splitDetector.removeVoxels(voxels);
 
-    Assert(m_numVoxels >= voxels.size(), "");
+    Assert(m_numVoxels >= voxels.size());
     m_numVoxels -= voxels.size();
 
 #if VERBOSE

@@ -56,6 +56,6 @@ void EmitterInstance::restart()
 
 void EmitterInstance::onEmitterDied()
 {
-    Assert(m_numActiveEmitters > 0, "");
+    Assert(m_numActiveEmitters > 0);
     m_numActiveEmitters--;
 }

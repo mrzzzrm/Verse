@@ -69,7 +69,7 @@ void EquipmentPrototype::updateComponent(const Entity & entity, Equipment & equi
                     world().systemRef<PrototypeSystem>().manager()->prototype<WeaponPrototype>(desc.compatibleWeapons[0]);
                 auto & hailstormManager =
                     world().systemRef<HailstormManager>();
-                Assert(static_cast<bool>(weaponPrototype), "");
+                Assert(static_cast<bool>(weaponPrototype));
                 hardpoint->setWeapon(std::make_shared<Weapon>(weaponPrototype, hailstormManager));
             }
         }
@@ -126,7 +126,7 @@ void EquipmentPrototype::loadSlotDesc(
         const auto forwardIter = obj.find("Forward");
         const auto upIter = obj.find("Up");
 
-        Assert(
+        AssertM(
             (forwardIter == obj.end()) == (upIter == obj.end()),
             "Either supply Forward AND Up, or neither");
 

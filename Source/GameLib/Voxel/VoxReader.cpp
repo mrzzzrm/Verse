@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include <Deliberation/Core/Assert.h>
+#include <Deliberation/Core/Log.h>
 #include <Deliberation/Core/IntTypes.h>
 #include <Deliberation/Core/StreamUtils.h>
 
@@ -74,24 +75,26 @@ VoxReader::Palette DEFAULT_PALETTE = {
 
 std::vector<VoxReader::VoxelModel> VoxReader::read(const std::string & path)
 {
+    DELIBERATION_LOG_INNER_SCOPE("VoxReader");
+
 #if VERBOSE
-    std::cout << "VoxReader: Loading '" << path << "'" << std::endl;
+    Log->info("Loading '{}'", path);
 #endif
 
     std::ifstream file(path, std::ios_base::binary);
 
-    Assert(file.is_open(), std::string("Couldn't open '") + path + "'");
+    AssertM(file.is_open(), std::string("Couldn't open '") + path + "'");
 
     std::array<char, 4> id;
     file.read(id.data(), id.size());
-    Assert(id == VOX_ID, "Not a VOX file");
+    AssertM(id == VOX_ID, "Not a VOX file");
 
     u32 versionNumber = 0;
     file.read((char *)&versionNumber, sizeof(versionNumber));
-    Assert(versionNumber == SUPPORTED_VERSION_NUMBER, "Illegal version number");
+    AssertM(versionNumber == SUPPORTED_VERSION_NUMBER, "Illegal version number");
 
     auto mainChunk = readChunkHeader(file);
-    Assert(mainChunk.type == MAIN_CHUNK, "No main chunk");
+    AssertM(mainChunk.type == MAIN_CHUNK, "No main chunk");
 
     auto packChunk = readChunkHeader(file);
 
@@ -104,7 +107,7 @@ std::vector<VoxReader::VoxelModel> VoxReader::read(const std::string & path)
     {
         file.seekg(-CHUNK_HEADER_SIZE, std::ios_base::cur);
     }
-    Assert(
+    AssertM(
         numModels <= MAX_NUM_MODELS_SUPPORTED,
         "Number of models not supported");
 
@@ -116,7 +119,7 @@ std::vector<VoxReader::VoxelModel> VoxReader::read(const std::string & path)
     for (u32 m = 0; m < numModels; m++)
     {
         auto sizeChunk = readChunkHeader(file);
-        Assert(sizeChunk.type == SIZE_CHUNK, "No size chunk");
+        AssertM(sizeChunk.type == SIZE_CHUNK, "No size chunk");
 
         file.read(
             (char *)&voxelModels[m].size.x, sizeof(voxelModels[m].size.x));
@@ -126,12 +129,12 @@ std::vector<VoxReader::VoxelModel> VoxReader::read(const std::string & path)
             (char *)&voxelModels[m].size.y, sizeof(voxelModels[m].size.y));
 
         auto xyziChunk = readChunkHeader(file);
-        Assert(xyziChunk.type == XYZI_CHUNK, "No xyzi chunk");
-        Assert(xyziChunk.numBytes % 4 == 0, "Invalid number of bytes");
+        AssertM(xyziChunk.type == XYZI_CHUNK, "No xyzi chunk");
+        AssertM(xyziChunk.numBytes % 4 == 0, "Invalid number of bytes");
 
         u32 numVoxels;
         file.read((char *)&numVoxels, sizeof(numVoxels));
-        Assert(numVoxels < 256 * 256 * 256, "Number of voxels too high");
+        AssertM(numVoxels < 256 * 256 * 256, "Number of voxels too high");
 
         voxelModels[m].palettedVoxels.reserve(numVoxels);
 
@@ -151,7 +154,7 @@ std::vector<VoxReader::VoxelModel> VoxReader::read(const std::string & path)
     if (rgbaChunk.type == RGBA_CHUNK)
     {
 #if VERBOSE
-        std::cout << "VoxReader: Custom palette" << std::endl;
+        Log->info("Custom palette");
 #endif
         std::array<u8, 4> rgba;
         for (u32 c = 0; c < 255; c++)

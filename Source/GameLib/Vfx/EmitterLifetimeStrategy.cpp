@@ -5,7 +5,7 @@
 EmitterRandomLifetime::EmitterRandomLifetime(float min, float max)
     : m_dist(min, max)
 {
-    Assert(max >= min, "");
+    Assert(max >= min);
 }
 
 float EmitterRandomLifetime::generateLifetime() const

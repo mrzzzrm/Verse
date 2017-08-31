@@ -64,7 +64,7 @@ size_t VfxMeshRenderer::getOrCreateBatchIndex(const VfxBatchKey & key)
      * Build VfxRenderBatch
      */
     const auto meshId = std::get<0>(key);
-    Assert(meshId < m_meshData.size(), "MeshID not registered " + std::to_string(meshId));
+    AssertM(meshId < m_meshData.size(), "MeshID not registered " + std::to_string(meshId));
 
     const auto & meshData = m_meshData[meshId];
     const auto dlightEnabled = std::get<1>(key);
@@ -77,7 +77,7 @@ size_t VfxMeshRenderer::getOrCreateBatchIndex(const VfxBatchKey & key)
 
     // Add batch to respective node
     const auto iter2 = m_renderNodesByRenderPhase.find((std::underlying_type<RenderPhase>::type)renderPhase);
-    Assert(iter2 != m_renderNodesByRenderPhase.end(),
+    AssertM(iter2 != m_renderNodesByRenderPhase.end(),
            "No such RenderNode for RenderPhase '" + RenderPhaseToString(renderPhase) + "'");
 
     iter2->second->m_batches.emplace_back(batch);
@@ -93,7 +93,7 @@ VfxMeshId VfxMeshRenderer::addMesh(const std::shared_ptr<MeshData> & mesh)
 
 size_t VfxMeshRenderer::addParticle(const VfxParticle & particle)
 {
-    Assert(particle.meshRenderBatchIndex < m_batches.size(),
+    AssertM(particle.meshRenderBatchIndex < m_batches.size(),
            "Batch index out of range " + std::to_string(particle.meshRenderBatchIndex));
 
     return m_batches[particle.meshRenderBatchIndex]->addInstance(particle);
@@ -101,14 +101,14 @@ size_t VfxMeshRenderer::addParticle(const VfxParticle & particle)
 
 void VfxMeshRenderer::removeParticle(const VfxParticleId & particleId)
 {
-    Assert(particleId.meshRenderBatchIndex < m_batches.size(), "Batch index out of range " + std::to_string(particleId.meshRenderBatchIndex));
+    AssertM(particleId.meshRenderBatchIndex < m_batches.size(), "Batch index out of range " + std::to_string(particleId.meshRenderBatchIndex));
 
     m_batches[particleId.meshRenderBatchIndex]->removeInstance(particleId.meshRenderBatchSlot);
 }
 
 void VfxMeshRenderer::disengageParticle(const VfxParticleId & particleId)
 {
-    Assert(particleId.meshRenderBatchIndex < m_batches.size(), "Batch index out of range " + std::to_string(particleId.meshRenderBatchIndex));
+    AssertM(particleId.meshRenderBatchIndex < m_batches.size(), "Batch index out of range " + std::to_string(particleId.meshRenderBatchIndex));
 
     m_batches[particleId.meshRenderBatchIndex]->disengageInstance(particleId.meshRenderBatchSlot);
 }

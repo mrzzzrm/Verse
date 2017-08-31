@@ -63,7 +63,7 @@ void VoxelShape::updateVoxel(const glm::uvec3 & voxel, bool set)
     }
     else
     {
-        Assert(m_numVoxels > 0, "No voxels to remove");
+        AssertM(m_numVoxels > 0, "No voxels to remove");
         m_numVoxels--;
         m_voxelPositionAccumulator -= voxel;
 
@@ -130,7 +130,7 @@ template<typename T>
 VoxelShape::Subtree<T>::Subtree(
     const glm::uvec3 & size, const glm::uvec3 & maxChunkSize)
 {
-    Assert(size.x >= 0 && size.y >= 0 && size.z >= 0, "");
+    Assert(size.x >= 0 && size.y >= 0 && size.z >= 0);
 
     size_t numLeafs = 0;
 
@@ -252,7 +252,7 @@ template<>
 void VoxelShape::Subtree<VoxelShape::VoxelLeaf>::updateVoxelLeaf(
     size_t index, const glm::uvec3 & voxel, bool set)
 {
-    Assert(leaves[nodes[index].leaf] != set, "");
+    Assert(leaves[nodes[index].leaf] != set);
     leaves[nodes[index].leaf] = set;
 }
 

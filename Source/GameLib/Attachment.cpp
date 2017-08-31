@@ -10,7 +10,7 @@ const Pose3D & Attachment::localPose() const { return m_desc.pose; }
 
 Pose3D Attachment::worldPose() const
 {
-    Assert(m_entity.hasComponent<Transform3DComponent>(), "Needs Transform");
+    AssertM(m_entity.hasComponent<Transform3DComponent>(), "Needs Transform");
 
     const auto & transform = m_entity.component<Transform3DComponent>().value();
     Pose3D       pose = m_desc.pose;
@@ -38,6 +38,6 @@ void Attachment::setEnabled(bool enabled)
 
 void Attachment::setEntity(const Entity & entity)
 {
-    Assert(!m_entity.isValid(), "Attachments can't switch entities") m_entity =
+    AssertM(!m_entity.isValid(), "Attachments can't switch entities") m_entity =
         entity;
 }

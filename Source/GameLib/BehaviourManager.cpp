@@ -11,7 +11,7 @@ std::shared_ptr<AbstractBehaviour>
 BehaviourManager::createBehaviour(const std::string & name)
 {
     const auto iter = m_behaviourFactoryByName.find(name);
-    Assert(
+    AssertM(
         iter != m_behaviourFactoryByName.end(),
         "No such Behaviour '" + name + "'");
 

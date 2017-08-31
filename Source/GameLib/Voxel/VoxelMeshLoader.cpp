@@ -17,7 +17,7 @@ VoxelMeshLoader::VoxelMeshLoader(const std::shared_ptr<ResourceManager> & resour
 std::shared_ptr<MeshData> VoxelMeshLoader::load(const std::string & path)
 {
     auto & voxelModels = m_resourceManager->resource<VoxReader::VoxelModels>(path);
-    Assert(voxelModels.size() == 1, "Wrong number of models in '" + path + "'");
+    AssertM(voxelModels.size() == 1, "Wrong number of models in '" + path + "'");
 
     auto & voxelModel = voxelModels[0];
 

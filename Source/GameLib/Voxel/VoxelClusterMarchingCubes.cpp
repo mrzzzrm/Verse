@@ -299,7 +299,7 @@ VoxelClusterMarchingCubes::generateMesh(i32 x, i32 y, i32 z, u8 configID)
 inline u32 VoxelClusterMarchingCubes::getCubeColorIndexAtCorner(
     i32 x, i32 y, i32 z, u8 corner) const
 {
-    // Assert(corner < 8, "Illegal corner index");
+    // AssertM(corner < 8, "Illegal corner index");
 
     static std::array<glm::ivec3, 8> cornerOffsets = {{
         {-1, -1, -1},
@@ -314,7 +314,7 @@ inline u32 VoxelClusterMarchingCubes::getCubeColorIndexAtCorner(
 
     auto voxel = cornerOffsets[corner] + glm::ivec3(x, y, z);
 
-    // Assert(voxel.x >= 0 && voxel.y >= 0 && voxel.z >= 0, "");
+    // Assert(voxel.x >= 0 && voxel.y >= 0 && voxel.z >= 0);
 
     return m_cluster.get(voxel);
 }

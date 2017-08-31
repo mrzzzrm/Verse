@@ -175,7 +175,7 @@ void ResourceManager::registerBuildIns()
 const MeshData & ResourceManager::mesh(::ResourceId resourceId) const
 {
     const auto iter = m_meshByResourceId.find((size_t)resourceId);
-    Assert(
+    AssertM(
         iter != m_meshByResourceId.end(),
         "Couldn't find resource " + std::to_string((size_t)resourceId));
 
@@ -185,7 +185,7 @@ const MeshData & ResourceManager::mesh(::ResourceId resourceId) const
 const Program & ResourceManager::program(::ResourceId resourceId) const
 {
     const auto iter = m_programByResourceId.find((size_t)resourceId);
-    Assert(
+    AssertM(
         iter != m_programByResourceId.end(),
         "Couldn't find resource " + std::to_string((size_t)resourceId));
 
