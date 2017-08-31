@@ -4,7 +4,7 @@ include_directories(
     ${target}
     PRIVATE
 
-    ${PROJECT_SOURCE_DIR}/Deliberation2/Extern/googletest/googletest/include/
+    ${PROJECT_SOURCE_DIR}/Deliberation/Extern/googletest/googletest/include/
 )
 
 add_executable(

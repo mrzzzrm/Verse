@@ -250,10 +250,8 @@ target_include_directories(${target}
     ${CMAKE_CURRENT_SOURCE_DIR}/Resource
     ${CMAKE_CURRENT_SOURCE_DIR}/Vfx
     ${CMAKE_CURRENT_SOURCE_DIR}/Voxel
-
-    ${DELIBERATION_INCLUDE_DIRS}
     )
 
 target_link_libraries(${target}
-    ${DELIBERATION_LIBRARIES}
+    Deliberation
     )
