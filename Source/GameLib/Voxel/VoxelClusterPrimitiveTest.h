@@ -3,7 +3,7 @@
 #include <memory>
 
 #include <Deliberation/Core/Math/Ray3D.h>
-#include <Deliberation/Physics/NarrowphasePrimitiveTest.h>
+#include <Deliberation/Physics/PrimitiveTestAlgorithm.h>
 #include <Deliberation/Physics/RigidBody.h>
 
 #include "GameLib.h"
@@ -16,7 +16,7 @@ struct RayCastVoxelClusterIntersection : RayCastIntersection
     glm::uvec3 voxel;
 };
 
-class VoxelClusterPrimitiveTest : public NarrowphasePrimitiveTest
+class VoxelClusterPrimitiveTest : public PrimitiveTestAlgorithm
 {
 public:
     virtual std::unique_ptr<RayCastIntersection>

@@ -13,7 +13,7 @@
 #include <Deliberation/ECS/Systems/PhysicsWorldSystem.h>
 #include <Deliberation/ECS/World.h>
 
-#include <Deliberation/Physics/Narrowphase.h>
+#include <Deliberation/Physics/PrimitiveTester.h>
 #include <Deliberation/Physics/PhysicsWorld.h>
 #include <Deliberation/Physics/RigidBody.h>
 
@@ -46,7 +46,6 @@
 #include "PlayerFlightControl.h"
 #include "VfxManager.h"
 #include "VoxReader.h"
-#include "VoxelClusterContact.h"
 #include "VoxelClusterPrimitiveTest.h"
 #include "VoxelRenderable.h"
 #include "VoxelRigidBodyPayload.h"

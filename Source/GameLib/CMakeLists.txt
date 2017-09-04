@@ -135,8 +135,6 @@ add_library(${target}
     Voxel/VoxelCluster.cpp
     Voxel/VoxelCluster.h
     Voxel/VoxelCluster.inl
-    Voxel/VoxelClusterContact.cpp
-    Voxel/VoxelClusterContact.h
     Voxel/VoxelClusterMarchingCubes.cpp
     Voxel/VoxelClusterMarchingCubes.h
     Voxel/VoxelClusterMarchingCubesTriangulation.cpp
