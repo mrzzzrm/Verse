@@ -4,7 +4,7 @@
 #include <Deliberation/Core/UpdateFrame.h>
 #include <Deliberation/Core/Math/Ray3D.h>
 
-#include <Deliberation/Physics/NarrowphasePrimitiveTest.h>
+#include <Deliberation/Physics/PrimitiveTestAlgorithm.h>
 #include <Deliberation/Physics/PhysicsWorld.h>
 #include <Deliberation/Physics/RigidBody.h>
 
@@ -83,8 +83,8 @@ void HailstormPhysicsWorld::update(const UpdateFrame & updateFrame)
                     voxelObject.processImpact(
                         voxelClusterIntersection.voxel, 100, 2);
 
-                    m_voxelObjectBulletHits.emplace_back(
-                        entity, voxelClusterIntersection.voxel, bullet);
+//                    m_voxelObjectBulletHits.emplace_back(
+//                        entity, voxelClusterIntersection.voxel, bullet);
 
                     auto localHitPoint =
                         glm::vec3(voxelClusterIntersection.voxel);

@@ -1,0 +1,27 @@
+{
+  "Entities": [
+    {
+      "Components": {
+        "Coriolis": {
+          "AngularVelocity": [
+            1,0,0
+          ]
+        },
+        "Transform3D": {
+          "Orientation": [
+            0,0,0
+          ],
+          "Position": [
+            20, 0, -50
+          ],
+          "Scale": 3
+        }
+      },
+      "LID": "asteroid0",
+      "Name": "AsteroidFieldAsteroid0",
+      "Bases": [
+        "Asteroid01"
+      ]
+    }
+  ]
+}

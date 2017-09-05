@@ -182,7 +182,7 @@ void PlayerSystem::onMouseMotion(MouseMotionEvent & event)
 {
     auto &    renderManager = world().systemRef<RenderSystem>().renderManager();
     AimHelper aimHelper(renderManager.mainCamera(), m_physicsWorld);
-    aimHelper.getTarget(m_input.mousePosition());
+    auto result = aimHelper.getTarget(m_input.mousePosition());
 
     if (m_cameraMode == CameraMode::FreeFlight)
     {

@@ -1,21 +1,20 @@
-[
+{
+  "Entities": [
   {
-    "LID": "target",
-    "Bases": ["Target"],
-    "Components": {
-      "Transform3D": {
-        "Position": [0, 0, -100]
-      }
-    }
+    "LID": "player",
+    "Name": "PlayerShip",
+    "Bases": ["Ship3", "Player"]
   },
   {
-    "LID": "ship",
-    "Bases": ["Ship3", "Player"],
+    "LID": "station",
+    "Name": "Station",
+    "Bases": ["Block50x1x1"],
     "Components": {
       "Transform3D": {
-        "Position": [0, 0, 0]
+        "Position": [0, 0, -100],
+        "Orientation": [0, 0, 0]
       }
     }
   }
-
-]
+  ]
+}

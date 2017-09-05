@@ -39,14 +39,14 @@ VerseApplication::VerseApplication(
 
 void VerseApplication::onStartup()
 {
-    m_physicsWorld.narrowphase().registerPrimitiveTest(
+    m_physicsWorld.primitiveTester().registerPrimitiveTest(
         (int)::CollisionShapeType::VoxelCluster,
         std::make_unique<VoxelClusterPrimitiveTest>());
 
-    m_physicsWorld.narrowphase()
-        .contactDispatcher()
-        .registerContactType<VoxelClusterContact>(
-            (int)::CollisionShapeType::VoxelCluster);
+//    m_physicsWorld.narrowphase()
+//        .contactDispatcher()
+//        .registerContactType<VoxelClusterContact>(
+//            (int)::CollisionShapeType::VoxelCluster);
 
     auto skyboxPaths =
         std::array<std::string, 6>{GameDataPath("Data/Skybox/Right.png"),
@@ -65,8 +65,8 @@ void VerseApplication::onStartup()
     {
         m_world.addSystem<RenderSystem>();
         auto pointLightSystem = m_world.addSystem<PointLightSystem>();
-        m_world.addSystem<DebugPointLightSystem>(
-            pointLightSystem->pointLightRenderer());
+//        m_world.addSystem<DebugPointLightSystem>(
+//            pointLightSystem->pointLightRenderer());
         m_world.addSystem<SkyboxSystem>(m_skyboxCubemap);
         m_world.addSystem<VerseResourceManager>();
         m_physicsWorldSystem =
@@ -111,24 +111,33 @@ void VerseApplication::onFrame(DurationMicros micros)
 {
     m_world.frameBegin();
 
+    m_updateFrame.setPhysicsSeconds(0.0f);
     m_updateFrame.setBeginMicros(m_updateFrame.beginMicros() + m_updateFrame.gameMicros());
 
     if (!m_gameplayPaused)
     {
         m_updateFrame.setGameMicros(micros);
-        m_updateFrame.setPhysicsSeconds(m_physicsWorld.nextSimulationStepSeconds(m_updateFrame.gameSeconds()));
 
+        const auto physicsSeconds =
+            m_physicsWorldSystem->physicsWorld().probeNextSimulationStepSeconds(m_updateFrame.gameSeconds());
+        m_updateFrame.setPhysicsSeconds(physicsSeconds);
+
+        /**
+         * Only call prePhysicsUpdate() / postPhysicsUpdate if there are physics steps to be expected
+         */
         if (m_updateFrame.physicsSeconds() > 0)
         {
             m_world.prePhysicsUpdate(m_updateFrame);
+
             m_physicsWorldSystem->updatePhysics(m_updateFrame);
+
             m_world.postPhysicsUpdate(m_updateFrame);
 
             onApplicationPhysicsUpdate();
         }
         else
         {
-            m_physicsWorld.update(0.0f);
+            m_physicsWorldSystem->updatePhysics(m_updateFrame);
         }
 
         m_world.gameUpdate(m_updateFrame);

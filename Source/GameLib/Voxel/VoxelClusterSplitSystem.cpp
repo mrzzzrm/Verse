@@ -110,7 +110,7 @@ void VoxelClusterSplitSystem::onGameUpdate(const UpdateFrame & updateFrame)
             auto splitBody =
                 std::make_shared<RigidBody>(splitVoxelObject.data()->shape());
             splitBody->setEntity(splitEntity);
-            splitBody->adjustCenterOfMass();
+            splitBody->updateMassProperties();
 
             auto scale =
                 entity.component<Transform3DComponent>().value().scale();

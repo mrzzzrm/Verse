@@ -15,7 +15,7 @@
 #include <Deliberation/ECS/Systems/PhysicsWorldSystem.h>
 #include <Deliberation/ECS/World.h>
 
-#include <Deliberation/Physics/Narrowphase.h>
+#include <Deliberation/Physics/PrimitiveTester.h>
 #include <Deliberation/Physics/PhysicsWorld.h>
 #include <Deliberation/Physics/RigidBody.h>
 

@@ -22,3 +22,6 @@ target_link_libraries(ShootingRangeSandbox SandboxCommon)
 
 add_executable(HudSandbox HudSandbox.cpp)
 target_link_libraries(HudSandbox SandboxCommon)
+
+add_executable(VerseSandbox VerseSandbox.cpp)
+target_link_libraries(VerseSandbox SandboxCommon)
