@@ -25,14 +25,14 @@ AABB VoxelShape::bounds(const Transform3D & transform) const
     return AABB(center - glm::vec3(radius), center + glm::vec3(radius));
 }
 
-glm::mat3 VoxelShape::localInertia() const
+glm::vec3 VoxelShape::localInertia(float scale) const
 {
     if (m_massPropertiesDirty) updateMassProperties();
 
-    return m_localInertia;
+    return m_localInertia * scale;
 }
 
-float VoxelShape::mass() const { return m_numVoxels; }
+float VoxelShape::mass(float scale) const { return scale * m_numVoxels; }
 
 glm::vec3 VoxelShape::centerOfMass() const
 {
@@ -388,7 +388,7 @@ void VoxelShape::updateMassProperties() const
     if (m_numVoxels == 0)
     {
         m_centerOfMass = glm::vec3(0.0f);
-        m_localInertia = glm::mat3(1.0f);
+        m_localInertia = glm::vec3(1.0f);
         return;
     }
 
@@ -432,18 +432,22 @@ void VoxelShape::updateMassProperties() const
                      m_centerOfMass.y * m_voxelPositionAccumulator.z +
                      m_numVoxels * m_centerOfMass.y * m_centerOfMass.z;
 
-    m_localInertia[0][0] = iXX;
-    m_localInertia[1][1] = iYY;
-    m_localInertia[2][2] = iZZ;
+    m_localInertia[0] = iXX;
+    m_localInertia[1] = iYY;
+    m_localInertia[2] = iZZ;
 
-    m_localInertia[1][0] = -iXY;
-    m_localInertia[0][1] = -iXY;
-
-    m_localInertia[2][0] = -iXZ;
-    m_localInertia[0][2] = -iXZ;
-
-    m_localInertia[2][1] = -iYZ;
-    m_localInertia[1][2] = -iYZ;
+//    m_localInertia[0][0] = iXX;
+//    m_localInertia[1][1] = iYY;
+//    m_localInertia[2][2] = iZZ;
+//
+//    m_localInertia[1][0] = -iXY;
+//    m_localInertia[0][1] = -iXY;
+//
+//    m_localInertia[2][0] = -iXZ;
+//    m_localInertia[0][2] = -iXZ;
+//
+//    m_localInertia[2][1] = -iYZ;
+//    m_localInertia[1][2] = -iYZ;
 
     m_massPropertiesDirty = false;
 }

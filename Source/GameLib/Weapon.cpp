@@ -3,6 +3,7 @@
 #include <glm/gtx/vector_angle.hpp>
 
 #include <Deliberation/Core/UpdateFrame.h>
+#include <Deliberation/Core/Math/MathUtils.h>
 #include <Deliberation/Core/Math/Trajectory.h>
 #include <Deliberation/Physics/RigidBody.h>
 #include <Deliberation/Scene/Pipeline/RenderPhase.h>
@@ -91,7 +92,7 @@ void Weapon::update(
             particle.birthRGBA = glm::vec4(1.0f);
             particle.deathRGBA = glm::vec4(1.0f);
 
-            particle.birthOrientation = intermediatePose.orientation();
+            particle.birthOrientation = GetArcQuaternion({0, 0, -1}, glm::normalize(velocity));
 
             particle.pointLight = VfxPointLightDesc{1000.0f};
             particle.birthScale = m_prototype->scale();

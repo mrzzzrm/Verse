@@ -39,9 +39,9 @@ VerseApplication::VerseApplication(
 
 void VerseApplication::onStartup()
 {
-//    m_physicsWorld.primitiveTester().registerPrimitiveTest(
-//        (int)::CollisionShapeType::VoxelCluster,
-//        std::make_unique<VoxelClusterPrimitiveTest>());
+    m_physicsWorld.primitiveTester().registerPrimitiveTest(
+        (int)::CollisionShapeType::VoxelCluster,
+        std::make_unique<VoxelClusterPrimitiveTest>());
 
 //    m_physicsWorld.narrowphase()
 //        .contactDispatcher()
@@ -65,8 +65,8 @@ void VerseApplication::onStartup()
     {
         m_world.addSystem<RenderSystem>();
         auto pointLightSystem = m_world.addSystem<PointLightSystem>();
-        m_world.addSystem<DebugPointLightSystem>(
-            pointLightSystem->pointLightRenderer());
+//        m_world.addSystem<DebugPointLightSystem>(
+//            pointLightSystem->pointLightRenderer());
         m_world.addSystem<SkyboxSystem>(m_skyboxCubemap);
         m_world.addSystem<VerseResourceManager>();
         m_physicsWorldSystem =
