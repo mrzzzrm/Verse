@@ -54,13 +54,15 @@ public:
 
     void setVoxelHealthPoints(const glm::uvec3 & voxel, float healthPoints);
 
+    // @{
     /**
      * Perform no checks whether the voxels already exist or whether the cells
      * are empty
      */
     void addVoxelsRaw(const std::vector<Voxel> & voxels);
     void removeVoxelsRaw(
-        const std::vector<glm::uvec3> & voxels, VoxelRemovalReason reason);
+        const std::vector<glm::uvec3> & voxels);
+    // @}
 
     void processImpact(const glm::uvec3 & voxel, float intensity, float radius);
     void performSplitDetection()
@@ -69,6 +71,10 @@ public:
     }
 
     void render();
+
+private:
+    void destroyVoxels(std::vector<glm::uvec3> voxels);
+    void checkCrucialVoxelForRemoval(const std::vector<glm::uvec3> & voxels);
 
 private:
     std::shared_ptr<VoxelObjectVoxelData> m_voxelData;

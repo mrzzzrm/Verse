@@ -14,7 +14,7 @@
 #include "VoxelObjectPrototype.h"
 #include "VoxelWorld.h"
 
-void VoxelImpactSystem::process(
+std::vector<glm::uvec3> VoxelImpactSystem::process(
     VoxelObject &      voxelObject,
     const glm::uvec3 & originVoxel,
     float              intensity,
@@ -25,7 +25,7 @@ void VoxelImpactSystem::process(
     const auto maxDepth = (u32)(std::ceil(radius * 1.5f));
     auto &     voxelData = voxelObject.data();
 
-    if (!voxelData->hasVoxel(originVoxel)) return;
+    if (!voxelData->hasVoxel(originVoxel)) return {};
 
     const auto radius2 = radius * radius;
 
@@ -78,7 +78,5 @@ void VoxelImpactSystem::process(
         std::swap(currentDepthSet, nextDepthSet);
     }
 
-    if (!voxelRemovals.empty())
-        voxelObject.removeVoxelsRaw(
-            voxelRemovals, VoxelRemovalReason::Destruction);
+    return voxelRemovals;
 }
