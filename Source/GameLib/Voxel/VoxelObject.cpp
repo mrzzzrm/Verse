@@ -31,39 +31,12 @@ void VoxelObject::setVoxelHealthPoints(
 void VoxelObject::addVoxelsRaw(const std::vector<Voxel> & voxels)
 {
     m_voxelData->addVoxelsRaw(voxels);
-
-    // TODO-ECS
-//    VoxelObjectModification modification(
-//        ((World *)world())->entityById(entityId()));
-//    modification.additions = voxels;
-//
-//    publishEvent(modification);
 }
 
 void VoxelObject::removeVoxelsRaw(
-    const std::vector<glm::uvec3> & voxels, VoxelRemovalReason reason)
+    const std::vector<glm::uvec3> & voxels)
 {
     m_voxelData->removeVoxelsRaw(voxels);
-
-    // TODO-ECS
-//    VoxelObjectModification modification(
-//        ((World *)world())->entityById(entityId()));
-//    if (reason == VoxelRemovalReason::Destruction)
-//        modification.destructions = voxels;
-//    else
-//        modification.splits = voxels;
-//
-//    if (m_crucialVoxel)
-//    {
-//        auto crucialVoxel = *m_crucialVoxel;
-//        for (const auto & voxel : voxels)
-//        {
-//            if (voxel == crucialVoxel)
-//                voxelWorld().onCrucialVoxelDestroyed(*this);
-//        }
-//    }
-//
-//    publishEvent(modification);
 }
 
 void VoxelObject::processImpact(
@@ -71,7 +44,34 @@ void VoxelObject::processImpact(
 {
     if (m_invincible) return;
 
-    VoxelImpactSystem().process(*this, voxel, intensity, radius);
+    auto destroyedVoxels = VoxelImpactSystem().process(*this, voxel, intensity, radius);
+    destroyVoxels(std::move(destroyedVoxels));
 }
 
 void VoxelObject::render() { m_voxelData->renderTree().render(m_transform); }
+
+void VoxelObject::destroyVoxels(std::vector<glm::uvec3> voxels)
+{
+    if (voxels.empty()) return;
+
+    removeVoxelsRaw(voxels);
+
+    VoxelObjectModification modification(((World *)world())->entityById(entityId()));
+    modification.destructions = std::move(voxels);
+
+    checkCrucialVoxelForRemoval(modification.destructions);
+
+    publishEvent(modification);
+}
+
+void VoxelObject::checkCrucialVoxelForRemoval(const std::vector<glm::uvec3> & voxels)
+{
+    if (!m_crucialVoxel) return;
+
+    auto crucialVoxel = *m_crucialVoxel;
+    for (const auto & voxel : voxels)
+    {
+        if (voxel == crucialVoxel)
+            voxelWorld().onCrucialVoxelDestroyed(*this);
+    }
+}

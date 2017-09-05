@@ -116,9 +116,9 @@ void VoxelClusterSplitSystem::onGameUpdate(const UpdateFrame & updateFrame)
                 entity.component<Transform3DComponent>().value().scale();
 
             const auto relativeCenterOfMass =
-                splitBody->shape()->centerOfMass() +
-                glm::vec3(split.llf) * scale /*+ glm::vec3(0.5f) */ -
-                originalBody->shape()->centerOfMass();
+                (splitBody->shape()->centerOfMass() +
+                glm::vec3(split.llf) /*+ glm::vec3(0.5f) */ -
+                originalBody->shape()->centerOfMass()) * scale;
 
             const auto splitPosition =
                 originalBody->transform().position() +
@@ -143,7 +143,7 @@ void VoxelClusterSplitSystem::onGameUpdate(const UpdateFrame & updateFrame)
             splitEntity.addComponent<RigidBodyComponent>(splitBody);
 
             originalVoxelObject.removeVoxelsRaw(
-                split.voxels, VoxelRemovalReason::Split);
+                split.voxels);
         }
     }
     m_modifiedVoxelObjects.clear();

@@ -80,6 +80,7 @@ void HailstormPhysicsWorld::update(const UpdateFrame & updateFrame)
                     }
 
                     auto & voxelObject = entity.component<VoxelObject>();
+
                     voxelObject.processImpact(
                         voxelClusterIntersection.voxel, 100, 2);
 
