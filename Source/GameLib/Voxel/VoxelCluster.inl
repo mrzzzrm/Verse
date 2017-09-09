@@ -84,7 +84,7 @@ template<typename T>
 void VoxelCluster<T>::set(const glm::uvec3 & voxel, const T & value)
 {
     auto index = voxelToIndex(voxel);
-    m_voxels[index] = value;
+    set(index, value);
 }
 
 template<typename T>
@@ -92,6 +92,9 @@ void VoxelCluster<T>::set(size_t index, const T & value)
 {
     AssertM(index < m_voxels.size(), "Voxel out of bounds");
     m_voxels[index] = value;
+
+    if (m_voxels[index] == EMPTY_VOXEL && value != EMPTY_VOXEL) m_numVoxels++;
+    else if (m_voxels[index] != EMPTY_VOXEL && value == EMPTY_VOXEL) m_numVoxels--;
 }
 
 template<typename T>

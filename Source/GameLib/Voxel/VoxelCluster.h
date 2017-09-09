@@ -40,6 +40,11 @@ public:
     std::vector<T> &       voxels();
     const std::vector<T> & voxels() const;
 
+    /**
+     * @return Number of non-empty voxels
+     */
+    u32 numVoxels() const;
+
     void set(const glm::uvec3 & voxel, const T & value);
     void set(size_t index, const T & value);
 
@@ -67,6 +72,7 @@ private:
     glm::uvec3     m_size;
     u32            m_sliceLength = 0;
     std::vector<T> m_voxels;
+    u32            m_numVoxels = 0;
 };
 
 #include "VoxelCluster.inl"

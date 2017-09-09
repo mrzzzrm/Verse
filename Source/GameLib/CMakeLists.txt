@@ -177,6 +177,8 @@ add_library(${target}
     Voxel/VoxelRigidBodyPayload.h
     Voxel/VoxelShape.cpp
     Voxel/VoxelShape.h
+    Voxel/VoxelShredder.cpp
+    Voxel/VoxelShredder.h
     Voxel/VoxelWorld.cpp
     Voxel/VoxelWorld.h
     Voxel/VoxReader.cpp
