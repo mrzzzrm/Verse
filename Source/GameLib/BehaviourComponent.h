@@ -7,22 +7,22 @@
 
 #include "GameLib.h"
 
-class AbstractBehaviour;
+class AbstractEntityBehaviour;
 
 class BehaviourComponent : public Component<BehaviourComponent>
 {
     DELIBERATION_COMPONENT_NAME("Behaviour")
 
 public:
-    const std::vector<std::shared_ptr<AbstractBehaviour>> & behaviours() const
+    const std::vector<std::shared_ptr<AbstractEntityBehaviour>> & behaviours() const
     {
         return m_behaviours;
     }
 
-    void addBehaviour(const std::shared_ptr<AbstractBehaviour> & behaviour);
-    std::shared_ptr<AbstractBehaviour>
+    void addBehaviour(const std::shared_ptr<AbstractEntityBehaviour> & behaviour);
+    std::shared_ptr<AbstractEntityBehaviour>
     getBehaviourByName(const std::string & name);
 
 private:
-    std::vector<std::shared_ptr<AbstractBehaviour>> m_behaviours;
+    std::vector<std::shared_ptr<AbstractEntityBehaviour>> m_behaviours;
 };

@@ -179,11 +179,15 @@ add_library(${target}
     Voxel/VoxelShape.h
     Voxel/VoxelShredder.cpp
     Voxel/VoxelShredder.h
+    Voxel/VoxelShredderSandbox.cpp
+    Voxel/VoxelShredderSandbox.h
     Voxel/VoxelWorld.cpp
     Voxel/VoxelWorld.h
     Voxel/VoxReader.cpp
     Voxel/VoxReader.h
 
+    AbstractEntityBehaviour.cpp
+    AbstractEntityBehaviour.h
     AbstractBehaviour.h
     AimHelper.cpp
     AimHelper.h

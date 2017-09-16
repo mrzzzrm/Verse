@@ -31,7 +31,6 @@ public:
 
     void onCreated() override;
 
-protected:
     void onGameUpdate(const UpdateFrame & updateFrame) override;
 
 private:

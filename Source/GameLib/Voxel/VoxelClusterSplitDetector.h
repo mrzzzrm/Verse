@@ -8,23 +8,16 @@
 #include "GameLib.h"
 #include "Voxel.h"
 #include "VoxelCluster.h"
+#include "VoxelClusterSegment.h"
 
 class VoxelObjectVoxelData;
-
-struct VoxelClusterSplit
-{
-    std::vector<glm::uvec3> voxels;
-    glm::uvec3              llf =
-        glm::uvec3(std::numeric_limits<glm::uvec3::value_type>::max());
-    glm::uvec3 urb;
-};
 
 class VoxelClusterSplitDetector final
 {
 public:
     VoxelClusterSplitDetector(const glm::uvec3 & size);
 
-    const std::vector<VoxelClusterSplit> & splits() const;
+    const std::vector<VoxelClusterSegment> & segments() const;
 
     size_t splitContainingCrucialVoxel() const;
 
@@ -43,7 +36,7 @@ private:
     u32 m_currentFloodBeginId = VoxelCluster<u32>::EMPTY_VOXEL + 1;
     u32 m_currentFloodId = VoxelCluster<u32>::EMPTY_VOXEL + 1;
     VoxelCluster<u32>              m_cluster;
-    std::vector<VoxelClusterSplit> m_splits;
+    std::vector<VoxelClusterSegment> m_splits;
     std::stack<glm::uvec3>         m_floodStack;
     size_t                         m_splitContainingCrucialVoxel = 0;
     boost::optional<glm::uvec3>    m_crucialVoxel;

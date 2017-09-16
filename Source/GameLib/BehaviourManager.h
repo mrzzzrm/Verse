@@ -4,6 +4,10 @@
 #include <string>
 #include <unordered_map>
 
+#include <Deliberation/ECS/World.h>
+
+#include "GameLib.h"
+
 class AbstractBehaviour;
 
 class BehaviourManager
@@ -16,12 +20,12 @@ public:
     void addBehaviourType(const std::string & name);
 
     std::shared_ptr<AbstractBehaviour>
-    createBehaviour(const std::string & name);
+    createBehaviour(const std::string & name, World & world);
 
 private:
     std::unordered_map<
         std::string,
-        std::function<std::shared_ptr<AbstractBehaviour>()>>
+        std::function<std::shared_ptr<AbstractBehaviour>(World &)>>
         m_behaviourFactoryByName;
 };
 

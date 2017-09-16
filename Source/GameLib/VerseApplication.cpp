@@ -6,6 +6,7 @@
 #include <Deliberation/Scene/Texture/TextureLoader.h>
 
 #include <Deliberation/ECS/LevelSystem.h>
+#include <Deliberation/ECS/Phase.h>
 #include <Deliberation/ECS/Systems/ApplicationSystem.h>
 #include <Deliberation/ECS/Systems/SkyboxSystem.h>
 
@@ -140,6 +141,7 @@ void VerseApplication::onFrame(DurationMicros micros)
             m_physicsWorldSystem->updatePhysics(m_updateFrame);
         }
 
+        m_world.activityManager()->invokePhase<GameUpdatePhase>(m_updateFrame);
         m_world.gameUpdate(m_updateFrame);
         onApplicationUpdate();
     }

@@ -1,6 +1,6 @@
 #include "BehaviourSystem.h"
 
-#include "AbstractBehaviour.h"
+#include "AbstractEntityBehaviour.h"
 #include "BehaviourComponent.h"
 
 BehaviourSystem::BehaviourSystem(World & world)
@@ -11,18 +11,18 @@ BehaviourSystem::BehaviourSystem(World & world)
 
 void BehaviourSystem::onEntityAdded(Entity & entity)
 {
-    auto & behaviourComponent = entity.component<BehaviourComponent>();
-    for (auto & behaviour : behaviourComponent.behaviours())
-    {
-        behaviour->onBehaviourStarted();
-    }
+//    auto & behaviourComponent = entity.component<BehaviourComponent>();
+//    for (auto & behaviour : behaviourComponent.behaviours())
+//    {
+//        behaviour->onBehaviourStarted();
+//    }
 }
 
 void BehaviourSystem::onEntityGameUpdate(Entity & entity, const UpdateFrame & updateFrame)
 {
-    auto & behaviourComponent = entity.component<BehaviourComponent>();
-    for (auto & behaviour : behaviourComponent.behaviours())
-    {
-        behaviour->onBehaviourUpdate(updateFrame);
-    }
+//    auto & behaviourComponent = entity.component<BehaviourComponent>();
+//    for (auto & behaviour : behaviourComponent.behaviours())
+//    {
+//        behaviour->onBehaviourUpdate(updateFrame);
+//    }
 }

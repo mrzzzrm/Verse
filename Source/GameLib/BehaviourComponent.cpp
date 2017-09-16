@@ -2,15 +2,15 @@
 
 #include <algorithm>
 
-#include "AbstractBehaviour.h"
+#include "AbstractEntityBehaviour.h"
 
 void BehaviourComponent::addBehaviour(
-    const std::shared_ptr<AbstractBehaviour> & behaviour)
+    const std::shared_ptr<AbstractEntityBehaviour> & behaviour)
 {
     m_behaviours.emplace_back(behaviour);
 }
 
-std::shared_ptr<AbstractBehaviour>
+std::shared_ptr<AbstractEntityBehaviour>
 BehaviourComponent::getBehaviourByName(const std::string & name)
 {
     auto iter = std::find_if(

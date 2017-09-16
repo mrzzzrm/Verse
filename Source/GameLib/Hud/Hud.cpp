@@ -4,6 +4,7 @@
 
 #include <Deliberation/ECS/Systems/ApplicationSystem.h>
 #include <Deliberation/ECS/Systems/PhysicsWorldSystem.h>
+#include <Deliberation/ECS/Phase.h>
 #include <Deliberation/ECS/World.h>
 
 #include <Deliberation/Scene/Pipeline/RenderManager.h>
@@ -32,6 +33,8 @@ Hud::Hud(World & world)
     m_layers.emplace_back(crosshairs);
     m_layers.emplace_back(std::make_shared<HudEntityMarkers>(
         *this, context, physicsWorld, renderManager.mainCamera()));
+
+    activatePhases<GameUpdatePhase>();
 
     addElement(crosshairs);
 }

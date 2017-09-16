@@ -41,7 +41,6 @@ public:
     void onCreated() override { m_input.addLayer(shared_from_this()); }
     void onRemoved() override { m_input.removeLayer(shared_from_this()); }
 
-protected:
     void onFrameBegin() override;
     void onEntityAdded(Entity & entity) override;
     void onEntityRemoved(Entity & entity) override;

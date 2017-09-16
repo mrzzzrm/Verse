@@ -30,6 +30,7 @@ public:
         const glm::uvec3 &                    size);
 
     VoxelWorld &                        voxelWorld() const;
+    const VoxelCluster<u32> &           colorIndices() const { return m_colorIndices; }
     const glm::uvec3 &                  size() const;
     const VoxelRenderable &             renderTree() const;
     const std::shared_ptr<VoxelShape> & shape() const;

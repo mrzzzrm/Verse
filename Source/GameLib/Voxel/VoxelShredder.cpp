@@ -4,29 +4,43 @@
 
 #include <glm/glm.hpp>
 
-VoxelShredder::VoxelShredder(const VoxelCluster<u32> & inputCluster):
-    m_inputCluster(inputCluster)
+#include "VoxelClusterSplitSystem.h"
+
+#include "VoxelObject.h"
+
+std::vector<Entity> VoxelShredder::shred(const Entity & originalEntity)
 {
+    auto segments = shred(originalEntity.component<VoxelObject>().data()->colorIndices());
 
-}
+    std::vector<Entity> result;
+    result.reserve(segments.size());
 
-std::vector<VoxelCluster<u32>> VoxelShredder::process()
-{
-    std::vector<glm::uvec3> voxels;
-    voxels.reserve(m_inputCluster.numVoxels());
-
-    for (size_t v = 0; v < m_inputCluster.voxels().size(); ++v)
+    for (auto & segment : segments)
     {
-        if (m_inputCluster.test(v)) voxels.emplace_back(m_inputCluster.indexToVoxel(v));
+        auto entity = VoxelClusterSplitSystem::splitVoxelsOffEntity(originalEntity, segment);
+        result.emplace_back(entity);
     }
 
-    auto segments = shred(voxels, {0, 0, 0}, m_inputCluster.size(), 0);
+    return result;
 }
 
-std::vector<std::vector<glm::uvec3>> VoxelShredder::shred(const std::vector<glm::uvec3> & input,
-                                             const glm::uvec3 & llf,
-                                             const glm::uvec3 & urb,
-                                                          u32 depth
+std::vector<VoxelClusterSegment> VoxelShredder::shred(const VoxelCluster<u32> & input)
+{
+    std::vector<glm::uvec3> voxels;
+    voxels.reserve(input.numVoxels());
+
+    for (size_t v = 0; v < input.voxels().size(); ++v)
+    {
+        if (input.test(v)) voxels.emplace_back(input.indexToVoxel(v));
+    }
+
+    return shred(voxels, {0, 0, 0}, input.size(), 0);
+}
+
+std::vector<VoxelClusterSegment> VoxelShredder::shred(const std::vector<glm::uvec3> & input,
+                                                      const glm::uvec3 & llf,
+                                                      const glm::uvec3 & urb,
+                                                      u32 depth
 )
 {
     const auto inputCenter = (glm::vec3(llf) + glm::vec3(urb)) / 2.0f;
@@ -46,13 +60,13 @@ std::vector<std::vector<glm::uvec3>> VoxelShredder::shred(const std::vector<glm:
         const auto position = glm::vec3(cell);
 
         if (glm::dot(position, separationPlaneNormal) > separationPlaneD) {
-            leftLlf = std::min(cell, leftLlf);
-            leftUrb = std::max(cell, leftUrb);
+            leftLlf = glm::min(cell, leftLlf);
+            leftUrb = glm::max(cell, leftUrb);
             left.emplace_back(cell);
         }
         else {
-            rightLlf = std::min(cell, rightLlf);
-            rightUrb = std::max(cell, rightUrb);
+            rightLlf = glm::min(cell, rightLlf);
+            rightUrb = glm::max(cell, rightUrb);
             right.emplace_back(cell);
         }
     }
@@ -62,7 +76,7 @@ std::vector<std::vector<glm::uvec3>> VoxelShredder::shred(const std::vector<glm:
         auto leftShredded = shred(left, leftLlf, leftUrb, depth + 1);
         auto rightShredded = shred(right, rightLlf, rightUrb, depth + 1);
 
-        std::vector result;
+        std::vector<VoxelClusterSegment> result;
         result.resize(leftShredded.size() + rightShredded.size());
         std::copy(leftShredded.begin(), leftShredded.end(), result.begin());
         std::copy(rightShredded.begin(), rightShredded.end(), result.begin() + leftShredded.size());
@@ -71,10 +85,10 @@ std::vector<std::vector<glm::uvec3>> VoxelShredder::shred(const std::vector<glm:
     }
     else
     {
-        std::vector result;
+        std::vector<VoxelClusterSegment> result;
 
-        if (!left.empty()) result.emplace_back(left);
-        if (!right.empty()) result.emplace_back(right);
+        if (!left.empty()) result.emplace_back(VoxelClusterSegment{left, leftLlf, leftUrb});
+        if (!right.empty()) result.emplace_back(VoxelClusterSegment{right, rightLlf, rightUrb});
 
         return result;
     }

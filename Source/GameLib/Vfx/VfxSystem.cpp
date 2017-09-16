@@ -5,6 +5,7 @@
 #include <Deliberation/Core/EventDomain.h>
 
 #include <Deliberation/ECS/Systems/ApplicationSystem.h>
+#include <Deliberation/ECS/Phase.h>
 #include <Deliberation/ECS/World.h>
 #include <Deliberation/ECS/Components.h>
 
@@ -28,6 +29,8 @@ VfxSystem::VfxSystem(World & world)
 {
     m_debugRenderer = std::make_shared<VfxDebugRenderer>(world.systemRef<RenderSystem>().renderManager(),
                                                          m_vfxManager);
+
+    activatePhases<GameUpdatePhase>();
 
     subscribeEvent<VoxelObjectModification>();
 }

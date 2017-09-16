@@ -3,7 +3,7 @@
 #include <Deliberation/Core/Log.h>
 #include <Deliberation/ECS/World.h>
 
-#include "AbstractBehaviour.h"
+#include "AbstractEntityBehaviour.h"
 #include "BehaviourManager.h"
 
 BehaviourPrototype::BehaviourPrototype(
@@ -28,9 +28,9 @@ void BehaviourPrototype::updateComponent(
         {
             Log->info("Adding '{}' to Entity '{}'", behaviourName, entity.name());
 
-            behaviour = m_manager->createBehaviour(behaviourName);
-            behaviour->setEntity(entity);
-            behaviourComponent.addBehaviour(behaviour);
+//            behaviour = m_manager->createBehaviour(behaviourName, entity.world());
+//            behaviour->setEntity(entity);
+//            behaviourComponent.addBehaviour(behaviour);
         }
     }
 }

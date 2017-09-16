@@ -9,7 +9,7 @@ VoxelClusterSplitDetector::VoxelClusterSplitDetector(const glm::uvec3 & size)
 {
 }
 
-const std::vector<VoxelClusterSplit> & VoxelClusterSplitDetector::splits() const
+const std::vector<VoxelClusterSegment> & VoxelClusterSplitDetector::segments() const
 {
     return m_splits;
 }

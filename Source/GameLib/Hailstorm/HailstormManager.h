@@ -25,7 +25,6 @@ public:
 
     void onEvent(const VoxelObjectBulletHit & hit);
 
-protected:
     void onGameUpdate(const UpdateFrame & updateFrame) override;
 
 private:

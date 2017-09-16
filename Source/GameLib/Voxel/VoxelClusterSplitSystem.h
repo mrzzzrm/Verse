@@ -8,18 +8,20 @@
 #include "GameLib.h"
 #include "VoxelObjectModification.h"
 
+class VoxelClusterSegment;
 class VoxelObject;
 
 class VoxelClusterSplitSystem : public System<VoxelClusterSplitSystem>
 {
 public:
-    VoxelClusterSplitSystem(World & world);
+    explicit VoxelClusterSplitSystem(World & world);
 
     void onEvent(const VoxelObjectModification & modification);
 
     void onCreated() override;
 
-protected:
+    static Entity splitVoxelsOffEntity(const Entity & originalEntity, const VoxelClusterSegment & segment);
+
     void onEntityGameUpdate(Entity & entity, const UpdateFrame & updateFrame) override;
     void onGameUpdate(const UpdateFrame & updateFrame) override;
 

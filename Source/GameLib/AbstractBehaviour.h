@@ -1,29 +1,30 @@
 #pragma once
 
-#include <Deliberation/ECS/Entity.h>
+#include <Deliberation/Platform/InputLayerWrapper.h>
 
 #include "GameLib.h"
 
 namespace deliberation
 {
 class UpdateFrame;
+class World;
 }
 
-class AbstractBehaviour
+class AbstractBehaviour:
+    public InputEventReceiver
 {
 public:
+    AbstractBehaviour(World & world): m_world(world) {}
     virtual ~AbstractBehaviour() = default;
 
     const std::string & name() const { return m_name; }
     void                setName(const std::string & name) { m_name = name; }
 
-    const Entity & entity() const { return m_entity; }
-    void           setEntity(const Entity & entity) { m_entity = entity; }
+    virtual void onCreated() {}
+    virtual void onRemoved() {}
 
-    virtual void onBehaviourStarted(){};
-    virtual void onBehaviourUpdate(const UpdateFrame & updateFrame){};
 
 protected:
-    Entity      m_entity;
+    World &     m_world;
     std::string m_name;
 };

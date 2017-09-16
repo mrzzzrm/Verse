@@ -9,6 +9,7 @@
 #include <Deliberation/Draw/Program.h>
 
 #include <Deliberation/ECS/Components.h>
+#include <Deliberation/ECS/Phase.h>
 #include <Deliberation/ECS/Systems/ApplicationSystem.h>
 #include <Deliberation/ECS/Systems/PhysicsWorldSystem.h>
 #include <Deliberation/ECS/World.h>
@@ -49,6 +50,7 @@ PlayerSystem::PlayerSystem(World & world)
     , m_cameraDolly(
           world.systemRef<RenderSystem>().renderManager().mainCamera())
 {
+    activatePhases<GameUpdatePhase>();
 }
 
 void PlayerSystem::onFrameBegin() {}

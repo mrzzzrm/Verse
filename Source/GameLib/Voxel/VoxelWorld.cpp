@@ -8,6 +8,7 @@
 #include <Deliberation/Draw/DrawContext.h>
 
 #include <Deliberation/ECS/Components.h>
+#include <Deliberation/ECS/Phase.h>
 #include <Deliberation/ECS/Systems/ApplicationSystem.h>
 #include <Deliberation/ECS/Systems/PhysicsWorldSystem.h>
 #include <Deliberation/ECS/World.h>
@@ -17,6 +18,7 @@
 #include <Deliberation/Scene/Camera3D.h>
 #include <Deliberation/Scene/Pipeline/RenderManager.h>
 #include <Deliberation/Scene/Pipeline/RenderSystem.h>
+#include <Deliberation/ECS/Phase.h>
 
 #include "VoxelClusterSplitSystem.h"
 #include "VoxelObjectModification.h"
@@ -34,6 +36,8 @@ VoxelWorld::VoxelWorld(World & world, const Texture & envMap)
     m_program =
         m_drawContext.createProgram({GameDataPath("Data/Shaders/Voxel.vert"),
                                      GameDataPath("Data/Shaders/Voxel.frag")});
+
+    activatePhases<GameUpdatePhase>();
 }
 
 DrawContext & VoxelWorld::drawContext() const { return m_drawContext; }
