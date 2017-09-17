@@ -41,14 +41,13 @@ public:
     void onCreated() override { m_input.addLayer(shared_from_this()); }
     void onRemoved() override { m_input.removeLayer(shared_from_this()); }
 
-    void onFrameBegin() override;
     void onEntityAdded(Entity & entity) override;
     void onEntityRemoved(Entity & entity) override;
     void onEntityGameUpdate(Entity & entity, const UpdateFrame & updateFrame) override;
-    void onGameUpdate(const UpdateFrame & updateFrame) override;
-    void onFrameUpdate(const UpdateFrame & updateFrame) override;
+    void onGameUpdate(const UpdateFrame & updateFrame);
+    void onFrameUpdate(const UpdateFrame & updateFrame);
     void onEntityPostPhysicsUpdate(Entity & entity, const UpdateFrame & updateFrame) override;
-    void onFrameComplete(const UpdateFrame & updateFrame) override;
+    void onFrameComplete(const UpdateFrame & updateFrame);
 
     void onMouseButtonDown(MouseStateEvent & event) override;
     void onMouseMotion(MouseMotionEvent & event) override;

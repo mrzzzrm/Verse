@@ -123,6 +123,7 @@ void VfxManager::update(const UpdateFrame & updateFrame)
     {
         const auto & nextDeath = m_deathQueue.top();
 
+
         if (updateFrame.endMicros() / 1000 > nextDeath.timeOfDeath)
         {
             const auto & particleId = nextDeath.id;

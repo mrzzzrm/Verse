@@ -21,6 +21,8 @@ DebugOverlay::DebugOverlay(World & world, DrawContext & context)
     , m_application(world.systemRef<ApplicationSystem>().application())
 {
     m_selectedComponent = std::make_pair(ECS_INVALID_ENTITY_ID, 0);
+
+    activatePhases<FrameUpdatePhase>();
 }
 
 void DebugOverlay::setFps(float fps) { m_fps = fps; }

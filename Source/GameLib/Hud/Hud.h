@@ -37,7 +37,7 @@ public:
     void onCreated() override { m_input.addLayer(shared_from_this()); }
     void onRemoved() override { m_input.removeLayer(shared_from_this()); }
 
-    void onGameUpdate(const UpdateFrame & updateFrame) override;
+    void onGameUpdate(const UpdateFrame & updateFrame);
 
     void onMouseButtonClicked(MouseButtonEvent & event) override;
     void onMouseButtonPressed(MouseButtonEvent & event) override;

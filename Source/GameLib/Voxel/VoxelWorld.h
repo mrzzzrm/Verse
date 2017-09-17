@@ -44,7 +44,7 @@ public:
     void onEntityAdded(Entity & entity) override;
     void onEntityRemoved(Entity & entity) override;
     void onEntityGameUpdate(Entity & entity, const UpdateFrame & updateFrame) override;
-    void onGameUpdate(const UpdateFrame & updateFrame) override;
+    void onGameUpdate(const UpdateFrame & updateFrame);
 
 private:
     std::shared_ptr<VoxelRenderer> m_renderer;

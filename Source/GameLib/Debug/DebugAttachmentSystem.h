@@ -25,9 +25,9 @@ public:
 
     void onCreated() override;
 
-protected:
-    void onFrameUpdate(const UpdateFrame & updateFrame) override;
+    void onFrameUpdate(const UpdateFrame & updateFrame);
 
+protected:
     void updateSphere(
         DebugSphereInstance &               sphere,
         const std::shared_ptr<Attachment> & attachment,

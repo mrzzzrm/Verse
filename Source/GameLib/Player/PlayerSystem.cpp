@@ -50,10 +50,8 @@ PlayerSystem::PlayerSystem(World & world)
     , m_cameraDolly(
           world.systemRef<RenderSystem>().renderManager().mainCamera())
 {
-    activatePhases<GameUpdatePhase>();
+    activatePhases<GameUpdatePhase, FrameUpdatePhase, FrameCompletePhase>();
 }
-
-void PlayerSystem::onFrameBegin() {}
 
 void PlayerSystem::onEntityAdded(Entity & entity)
 {

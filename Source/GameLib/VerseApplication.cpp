@@ -110,7 +110,7 @@ void VerseApplication::onStartup()
 
 void VerseApplication::onFrame(DurationMicros micros)
 {
-    m_world.frameBegin();
+    m_world.frameBeginPhase();
 
     m_updateFrame.setPhysicsSeconds(0.0f);
     m_updateFrame.setBeginMicros(m_updateFrame.beginMicros() + m_updateFrame.gameMicros());
@@ -128,21 +128,19 @@ void VerseApplication::onFrame(DurationMicros micros)
          */
         if (m_updateFrame.physicsSeconds() > 0)
         {
-            m_world.prePhysicsUpdate(m_updateFrame);
-
+            m_world.prePhysicsUpdatePhase(m_updateFrame);
             m_physicsWorldSystem->updatePhysics(m_updateFrame);
-
-            m_world.postPhysicsUpdate(m_updateFrame);
+            m_world.postPhysicsUpdatePhase(m_updateFrame);
 
             onApplicationPhysicsUpdate();
         }
         else
         {
+            // Won't do anything but updating the PhysicWorld's internal clock
             m_physicsWorldSystem->updatePhysics(m_updateFrame);
         }
 
-        m_world.activityManager()->invokePhase<GameUpdatePhase>(m_updateFrame);
-        m_world.gameUpdate(m_updateFrame);
+        m_world.gameUpdatePhase(m_updateFrame);
         onApplicationUpdate();
     }
     else
@@ -150,9 +148,8 @@ void VerseApplication::onFrame(DurationMicros micros)
         m_updateFrame.setGameMicros(0);
     }
 
-    m_world.frameUpdate(m_updateFrame);
-
+    m_world.frameUpdatePhase(m_updateFrame);
     m_world.systemRef<RenderSystem>().renderManager().render();
 
-    m_world.frameComplete(m_updateFrame);
+    m_world.frameCompletePhase(m_updateFrame);
 }

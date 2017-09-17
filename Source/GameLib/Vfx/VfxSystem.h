@@ -31,7 +31,7 @@ public:
 
     void onCreated() override;
 
-    void onGameUpdate(const UpdateFrame & updateFrame) override;
+    void onGameUpdate(const UpdateFrame & updateFrame);
 
 private:
     std::shared_ptr<VfxDebugRenderer>     m_debugRenderer;

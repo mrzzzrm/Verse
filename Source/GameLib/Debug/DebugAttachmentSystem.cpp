@@ -11,6 +11,7 @@
 DebugAttachmentSystem::DebugAttachmentSystem(World & world)
     : Base(world, ComponentFilter::requires<Equipment>())
 {
+    activatePhases<FrameUpdatePhase>();
 }
 
 void DebugAttachmentSystem::onCreated()

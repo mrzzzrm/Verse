@@ -23,7 +23,7 @@ public:
     static Entity splitVoxelsOffEntity(const Entity & originalEntity, const VoxelClusterSegment & segment);
 
     void onEntityGameUpdate(Entity & entity, const UpdateFrame & updateFrame) override;
-    void onGameUpdate(const UpdateFrame & updateFrame) override;
+    void onGameUpdate(const UpdateFrame & updateFrame);
 
 private:
     std::set<std::shared_ptr<VoxelObject>> m_modifiedVoxelObjects;

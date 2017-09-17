@@ -25,7 +25,7 @@ public:
 
     void onEvent(const VoxelObjectBulletHit & hit);
 
-    void onGameUpdate(const UpdateFrame & updateFrame) override;
+    void onGameUpdate(const UpdateFrame & updateFrame);
 
 private:
     VfxManager            m_vfxManager;
