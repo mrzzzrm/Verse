@@ -17,7 +17,7 @@ void VerseResourceManager::onCreated()
 {
     setLoader<std::shared_ptr<MeshData>>([&] (const auto & path) {
         if (StringEndsWith(path, ".vox")) {
-            return VoxelMeshLoader(shared_from_this(), world().system<VoxelWorld>()).load(path);
+            return VoxelMeshLoader(this->shared_from_this(), this->world().system<VoxelWorld>()).load(path);
         } else {
             Fail("Only voxel meshes supported right now, can't load '" + path + "'");
             return std::shared_ptr<MeshData>();
