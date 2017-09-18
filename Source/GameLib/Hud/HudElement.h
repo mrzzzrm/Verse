@@ -1,10 +1,10 @@
 #pragma once
 
-#include <Deliberation/Platform/InputEventReceiver.h>
+#include <Deliberation/Platform/InputListener.h>
 
 #include "GameLib.h"
 
-class HudElement : public InputEventReceiver
+class HudElement : public InputListener
 {
 public:
     virtual ~HudElement() = default;

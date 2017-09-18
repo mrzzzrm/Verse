@@ -11,7 +11,7 @@ class World;
 }
 
 class AbstractBehaviour:
-    public InputEventReceiver
+    public InputListener
 {
 public:
     AbstractBehaviour(World & world): m_world(world) {}

@@ -84,7 +84,7 @@ protected:
     VerseApplicationSystemInitMode m_systemInitMode;
 
     PhysicsWorld m_physicsWorld;
-    World        m_world;
+    std::shared_ptr<World> m_world;
 
     Texture m_skyboxCubemap;
 
