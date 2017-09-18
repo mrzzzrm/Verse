@@ -4,7 +4,6 @@
 #include <Deliberation/ECS/World.h>
 
 #include "Equipment.h"
-#include "VerseEntityPrototypeSystem.h"
 
 //void LaunchDefenseBehaviour::onBehaviourUpdate(const UpdateFrame & updateFrame)
 //{

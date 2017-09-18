@@ -1,13 +1,8 @@
 {
-  "Entities": [
+  "Activities": [
     {
-      "Components": [
-        {
-          "Behaviour": {
-            "VoxelShredderSandbox": {}
-          }
-        }
-      ]
+      "LID": "VoxelShredderSandbox",
+      "Type": "VoxelShredderSandbox"
     }
   ]
 }

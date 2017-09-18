@@ -8,14 +8,14 @@
 #include <Deliberation/Draw/Framebuffer.h>
 
 #include <Deliberation/ECS/ComponentPrototype.h>
+#include <Deliberation/ECS/EntityPrototypeManager.h>
 
 #include <Deliberation/ImGui/ImGuiSystem.h>
 
 #include <Deliberation/Platform/Application.h>
+#include <Deliberation/Platform/ApplicationRuntime.h>
 
-#include "VerseEntityPrototypeSystem.h"
 #include "HailstormManager.h"
-#include "VerseEntityPrototypeSystem.h"
 
 DebugOverlay::DebugOverlay(World & world, DrawContext & context)
     : Base(world)
@@ -162,8 +162,7 @@ void DebugOverlay::onFrameUpdate(const UpdateFrame & updateFrame)
             {
                 ImGui::Columns(3, "Prototype columns");
 
-                auto & prototypeManager =
-                    world().systemRef<VerseEntityPrototypeSystem>().manager();
+                auto & prototypeManager = Application::instance().runtime()->entityPrototypeManager();
 
                 for (auto & pair : prototypeManager->entityPrototypeByKey())
                 {

@@ -54,6 +54,8 @@ void HailstormPhysicsWorld::update(const UpdateFrame & updateFrame)
 
         auto markedForDestruction = false;
 
+        if (currentMillis > bullet.particle.birth) continue;
+
         if (currentMillis > bullet.particle.birth + bullet.particle.lifetime)
         {
             m_expiredBullets.emplace_back(bullet.id);

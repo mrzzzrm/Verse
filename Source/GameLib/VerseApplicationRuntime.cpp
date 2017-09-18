@@ -1,16 +1,22 @@
 #include "VerseApplicationRuntime.h"
 
+#include <Deliberation/Core/Assert.h>
+
+#include <Deliberation/ECS/ComponentPrototypes.h>
+#include <Deliberation/ECS/LevelSystem.h>
+#include <Deliberation/ECS/Phase.h>
+#include <Deliberation/ECS/Systems/SkyboxSystem.h>
+#include <Deliberation/ECS/Components.h>
+
+#include <Deliberation/ImGui/ImGuiSystem.h>
+#include <Deliberation/ImGui/ImGuiSystem.h>
+
+#include <Deliberation/Resource/PrototypeSystem.h>
+
 #include <Deliberation/Scene/Debug/DebugPointLightSystem.h>
 #include <Deliberation/Scene/Effects/BloomRenderer.h>
 #include <Deliberation/Scene/Lighting/PointLightRenderer.h>
 #include <Deliberation/Scene/Texture/TextureLoader.h>
-
-#include <Deliberation/ECS/LevelSystem.h>
-#include <Deliberation/ECS/Phase.h>
-#include <Deliberation/ECS/Systems/SkyboxSystem.h>
-
-#include <Deliberation/ImGui/ImGuiSystem.h>
-#include <Deliberation/Resource/PrototypeSystem.h>
 
 #include "BehaviourSystem.h"
 #include "CoriolisSystem.h"
@@ -22,7 +28,6 @@
 #include "NpcBehaviourSystem.h"
 #include "PlayerSystem.h"
 #include "ResourceManager.h"
-#include "VerseEntityPrototypeSystem.h"
 #include "VerseRenderManager.h"
 #include "VfxSystem.h"
 #include "VersePrototypeSystem.h"
@@ -30,12 +35,31 @@
 #include "VoxelClusterSplitSystem.h"
 #include "VoxelMaterialSystem.h"
 #include "VoxelPhysicsSystem.h"
+#include "VoxelShredderSandbox.h"
+#include "AllegiancePrototype.h"
+#include "BehaviourPrototype.h"
+#include "CoriolisPrototype.h"
+#include "EquipmentPrototype.h"
+#include "FlightControlConfigPrototype.h"
+#include "HudProxyPrototype.h"
+#include "NpcBehaviourPrototype.h"
+#include "NpcControllerPrototype.h"
+#include "PlayerFlightControl.h"
+#include "PlayerFlightControlPrototype.h"
+#include "VfxComponentPrototype.h"
+#include "VfxSystem.h"
+#include "VoxelObjectPrototype.h"
+#include "VoxelRigidBodyPrototype.h"
+#include "BehaviourSystem.h"
+#include "VersePrototypeSystem.h"
+#include "VoxelMaterialComponentPrototype.h"
+
+constexpr const char * RELOAD_PROTOTYPES_CONTROL = "Reload Scene";
 
 VerseApplicationRuntime::VerseApplicationRuntime(
 VerseApplicationSystemInitMode systemInitMode)
     : ApplicationRuntime("Verse", "."), m_systemInitMode(systemInitMode)
 {
-    m_world = std::make_shared<World>();
 }
 
 void VerseApplicationRuntime::onStartup()
@@ -62,6 +86,14 @@ void VerseApplicationRuntime::onStartup()
 
     if (m_systemInitMode == VerseApplicationSystemInitMode::AllSystems)
     {
+        /**
+         * Register Buildin Activities
+         */
+        m_world->activityManager()->addActivityType<VoxelShredderSandbox>("VoxelShredderSandbox");
+
+        /**
+         * Add systems
+         */
         m_world->addSystem<RenderSystem>();
         auto pointLightSystem = m_world->addSystem<PointLightSystem>();
 //        m_world->addSystem<DebugPointLightSystem>(
@@ -84,14 +116,67 @@ void VerseApplicationRuntime::onStartup()
         m_world->addSystem<ImGuiSystem>();
         m_world->addSystem<Hud>();
         m_world->addSystem<BehaviourSystem>();
-        m_world->addSystem<VerseEntityPrototypeSystem>();
         m_world->addSystem<VoxelPhysicsSystem>();
         m_world->addSystem<DebugAttachmentSystem>();
         m_world->addSystem<HullSystem>();
         m_world->addSystem<VersePrototypeSystem>();
         m_world->addSystem<VoxelMaterialSystem>();
-        m_world->addSystem<LevelSystem>(GameDataPath("Data/Levels/level0.json")); // Do this last because it adds entities
 
+        /**
+         * Register ComponentPrototypes
+         */
+        {
+            auto   voxelWorld = m_world->system<VoxelWorld>();
+            auto & vfxManager = m_world->systemRef<VfxSystem>().manager();
+            auto & behaviourManager = m_world->systemRef<BehaviourSystem>().manager();
+            
+            auto & manager = *m_entityPrototypeManager;
+            
+            manager.registerComponentPrototype<VoxelObjectPrototype>("VoxelObject", voxelWorld);
+            manager.registerComponentPrototype<VoxelRigidBodyPrototype>("VoxelRigidBody");
+            manager.registerComponentPrototype<CoriolisPrototype>("Coriolis");
+            manager.registerComponentPrototype<EquipmentPrototype>("Equipment", vfxManager);
+            manager.registerComponentPrototype<FlightControlConfigPrototype>(
+            "FlightControlConfig");
+            manager.registerComponentPrototype<NpcControllerPrototype>("NpcController");
+            manager.registerComponentPrototype<PlayerFlightControlPrototype>(
+            "PlayerFlightControl");
+            manager.registerComponentPrototype<AllegiancePrototype>("Allegiance");
+            manager.registerComponentPrototype<NpcBehaviourPrototype>("NpcBehaviour");
+            manager.registerComponentPrototype<NpcBehaviourPrototype>("NpcBehaviour");
+            manager.registerComponentPrototype<HudProxyPrototype>("HudProxy");
+            manager.registerComponentPrototype<Transform3DComponentPrototype>("Transform3D");
+            manager.registerComponentPrototype<BehaviourPrototype>(
+            "Behaviour", behaviourManager);
+            manager.registerComponentPrototype<VoxelMaterialComponentPrototype>(
+            "VoxelMaterial");
+            manager.registerComponentPrototype<VfxComponentPrototype>(
+            "VfxComponent");
+    
+            auto & imGuiSystem = m_world->systemRef<ImGuiSystem>();
+            imGuiSystem.addControlItem(RELOAD_PROTOTYPES_CONTROL, [&]() {
+                auto prototypeSystem = m_world->system<VersePrototypeSystem>();
+                if (prototypeSystem)
+                {
+                    prototypeSystem->reload();
+                }
+    
+                auto levelSystem = m_world->system<LevelSystem>();
+                if (levelSystem)
+                {
+                    if (levelSystem->level()) levelSystem->level()->reload();
+                }
+    
+                manager.reloadList();
+                manager.updateEntities();
+            });
+
+            manager.reloadList();
+        }
+        
+        /**
+         * Add Renderers
+         */
         auto & renderManager =
             m_world->systemRef<RenderSystem>().renderManager();
         renderManager.addRenderer<AmbientLightRenderer>();
@@ -99,6 +184,8 @@ void VerseApplicationRuntime::onStartup()
         renderManager.addRenderer<BloomRenderer>();
         renderManager.addRenderer<SsaoRenderer>();
         renderManager.addRenderer<HdrRenderer>();
+
+        m_world->addSystem<LevelSystem>(GameDataPath("Data/Levels/VoxelShredderSandbox.json")); // Do this last because it adds entities
     }
 
     onApplicationStartup();

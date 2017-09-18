@@ -64,7 +64,6 @@ add_library(${target}
     Resource/BehaviourPrototype.cpp
     Resource/BehaviourPrototype.h
     Resource/CoriolisPrototype.h
-    Resource/VerseEntityPrototypeSystem.h
     Resource/EquipmentPrototype.cpp
     Resource/EquipmentPrototype.h
     Resource/FlightControlConfigPrototype.cpp
@@ -78,8 +77,6 @@ add_library(${target}
     Resource/ResourceManager.h
     Resource/ResourceManager.inl
     Resource/R.h
-    Resource/VerseEntityPrototypeSystem.cpp
-    Resource/VerseEntityPrototypeSystem.h
     Resource/VerseResourceManager.cpp
     Resource/VerseResourceManager.h
     Resource/VoxelMaterialComponentPrototype.cpp

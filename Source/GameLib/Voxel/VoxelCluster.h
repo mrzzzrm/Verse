@@ -43,7 +43,7 @@ public:
     /**
      * @return Number of non-empty voxels
      */
-    u32 numVoxels() const;
+    u32 numVoxels() const { return m_numVoxels; }
 
     void set(const glm::uvec3 & voxel, const T & value);
     void set(size_t index, const T & value);

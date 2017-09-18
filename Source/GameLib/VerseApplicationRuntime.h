@@ -85,8 +85,6 @@ protected:
     UpdateFrame m_updateFrame;
 
     PhysicsWorld m_physicsWorld;
-    std::shared_ptr<World> m_world;
-
     Texture m_skyboxCubemap;
 
     std::shared_ptr<PhysicsWorldSystem> m_physicsWorldSystem;
