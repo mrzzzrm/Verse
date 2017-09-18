@@ -5,7 +5,7 @@
 #include <Deliberation/ECS/Entity.h>
 #include <Deliberation/ECS/System.h>
 
-#include <Deliberation/Platform/Input.h>
+#include <Deliberation/Platform/InputManager.h>
 #include <Deliberation/Platform/InputLayer.h>
 
 #include "AbstractBehaviour.h"

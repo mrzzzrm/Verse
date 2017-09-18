@@ -11,7 +11,7 @@
 
 #include "Emitter.h"
 #include "ResourceManager.h"
-#include "VerseApplication.h"
+#include "VerseApplicationRuntime.h"
 #include "VfxManager.h"
 #include "VfxSystem.h"
 #include "VoxelRenderable.h"
@@ -19,11 +19,11 @@
 
 using namespace deliberation;
 
-class VfxSandbox : public VerseApplication
+class VfxSandbox : public VerseApplicationRuntime
 {
 public:
     VfxSandbox()
-        : VerseApplication(
+        : VerseApplicationRuntime(
               "VfxSandbox", VerseApplicationSystemInitMode::NoSystems)
     {
     }

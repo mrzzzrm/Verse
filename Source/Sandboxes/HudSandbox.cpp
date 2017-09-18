@@ -12,15 +12,15 @@
 #include "HudButton.h"
 #include "HudEntityMarkersRenderer.h"
 #include "ResourceManager.h"
-#include "VerseApplication.h"
+#include "VerseApplicationRuntime.h"
 
 using namespace deliberation;
 
-class HudSandbox : public VerseApplication
+class HudSandbox : public VerseApplicationRuntime
 {
 public:
     HudSandbox()
-        : VerseApplication(
+        : VerseApplicationRuntime(
               "HudSandbox", VerseApplicationSystemInitMode::NoSystems)
     {
     }

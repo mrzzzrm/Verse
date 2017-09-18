@@ -227,8 +227,8 @@ add_library(${target}
     GameLib.h
     LaunchDefenseBehaviour.cpp
     LaunchDefenseBehaviour.h
-    VerseApplication.cpp
-    VerseApplication.h
+    VerseApplicationRuntime.cpp
+    VerseApplicationRuntime.h
     VerseRenderManager.cpp
     VerseRenderManager.h
     VoxelLight.cpp

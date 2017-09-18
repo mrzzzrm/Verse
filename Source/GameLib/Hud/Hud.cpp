@@ -2,13 +2,13 @@
 
 #include <algorithm>
 
-#include <Deliberation/ECS/Systems/ApplicationSystem.h>
 #include <Deliberation/ECS/Systems/PhysicsWorldSystem.h>
 #include <Deliberation/ECS/Phase.h>
 #include <Deliberation/ECS/World.h>
 
 #include <Deliberation/Scene/Pipeline/RenderManager.h>
 #include <Deliberation/Scene/Pipeline/RenderSystem.h>
+#include <Deliberation/Platform/Application.h>
 
 #include "HudButton.h"
 #include "HudCrosshairs.h"
@@ -18,10 +18,10 @@
 Hud::Hud(World & world)
     : Base(world)
     , InputLayer(1)
-    , m_input(world.systemRef<ApplicationSystem>().input())
+    , m_inputManager(Application::instance().inputManager())
     , m_playerSystem(world.systemRef<PlayerSystem>())
 {
-    auto & context = world.systemRef<ApplicationSystem>().drawContext();
+    auto & context = Application::instance().drawContext();
     auto & physicsWorld = world.systemRef<PhysicsWorldSystem>().physicsWorld();
 
     auto crosshairs = std::make_shared<HudCrosshairs>(*this);

@@ -1,15 +1,9 @@
-#include <iostream>
+#include <Deliberation/Platform/Application.h>
 
-#include "VerseApplication.h"
+#include "VerseApplicationRuntime.h"
 
 using namespace deliberation;
 
-class Game : public VerseApplication
-{
-public:
-    Game() : VerseApplication("Verse") {}
-};
-
 int main(int argc, char * argv[]) {
-    return Game().run(argc, argv);
+    Application::instance().run(std::make_shared<VerseApplicationRuntime>(), argc, argv);
 }

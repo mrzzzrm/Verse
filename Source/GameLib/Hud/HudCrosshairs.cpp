@@ -8,12 +8,12 @@
 
 #include <Deliberation/ECS/Components.h>
 #include <Deliberation/ECS/System.h>
-#include <Deliberation/ECS/Systems/ApplicationSystem.h>
 #include <Deliberation/ECS/World.h>
 
 #include <Deliberation/Scene/Camera3D.h>
 #include <Deliberation/Scene/Pipeline/RenderManager.h>
 #include <Deliberation/Scene/Pipeline/RenderSystem.h>
+#include <Deliberation/Platform/Application.h>
 
 #include "Equipment.h"
 #include "Hud.h"
@@ -25,7 +25,7 @@
 
 HudCrosshairs::HudCrosshairs(Hud & hud)
     : HudLayer(hud)
-    , m_drawContext(hud.world().systemRef<ApplicationSystem>().drawContext())
+    , m_drawContext(Application::instance().drawContext())
     , m_playerSystem(hud.world().systemRef<PlayerSystem>())
     , m_renderManager(hud.world().systemRef<RenderSystem>().renderManager())
 {

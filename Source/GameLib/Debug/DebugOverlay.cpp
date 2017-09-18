@@ -8,17 +8,17 @@
 #include <Deliberation/Draw/Framebuffer.h>
 
 #include <Deliberation/ECS/ComponentPrototype.h>
-#include <Deliberation/ECS/Systems/ApplicationSystem.h>
 
 #include <Deliberation/ImGui/ImGuiSystem.h>
-#include <Resource/VerseEntityPrototypeSystem.h>
 
+#include <Deliberation/Platform/Application.h>
+
+#include "VerseEntityPrototypeSystem.h"
 #include "HailstormManager.h"
 #include "VerseEntityPrototypeSystem.h"
 
 DebugOverlay::DebugOverlay(World & world, DrawContext & context)
     : Base(world)
-    , m_application(world.systemRef<ApplicationSystem>().application())
 {
     m_selectedComponent = std::make_pair(ECS_INVALID_ENTITY_ID, 0);
 
@@ -35,7 +35,7 @@ void DebugOverlay::onFrameUpdate(const UpdateFrame & updateFrame)
 
     //    bool open = true;
     //    ImGui::ShowTestWindow(&open);
-    m_fps = m_application.fps();
+    m_fps = Application::instance().fps();
 
     const auto & profiler = world().profiler();
     const auto   numScopes = std::min<size_t>(profiler.scopes().size(), 5u);
@@ -227,6 +227,5 @@ void DebugOverlay::onFrameUpdate(const UpdateFrame & updateFrame)
     /**
      * Application Control
      */
-    auto & application = world().systemRef<ApplicationSystem>().application();
-    application.setGameplayPaused(imGuiSystem->showView("Pause Gameplay"));
+    Application::instance().setGameplayPaused(imGuiSystem->showView("Pause Gameplay"));
 }

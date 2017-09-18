@@ -3,10 +3,11 @@
 #include <Deliberation/Core/DataLayout.h>
 #include <Deliberation/Core/LayoutedBlob.h>
 
-#include <Deliberation/ECS/Systems/ApplicationSystem.h>
 #include <Deliberation/ECS/World.h>
 
 #include <Deliberation/Draw/DrawContext.h>
+
+#include <Deliberation/Platform/Application.h>
 
 #include <Deliberation/Scene/MeshData.h>
 #include <Deliberation/Scene/Texture/TextureLoader.h>
@@ -14,7 +15,7 @@
 
 ResourceManager::ResourceManager(World & world)
     : Base(world)
-    , m_drawContext(world.systemRef<ApplicationSystem>().drawContext())
+    , m_drawContext(Application::instance().drawContext())
 {
 
 }
@@ -162,7 +163,7 @@ void ResourceManager::registerBuildIns()
             std::make_shared<MeshData>(mesh));
     }
 
-    auto & context = m_world.systemRef<ApplicationSystem>().drawContext();
+    auto & context = Application::instance().drawContext();
 
     {
         auto program = m_drawContext.createProgram(

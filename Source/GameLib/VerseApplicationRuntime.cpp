@@ -1,4 +1,4 @@
-#include "VerseApplication.h"
+#include "VerseApplicationRuntime.h"
 
 #include <Deliberation/Scene/Debug/DebugPointLightSystem.h>
 #include <Deliberation/Scene/Effects/BloomRenderer.h>
@@ -7,7 +7,6 @@
 
 #include <Deliberation/ECS/LevelSystem.h>
 #include <Deliberation/ECS/Phase.h>
-#include <Deliberation/ECS/Systems/ApplicationSystem.h>
 #include <Deliberation/ECS/Systems/SkyboxSystem.h>
 
 #include <Deliberation/ImGui/ImGuiSystem.h>
@@ -32,13 +31,14 @@
 #include "VoxelMaterialSystem.h"
 #include "VoxelPhysicsSystem.h"
 
-VerseApplication::VerseApplication(
-    const std::string & name, VerseApplicationSystemInitMode systemInitMode)
-    : Application(name), m_systemInitMode(systemInitMode)
+VerseApplicationRuntime::VerseApplicationRuntime(
+VerseApplicationSystemInitMode systemInitMode)
+    : ApplicationRuntime("Verse", "."), m_systemInitMode(systemInitMode)
 {
+    m_world = std::make_shared<World>();
 }
 
-void VerseApplication::onStartup()
+void VerseApplicationRuntime::onStartup()
 {
     m_physicsWorld.primitiveTester().registerPrimitiveTest(
         (int)::CollisionShapeType::VoxelCluster,
@@ -58,44 +58,42 @@ void VerseApplication::onStartup()
                                    GameDataPath("Data/Skybox/Back.png")};
 
     auto skyboxCubemapBinary = TextureLoader(skyboxPaths).load();
-    m_skyboxCubemap = drawContext().createTexture(skyboxCubemapBinary);
-
-    m_world.addSystem<ApplicationSystem>(*this);
+    m_skyboxCubemap = Application::instance().drawContext().createTexture(skyboxCubemapBinary);
 
     if (m_systemInitMode == VerseApplicationSystemInitMode::AllSystems)
     {
-        m_world.addSystem<RenderSystem>();
-        auto pointLightSystem = m_world.addSystem<PointLightSystem>();
-//        m_world.addSystem<DebugPointLightSystem>(
+        m_world->addSystem<RenderSystem>();
+        auto pointLightSystem = m_world->addSystem<PointLightSystem>();
+//        m_world->addSystem<DebugPointLightSystem>(
 //            pointLightSystem->pointLightRenderer());
-        m_world.addSystem<SkyboxSystem>(m_skyboxCubemap);
-        m_world.addSystem<VerseResourceManager>();
+        m_world->addSystem<SkyboxSystem>(m_skyboxCubemap);
+        m_world->addSystem<VerseResourceManager>();
         m_physicsWorldSystem =
-            m_world.addSystem<PhysicsWorldSystem>(m_physicsWorld);
-        m_world.addSystem<VoxelClusterSplitSystem>();
-        m_world.addSystem<VoxelWorld>(m_skyboxCubemap);
-        m_world.addSystem<NpcControllerSystem>();
-        m_world.addSystem<HailstormManager>();
-        m_world.addSystem<VfxSystem>();
-        m_world.addSystem<DebugOverlay>(drawContext());
-        m_world.addSystem<CoriolisSystem>();
-        m_world.addSystem<EquipmentSystem>();
-        m_world.addSystem<PlayerSystem>();
-        m_world.addSystem<FactionManager>();
-        m_world.addSystem<NpcBehaviourSystem>();
-        m_world.addSystem<ImGuiSystem>();
-        m_world.addSystem<Hud>();
-        m_world.addSystem<BehaviourSystem>();
-        m_world.addSystem<VerseEntityPrototypeSystem>();
-        m_world.addSystem<VoxelPhysicsSystem>();
-        m_world.addSystem<DebugAttachmentSystem>();
-        m_world.addSystem<HullSystem>();
-        m_world.addSystem<VersePrototypeSystem>();
-        m_world.addSystem<VoxelMaterialSystem>();
-        m_world.addSystem<LevelSystem>(GameDataPath("Data/Levels/level0.json")); // Do this last because it adds entities
+            m_world->addSystem<PhysicsWorldSystem>(m_physicsWorld);
+        m_world->addSystem<VoxelClusterSplitSystem>();
+        m_world->addSystem<VoxelWorld>(m_skyboxCubemap);
+        m_world->addSystem<NpcControllerSystem>();
+        m_world->addSystem<HailstormManager>();
+        m_world->addSystem<VfxSystem>();
+        m_world->addSystem<DebugOverlay>(Application::instance().drawContext());
+        m_world->addSystem<CoriolisSystem>();
+        m_world->addSystem<EquipmentSystem>();
+        m_world->addSystem<PlayerSystem>();
+        m_world->addSystem<FactionManager>();
+        m_world->addSystem<NpcBehaviourSystem>();
+        m_world->addSystem<ImGuiSystem>();
+        m_world->addSystem<Hud>();
+        m_world->addSystem<BehaviourSystem>();
+        m_world->addSystem<VerseEntityPrototypeSystem>();
+        m_world->addSystem<VoxelPhysicsSystem>();
+        m_world->addSystem<DebugAttachmentSystem>();
+        m_world->addSystem<HullSystem>();
+        m_world->addSystem<VersePrototypeSystem>();
+        m_world->addSystem<VoxelMaterialSystem>();
+        m_world->addSystem<LevelSystem>(GameDataPath("Data/Levels/level0.json")); // Do this last because it adds entities
 
         auto & renderManager =
-            m_world.systemRef<RenderSystem>().renderManager();
+            m_world->systemRef<RenderSystem>().renderManager();
         renderManager.addRenderer<AmbientLightRenderer>();
         renderManager.addRenderer<PointLightRenderer>();
         renderManager.addRenderer<BloomRenderer>();
@@ -108,14 +106,14 @@ void VerseApplication::onStartup()
     deliberation::DisableGLErrorChecks();
 }
 
-void VerseApplication::onFrame(DurationMicros micros)
+void VerseApplicationRuntime::onFrame(DurationMicros micros)
 {
-    m_world.frameBeginPhase();
-
+    m_world->frameBeginPhase();
+    
     m_updateFrame.setPhysicsSeconds(0.0f);
     m_updateFrame.setBeginMicros(m_updateFrame.beginMicros() + m_updateFrame.gameMicros());
 
-    if (!m_gameplayPaused)
+    if (!Application::instance().gameplayPaused())
     {
         m_updateFrame.setGameMicros(micros);
 
@@ -128,9 +126,9 @@ void VerseApplication::onFrame(DurationMicros micros)
          */
         if (m_updateFrame.physicsSeconds() > 0)
         {
-            m_world.prePhysicsUpdatePhase(m_updateFrame);
+            m_world->prePhysicsUpdatePhase(m_updateFrame);
             m_physicsWorldSystem->updatePhysics(m_updateFrame);
-            m_world.postPhysicsUpdatePhase(m_updateFrame);
+            m_world->postPhysicsUpdatePhase(m_updateFrame);
 
             onApplicationPhysicsUpdate();
         }
@@ -140,7 +138,7 @@ void VerseApplication::onFrame(DurationMicros micros)
             m_physicsWorldSystem->updatePhysics(m_updateFrame);
         }
 
-        m_world.gameUpdatePhase(m_updateFrame);
+        m_world->gameUpdatePhase(m_updateFrame);
         onApplicationUpdate();
     }
     else
@@ -148,8 +146,8 @@ void VerseApplication::onFrame(DurationMicros micros)
         m_updateFrame.setGameMicros(0);
     }
 
-    m_world.frameUpdatePhase(m_updateFrame);
-    m_world.systemRef<RenderSystem>().renderManager().render();
+    m_world->frameUpdatePhase(m_updateFrame);
+    m_world->systemRef<RenderSystem>().renderManager().render();
 
-    m_world.frameCompletePhase(m_updateFrame);
+    m_world->frameCompletePhase(m_updateFrame);
 }

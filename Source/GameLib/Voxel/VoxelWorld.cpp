@@ -9,12 +9,12 @@
 
 #include <Deliberation/ECS/Components.h>
 #include <Deliberation/ECS/Phase.h>
-#include <Deliberation/ECS/Systems/ApplicationSystem.h>
 #include <Deliberation/ECS/Systems/PhysicsWorldSystem.h>
 #include <Deliberation/ECS/World.h>
 
 #include <Deliberation/Physics/PhysicsWorld.h>
 
+#include <Deliberation/Platform/Application.h>
 #include <Deliberation/Scene/Camera3D.h>
 #include <Deliberation/Scene/Pipeline/RenderManager.h>
 #include <Deliberation/Scene/Pipeline/RenderSystem.h>
@@ -26,7 +26,7 @@
 VoxelWorld::VoxelWorld(World & world, const Texture & envMap)
     : Base(
           world, ComponentFilter::requires<Transform3DComponent, VoxelObject>())
-    , m_drawContext(world.systemRef<ApplicationSystem>().drawContext())
+    , m_drawContext(Application::instance().drawContext())
     , m_envMap(envMap)
 {
     m_renderer = world.systemRef<RenderSystem>()

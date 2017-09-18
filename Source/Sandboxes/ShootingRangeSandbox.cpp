@@ -41,7 +41,7 @@
 #include "NpcSteering.h"
 #include "PlayerFlightControl.h"
 #include "ResourceManager.h"
-#include "VerseApplication.h"
+#include "VerseApplicationRuntime.h"
 #include "VfxManager.h"
 #include "VoxReader.h"
 #include "VoxelClusterContact.h"
@@ -56,11 +56,11 @@
 
 using namespace deliberation;
 
-class ShootingRangeSandbox : public VerseApplication
+class ShootingRangeSandbox : public VerseApplicationRuntime
 {
 public:
     ShootingRangeSandbox()
-        : VerseApplication(
+        : VerseApplicationRuntime(
               "ShootingRangeSandbox", VerseApplicationSystemInitMode::NoSystems)
     {
     }

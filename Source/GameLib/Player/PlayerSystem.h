@@ -8,7 +8,7 @@
 
 #include <Deliberation/ECS/System.h>
 
-#include <Deliberation/Platform/Input.h>
+#include <Deliberation/Platform/InputManager.h>
 #include <Deliberation/Platform/InputLayer.h>
 
 #include <Deliberation/Scene/CameraDolly3D.h>
@@ -19,7 +19,7 @@
 
 namespace deliberation
 {
-class Input;
+class InputManager;
 class Camera3D;
 class PhysicsWorld;
 class World;
@@ -38,8 +38,8 @@ public:
 
     void setPlayerTarget(Entity & entity) { m_playerTarget = entity; }
 
-    void onCreated() override { m_input.addLayer(shared_from_this()); }
-    void onRemoved() override { m_input.removeLayer(shared_from_this()); }
+    void onCreated() override { m_inputManager.addLayer(shared_from_this()); }
+    void onRemoved() override { m_inputManager.removeLayer(shared_from_this()); }
 
     void onEntityAdded(Entity & entity) override;
     void onEntityRemoved(Entity & entity) override;
@@ -62,7 +62,7 @@ private:
     };
 
 private:
-    Input &        m_input;
+    InputManager &        m_inputManager;
     PhysicsWorld & m_physicsWorld;
 
     CameraMode             m_cameraMode;

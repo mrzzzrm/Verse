@@ -1,7 +1,6 @@
 #include "VoxelShredderSandbox.h"
 
 #include <Deliberation/Core/Log.h>
-#include <Deliberation/ECS/Systems/ApplicationSystem.h>
 
 #include "VoxelShredder.h"
 

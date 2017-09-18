@@ -4,7 +4,6 @@
 
 #include <Deliberation/Core/EventDomain.h>
 
-#include <Deliberation/ECS/Systems/ApplicationSystem.h>
 #include <Deliberation/ECS/Phase.h>
 #include <Deliberation/ECS/World.h>
 #include <Deliberation/ECS/Components.h>

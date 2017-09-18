@@ -3,7 +3,6 @@
 #include <Deliberation/Core/ScopeProfiler.h>
 
 #include <Deliberation/ECS/Phase.h>
-#include <Deliberation/ECS/Systems/ApplicationSystem.h>
 #include <Deliberation/ECS/Systems/PhysicsWorldSystem.h>
 #include <Deliberation/ECS/World.h>
 

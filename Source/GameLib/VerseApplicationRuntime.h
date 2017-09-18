@@ -18,6 +18,7 @@
 #include <Deliberation/Physics/RigidBody.h>
 
 #include <Deliberation/Platform/Application.h>
+#include <Deliberation/Platform/ApplicationRuntime.h>
 
 #include <Deliberation/Scene/Camera3D.h>
 #include <Deliberation/Scene/CameraDolly3D.h>
@@ -64,13 +65,11 @@ enum class VerseApplicationSystemInitMode
     AllSystems
 };
 
-class VerseApplication : public Application
+class VerseApplicationRuntime : public ApplicationRuntime
 {
 public:
-    VerseApplication(
-        const std::string &            name,
-        VerseApplicationSystemInitMode systemInitMode =
-            VerseApplicationSystemInitMode::AllSystems);
+    explicit VerseApplicationRuntime(VerseApplicationSystemInitMode systemInitMode =
+        VerseApplicationSystemInitMode::AllSystems);
 
     void onStartup() final override;
     void onFrame(DurationMicros micros) final override;
@@ -82,6 +81,8 @@ protected:
 
 protected:
     VerseApplicationSystemInitMode m_systemInitMode;
+
+    UpdateFrame m_updateFrame;
 
     PhysicsWorld m_physicsWorld;
     std::shared_ptr<World> m_world;

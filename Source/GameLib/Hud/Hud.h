@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Deliberation/Platform/Input.h>
+#include <Deliberation/Platform/InputManager.h>
 
 #include <Deliberation/ECS/System.h>
 
@@ -34,8 +34,8 @@ public:
     void addElement(const std::shared_ptr<HudElement> & element);
     void removeElement(const std::shared_ptr<HudElement> & element);
 
-    void onCreated() override { m_input.addLayer(shared_from_this()); }
-    void onRemoved() override { m_input.removeLayer(shared_from_this()); }
+    void onCreated() override { m_inputManager.addLayer(shared_from_this()); }
+    void onRemoved() override { m_inputManager.removeLayer(shared_from_this()); }
 
     void onGameUpdate(const UpdateFrame & updateFrame);
 
@@ -48,7 +48,7 @@ private:
         T & event, const std::function<void(HudElement & element)> & fn) const;
 
 private:
-    Input &                                  m_input;
+    InputManager &                           m_inputManager;
     PlayerSystem &                           m_playerSystem;
     std::vector<std::shared_ptr<HudLayer>>   m_layers;
     std::vector<std::shared_ptr<HudElement>> m_elements;
