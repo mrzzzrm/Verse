@@ -8,6 +8,7 @@
 #include <Deliberation/Platform/ApplicationRuntime.h>
 
 #include "VoxelShredder.h"
+#include "VoxelClusterSplitSystem.h"
 
 VoxelShredderSandbox::VoxelShredderSandbox()
 {
@@ -29,13 +30,19 @@ void VoxelShredderSandbox::onKeyPressed(KeyEvent & event)
 
         if (m_originalEntity.isValid()) m_originalEntity.scheduleRemoval();
 
-        m_originalEntity = Application::instance().runtime()->entityPrototypeManager()->createEntity("Asteroid00");
+        m_originalEntity = Application::instance().runtime()->entityPrototypeManager()->createEntity("Block2x2x2");
     }
 
     if (event.key() == Key_M && m_originalEntity.isValid())
     {
-        VoxelShredder shredder;
-        m_segmentEntities = shredder.shred(m_originalEntity);
-        m_originalEntity.scheduleRemoval();
+//        VoxelShredder shredder;
+//        m_segmentEntities = shredder.shred(m_originalEntity);
+//        m_originalEntity.scheduleRemoval();
+
+        VoxelClusterSegment seg;
+        seg.voxels = {glm::uvec3(0, 0, 0)};
+        seg.llf = glm::uvec3(0, 0, 0);
+        seg.urb = glm::uvec3(0, 0, 0);
+        auto entity = VoxelClusterSplitSystem::splitVoxelsOffEntity(m_originalEntity, seg);
     }
 }

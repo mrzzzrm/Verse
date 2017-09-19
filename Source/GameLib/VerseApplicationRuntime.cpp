@@ -64,9 +64,6 @@ VerseApplicationSystemInitMode systemInitMode)
 
 void VerseApplicationRuntime::onStartup()
 {
-    m_physicsWorld.primitiveTester().registerPrimitiveTest(
-        (int)::CollisionShapeType::VoxelCluster,
-        std::make_unique<VoxelClusterPrimitiveTest>());
 
 //    m_physicsWorld.narrowphase()
 //        .contactDispatcher()
@@ -101,7 +98,7 @@ void VerseApplicationRuntime::onStartup()
         m_world->addSystem<SkyboxSystem>(m_skyboxCubemap);
         m_world->addSystem<VerseResourceManager>();
         m_physicsWorldSystem =
-            m_world->addSystem<PhysicsWorldSystem>(m_physicsWorld);
+            m_world->addSystem<PhysicsWorldSystem>();
         m_world->addSystem<VoxelClusterSplitSystem>();
         m_world->addSystem<VoxelWorld>(m_skyboxCubemap);
         m_world->addSystem<NpcControllerSystem>();
@@ -187,6 +184,10 @@ void VerseApplicationRuntime::onStartup()
 
         m_world->addSystem<LevelSystem>(GameDataPath("Data/Levels/VoxelShredderSandbox.json")); // Do this last because it adds entities
     }
+
+    m_world->systemRef<PhysicsWorldSystem>().physicsWorld().primitiveTester().registerPrimitiveTest(
+        (int)::CollisionShapeType::VoxelCluster,
+        std::make_unique<VoxelClusterPrimitiveTest>());
 
     onApplicationStartup();
 

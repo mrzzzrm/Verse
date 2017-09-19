@@ -132,13 +132,13 @@ Entity VoxelClusterSplitSystem::splitVoxelsOffEntity(const Entity & originalEnti
 
     const auto splitPosition =
         originalBody->transform().position() +
-        originalBody->transform().orientation() * relativeCenterOfMass;
+        originalBody->transform().orientation() * (glm::vec3(segment.llf) - originalBody->shape()->centerOfMass());
     //            std::cout << "splitPosition: " << splitPosition <<
     //            std::endl;
 
     auto & transform =
         splitEntity.addComponent<Transform3DComponent>().value();
-    transform.setCenter(splitBody->shape()->centerOfMass());
+   // transform.setCenter(splitBody->shape()->centerOfMass());
     transform.setPosition(splitPosition);
     transform.setOrientation(originalBody->transform().orientation());
     transform.setScale(originalBody->transform().scale());

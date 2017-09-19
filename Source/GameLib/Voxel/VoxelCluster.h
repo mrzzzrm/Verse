@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 
 #include "GameLib.h"
+#include "Voxel.h"
 
 // template<typename T> class VoxelCluster;
 //
@@ -74,5 +75,13 @@ private:
     std::vector<T> m_voxels;
     u32            m_numVoxels = 0;
 };
+
+//extern template glm::vec3 VoxelCluster<glm::vec3>::EMPTY_VOXEL;
+//extern template bool VoxelCluster<bool>::EMPTY_VOXEL;
+//extern template u8 VoxelCluster<u8>::EMPTY_VOXEL;
+//extern template u16 VoxelCluster<u16>::EMPTY_VOXEL;
+//extern template u32 VoxelCluster<u32>::EMPTY_VOXEL;
+//extern template Voxel VoxelCluster<Voxel>::EMPTY_VOXEL;
+//extern template float VoxelCluster<float>::EMPTY_VOXEL;
 
 #include "VoxelCluster.inl"

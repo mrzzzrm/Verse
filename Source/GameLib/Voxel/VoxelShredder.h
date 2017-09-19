@@ -16,8 +16,8 @@ private:
     std::vector<VoxelClusterSegment> shred(const std::vector<glm::uvec3> & input,
                                   const glm::uvec3 & llf,
                                   const glm::uvec3 & urb,
-                                u32 depth);
+                                  u32 depth);
 
 private:
-    u32 m_minShredDepth = 2;
+    u32 m_minShredDepth = 1;
 };
