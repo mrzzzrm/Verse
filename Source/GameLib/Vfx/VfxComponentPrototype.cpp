@@ -7,8 +7,11 @@
 
 void VfxComponentPrototype::updateComponent(const Entity & entity, VfxComponent & vfxComponent)
 {
-    auto & prototypeManager = world().systemRef<PrototypeSystem>().manager();
-    auto & vfxManager = world().systemRef<VfxSystem>().manager();
+    auto world = this->world();
+    Assert(world);
+
+    auto & prototypeManager = world->systemRef<PrototypeSystem>().manager();
+    auto & vfxManager = world->systemRef<VfxSystem>().manager();
 
     for (auto & instance : vfxComponent.m_instances)
     {

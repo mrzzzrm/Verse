@@ -130,7 +130,7 @@ bool VoxelRenderChunk::updateVertices()
     {
         if (m_verticesDirty)
         {
-            m_vertices.resize(0);
+            if (!m_vertices.empty()) m_vertices.resize(0);
             return true;
         }
         return false;

@@ -6,7 +6,7 @@
 
 #include <Deliberation/ECS/Phase.h>
 #include <Deliberation/ECS/World.h>
-#include <Deliberation/ECS/Components.h>
+#include <Deliberation/ECS/RigidBodyComponent.h>
 
 #include <Deliberation/ImGui/ImGuiSystem.h>
 

@@ -16,6 +16,7 @@ public:
 
 protected:
     void onEntityAdded(Entity & entity) override;
+    void onEntityRemoved(Entity & entity) override;
     void onEntityGameUpdate(Entity & entity, const UpdateFrame & updateFrame) override;
     void onEntityPostPhysicsUpdate(Entity & entity, const UpdateFrame & updateFrame) override;
 };

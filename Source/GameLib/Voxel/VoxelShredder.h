@@ -19,5 +19,5 @@ private:
                                   u32 depth);
 
 private:
-    u32 m_minShredDepth = 1;
+    u32 m_maxShredDepth = 4;
 };

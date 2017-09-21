@@ -6,7 +6,7 @@
 #include <Deliberation/ECS/LevelSystem.h>
 #include <Deliberation/ECS/Phase.h>
 #include <Deliberation/ECS/Systems/SkyboxSystem.h>
-#include <Deliberation/ECS/Components.h>
+#include <Deliberation/ECS/RigidBodyComponent.h>
 
 #include <Deliberation/ImGui/ImGuiSystem.h>
 #include <Deliberation/ImGui/ImGuiSystem.h>
@@ -58,7 +58,7 @@ constexpr const char * RELOAD_PROTOTYPES_CONTROL = "Reload Scene";
 
 VerseApplicationRuntime::VerseApplicationRuntime(
 VerseApplicationSystemInitMode systemInitMode)
-    : ApplicationRuntime("Verse", "."), m_systemInitMode(systemInitMode)
+    : ApplicationRuntime("Verse", ".", GameDataPath("Data/EntityPrototypes/list.json")), m_systemInitMode(systemInitMode)
 {
 }
 
@@ -79,7 +79,7 @@ void VerseApplicationRuntime::onStartup()
                                    GameDataPath("Data/Skybox/Back.png")};
 
     auto skyboxCubemapBinary = TextureLoader(skyboxPaths).load();
-    m_skyboxCubemap = Application::instance().drawContext().createTexture(skyboxCubemapBinary);
+    m_skyboxCubemap = Application::get().drawContext().createTexture(skyboxCubemapBinary);
 
     if (m_systemInitMode == VerseApplicationSystemInitMode::AllSystems)
     {
@@ -104,7 +104,7 @@ void VerseApplicationRuntime::onStartup()
         m_world->addSystem<NpcControllerSystem>();
         m_world->addSystem<HailstormManager>();
         m_world->addSystem<VfxSystem>();
-        m_world->addSystem<DebugOverlay>(Application::instance().drawContext());
+        m_world->addSystem<DebugOverlay>(Application::get().drawContext());
         m_world->addSystem<CoriolisSystem>();
         m_world->addSystem<EquipmentSystem>();
         m_world->addSystem<PlayerSystem>();
@@ -201,7 +201,7 @@ void VerseApplicationRuntime::onFrame(DurationMicros micros)
     m_updateFrame.setPhysicsSeconds(0.0f);
     m_updateFrame.setBeginMicros(m_updateFrame.beginMicros() + m_updateFrame.gameMicros());
 
-    if (!Application::instance().gameplayPaused())
+    if (!Application::get().gameplayPaused())
     {
         m_updateFrame.setGameMicros(micros);
 

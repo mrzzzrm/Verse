@@ -12,7 +12,10 @@
 
 void EquipmentPrototype::updateComponent(const Entity & entity, Equipment & equipment)
 {
-    auto prototypeManager = world().systemRef<VersePrototypeSystem>().manager();
+    auto world = this->world();
+    Assert(world);
+
+    auto prototypeManager = world->systemRef<VersePrototypeSystem>().manager();
 
     /**
      * Clear Equipment
@@ -66,9 +69,9 @@ void EquipmentPrototype::updateComponent(const Entity & entity, Equipment & equi
             if (desc.compatibleWeapons.size() > 0)
             {
                 auto weaponPrototype =
-                    world().systemRef<PrototypeSystem>().manager()->prototype<WeaponPrototype>(desc.compatibleWeapons[0]);
+                    world->systemRef<PrototypeSystem>().manager()->prototype<WeaponPrototype>(desc.compatibleWeapons[0]);
                 auto & hailstormManager =
-                    world().systemRef<HailstormManager>();
+                    world->systemRef<HailstormManager>();
                 Assert(static_cast<bool>(weaponPrototype));
                 hardpoint->setWeapon(std::make_shared<Weapon>(weaponPrototype, hailstormManager));
             }

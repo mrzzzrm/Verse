@@ -3,6 +3,9 @@
 #include <Deliberation/ECS/Component.h>
 #include <Deliberation/ECS/World.h>
 
+#include <Deliberation/Platform/Application.h>
+#include <Deliberation/Platform/ApplicationRuntime.h>
+
 #include "FactionChangeEvent.h"
 #include "GameLib.h"
 
@@ -20,7 +23,7 @@ public:
             world->entityById(m_entityId), m_faction, faction);
         m_faction = faction;
 
-        publishEvent(event);
+        Application::get().runtime()->events()->publishEvent(event);
     }
 
 private:

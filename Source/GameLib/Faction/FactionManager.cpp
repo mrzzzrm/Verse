@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-#include <Deliberation/ECS/Components.h>
+#include <Deliberation/ECS/RigidBodyComponent.h>
 
 #include "Allegiance.h"
 

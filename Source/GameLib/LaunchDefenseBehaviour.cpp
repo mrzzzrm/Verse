@@ -1,6 +1,6 @@
 #include "LaunchDefenseBehaviour.h"
 
-#include <Deliberation/ECS/Components.h>
+#include <Deliberation/ECS/RigidBodyComponent.h>
 #include <Deliberation/ECS/World.h>
 
 #include "Equipment.h"

@@ -35,10 +35,10 @@ void VoxelLight::onEnabled()
 
 void VoxelLight::onDisabled()
 {
-    auto & pointLightRenderer =
-        m_entity.world().systemRef<PointLightSystem>().pointLightRenderer();
-
-    pointLightRenderer->removePointLight(m_pointLight);
+//    auto & pointLightRenderer =
+//        m_entity.world().systemRef<PointLightSystem>().pointLightRenderer();
+//
+//    pointLightRenderer->removePointLight(m_pointLight);
 }
 
 void VoxelLight::onGameUpdate(const UpdateFrame & updateFrame, const EquipmentUpdateContext & context)

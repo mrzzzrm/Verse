@@ -18,10 +18,10 @@
 Hud::Hud(World & world)
     : Base(world)
     , InputLayer(1)
-    , m_inputManager(Application::instance().inputManager())
+    , m_inputManager(Application::get().inputManager())
     , m_playerSystem(world.systemRef<PlayerSystem>())
 {
-    auto & context = Application::instance().drawContext();
+    auto & context = Application::get().drawContext();
     auto & physicsWorld = world.systemRef<PhysicsWorldSystem>().physicsWorld();
 
     auto crosshairs = std::make_shared<HudCrosshairs>(*this);

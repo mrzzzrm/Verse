@@ -1,5 +1,8 @@
 #include "VoxelObject.h"
 
+#include <Deliberation/Platform/Application.h>
+#include <Deliberation/Platform/ApplicationRuntime.h>
+
 #include "VoxelImpactSystem.h"
 #include "VoxelObjectModification.h"
 #include "VoxelRigidBodyPayload.h"
@@ -61,7 +64,7 @@ void VoxelObject::destroyVoxels(std::vector<glm::uvec3> voxels)
 
     checkCrucialVoxelForRemoval(modification.destructions);
 
-    publishEvent(modification);
+    Application::get().runtime()->events()->publishEvent(modification);
 }
 
 void VoxelObject::checkCrucialVoxelForRemoval(const std::vector<glm::uvec3> & voxels)

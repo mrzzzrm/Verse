@@ -73,7 +73,7 @@ std::vector<VoxelClusterSegment> VoxelShredder::shred(const std::vector<glm::uve
         }
     }
 
-    if (depth <= m_minShredDepth)
+    if (depth < m_maxShredDepth)
     {
         auto leftShredded = shred(left, leftLlf, leftUrb, depth + 1);
         auto rightShredded = shred(right, rightLlf, rightUrb, depth + 1);

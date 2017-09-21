@@ -5,7 +5,10 @@
 
 void VoxelMaterialComponentPrototype::updateComponent(const Entity & entity, VoxelMaterialComponent & voxelMaterialComponent)
 {
-    auto & prototypeSystem = world().systemRef<PrototypeSystem>();
+    auto world = this->world();
+    Assert(world);
+
+    auto & prototypeSystem = world->systemRef<PrototypeSystem>();
     auto & prototypeManager = prototypeSystem.manager();
 
     auto newVoxelMaterialPalette = prototypeManager->getOrCreatePrototype<VoxelMaterialPalettePrototype>(

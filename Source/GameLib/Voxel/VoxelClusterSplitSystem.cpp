@@ -4,8 +4,9 @@
 
 #include <Deliberation/Core/Math/Transform3D.h>
 
-#include <Deliberation/ECS/Components.h>
+#include <Deliberation/ECS/RigidBodyComponent.h>
 #include <Deliberation/ECS/Phase.h>
+#include <Deliberation/ECS/Transform3DComponent.h>
 #include <Deliberation/ECS/World.h>
 
 #include <Deliberation/Physics/RigidBody.h>
@@ -120,37 +121,38 @@ Entity VoxelClusterSplitSystem::splitVoxelsOffEntity(const Entity & originalEnti
     auto splitBody =
         std::make_shared<RigidBody>(splitVoxelObject.data()->shape());
     splitBody->setEntity(splitEntity);
-    splitBody->updateMassProperties();
+
+    std::cout << "Center of mass at split: " << splitVoxelObject.data()->shape()->centerOfMass() << std::endl;
+    std::cout << "segment origin: " << glm::vec3(segment.llf) << std::endl;
 
     auto scale =
-        originalEntity.component<Transform3DComponent>().value().scale();
+        originalEntity.component<Transform3DComponent>().transform().scale();
 
     const auto relativeCenterOfMass =
-        (splitBody->shape()->centerOfMass() +
-         glm::vec3(segment.llf) /*+ glm::vec3(0.5f) */ -
+        (glm::vec3(segment.llf) -
          originalBody->shape()->centerOfMass()) * scale;
 
     const auto splitPosition =
         originalBody->transform().position() +
-        originalBody->transform().orientation() * (glm::vec3(segment.llf) - originalBody->shape()->centerOfMass());
-    //            std::cout << "splitPosition: " << splitPosition <<
-    //            std::endl;
+        originalBody->transform().orientation() * relativeCenterOfMass;
+    std::cout << "splitPosition: " << splitPosition <<
+    std::endl;
 
-    auto & transform =
-        splitEntity.addComponent<Transform3DComponent>().value();
-   // transform.setCenter(splitBody->shape()->centerOfMass());
-    transform.setPosition(splitPosition);
-    transform.setOrientation(originalBody->transform().orientation());
-    transform.setScale(originalBody->transform().scale());
-    splitVoxelObject.setTransform(transform);
+    splitEntity.addComponent<Transform3DComponent>();
 
     splitBody->setLinearVelocity(originalBody->localVelocity(
         originalBody->transform().pointLocalToWorld(
             originalBody->transform().center() + relativeCenterOfMass) -
         originalBody->transform().position()));
+
     splitBody->setAngularVelocity(originalBody->angularVelocity());
 
     splitEntity.addComponent<RigidBodyComponent>(splitBody);
+
+    // Do this after adding the component in order to override the Transform3DComponent's original transform
+    splitBody->setPosition(splitPosition);
+    splitBody->setOrientation(originalBody->transform().orientation());
+    splitBody->setScale(originalBody->transform().scale());
 
     originalVoxelObject.removeVoxelsRaw(
         segment.voxels);

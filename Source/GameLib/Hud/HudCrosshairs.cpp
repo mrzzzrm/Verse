@@ -6,8 +6,9 @@
 
 #include <Deliberation/Draw/DrawContext.h>
 
-#include <Deliberation/ECS/Components.h>
+#include <Deliberation/ECS/RigidBodyComponent.h>
 #include <Deliberation/ECS/System.h>
+#include <Deliberation/ECS/Transform3DComponent.h>
 #include <Deliberation/ECS/World.h>
 
 #include <Deliberation/Scene/Camera3D.h>
@@ -25,7 +26,7 @@
 
 HudCrosshairs::HudCrosshairs(Hud & hud)
     : HudLayer(hud)
-    , m_drawContext(Application::instance().drawContext())
+    , m_drawContext(Application::get().drawContext())
     , m_playerSystem(hud.world().systemRef<PlayerSystem>())
     , m_renderManager(hud.world().systemRef<RenderSystem>().renderManager())
 {
@@ -139,7 +140,7 @@ void HudCrosshairs::onMouseButtonPressed(MouseButtonEvent & event)
     const auto & targetVelocity = targetBody.linearVelocity();
 
     const auto & equipmentTransform =
-        player.component<Transform3DComponent>().value();
+        player.component<Transform3DComponent>().transform();
 
     equipment.setFireRequestTargetForAllHardpoints(
         equipmentTransform,

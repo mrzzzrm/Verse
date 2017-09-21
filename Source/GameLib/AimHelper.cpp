@@ -1,6 +1,7 @@
 #include "AimHelper.h"
 
-#include <Deliberation/ECS/Components.h>
+#include <Deliberation/ECS/RigidBodyComponent.h>
+#include <Deliberation/ECS/Transform3DComponent.h>
 
 #include <Deliberation/Physics/PhysicsWorld.h>
 #include <Deliberation/Physics/RigidBody.h>
@@ -44,7 +45,7 @@ AimHelperResult AimHelper::getTarget(const glm::vec2 & mouse)
 
                 auto & transform = intersection.body->entity()
                                        .component<Transform3DComponent>()
-                                       .value();
+                                       .transform();
 
                 result.pointOfImpact = transform.pointLocalToWorld(
                     glm::vec3(voxelClusterIntersection.voxel));

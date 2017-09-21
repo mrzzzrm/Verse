@@ -27,8 +27,6 @@ AABB VoxelShape::bounds(const Transform3D & transform) const
 
 glm::vec3 VoxelShape::localInertia(float scale) const
 {
-    if (m_massPropertiesDirty) updateMassProperties();
-
     return m_localInertia * scale;
 }
 
@@ -36,8 +34,6 @@ float VoxelShape::mass(float scale) const { return scale * m_numVoxels; }
 
 glm::vec3 VoxelShape::centerOfMass() const
 {
-    if (m_massPropertiesDirty) updateMassProperties();
-
     return m_centerOfMass;
 }
 
@@ -383,8 +379,10 @@ std::shared_ptr<VoxelShape::Subtree<T>> VoxelShape::Subtree<T>::clone() const
     return std::make_shared<Subtree<T>>(*this);
 }
 
-void VoxelShape::updateMassProperties() const
+void VoxelShape::updateMassProperties()
 {
+    if (!m_massPropertiesDirty) return;
+
     if (m_numVoxels == 0)
     {
         m_centerOfMass = glm::vec3(0.0f);

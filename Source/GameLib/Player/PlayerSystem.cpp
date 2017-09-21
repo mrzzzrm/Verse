@@ -8,9 +8,10 @@
 #include <Deliberation/Draw/DrawContext.h>
 #include <Deliberation/Draw/Program.h>
 
-#include <Deliberation/ECS/Components.h>
+#include <Deliberation/ECS/RigidBodyComponent.h>
 #include <Deliberation/ECS/Phase.h>
 #include <Deliberation/ECS/Systems/PhysicsWorldSystem.h>
+#include <Deliberation/ECS/Transform3DComponent.h>
 #include <Deliberation/ECS/World.h>
 
 #include <Deliberation/Physics/PhysicsWorld.h>
@@ -40,7 +41,7 @@ PlayerSystem::PlayerSystem(World & world)
               PlayerFlightControl,
               Equipment>())
     , InputLayer(0)
-    , m_inputManager(Application::instance().inputManager())
+    , m_inputManager(Application::get().inputManager())
     , m_cameraMode(CameraMode::FreeFlight)
     , m_navigator(
           world.systemRef<RenderSystem>().renderManager().mainCamera(),
@@ -117,7 +118,7 @@ void PlayerSystem::onEntityPostPhysicsUpdate(Entity & entity, const UpdateFrame 
         auto & voxelObject = entity.component<VoxelObject>();
         auto & voxelData = voxelObject.data();
 
-        auto & transform = entity.component<Transform3DComponent>().value();
+        auto & transform = entity.component<Transform3DComponent>().transform();
 
         glm::vec3 offset;
         offset.z = voxelData->size().z * 1.4f;
@@ -167,7 +168,7 @@ void PlayerSystem::onMouseButtonDown(MouseStateEvent & event)
 
             auto &equipment = m_player.component<Equipment>();
             const auto &equipmentTransform =
-                m_player.component<Transform3DComponent>().value();
+                m_player.component<Transform3DComponent>().transform();
 
             equipment.setFireRequestTargetForAllHardpoints(
                 equipmentTransform,

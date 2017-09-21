@@ -1,6 +1,6 @@
 #include "CoriolisSystem.h"
 
-#include <Deliberation/ECS/Components.h>
+#include <Deliberation/ECS/RigidBodyComponent.h>
 #include <Deliberation/Physics/RigidBody.h>
 
 #include "CoriolisComponent.h"

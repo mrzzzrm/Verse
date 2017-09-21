@@ -9,7 +9,7 @@
 
 #include <Deliberation/ECS/Component.h>
 #include <Deliberation/ECS/ComponentPrototype.h>
-#include <Deliberation/ECS/Components.h>
+#include <Deliberation/ECS/RigidBodyComponent.h>
 #include <Deliberation/ECS/World.h>
 
 #include "GameLib.h"

@@ -15,7 +15,7 @@
 
 ResourceManager::ResourceManager(World & world)
     : Base(world)
-    , m_drawContext(Application::instance().drawContext())
+    , m_drawContext(Application::get().drawContext())
 {
 
 }
@@ -163,7 +163,7 @@ void ResourceManager::registerBuildIns()
             std::make_shared<MeshData>(mesh));
     }
 
-    auto & context = Application::instance().drawContext();
+    auto & context = Application::get().drawContext();
 
     {
         auto program = m_drawContext.createProgram(

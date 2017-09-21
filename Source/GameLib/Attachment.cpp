@@ -1,6 +1,7 @@
 #include "Attachment.h"
 
-#include <Deliberation/ECS/Components.h>
+#include <Deliberation/ECS/RigidBodyComponent.h>
+#include <Deliberation/ECS/Transform3DComponent.h>
 
 Attachment::Attachment(const AttachmentDesc & desc) : m_desc(desc) {}
 
@@ -12,7 +13,7 @@ Pose3D Attachment::worldPose() const
 {
     AssertM(m_entity.hasComponent<Transform3DComponent>(), "Needs Transform");
 
-    const auto & transform = m_entity.component<Transform3DComponent>().value();
+    const auto & transform = m_entity.component<Transform3DComponent>().transform();
     Pose3D       pose = m_desc.pose;
     pose.setPosition(
         pose.position() + glm::vec3(m_desc.voxel) + glm::vec3(0.5f));

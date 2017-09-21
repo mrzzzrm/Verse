@@ -35,7 +35,7 @@ void DebugOverlay::onFrameUpdate(const UpdateFrame & updateFrame)
 
     //    bool open = true;
     //    ImGui::ShowTestWindow(&open);
-    m_fps = Application::instance().fps();
+    m_fps = Application::get().fps();
 
     const auto & profiler = world().profiler();
     const auto   numScopes = std::min<size_t>(profiler.scopes().size(), 5u);
@@ -162,7 +162,7 @@ void DebugOverlay::onFrameUpdate(const UpdateFrame & updateFrame)
             {
                 ImGui::Columns(3, "Prototype columns");
 
-                auto & prototypeManager = Application::instance().runtime()->entityPrototypeManager();
+                auto & prototypeManager = Application::get().runtime()->entityPrototypeManager();
 
                 for (auto & pair : prototypeManager->entityPrototypeByKey())
                 {
@@ -226,5 +226,5 @@ void DebugOverlay::onFrameUpdate(const UpdateFrame & updateFrame)
     /**
      * Application Control
      */
-    Application::instance().setGameplayPaused(imGuiSystem->showView("Pause Gameplay"));
+    Application::get().setGameplayPaused(imGuiSystem->showView("Pause Gameplay"));
 }

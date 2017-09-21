@@ -5,5 +5,5 @@
 using namespace deliberation;
 
 int main(int argc, char * argv[]) {
-    Application::instance().run(std::make_shared<VerseApplicationRuntime>(), argc, argv);
+    Application::get().run(std::make_shared<VerseApplicationRuntime>(), argc, argv);
 }

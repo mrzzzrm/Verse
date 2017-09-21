@@ -8,7 +8,7 @@
 #include <Deliberation/Core/Math/MathUtils.h>
 #include <Deliberation/Core/Math/Random.h>
 
-#include <Deliberation/ECS/Components.h>
+#include <Deliberation/ECS/RigidBodyComponent.h>
 
 #include "NpcController.h"
 

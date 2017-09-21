@@ -7,9 +7,10 @@
 
 #include <Deliberation/Draw/DrawContext.h>
 
-#include <Deliberation/ECS/Components.h>
+#include <Deliberation/ECS/RigidBodyComponent.h>
 #include <Deliberation/ECS/Phase.h>
 #include <Deliberation/ECS/Systems/PhysicsWorldSystem.h>
+#include <Deliberation/ECS/Transform3DComponent.h>
 #include <Deliberation/ECS/World.h>
 
 #include <Deliberation/Physics/PhysicsWorld.h>
@@ -26,7 +27,7 @@
 VoxelWorld::VoxelWorld(World & world, const Texture & envMap)
     : Base(
           world, ComponentFilter::requires<Transform3DComponent, VoxelObject>())
-    , m_drawContext(Application::instance().drawContext())
+    , m_drawContext(Application::get().drawContext())
     , m_envMap(envMap)
 {
     m_renderer = world.systemRef<RenderSystem>()
@@ -67,11 +68,16 @@ void VoxelWorld::onCrucialVoxelDestroyed(VoxelObject & voxelObject)
         world().createEntity("Remnant of '" + originalEntity.name() + "'");
     auto & remnantVoxelObject = remnant.addComponent<VoxelObject>();
     remnantVoxelObject.setVoxelData(remnantVoxelData);
-    auto & transform3DComponent = remnant.addComponent<Transform3DComponent>();
-    transform3DComponent.value() = originalEntity.component<Transform3DComponent>().value();
 
     auto remnantRigidBody =
         std::make_shared<RigidBody>(voxelObject.data()->shape());
+
+    auto & transform = originalEntity.component<Transform3DComponent>().transform();
+    remnantRigidBody->setPosition(transform.position());
+    remnantRigidBody->setOrientation(transform.orientation());
+    remnantRigidBody->setScale(transform.scale());
+
+    remnant.addComponent<Transform3DComponent>();
     remnant.addComponent<RigidBodyComponent>(remnantRigidBody);
 
     originalEntity.scheduleRemoval();
@@ -80,7 +86,7 @@ void VoxelWorld::onCrucialVoxelDestroyed(VoxelObject & voxelObject)
 void VoxelWorld::onEntityAdded(Entity & entity)
 {
     auto & voxelObject = entity.component<VoxelObject>();
-    auto & transform = entity.component<Transform3DComponent>().value();
+    auto & transform = entity.component<Transform3DComponent>().transform();
 
     m_renderer->addVoxelObject(voxelObject.shared_from_this());
 }
@@ -101,7 +107,7 @@ void VoxelWorld::onEntityGameUpdate(Entity & entity, const UpdateFrame & updateF
 
     if (entity.hasComponent<Transform3DComponent>())
     {
-        auto & transform = entity.component<Transform3DComponent>().value();
+        auto & transform = entity.component<Transform3DComponent>().transform();
         auto & object = entity.component<VoxelObject>();
 
         object.setTransform(transform);

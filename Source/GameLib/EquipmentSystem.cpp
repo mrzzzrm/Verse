@@ -1,6 +1,6 @@
 #include "EquipmentSystem.h"
 
-#include <Deliberation/ECS/Components.h>
+#include <Deliberation/ECS/RigidBodyComponent.h>
 #include <Deliberation/ECS/World.h>
 
 #include "Equipment.h"
@@ -43,6 +43,16 @@ void EquipmentSystem::onCreated() { subscribeEvent<VoxelObjectModification>(); }
 
 void EquipmentSystem::onEntityAdded(Entity & entity)
 {
+}
+
+void EquipmentSystem::onEntityRemoved(Entity & entity)
+{
+    auto & equipment = entity.component<Equipment>();
+
+    for (auto & attachment : equipment.attachments())
+    {
+        attachment->setEnabled(false);
+    }
 }
 
 void EquipmentSystem::onEntityPostPhysicsUpdate(Entity & entity, const UpdateFrame & updateFrame)

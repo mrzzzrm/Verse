@@ -2,7 +2,8 @@
 
 #include <Deliberation/ImGui/ImGuiSystem.h>
 
-#include <Deliberation/ECS/Components.h>
+#include <Deliberation/ECS/RigidBodyComponent.h>
+#include <Deliberation/ECS/Transform3DComponent.h>
 
 #include <Deliberation/Scene/Pipeline/RenderSystem.h>
 
@@ -54,7 +55,7 @@ void DebugAttachmentSystem::onFrameUpdate(const UpdateFrame & updateFrame)
         {
             auto transform = Transform3D::fromPose(attachment->worldPose());
             transform.setScale(
-                entity.component<Transform3DComponent>().value().scale());
+                entity.component<Transform3DComponent>().transform().scale());
 
             updateSphere(
                 m_visibleNode->sphere(currentAttachmentIndex),

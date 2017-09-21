@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include <Deliberation/ECS/Components.h>
+#include <Deliberation/ECS/RigidBodyComponent.h>
 #include <Deliberation/ECS/System.h>
 
 #include "Equipment.h"

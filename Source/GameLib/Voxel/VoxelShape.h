@@ -33,6 +33,8 @@ public:
 
     void updateVoxel(const glm::uvec3 & voxel, bool set);
 
+    void updateMassProperties() override;
+
     bool lineCast(
         const Transform3D & transform,
         const Ray3D &       ray,
@@ -86,16 +88,13 @@ private:
     using ChunkLeaf = std::shared_ptr<Subtree<VoxelLeaf>>;
 
 private:
-    void updateMassProperties() const;
-
-private:
     glm::uvec3         m_size;
     Subtree<ChunkLeaf> m_tree;
     mutable glm::vec3  m_localInertia;
     mutable glm::vec3  m_centerOfMass;
     glm::uvec3         m_voxelPositionAccumulator;
     u32                m_numVoxels = 0;
-    mutable bool       m_massPropertiesDirty = true;
+    bool               m_massPropertiesDirty = true;
     mutable u32        m_absIXX = 0;
     mutable u32        m_absIYY = 0;
     mutable u32        m_absIZZ = 0;

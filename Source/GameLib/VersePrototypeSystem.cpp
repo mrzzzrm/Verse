@@ -1,5 +1,8 @@
 #include "VersePrototypeSystem.h"
 
+#include <Deliberation/Platform/Application.h>
+#include <Deliberation/Platform/ApplicationRuntime.h>
+
 #include <Deliberation/Resource/PrototypesReloadedEvent.h>
 
 #include "Emitter.h"
@@ -22,5 +25,6 @@ void VersePrototypeSystem::onCreated()
 void VersePrototypeSystem::reload()
 {
     m_manager->reload();
-    world().events()->publishEvent(PrototypesReloadedEvent());
+
+    Application::get().runtime()->events()->publishEvent(PrototypesReloadedEvent());
 }

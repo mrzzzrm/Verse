@@ -4,7 +4,10 @@
 
 #include <Deliberation/ECS/Phase.h>
 #include <Deliberation/ECS/Systems/PhysicsWorldSystem.h>
+#include <Deliberation/ECS/Transform3DComponent.h>
 #include <Deliberation/ECS/World.h>
+
+#include <Deliberation/Platform/Application.h>
 
 #include <Deliberation/Scene/Pipeline/RenderManager.h>
 #include <Deliberation/Scene/Pipeline/RenderSystem.h>
@@ -47,7 +50,7 @@ void HailstormManager::onEvent(const VoxelObjectBulletHit & hit)
     auto & vfxManager = world().systemRef<VfxSystem>().manager();
 
     const auto & transform =
-        hit.entity.component<Transform3DComponent>().value();
+        hit.entity.component<Transform3DComponent>().transform();
 
     const auto position = transform.pointLocalToWorld(glm::vec3(hit.voxel));
 
@@ -68,7 +71,7 @@ void HailstormManager::onGameUpdate(const UpdateFrame & updateFrame)
 
     for (const auto & hit : m_hailstormPhysicsWorld.voxelObjectBulletHits())
     {
-        world().events()->publishEvent(hit);
+        Application::get().runtime()->events()->publishEvent(PrototypesReloadedEvent());
     }
 
     for (auto & bullet : m_hailstormPhysicsWorld.destroyedBullets())
