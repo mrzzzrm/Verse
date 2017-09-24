@@ -8,7 +8,7 @@
 
 #include <Deliberation/Scene/Pipeline/RenderManager.h>
 #include <Deliberation/Scene/Pipeline/RenderSystem.h>
-#include <Deliberation/Platform/Application.h>
+#include <Deliberation/Platform/App.h>
 
 #include "HudButton.h"
 #include "HudCrosshairs.h"
@@ -18,10 +18,10 @@
 Hud::Hud(World & world)
     : Base(world)
     , InputLayer(1)
-    , m_inputManager(Application::get().inputManager())
+    , m_inputManager(App::get().inputManager())
     , m_playerSystem(world.systemRef<PlayerSystem>())
 {
-    auto & context = Application::get().drawContext();
+    auto & context = App::get().drawContext();
     auto & physicsWorld = world.systemRef<PhysicsWorldSystem>().physicsWorld();
 
     auto crosshairs = std::make_shared<HudCrosshairs>(*this);

@@ -15,7 +15,7 @@
 #include "HudProxy.h"
 #include "PlayerFlightControl.h"
 #include "PlayerSystem.h"
-#include "ResourceManager.h"
+#include "Deliberation/Resource/ResourceManager.h"
 
 HudEntityMarkers::HudEntityMarkers(
     Hud &                hud,
@@ -25,7 +25,7 @@ HudEntityMarkers::HudEntityMarkers(
     : HudLayer(hud)
     , m_physicsWorld(physicsWorld)
     , m_camera(camera)
-    , m_renderer(context, hud.world().systemRef<ResourceManager>())
+    , m_renderer(context)
 {
 }
 

@@ -11,26 +11,28 @@
 #include <Deliberation/ECS/Transform3DComponent.h>
 #include <Deliberation/ECS/World.h>
 
+#include <Deliberation/Resource/ResourceManager.h>
+
 #include <Deliberation/Scene/Camera3D.h>
 #include <Deliberation/Scene/Pipeline/RenderManager.h>
 #include <Deliberation/Scene/Pipeline/RenderSystem.h>
-#include <Deliberation/Platform/Application.h>
+
+#include <Deliberation/Platform/App.h>
+#include <Deliberation/Platform/AppRuntime.h>
 
 #include "Equipment.h"
 #include "Hud.h"
 #include "PlayerSystem.h"
-#include "R.h"
-#include "ResourceManager.h"
 #include "VoxelObject.h"
 #include "Weapon.h"
 
 HudCrosshairs::HudCrosshairs(Hud & hud)
     : HudLayer(hud)
-    , m_drawContext(Application::get().drawContext())
+    , m_drawContext(App::get().drawContext())
     , m_playerSystem(hud.world().systemRef<PlayerSystem>())
     , m_renderManager(hud.world().systemRef<RenderSystem>().renderManager())
 {
-    auto & resourceManager = hud.world().systemRef<ResourceManager>();
+    auto & resourceManager = *App::get().runtime()->resourceManager();
     auto   mesh = resourceManager.mesh(R::UiCrosshairMesh);
     auto   program = resourceManager.program(R::HudElement);
 

@@ -7,12 +7,12 @@
 #include <Deliberation/ECS/Transform3DComponent.h>
 #include <Deliberation/ECS/World.h>
 
-#include <Deliberation/Platform/Application.h>
+#include <Deliberation/Platform/App.h>
 
 #include <Deliberation/Scene/Pipeline/RenderManager.h>
 #include <Deliberation/Scene/Pipeline/RenderSystem.h>
 
-#include "ResourceManager.h"
+#include "Deliberation/Resource/ResourceManager.h"
 #include "VoxelWorld.h"
 #include "VoxelObjectBulletHit.h"
 #include "VfxSystem.h"
@@ -20,8 +20,7 @@
 HailstormManager::HailstormManager(World & world)
     : Base(world)
     , m_vfxManager(
-          world.systemRef<RenderSystem>().renderManager(),
-          world.systemRef<ResourceManager>())
+          world.systemRef<RenderSystem>().renderManager())
     , m_hailstormPhysicsWorld(
           world.systemRef<PhysicsWorldSystem>().physicsWorld(),
           world.systemRef<VoxelWorld>())
@@ -71,7 +70,7 @@ void HailstormManager::onGameUpdate(const UpdateFrame & updateFrame)
 
     for (const auto & hit : m_hailstormPhysicsWorld.voxelObjectBulletHits())
     {
-        Application::get().runtime()->events()->publishEvent(PrototypesReloadedEvent());
+        App::get().runtime()->events()->publishEvent(hit);
     }
 
     for (auto & bullet : m_hailstormPhysicsWorld.destroyedBullets())

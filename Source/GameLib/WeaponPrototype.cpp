@@ -7,7 +7,7 @@
 #include <Deliberation/Resource/PrototypeManager.h>
 
 #include "HailstormManager.h"
-#include "ResourceManager.h"
+#include "Deliberation/Resource/ResourceManager.h"
 
 WeaponPrototype::WeaponPrototype(const std::weak_ptr<PrototypeManager> &prototypeManager):
     AbstractPrototype(prototypeManager)
@@ -15,8 +15,8 @@ WeaponPrototype::WeaponPrototype(const std::weak_ptr<PrototypeManager> &prototyp
 
 void WeaponPrototype::onReload(const Json & json)
 {
-    auto & world = prototypeManagerRef().world();
-    auto & resourceManager = world.systemRef<ResourceManager>();
+    auto & world = *App::get().runtime()->world();
+    auto & resourceManager = *App::get().runtime()->resourceManager();
     auto & hailstormManager = world.systemRef<HailstormManager>();
 
     auto resourceToken = resourceManager.resourceToken<std::shared_ptr<MeshData>>(json["Bullet"]);

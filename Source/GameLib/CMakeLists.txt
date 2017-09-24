@@ -73,12 +73,6 @@ add_library(${target}
     Resource/NpcControllerPrototype.h
     Resource/PlayerFlightControlPrototype.cpp
     Resource/PlayerFlightControlPrototype.h
-    Resource/ResourceManager.cpp
-    Resource/ResourceManager.h
-    Resource/ResourceManager.inl
-    Resource/R.h
-    Resource/VerseResourceManager.cpp
-    Resource/VerseResourceManager.h
     Resource/VoxelMaterialComponentPrototype.cpp
     Resource/VoxelMaterialComponentPrototype.h
     Resource/VoxelRigidBodyPrototype.cpp
@@ -224,8 +218,8 @@ add_library(${target}
     GameLib.h
     LaunchDefenseBehaviour.cpp
     LaunchDefenseBehaviour.h
-    VerseApplicationRuntime.cpp
-    VerseApplicationRuntime.h
+    VerseRuntime.cpp
+    VerseRuntime.h
     VerseRenderManager.cpp
     VerseRenderManager.h
     VoxelLight.cpp
@@ -233,9 +227,7 @@ add_library(${target}
     Weapon.cpp
     Weapon.h
     WeaponPrototype.cpp
-    WeaponPrototype.h
-    VersePrototypeSystem.cpp
-    VersePrototypeSystem.h)
+    WeaponPrototype.h)
 
 target_include_directories(${target}
     PUBLIC

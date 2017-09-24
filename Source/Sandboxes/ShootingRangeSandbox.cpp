@@ -17,7 +17,7 @@
 #include <Deliberation/Physics/PhysicsWorld.h>
 #include <Deliberation/Physics/RigidBody.h>
 
-#include <Deliberation/Platform/Application.h>
+#include <Deliberation/Platform/App.h>
 
 #include <Deliberation/Scene/Camera3D.h>
 #include <Deliberation/Scene/CameraDolly3D.h>
@@ -40,8 +40,8 @@
 #include "NpcFlightControl.h"
 #include "NpcSteering.h"
 #include "PlayerFlightControl.h"
-#include "ResourceManager.h"
-#include "VerseApplicationRuntime.h"
+#include "Deliberation/Resource/ResourceManager.h"
+#include "VerseRuntime.h"
 #include "VfxManager.h"
 #include "VoxReader.h"
 #include "VoxelClusterContact.h"
@@ -56,11 +56,11 @@
 
 using namespace deliberation;
 
-class ShootingRangeSandbox : public VerseApplicationRuntime
+class ShootingRangeSandbox : public VerseRuntime
 {
 public:
     ShootingRangeSandbox()
-        : VerseApplicationRuntime(
+        : VerseRuntime(
               "ShootingRangeSandbox", VerseApplicationSystemInitMode::NoSystems)
     {
     }

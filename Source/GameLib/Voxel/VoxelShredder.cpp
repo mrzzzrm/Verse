@@ -1,12 +1,73 @@
 #include "VoxelShredder.h"
 
 #include <Deliberation/Core/Math/Random.h>
+#include <Deliberation/ECS/Transform3DComponent.h>
+#include <Deliberation/ECS/RigidBodyComponent.h>
 
 #include <glm/glm.hpp>
 
 #include "VoxelClusterSplitSystem.h"
 
 #include "VoxelObject.h"
+
+std::vector<Entity> VoxelShredder::explode(Entity & originalEntity)
+{
+    std::vector<Entity> segmentEntities;
+
+    auto origin = originalEntity.component<Transform3DComponent>().transform().position();
+
+    VoxelShredder shredder;
+    auto entities = shredder.shred(originalEntity);
+
+    for (auto & entity : entities)
+    {
+        auto & object = entity.component<VoxelObject>();
+        auto & originalVoxelData = object.data();
+        auto & splitDetector = object.data()->splitDetector();
+
+        object.performSplitDetection();
+
+        const auto & segments = splitDetector.segments();
+
+        AssertM(
+            !segments.empty() || originalVoxelData->numVoxels() == 0,
+            entity.name() +
+            ": there has to be one split, the object itself, by "
+                "definition. "
+                "Remaining voxels: " +
+            std::to_string(originalVoxelData->numVoxels()));
+
+        if (segments.size() <= 1)
+        {
+            segmentEntities.emplace_back(entity);
+            continue;
+        }
+
+        for (size_t s = 0; s < segments.size(); s++)
+        {
+            auto entity2 = VoxelClusterSplitSystem::splitVoxelsOffEntity(entity, segments[s]);
+            segmentEntities.emplace_back(entity2);
+        }
+
+        entity.scheduleRemoval();
+    }
+
+    // Apply explosive forces
+    for (auto & entity : segmentEntities) {
+        auto & body = entity.component<RigidBodyComponent>().value();
+        body->adaptShape();
+
+        const auto direction = GLMSafeNormalize(body->transform().position() - origin);
+        const auto intensity = RandomFloat(750.0f, 1800.0f) * body->mass() / 4.0f;
+
+        body->applyCentralImpulse(direction * intensity);
+        body->applyTorqueImpulse(0.008f * RandomVec3(1.0f, 2.0f) * intensity);
+    }
+
+    originalEntity.scheduleRemoval();
+
+    return segmentEntities;
+}
 
 std::vector<Entity> VoxelShredder::shred(const Entity & originalEntity)
 {

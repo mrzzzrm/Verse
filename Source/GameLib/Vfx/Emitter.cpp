@@ -3,7 +3,7 @@
 #include <Deliberation/Core/UpdateFrame.h>
 #include <Deliberation/Resource/PrototypeManager.h>
 
-#include "ResourceManager.h"
+#include "Deliberation/Resource/ResourceManager.h"
 #include "VfxManager.h"
 #include "VfxParticle.h"
 #include "VfxSystem.h"
@@ -240,8 +240,8 @@ void Emitter::onReload(const Json & json)
         }
 
         // Mesh
-        auto & world = prototypeManagerRef().world();
-        auto & resourceManager = world.systemRef<ResourceManager>();
+        auto & world = *App::get().runtime()->world();
+        auto & resourceManager = *App::get().runtime()->resourceManager();
         auto & vfxManager = world.systemRef<VfxSystem>().manager();
 
         auto resourceToken = resourceManager.resourceToken<std::shared_ptr<MeshData>>(strategiesJson["Mesh"]);

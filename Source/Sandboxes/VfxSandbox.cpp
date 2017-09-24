@@ -3,15 +3,15 @@
 
 #include <Deliberation/Core/Optional.h>
 #include <Deliberation/Physics/PhysicsWorld.h>
-#include <Deliberation/Platform/Application.h>
+#include <Deliberation/Platform/App.h>
 #include <Deliberation/Scene/Camera3D.h>
 #include <Deliberation/Scene/Debug/DebugCameraNavigator3D.h>
 #include <Deliberation/Scene/Debug/DebugGroundPlaneRenderer.h>
 #include <Deliberation/Scene/UVSphere.h>
 
 #include "Emitter.h"
-#include "ResourceManager.h"
-#include "VerseApplicationRuntime.h"
+#include "Deliberation/Resource/ResourceManager.h"
+#include "VerseRuntime.h"
 #include "VfxManager.h"
 #include "VfxSystem.h"
 #include "VoxelRenderable.h"
@@ -19,11 +19,11 @@
 
 using namespace deliberation;
 
-class VfxSandbox : public VerseApplicationRuntime
+class VfxSandbox : public VerseRuntime
 {
 public:
     VfxSandbox()
-        : VerseApplicationRuntime(
+        : VerseRuntime(
               "VfxSandbox", VerseApplicationSystemInitMode::NoSystems)
     {
     }

@@ -1,9 +1,9 @@
-#include <Deliberation/Platform/Application.h>
+#include <Deliberation/Platform/App.h>
 
-#include "VerseApplicationRuntime.h"
+#include "VerseRuntime.h"
 
 using namespace deliberation;
 
 int main(int argc, char * argv[]) {
-    Application::get().run(std::make_shared<VerseApplicationRuntime>(), argc, argv);
+    App::get().run(std::make_shared<VerseRuntime>(), argc, argv);
 }

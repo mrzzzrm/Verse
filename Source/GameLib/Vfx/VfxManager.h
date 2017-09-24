@@ -5,20 +5,18 @@
 #include <Deliberation/Core/Optional.h>
 #include <Deliberation/Core/SparseVector.h>
 #include <Deliberation/Resource/ResourceToken.h>
+#include <Deliberation/Resource/ResourceManager.h>
 
 #include "EmitterInstance.h"
-#include "R.h"
 #include "VfxParticle.h"
 #include "VfxMeshRenderer.h"
 #include "VfxPointLightManager.h"
-
-class ResourceManager;
 
 class VfxManager final
 {
 public:
     VfxManager(
-        RenderManager & renderManager, ResourceManager & resourceManager);
+        RenderManager & renderManager);
 
     VfxMeshRenderer &       meshRenderer();
     const VfxMeshRenderer & meshRenderer() const;
@@ -65,7 +63,6 @@ private:
     static void centerMesh(std::shared_ptr<MeshData> inputMesh);
 
 private:
-    ResourceManager &                               m_resourceManager;
     std::shared_ptr<VfxMeshRenderer>                m_meshRenderer;
     std::shared_ptr<VfxPointLightManager>           m_pointLightManager;
     std::unordered_map<size_t, VfxMeshId>           m_meshIdByResourceId;

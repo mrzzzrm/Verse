@@ -7,17 +7,17 @@
 
 namespace deliberation
 {
+class ResourceManager;
 class DrawContext;
 }
 
 class HudButton;
-class ResourceManager;
 
 class HudEntityMarkersRenderer
 {
 public:
     HudEntityMarkersRenderer(
-        DrawContext & context, ResourceManager & resourceManager);
+        DrawContext & context);
 
     void render(const std::vector<std::shared_ptr<HudButton>> & markers);
 

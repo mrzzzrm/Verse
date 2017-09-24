@@ -54,7 +54,7 @@ void HailstormPhysicsWorld::update(const UpdateFrame & updateFrame)
 
         auto markedForDestruction = false;
 
-        if (currentMillis > bullet.particle.birth) continue;
+        if (currentMillis < bullet.particle.birth) continue;
 
         if (currentMillis > bullet.particle.birth + bullet.particle.lifetime)
         {
@@ -65,6 +65,8 @@ void HailstormPhysicsWorld::update(const UpdateFrame & updateFrame)
         m_physicsWorld.lineCast(
             Ray3D::fromTo(a, b),
             [&](const RayCastIntersection & intersection) -> bool {
+
+
                 auto & body = intersection.body;
 
                 if (body->shape()->type() ==
@@ -86,8 +88,8 @@ void HailstormPhysicsWorld::update(const UpdateFrame & updateFrame)
                     voxelObject.processImpact(
                         voxelClusterIntersection.voxel, 100, 2);
 
-//                    m_voxelObjectBulletHits.emplace_back(
-//                        entity, voxelClusterIntersection.voxel, bullet);
+                    m_voxelObjectBulletHits.emplace_back(
+                        entity, voxelClusterIntersection.voxel, bullet);
 
                     auto localHitPoint =
                         glm::vec3(voxelClusterIntersection.voxel);

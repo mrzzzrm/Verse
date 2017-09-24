@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "ResourceManager.h"
+#include "Deliberation/Resource/ResourceManager.h"
 
 struct Foo
 {

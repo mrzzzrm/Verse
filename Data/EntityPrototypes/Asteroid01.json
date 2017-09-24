@@ -2,6 +2,9 @@
     "Components": {
         "Transform3D": { "Scale": 3 },
         "VoxelObject": { "VoxelCluster": "Asteroid01"},
-        "VoxelRigidBody": {}
+        "VoxelRigidBody": {},
+        "Hull": {
+            "MaxHealth": 100
+        }
     }
 }

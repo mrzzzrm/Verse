@@ -9,6 +9,7 @@
 class VoxelShredder final
 {
 public:
+    std::vector<Entity> explode(Entity & originalEntity);
     std::vector<Entity> shred(const Entity & originalEntity);
     std::vector<VoxelClusterSegment> shred(const VoxelCluster<u32> & input);
 

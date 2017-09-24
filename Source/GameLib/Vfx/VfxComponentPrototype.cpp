@@ -1,6 +1,9 @@
 #include "VfxComponentPrototype.h"
 
-#include <Deliberation/Resource/PrototypeSystem.h>
+#include <Deliberation/Platform/AppRuntime.h>
+#include <Deliberation/Platform/App.h>
+
+#include <Deliberation/Resource/PrototypeManager.h>
 
 #include "VfxManager.h"
 #include "VfxSystem.h"
@@ -10,7 +13,7 @@ void VfxComponentPrototype::updateComponent(const Entity & entity, VfxComponent 
     auto world = this->world();
     Assert(world);
 
-    auto & prototypeManager = world->systemRef<PrototypeSystem>().manager();
+    auto & prototypeManager = App::get().runtime()->prototypeManager();
     auto & vfxManager = world->systemRef<VfxSystem>().manager();
 
     for (auto & instance : vfxComponent.m_instances)

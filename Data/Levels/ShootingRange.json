@@ -1,20 +1,31 @@
 {
   "Entities": [
-  {
-    "LID": "player",
-    "Name": "PlayerShip",
-    "Bases": ["Ship3", "Player"]
-  },
-  {
-    "LID": "station",
-    "Name": "Station",
-    "Bases": ["Block50x1x1"],
-    "Components": {
-      "Transform3D": {
-        "Position": [0, 0, -100],
-        "Orientation": [0, 0, 0]
+    {
+      "LID": "player",
+      "Name": "PlayerShip",
+      "Bases": ["Ship3", "Player"]
+    },
+    {
+      "LID": "station",
+      "Name": "Station",
+      "Bases": ["Block50x1x1"],
+      "Components": {
+        "Transform3D": {
+          "Position": [0, 0, -100],
+          "Orientation": [0, 0, 0]
+        }
+      }
+    },
+    {
+      "LID": "asteroid",
+      "Name": "Asteroid",
+      "Bases": ["Asteroid00"],
+      "Components": {
+        "Transform3D": {
+          "Position": [0, 20, -100],
+          "Orientation": [0, 0, 0]
+        }
       }
     }
-  }
   ]
 }

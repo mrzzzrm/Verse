@@ -2,14 +2,19 @@
 
 #include <Deliberation/Draw/DrawContext.h>
 
+#include <Deliberation/Resource/ResourceManager.h>
+
+#include <Deliberation/Platform/App.h>
+#include <Deliberation/Platform/AppRuntime.h>
+
 #include "HudButton.h"
-#include "R.h"
-#include "ResourceManager.h"
 
 HudEntityMarkersRenderer::HudEntityMarkersRenderer(
-    DrawContext & context, ResourceManager & resourceManager)
+    DrawContext & context)
     : m_drawContext(context)
 {
+    auto & resourceManager = *App::get().runtime()->resourceManager();
+
     auto mesh = resourceManager.mesh(R::HudEntityMarkerUpperLeft);
     auto program = resourceManager.program(R::HudElement);
 

@@ -20,6 +20,9 @@
         },
         "VoxelMaterial": {
             "Palette": "Palette0"
+        },
+        "Hull": {
+            "MaxHealth": 500
         }
     }
 }

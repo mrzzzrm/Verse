@@ -15,7 +15,7 @@
 
 #include <Deliberation/Physics/PhysicsWorld.h>
 
-#include <Deliberation/Platform/Application.h>
+#include <Deliberation/Platform/App.h>
 #include <Deliberation/Scene/Camera3D.h>
 #include <Deliberation/Scene/Pipeline/RenderManager.h>
 #include <Deliberation/Scene/Pipeline/RenderSystem.h>
@@ -27,7 +27,7 @@
 VoxelWorld::VoxelWorld(World & world, const Texture & envMap)
     : Base(
           world, ComponentFilter::requires<Transform3DComponent, VoxelObject>())
-    , m_drawContext(Application::get().drawContext())
+    , m_drawContext(App::get().drawContext())
     , m_envMap(envMap)
 {
     m_renderer = world.systemRef<RenderSystem>()

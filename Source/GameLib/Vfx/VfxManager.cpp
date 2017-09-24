@@ -10,16 +10,16 @@
 #include <Deliberation/Draw/DrawContext.h>
 #include <Deliberation/Draw/Texture.h>
 
+#include <Deliberation/Resource/ResourceManager.h>
+
 #include <Deliberation/Scene/Pipeline/RenderManager.h>
 #include <Deliberation/Scene/Texture/TextureLoader.h>
 #include <Deliberation/Scene/Lighting/PointLightRenderer.h>
 
-#include "ResourceManager.h"
 #include "VoxelWorld.h"
 
 VfxManager::VfxManager(
-    RenderManager & renderManager, ResourceManager & resourceManager)
-    : m_resourceManager(resourceManager)
+    RenderManager & renderManager)
 {
     m_meshRenderer = renderManager.addRenderer<VfxMeshRenderer>();
     m_pointLightManager = std::make_shared<VfxPointLightManager>(renderManager.renderer<PointLightRenderer>());
@@ -34,7 +34,7 @@ VfxMeshId VfxManager::getOrCreateMeshId(const ResourceToken & resourceToken)
     auto iter = m_meshIdByResourceId.find((size_t)resourceToken.id());
     if (iter == m_meshIdByResourceId.end())
     {
-        const auto & mesh = m_resourceManager.resource<std::shared_ptr<MeshData>>(resourceToken);
+        const auto & mesh = App::get().runtime()->resourceManager()->resource<std::shared_ptr<MeshData>>(resourceToken);
         auto   processedMesh = processMesh(mesh);
         centerMesh(processedMesh);
         const auto   meshId = m_meshRenderer->addMesh(processedMesh);

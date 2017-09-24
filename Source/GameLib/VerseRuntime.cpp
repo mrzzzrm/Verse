@@ -1,4 +1,4 @@
-#include "VerseApplicationRuntime.h"
+#include "VerseRuntime.h"
 
 #include <Deliberation/Core/Assert.h>
 
@@ -11,12 +11,12 @@
 #include <Deliberation/ImGui/ImGuiSystem.h>
 #include <Deliberation/ImGui/ImGuiSystem.h>
 
-#include <Deliberation/Resource/PrototypeSystem.h>
-
 #include <Deliberation/Scene/Debug/DebugPointLightSystem.h>
 #include <Deliberation/Scene/Effects/BloomRenderer.h>
 #include <Deliberation/Scene/Lighting/PointLightRenderer.h>
 #include <Deliberation/Scene/Texture/TextureLoader.h>
+#include <Deliberation/Resource/PrototypeManager.h>
+#include <Deliberation/Resource/ResourceManager.h>
 
 #include "BehaviourSystem.h"
 #include "CoriolisSystem.h"
@@ -25,13 +25,11 @@
 #include "FactionManager.h"
 #include "Hud.h"
 #include "HullSystem.h"
+#include "HullComponent.h"
 #include "NpcBehaviourSystem.h"
 #include "PlayerSystem.h"
-#include "ResourceManager.h"
 #include "VerseRenderManager.h"
 #include "VfxSystem.h"
-#include "VersePrototypeSystem.h"
-#include "VerseResourceManager.h"
 #include "VoxelClusterSplitSystem.h"
 #include "VoxelMaterialSystem.h"
 #include "VoxelPhysicsSystem.h"
@@ -51,18 +49,18 @@
 #include "VoxelObjectPrototype.h"
 #include "VoxelRigidBodyPrototype.h"
 #include "BehaviourSystem.h"
-#include "VersePrototypeSystem.h"
 #include "VoxelMaterialComponentPrototype.h"
+#include "VoxelMeshLoader.h"
 
 constexpr const char * RELOAD_PROTOTYPES_CONTROL = "Reload Scene";
 
-VerseApplicationRuntime::VerseApplicationRuntime(
+VerseRuntime::VerseRuntime(
 VerseApplicationSystemInitMode systemInitMode)
-    : ApplicationRuntime("Verse", ".", GameDataPath("Data/EntityPrototypes/list.json")), m_systemInitMode(systemInitMode)
+    : AppRuntime("Verse", ".", GameDataPath("Data/EntityPrototypes/list.json")), m_systemInitMode(systemInitMode)
 {
 }
 
-void VerseApplicationRuntime::onStartup()
+void VerseRuntime::onStartup()
 {
 
 //    m_physicsWorld.narrowphase()
@@ -79,7 +77,7 @@ void VerseApplicationRuntime::onStartup()
                                    GameDataPath("Data/Skybox/Back.png")};
 
     auto skyboxCubemapBinary = TextureLoader(skyboxPaths).load();
-    m_skyboxCubemap = Application::get().drawContext().createTexture(skyboxCubemapBinary);
+    m_skyboxCubemap = App::get().drawContext().createTexture(skyboxCubemapBinary);
 
     if (m_systemInitMode == VerseApplicationSystemInitMode::AllSystems)
     {
@@ -89,14 +87,35 @@ void VerseApplicationRuntime::onStartup()
         m_world->activityManager()->addActivityType<VoxelShredderSandbox>("VoxelShredderSandbox");
 
         /**
-         * Add systems
+         * Register Resource Loaders
+         */
+        {
+            auto & manager = App::get().runtime()->resourceManager();
+
+            manager->setLoader<std::shared_ptr<MeshData>>([&] (const auto & path) {
+                if (StringEndsWith(path, ".vox")) {
+                    return VoxelMeshLoader().load(path);
+                } else {
+                    Fail("Only voxel meshes supported right now, can't load '" + path + "'");
+                    return std::shared_ptr<MeshData>();
+                }
+            });
+            manager->setLoader<VoxReader::VoxelModels>([&] (const std::string & path) -> VoxReader::VoxelModels{
+                auto models = VoxReader().read(path);
+                Log->info("Loaded {} models", models.size());
+                return models;
+            });
+
+            manager->registerBuildIns();
+        }
+        /**
+         * Add Systems
          */
         m_world->addSystem<RenderSystem>();
         auto pointLightSystem = m_world->addSystem<PointLightSystem>();
 //        m_world->addSystem<DebugPointLightSystem>(
 //            pointLightSystem->pointLightRenderer());
         m_world->addSystem<SkyboxSystem>(m_skyboxCubemap);
-        m_world->addSystem<VerseResourceManager>();
         m_physicsWorldSystem =
             m_world->addSystem<PhysicsWorldSystem>();
         m_world->addSystem<VoxelClusterSplitSystem>();
@@ -104,7 +123,7 @@ void VerseApplicationRuntime::onStartup()
         m_world->addSystem<NpcControllerSystem>();
         m_world->addSystem<HailstormManager>();
         m_world->addSystem<VfxSystem>();
-        m_world->addSystem<DebugOverlay>(Application::get().drawContext());
+        m_world->addSystem<DebugOverlay>(App::get().drawContext());
         m_world->addSystem<CoriolisSystem>();
         m_world->addSystem<EquipmentSystem>();
         m_world->addSystem<PlayerSystem>();
@@ -116,8 +135,21 @@ void VerseApplicationRuntime::onStartup()
         m_world->addSystem<VoxelPhysicsSystem>();
         m_world->addSystem<DebugAttachmentSystem>();
         m_world->addSystem<HullSystem>();
-        m_world->addSystem<VersePrototypeSystem>();
         m_world->addSystem<VoxelMaterialSystem>();
+
+        /**
+         * Register Prototypes
+         */
+        {
+            auto & manager = App::get().runtime()->prototypeManager();
+
+            manager->addPath<WeaponPrototype>(GameDataPath("Data/Prototypes/Weapons.json"));
+            manager->addPath<VoxelMaterialPalettePrototype>(GameDataPath("Data/Prototypes/VoxelMaterialPalettes.json"));
+            manager->addPath<VoxelMaterialPrototype>(GameDataPath("Data/Prototypes/VoxelMaterials.json"));
+            manager->addPath<Emitter>(GameDataPath("Data/Prototypes/Emitters.json"));
+
+            manager->reload();
+        }
 
         /**
          * Register ComponentPrototypes
@@ -149,15 +181,14 @@ void VerseApplicationRuntime::onStartup()
             "VoxelMaterial");
             manager.registerComponentPrototype<VfxComponentPrototype>(
             "VfxComponent");
+            manager.registerComponentPrototype<HullComponentPrototype>(
+                "Hull");
     
             auto & imGuiSystem = m_world->systemRef<ImGuiSystem>();
             imGuiSystem.addControlItem(RELOAD_PROTOTYPES_CONTROL, [&]() {
-                auto prototypeSystem = m_world->system<VersePrototypeSystem>();
-                if (prototypeSystem)
-                {
-                    prototypeSystem->reload();
-                }
-    
+                App::get().runtime()->prototypeManager()->reload();
+                App::get().runtime()->events()->publishEvent(PrototypesReloadedEvent());
+
                 auto levelSystem = m_world->system<LevelSystem>();
                 if (levelSystem)
                 {
@@ -182,7 +213,7 @@ void VerseApplicationRuntime::onStartup()
         renderManager.addRenderer<SsaoRenderer>();
         renderManager.addRenderer<HdrRenderer>();
 
-        m_world->addSystem<LevelSystem>(GameDataPath("Data/Levels/VoxelShredderSandbox.json")); // Do this last because it adds entities
+        m_world->addSystem<LevelSystem>(GameDataPath("Data/Levels/level0.json")); // Do this last because it adds entities
     }
 
     m_world->systemRef<PhysicsWorldSystem>().physicsWorld().primitiveTester().registerPrimitiveTest(
@@ -194,14 +225,14 @@ void VerseApplicationRuntime::onStartup()
     deliberation::DisableGLErrorChecks();
 }
 
-void VerseApplicationRuntime::onFrame(DurationMicros micros)
+void VerseRuntime::onFrame(DurationMicros micros)
 {
     m_world->frameBeginPhase();
     
     m_updateFrame.setPhysicsSeconds(0.0f);
     m_updateFrame.setBeginMicros(m_updateFrame.beginMicros() + m_updateFrame.gameMicros());
 
-    if (!Application::get().gameplayPaused())
+    if (!App::get().gameplayPaused())
     {
         m_updateFrame.setGameMicros(micros);
 

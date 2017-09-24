@@ -17,8 +17,8 @@
 #include <Deliberation/Physics/PhysicsWorld.h>
 #include <Deliberation/Physics/RigidBody.h>
 
-#include <Deliberation/Platform/Application.h>
-#include <Deliberation/Platform/ApplicationRuntime.h>
+#include <Deliberation/Platform/App.h>
+#include <Deliberation/Platform/AppRuntime.h>
 
 #include <Deliberation/Scene/Camera3D.h>
 #include <Deliberation/Scene/CameraDolly3D.h>
@@ -65,10 +65,10 @@ enum class VerseApplicationSystemInitMode
     AllSystems
 };
 
-class VerseApplicationRuntime : public ApplicationRuntime
+class VerseRuntime : public AppRuntime
 {
 public:
-    explicit VerseApplicationRuntime(VerseApplicationSystemInitMode systemInitMode =
+    explicit VerseRuntime(VerseApplicationSystemInitMode systemInitMode =
         VerseApplicationSystemInitMode::AllSystems);
 
     void onStartup() final override;

@@ -18,7 +18,7 @@
 #include <Deliberation/Physics/RigidBody.h>
 
 #include <Deliberation/Platform/InputManager.h>
-#include <Deliberation/Platform/Application.h>
+#include <Deliberation/Platform/App.h>
 #include <Deliberation/Platform/KeyMap.h>
 
 #include <Deliberation/Scene/Camera3D.h>
@@ -28,7 +28,7 @@
 #include "AimHelper.h"
 #include "Equipment.h"
 #include "PlayerFlightControl.h"
-#include "ResourceManager.h"
+#include "Deliberation/Resource/ResourceManager.h"
 #include "VoxelObject.h"
 
 PlayerSystem::PlayerSystem(World & world)
@@ -41,7 +41,7 @@ PlayerSystem::PlayerSystem(World & world)
               PlayerFlightControl,
               Equipment>())
     , InputLayer(0)
-    , m_inputManager(Application::get().inputManager())
+    , m_inputManager(App::get().inputManager())
     , m_cameraMode(CameraMode::FreeFlight)
     , m_navigator(
           world.systemRef<RenderSystem>().renderManager().mainCamera(),

@@ -2,7 +2,7 @@
 
 #include <Deliberation/Core/Optional.h>
 #include <Deliberation/Physics/PhysicsWorld.h>
-#include <Deliberation/Platform/Application.h>
+#include <Deliberation/Platform/App.h>
 #include <Deliberation/Scene/Camera3D.h>
 #include <Deliberation/Scene/Debug/DebugCameraNavigator3D.h>
 
@@ -12,10 +12,10 @@
 
 using namespace deliberation;
 
-class VoxelObjectSandbox : public Application
+class VoxelObjectSandbox : public App
 {
 public:
-    VoxelObjectSandbox() : Application("VoxelObjectSandbox") {}
+    VoxelObjectSandbox() : App("VoxelObjectSandbox") {}
 
     void onStartup() override
     {

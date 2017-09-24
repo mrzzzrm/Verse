@@ -5,7 +5,6 @@
 
 #include "Equipment.h"
 #include "HailstormManager.h"
-#include "R.h"
 #include "VoxelObject.h"
 #include "Weapon.h"
 

@@ -21,5 +21,5 @@ struct VoxelObjectBulletHit
     Entity          entity;
     glm::uvec3      voxel;
     HailstormBullet bullet;
-    float           damage = 0.0f;
+    float           damage = 10.0f;
 };

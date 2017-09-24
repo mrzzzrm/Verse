@@ -14,7 +14,7 @@
 #include <Deliberation/Scene/Pipeline/RenderSystem.h>
 
 #include "Emitter.h"
-#include "ResourceManager.h"
+#include "Deliberation/Resource/ResourceManager.h"
 #include "VfxManager.h"
 #include "VoxelObject.h"
 #include "VoxelObjectBulletHit.h"
@@ -23,8 +23,7 @@
 VfxSystem::VfxSystem(World & world)
     : Base(world)
     , m_vfxManager(std::make_shared<VfxManager>(
-          world.systemRef<RenderSystem>().renderManager(),
-          world.systemRef<ResourceManager>()))
+          world.systemRef<RenderSystem>().renderManager()))
 {
     m_debugRenderer = std::make_shared<VfxDebugRenderer>(world.systemRef<RenderSystem>().renderManager(),
                                                          m_vfxManager);
@@ -51,14 +50,14 @@ void VfxSystem::onEvent(const VoxelObjectModification & modification)
 //    }
 }
 
-void VfxSystem::onEvent(const PrototypesReloadedEvent & event)
+void VfxSystem::onEvent(const VoxelObjectBulletHit & event)
 {
     m_vfxManager->rebuildEmitterInstances();
 }
 
 void VfxSystem::onCreated()
 {
-    subscribeEvent<PrototypesReloadedEvent>();
+    subscribeEvent<VoxelObjectBulletHit>();
 }
 
 void VfxSystem::onGameUpdate(const UpdateFrame & updateFrame) {

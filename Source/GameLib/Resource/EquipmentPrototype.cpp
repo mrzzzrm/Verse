@@ -3,19 +3,19 @@
 #include <Deliberation/Core/Assert.h>
 #include <Deliberation/Core/Json.h>
 #include <Deliberation/Core/StreamUtils.h>
-#include <Deliberation/Resource/PrototypeSystem.h>
+
+#include <Deliberation/Resource/PrototypeManager.h>
 
 #include "Equipment.h"
 #include "Hardpoint.h"
 #include "HailstormManager.h"
-#include "VersePrototypeSystem.h"
 
 void EquipmentPrototype::updateComponent(const Entity & entity, Equipment & equipment)
 {
     auto world = this->world();
     Assert(world);
 
-    auto prototypeManager = world->systemRef<VersePrototypeSystem>().manager();
+    auto prototypeManager = App::get().runtime()->prototypeManager();
 
     /**
      * Clear Equipment
@@ -69,7 +69,7 @@ void EquipmentPrototype::updateComponent(const Entity & entity, Equipment & equi
             if (desc.compatibleWeapons.size() > 0)
             {
                 auto weaponPrototype =
-                    world->systemRef<PrototypeSystem>().manager()->prototype<WeaponPrototype>(desc.compatibleWeapons[0]);
+                    App::get().runtime()->prototypeManager()->prototype<WeaponPrototype>(desc.compatibleWeapons[0]);
                 auto & hailstormManager =
                     world->systemRef<HailstormManager>();
                 Assert(static_cast<bool>(weaponPrototype));

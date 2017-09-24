@@ -14,7 +14,7 @@
 
 namespace deliberation
 {
-class Application;
+class App;
 }
 
 class DebugOverlay : public System<DebugOverlay>

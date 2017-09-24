@@ -11,7 +11,7 @@
 #include "Equipment.h"
 #include "HailstormBullet.h"
 #include "HailstormManager.h"
-#include "ResourceManager.h"
+#include "Deliberation/Resource/ResourceManager.h"
 
 Weapon::Weapon(
     const std::shared_ptr<const WeaponPrototype> & prototype,

@@ -122,9 +122,6 @@ Entity VoxelClusterSplitSystem::splitVoxelsOffEntity(const Entity & originalEnti
         std::make_shared<RigidBody>(splitVoxelObject.data()->shape());
     splitBody->setEntity(splitEntity);
 
-    std::cout << "Center of mass at split: " << splitVoxelObject.data()->shape()->centerOfMass() << std::endl;
-    std::cout << "segment origin: " << glm::vec3(segment.llf) << std::endl;
-
     auto scale =
         originalEntity.component<Transform3DComponent>().transform().scale();
 
@@ -135,9 +132,6 @@ Entity VoxelClusterSplitSystem::splitVoxelsOffEntity(const Entity & originalEnti
     const auto splitPosition =
         originalBody->transform().position() +
         originalBody->transform().orientation() * relativeCenterOfMass;
-    std::cout << "splitPosition: " << splitPosition <<
-    std::endl;
-
     splitEntity.addComponent<Transform3DComponent>();
 
     splitBody->setLinearVelocity(originalBody->localVelocity(

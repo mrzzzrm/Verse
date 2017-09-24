@@ -4,6 +4,7 @@
 #include "VoxelObject.h"
 #include "VoxelMaterialComponent.h"
 #include "VoxelMaterialComponentPrototype.h"
+#include "VoxelObjectBulletHit.h"
 
 VoxelMaterialSystem::VoxelMaterialSystem(World & world):
     Base(world, ComponentFilter::requires<VoxelMaterialComponent, VoxelObject>())

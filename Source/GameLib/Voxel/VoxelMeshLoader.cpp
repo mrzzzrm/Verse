@@ -1,22 +1,14 @@
 #include "VoxelMeshLoader.h"
 
-#include "ResourceManager.h"
+#include "Deliberation/Resource/ResourceManager.h"
 #include "VoxelWorld.h"
 #include "VoxReader.h"
 #include "VoxelClusterMarchingCubes.h"
 #include "VoxelCluster.h"
 
-VoxelMeshLoader::VoxelMeshLoader(const std::shared_ptr<ResourceManager> & resourceManager,
-                                 const std::shared_ptr<VoxelWorld> & voxelWorld):
-    m_resourceManager(resourceManager),
-    m_voxelWorld(voxelWorld)
-{
-
-}
-
 std::shared_ptr<MeshData> VoxelMeshLoader::load(const std::string & path)
 {
-    auto & voxelModels = m_resourceManager->resource<VoxReader::VoxelModels>(path);
+    auto & voxelModels = App::get().runtime()->resourceManager()->resource<VoxReader::VoxelModels>(path);
     AssertM(voxelModels.size() == 1, "Wrong number of models in '" + path + "'");
 
     auto & voxelModel = voxelModels[0];
@@ -27,7 +19,7 @@ std::shared_ptr<MeshData> VoxelMeshLoader::load(const std::string & path)
         cluster.set(voxel.cell, voxel.colorIndex);
     }
 
-    VoxelClusterMarchingCubes marchingCubes(m_voxelWorld->marchingCubesTriangulation(),
+    VoxelClusterMarchingCubes marchingCubes(App::get().runtime()->world()->systemRef<VoxelWorld>().marchingCubesTriangulation(),
         cluster);
     marchingCubes.run();
 

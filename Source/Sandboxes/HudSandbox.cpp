@@ -3,7 +3,7 @@
 
 #include <Deliberation/Core/Optional.h>
 #include <Deliberation/Physics/PhysicsWorld.h>
-#include <Deliberation/Platform/Application.h>
+#include <Deliberation/Platform/App.h>
 #include <Deliberation/Scene/Camera3D.h>
 #include <Deliberation/Scene/Debug/DebugCameraNavigator3D.h>
 #include <Deliberation/Scene/Debug/DebugGroundPlaneRenderer.h>
@@ -11,16 +11,16 @@
 
 #include "HudButton.h"
 #include "HudEntityMarkersRenderer.h"
-#include "ResourceManager.h"
-#include "VerseApplicationRuntime.h"
+#include "Deliberation/Resource/ResourceManager.h"
+#include "VerseRuntime.h"
 
 using namespace deliberation;
 
-class HudSandbox : public VerseApplicationRuntime
+class HudSandbox : public VerseRuntime
 {
 public:
     HudSandbox()
-        : VerseApplicationRuntime(
+        : VerseRuntime(
               "HudSandbox", VerseApplicationSystemInitMode::NoSystems)
     {
     }

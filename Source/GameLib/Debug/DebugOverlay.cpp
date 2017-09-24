@@ -12,8 +12,8 @@
 
 #include <Deliberation/ImGui/ImGuiSystem.h>
 
-#include <Deliberation/Platform/Application.h>
-#include <Deliberation/Platform/ApplicationRuntime.h>
+#include <Deliberation/Platform/App.h>
+#include <Deliberation/Platform/AppRuntime.h>
 
 #include "HailstormManager.h"
 
@@ -35,7 +35,7 @@ void DebugOverlay::onFrameUpdate(const UpdateFrame & updateFrame)
 
     //    bool open = true;
     //    ImGui::ShowTestWindow(&open);
-    m_fps = Application::get().fps();
+    m_fps = App::get().fps();
 
     const auto & profiler = world().profiler();
     const auto   numScopes = std::min<size_t>(profiler.scopes().size(), 5u);
@@ -162,7 +162,7 @@ void DebugOverlay::onFrameUpdate(const UpdateFrame & updateFrame)
             {
                 ImGui::Columns(3, "Prototype columns");
 
-                auto & prototypeManager = Application::get().runtime()->entityPrototypeManager();
+                auto & prototypeManager = App::get().runtime()->entityPrototypeManager();
 
                 for (auto & pair : prototypeManager->entityPrototypeByKey())
                 {
@@ -226,5 +226,5 @@ void DebugOverlay::onFrameUpdate(const UpdateFrame & updateFrame)
     /**
      * Application Control
      */
-    Application::get().setGameplayPaused(imGuiSystem->showView("Pause Gameplay"));
+    App::get().setGameplayPaused(imGuiSystem->showView("Pause Gameplay"));
 }
