@@ -41,11 +41,9 @@ PlayerSystem::PlayerSystem(World & world)
               PlayerFlightControl,
               Equipment>())
     , InputLayer(0)
-    , m_inputManager(App::get().inputManager())
     , m_cameraMode(CameraMode::FreeFlight)
     , m_navigator(
           world.systemRef<RenderSystem>().renderManager().mainCamera(),
-          m_inputManager,
           150.0f)
     , m_physicsWorld(world.systemRef<PhysicsWorldSystem>().physicsWorld())
     , m_cameraDolly(
@@ -74,17 +72,17 @@ void PlayerSystem::onEntityGameUpdate(Entity & entity, const UpdateFrame & updat
 
     if (m_cameraMode == CameraMode::Normal)
     {
-        if (m_inputManager.keyPressed(Key_W))
+        if (GetGlobal<InputManager>()->keyPressed(Key_W))
             m_linearThrust += glm::vec3(0.0f, 0.0f, -1.0f);
-        if (m_inputManager.keyPressed(Key_S))
+        if (GetGlobal<InputManager>()->keyPressed(Key_S))
             m_linearThrust += glm::vec3(0.0f, 0.0f, 1.0f);
-        if (m_inputManager.keyPressed(Key_D))
+        if (GetGlobal<InputManager>()->keyPressed(Key_D))
             m_linearThrust += glm::vec3(1.0f, 0.0f, 0.0f);
-        if (m_inputManager.keyPressed(Key_A))
+        if (GetGlobal<InputManager>()->keyPressed(Key_A))
             m_linearThrust += glm::vec3(-1.0f, 0.0f, 0.0f);
 
-        if (m_inputManager.keyPressed(Key_Q)) m_angularThrust.z = 1;
-        if (m_inputManager.keyPressed(Key_E)) m_angularThrust.z = -1;
+        if (GetGlobal<InputManager>()->keyPressed(Key_Q)) m_angularThrust.z = 1;
+        if (GetGlobal<InputManager>()->keyPressed(Key_E)) m_angularThrust.z = -1;
 
         flightControl.setLinearThrust(m_linearThrust);
         flightControl.setAngularThrust(m_angularThrust);
@@ -95,7 +93,7 @@ void PlayerSystem::onEntityGameUpdate(Entity & entity, const UpdateFrame & updat
             //            AimHelper aimHelper(m_camera, m_physicsWorld);
             //
             //            auto result =
-            //            aimHelper.getTarget(m_inputManager.mousePosition());
+            //            aimHelper.getTarget(GetGlobal<InputManager>()->mousePosition());
             //            m_debugGeometryRenderer.sphere(0).setColor({1.0f, 1.0f,
             //            0.0f});
             //            m_debugGeometryRenderer.sphere(0).setRadius(2.0f);
@@ -162,7 +160,7 @@ void PlayerSystem::onMouseButtonDown(MouseStateEvent & event)
                 world().systemRef<RenderSystem>().renderManager();
             AimHelper aimHelper(renderManager.mainCamera(), m_physicsWorld);
 
-            auto result = aimHelper.getTarget(m_inputManager.mousePosition());
+            auto result = aimHelper.getTarget(GetGlobal<InputManager>()->mousePosition());
 
             auto &body = *m_player.component<RigidBodyComponent>().value();
 
@@ -183,7 +181,7 @@ void PlayerSystem::onMouseMotion(MouseMotionEvent & event)
 {
     auto &    renderManager = world().systemRef<RenderSystem>().renderManager();
     AimHelper aimHelper(renderManager.mainCamera(), m_physicsWorld);
-    auto result = aimHelper.getTarget(m_inputManager.mousePosition());
+    auto result = aimHelper.getTarget(GetGlobal<InputManager>()->mousePosition());
 
     if (m_cameraMode == CameraMode::FreeFlight)
     {

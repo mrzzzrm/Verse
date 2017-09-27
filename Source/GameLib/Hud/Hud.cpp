@@ -18,7 +18,6 @@
 Hud::Hud(World & world)
     : Base(world)
     , InputLayer(1)
-    , m_inputManager(App::get().inputManager())
     , m_playerSystem(world.systemRef<PlayerSystem>())
 {
     auto & physicsWorld = world.systemRef<PhysicsWorldSystem>().physicsWorld();

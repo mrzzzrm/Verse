@@ -38,8 +38,8 @@ public:
 
     void setPlayerTarget(Entity & entity) { m_playerTarget = entity; }
 
-    void onCreated() override { m_inputManager.addLayer(shared_from_this()); }
-    void onRemoved() override { m_inputManager.removeLayer(shared_from_this()); }
+    void onCreated() override { GetGlobal<InputManager>()->addLayer(shared_from_this()); }
+    void onRemoved() override { GetGlobal<InputManager>()->removeLayer(shared_from_this()); }
 
     void onEntityAdded(Entity & entity) override;
     void onEntityRemoved(Entity & entity) override;
@@ -62,7 +62,6 @@ private:
     };
 
 private:
-    InputManager &        m_inputManager;
     PhysicsWorld & m_physicsWorld;
 
     CameraMode             m_cameraMode;
