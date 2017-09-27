@@ -17,7 +17,7 @@
 
 #include "HailstormManager.h"
 
-DebugOverlay::DebugOverlay(World & world, DrawContext & context)
+DebugOverlay::DebugOverlay(World & world)
     : Base(world)
 {
     m_selectedComponent = std::make_pair(ECS_INVALID_ENTITY_ID, 0);

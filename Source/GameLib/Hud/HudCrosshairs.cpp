@@ -28,7 +28,6 @@
 
 HudCrosshairs::HudCrosshairs(Hud & hud)
     : HudLayer(hud)
-    , m_drawContext(App::get().drawContext())
     , m_playerSystem(hud.world().systemRef<PlayerSystem>())
     , m_renderManager(hud.world().systemRef<RenderSystem>().renderManager())
 {
@@ -36,7 +35,7 @@ HudCrosshairs::HudCrosshairs(Hud & hud)
     auto   mesh = resourceManager.mesh(R::UiCrosshairMesh);
     auto   program = resourceManager.program(R::HudElement);
 
-    m_draw = m_drawContext.createDraw(program);
+    m_draw = GetGlobal<DrawContext>()->createDraw(program);
     m_draw.setIndices(mesh.indices());
     m_draw.addVertices(mesh.vertices());
     m_draw.sampler("Texture").setTexture(mesh.textures()[0]);
@@ -52,7 +51,7 @@ HudCrosshairs::HudCrosshairs(Hud & hud)
 void HudCrosshairs::update(const UpdateFrame & updateFrame)
 {
     const auto halfExtent =
-        glm::vec2(32.0f) / glm::vec2(m_drawContext.backbuffer().size());
+        glm::vec2(32.0f) / glm::vec2(GetGlobal<DrawContext>()->backbuffer().size());
     setHalfExtent(halfExtent);
 
     auto & player = m_playerSystem.player();
@@ -113,7 +112,7 @@ void HudCrosshairs::render()
 
     if (player.isValid() && playerTarget.isValid())
     {
-        m_viewportSizeUniform.set(glm::vec2{m_drawContext.backbuffer().size()});
+        m_viewportSizeUniform.set(glm::vec2{GetGlobal<DrawContext>()->backbuffer().size()});
 
         if (visible())
         {

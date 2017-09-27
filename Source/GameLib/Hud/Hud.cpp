@@ -21,7 +21,6 @@ Hud::Hud(World & world)
     , m_inputManager(App::get().inputManager())
     , m_playerSystem(world.systemRef<PlayerSystem>())
 {
-    auto & context = App::get().drawContext();
     auto & physicsWorld = world.systemRef<PhysicsWorldSystem>().physicsWorld();
 
     auto crosshairs = std::make_shared<HudCrosshairs>(*this);
@@ -32,7 +31,7 @@ Hud::Hud(World & world)
 
     m_layers.emplace_back(crosshairs);
     m_layers.emplace_back(std::make_shared<HudEntityMarkers>(
-        *this, context, physicsWorld, renderManager.mainCamera()));
+        *this, physicsWorld, renderManager.mainCamera()));
 
     activatePhases<GameUpdatePhase>();
 

@@ -30,10 +30,8 @@ struct VfxRenderNode : public RenderNode
 VfxMeshRenderer::VfxMeshRenderer(RenderManager & renderManager)
     : Renderer(renderManager, "VfxMesh")
 {
-    auto & drawContext = renderManager.drawContext();
-
     m_program =
-        drawContext.createProgram({GameDataPath("Data/Shaders/Particle.vert"),
+        GetGlobal<DrawContext>()->createProgram({GameDataPath("Data/Shaders/Particle.vert"),
                                    GameDataPath("Data/Shaders/Particle.frag")});
 
     auto globalsDataLayout =
@@ -44,7 +42,7 @@ VfxMeshRenderer::VfxMeshRenderer(RenderManager & renderManager)
     m_projectionGlobal = m_globals.field<glm::mat4>("Projection");
     m_timeGlobal = m_globals.field<uint32_t>("Time");
 
-    m_globalsBuffer = drawContext.createBuffer(globalsDataLayout);
+    m_globalsBuffer = GetGlobal<DrawContext>()->createBuffer(globalsDataLayout);
 }
 
 const Program & VfxMeshRenderer::program() { return m_program; }

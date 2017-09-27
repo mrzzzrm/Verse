@@ -19,13 +19,12 @@
 
 HudEntityMarkers::HudEntityMarkers(
     Hud &                hud,
-    DrawContext &        context,
     const PhysicsWorld & physicsWorld,
     const Camera3D &     camera)
     : HudLayer(hud)
     , m_physicsWorld(physicsWorld)
     , m_camera(camera)
-    , m_renderer(context)
+    , m_renderer()
 {
 }
 

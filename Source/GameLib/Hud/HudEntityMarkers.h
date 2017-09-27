@@ -28,7 +28,6 @@ class HudEntityMarkers : public HudLayer
 public:
     HudEntityMarkers(
         Hud &                hud,
-        DrawContext &        context,
         const PhysicsWorld & physicsWorld,
         const Camera3D &     camera);
 

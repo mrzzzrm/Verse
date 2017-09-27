@@ -21,8 +21,7 @@ void VoxelObjectPrototype::initComponent(const Entity & entity, VoxelObject & vo
             GameDataPath("Data/VoxelClusters/" + voxelClusterName + ".vox"));
         if (!models.empty())
         {
-            auto palette = std::make_shared<ColorPalette>(
-                m_voxelWorld->drawContext(), models[0].palette);
+            auto palette = std::make_shared<ColorPalette>(models[0].palette);
 
             auto voxelData = std::make_shared<VoxelObjectVoxelData>(
                 *m_voxelWorld, palette, models[0].size);

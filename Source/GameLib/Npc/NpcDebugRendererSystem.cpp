@@ -5,7 +5,7 @@
 #include "NpcController.h"
 
 NpcDebugRendererSystem::NpcDebugRendererSystem(
-    World & world, DrawContext & context, const Camera3D & camera)
+    World & world, const Camera3D & camera)
     : Base(world, ComponentFilter::requires<NpcController>())
     ,
     //    m_geometryManager(context),

@@ -102,7 +102,6 @@ Entity VoxelClusterSplitSystem::splitVoxelsOffEntity(const Entity & originalEnti
     }
 
     auto splitPalette = std::make_shared<ColorPalette>(
-        voxelWorld.drawContext(),
         originalVoxelData->palette()->colors());
 
     const auto splitSize = segment.urb - segment.llf + 1u;

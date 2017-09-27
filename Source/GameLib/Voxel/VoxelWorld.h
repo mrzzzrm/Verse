@@ -33,7 +33,6 @@ class VoxelWorld final : public System<VoxelWorld>
 public:
     VoxelWorld(World & world, const Texture & envMap);
 
-    DrawContext & drawContext() const;
     const VoxelClusterMarchingCubesTriangulation &
                     marchingCubesTriangulation() const;
     const Program & program() const;
@@ -49,7 +48,6 @@ public:
 private:
     std::shared_ptr<VoxelRenderer> m_renderer;
 
-    DrawContext &                          m_drawContext;
     Texture                                m_envMap;
     VoxelClusterMarchingCubesTriangulation m_marchingCubesTriangulation;
     Program                                m_program;

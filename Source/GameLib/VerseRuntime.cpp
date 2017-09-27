@@ -77,7 +77,7 @@ void VerseRuntime::onStartup()
                                    GameDataPath("Data/Skybox/Back.png")};
 
     auto skyboxCubemapBinary = TextureLoader(skyboxPaths).load();
-    m_skyboxCubemap = App::get().drawContext().createTexture(skyboxCubemapBinary);
+    m_skyboxCubemap = GetGlobal<DrawContext>()->createTexture(skyboxCubemapBinary);
 
     if (m_systemInitMode == VerseApplicationSystemInitMode::AllSystems)
     {
@@ -123,7 +123,7 @@ void VerseRuntime::onStartup()
         m_world->addSystem<NpcControllerSystem>();
         m_world->addSystem<HailstormManager>();
         m_world->addSystem<VfxSystem>();
-        m_world->addSystem<DebugOverlay>(App::get().drawContext());
+        m_world->addSystem<DebugOverlay>();
         m_world->addSystem<CoriolisSystem>();
         m_world->addSystem<EquipmentSystem>();
         m_world->addSystem<PlayerSystem>();

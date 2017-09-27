@@ -23,7 +23,6 @@ public:
 private:
     PlayerSystem &  m_playerSystem;
     RenderManager & m_renderManager;
-    DrawContext &   m_drawContext;
     Draw            m_draw;
     Uniform         m_viewportSizeUniform;
     Uniform         m_crosshairPositionUniform;

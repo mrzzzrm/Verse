@@ -149,12 +149,10 @@ void VoxelRenderable::render(const Transform3D & transform) const
      */
     if (!m_drawInitialized)
     {
-        auto & drawContext = m_voxelWorld.drawContext();
-
         m_vertexBuffer =
-            drawContext.createBuffer(VoxelClusterMarchingCubes::vertexLayout());
+            GetGlobal<DrawContext>()->createBuffer(VoxelClusterMarchingCubes::vertexLayout());
 
-        m_draw = drawContext.createDraw(m_voxelWorld.program());
+        m_draw = GetGlobal<DrawContext>()->createDraw(m_voxelWorld.program());
         m_draw.addVertexBuffer(m_vertexBuffer);
         //     m_draw.state().setCullState(CullState::disabled());
 

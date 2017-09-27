@@ -20,9 +20,7 @@ class DrawContext;
 class ColorPalette final
 {
 public:
-    ColorPalette(
-        DrawContext & drawContext,
-        const std::vector<glm::u8vec4> & colors);
+    ColorPalette(const std::vector<glm::u8vec4> & colors);
 
     const std::vector<glm::u8vec4> & colors() const { return m_colors; }
     const Buffer &                   colorBuffer() const { return m_colorBuffer; }

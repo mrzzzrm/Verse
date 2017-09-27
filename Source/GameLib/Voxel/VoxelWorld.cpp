@@ -27,7 +27,6 @@
 VoxelWorld::VoxelWorld(World & world, const Texture & envMap)
     : Base(
           world, ComponentFilter::requires<Transform3DComponent, VoxelObject>())
-    , m_drawContext(App::get().drawContext())
     , m_envMap(envMap)
 {
     m_renderer = world.systemRef<RenderSystem>()
@@ -35,13 +34,11 @@ VoxelWorld::VoxelWorld(World & world, const Texture & envMap)
                      .addRenderer<VoxelRenderer>(envMap);
 
     m_program =
-        m_drawContext.createProgram({GameDataPath("Data/Shaders/Voxel.vert"),
+        GetGlobal<DrawContext>()->createProgram({GameDataPath("Data/Shaders/Voxel.vert"),
                                      GameDataPath("Data/Shaders/Voxel.frag")});
 
     activatePhases<GameUpdatePhase>();
 }
-
-DrawContext & VoxelWorld::drawContext() const { return m_drawContext; }
 
 const VoxelClusterMarchingCubesTriangulation &
 VoxelWorld::marchingCubesTriangulation() const

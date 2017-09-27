@@ -9,9 +9,7 @@
 
 #include "HudButton.h"
 
-HudEntityMarkersRenderer::HudEntityMarkersRenderer(
-    DrawContext & context)
-    : m_drawContext(context)
+HudEntityMarkersRenderer::HudEntityMarkersRenderer()
 {
     auto & resourceManager = *App::get().runtime()->resourceManager();
 
@@ -23,9 +21,9 @@ HudEntityMarkersRenderer::HudEntityMarkersRenderer(
                                       {"Flip", Type_Vec2}});
 
     m_instances = LayoutedBlob(instanceLayout);
-    m_instanceBuffer = context.createBuffer(instanceLayout);
+    m_instanceBuffer = GetGlobal<DrawContext>()->createBuffer(instanceLayout);
 
-    m_draw = context.createDraw(program);
+    m_draw = GetGlobal<DrawContext>()->createDraw(program);
     m_draw.setIndices(mesh.indices());
     m_draw.addVertices(mesh.vertices());
     m_draw.addInstanceBuffer(m_instanceBuffer, 1);
@@ -71,8 +69,8 @@ void HudEntityMarkersRenderer::render(
 
     m_instanceBuffer.upload(m_instances);
 
-    m_viewportSizeUniform.set(glm::vec2{m_drawContext.backbuffer().width(),
-                                        m_drawContext.backbuffer().height()});
+    m_viewportSizeUniform.set(glm::vec2{GetGlobal<DrawContext>()->backbuffer().width(),
+                                        GetGlobal<DrawContext>()->backbuffer().height()});
 
     m_draw.render();
 }

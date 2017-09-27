@@ -16,13 +16,11 @@ class HudButton;
 class HudEntityMarkersRenderer
 {
 public:
-    HudEntityMarkersRenderer(
-        DrawContext & context);
+    HudEntityMarkersRenderer();
 
     void render(const std::vector<std::shared_ptr<HudButton>> & markers);
 
 private:
-    DrawContext & m_drawContext;
     Draw          m_draw;
     Uniform       m_viewportSizeUniform;
     LayoutedBlob  m_instances;

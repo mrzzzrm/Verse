@@ -2,14 +2,13 @@
 
 #include <Deliberation/Draw/DrawContext.h>
 
-ColorPalette::ColorPalette(
-    DrawContext & drawContext, const std::vector<glm::u8vec4> & colors)
+ColorPalette::ColorPalette(const std::vector<glm::u8vec4> & colors)
     : m_colors(colors)
 {
     m_brightnessScales.resize(m_colors.size(), 1.0f);
 
-    m_colorBuffer = drawContext.createBuffer({"Color", Type_U8Vec4});
-    m_brightnessScaleBuffer = drawContext.createBuffer({"BrightnessScale", Type_Float});
+    m_colorBuffer = GetGlobal<DrawContext>()->createBuffer({"Color", Type_U8Vec4});
+    m_brightnessScaleBuffer = GetGlobal<DrawContext>()->createBuffer({"BrightnessScale", Type_Float});
 }
 
 void ColorPalette::setColor(u32 index, const glm::u8vec4 & color)

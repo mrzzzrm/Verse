@@ -11,8 +11,7 @@ std::shared_ptr<VoxelObjectVoxelData> VoxelObjectVoxelData::fromFile(
     auto models = voxReader.read(path);
     if (!models.empty())
     {
-        auto palette = std::make_shared<ColorPalette>(
-            voxelWorld.drawContext(), models[0].palette);
+        auto palette = std::make_shared<ColorPalette>(models[0].palette);
 
         auto voxelData = std::make_shared<VoxelObjectVoxelData>(
             voxelWorld, palette, models[0].size);

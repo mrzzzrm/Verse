@@ -52,7 +52,7 @@ VfxMeshRenderBatch::VfxMeshRenderBatch(
     }
 
     m_instanceBuffer =
-        m_renderer.drawContext().createBuffer(instanceDataLayout);
+        GetGlobal<DrawContext>()->createBuffer(instanceDataLayout);
 }
 
 size_t VfxMeshRenderBatch::addInstance(const VfxParticle & particle)
@@ -117,7 +117,7 @@ void VfxMeshRenderBatch::render()
 
     if (m_drawDirty)
     {
-        m_draw = m_renderer.drawContext().createDraw(m_renderer.program(), DrawPrimitive::Triangles, "VfxMeshRenderBatch");
+        m_draw = GetGlobal<DrawContext>()->createDraw(m_renderer.program(), DrawPrimitive::Triangles, "VfxMeshRenderBatch");
 
         const auto & vertexLayout = m_meshData->vertices().layout();
         AssertM(
@@ -133,7 +133,7 @@ void VfxMeshRenderBatch::render()
             const auto dummyTextureBinary =
                 TextureLoader({1, 1}, glm::vec3(1.0f, 1.0f, 1.0f)).load();
             const auto dummyTexture =
-                m_renderer.drawContext().createTexture(dummyTextureBinary);
+                GetGlobal<DrawContext>()->createTexture(dummyTextureBinary);
 
             m_draw.sampler("Texture").setTexture(dummyTexture);
         }

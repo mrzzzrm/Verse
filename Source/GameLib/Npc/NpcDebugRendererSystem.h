@@ -21,7 +21,7 @@ class NpcDebugRendererSystem : public System<NpcDebugRendererSystem>
 {
 public:
     NpcDebugRendererSystem(
-        World & world, DrawContext & context, const Camera3D & camera);
+        World & world, const Camera3D & camera);
 
 protected:
     void onEntityAdded(Entity & entity) override;
