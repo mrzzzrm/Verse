@@ -8,7 +8,7 @@
 #include <Deliberation/Platform/InputManager.h>
 #include <Deliberation/Platform/InputLayer.h>
 
-#include "AbstractBehaviour.h"
+#include "GameLib.h"
 
 class VoxelShredderSandbox:
     public Activity<VoxelShredderSandbox>

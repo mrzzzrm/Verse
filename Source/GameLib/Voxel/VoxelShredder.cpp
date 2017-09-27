@@ -104,8 +104,6 @@ std::vector<VoxelClusterSegment> VoxelShredder::shred(const std::vector<glm::uve
                                                       u32 depth
 )
 {
-    Log->info("Shredding {} to {}", llf, urb);
-
     const auto inputCenter = (glm::vec3(llf) + glm::vec3(urb)) / 2.0f;
 
     const auto separationPlaneNormal = RandomUnitVec3();

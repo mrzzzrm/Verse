@@ -30,6 +30,8 @@ void FactionManager::onEvent(const FactionChangeEvent & event)
     // through onEntityAdded yet
     if (m_entities.count(event.entity.id()) == 0) return;
 
+    Log->info("Changing faction of {} from {} to {}", event.entity.name(), event.from, event.to);
+
     removeEntityFromFaction(event.entity, event.from);
     addEntityToFaction(event.entity, event.to);
 }

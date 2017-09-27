@@ -7,6 +7,7 @@
 #include <Deliberation/Draw/DrawContext.h>
 #include <Deliberation/Draw/Framebuffer.h>
 
+#include <Deliberation/ECS/ActivityManager.h>
 #include <Deliberation/ECS/ComponentPrototype.h>
 #include <Deliberation/ECS/EntityPrototypeManager.h>
 
@@ -141,7 +142,7 @@ void DebugOverlay::onFrameUpdate(const UpdateFrame & updateFrame)
                     auto & system = pair.second;
                     if (!system) continue;
                     if (ImGui::Selectable(
-                            system->name().c_str(),
+                            system->name(),
                             m_selectedSystem == pair.first))
                     {
                         m_selectedSystem = pair.first;
@@ -215,6 +216,33 @@ void DebugOverlay::onFrameUpdate(const UpdateFrame & updateFrame)
                 }
 
                 ImGui::NextColumn();
+                ImGui::Columns(1);
+            }
+
+
+            if (ImGui::CollapsingHeader("Activities"))
+            {
+                ImGui::Columns(2, "Activity columns");
+                auto & activityManager = App::get().runtime()->world()->activityManager();
+
+                for (auto & activity : activityManager->activities())
+                {
+                    auto label = activity->name() + "#" + std::to_string((uintptr_t)activity.get());
+                    if (ImGui::Selectable(label.c_str()) || m_selectedActivity == label)
+                    {
+                        m_selectedActivity = label;
+
+                        ImGui::NextColumn();
+
+                        for (const auto & phaseInvoker : activity->phaseInvokers())
+                        {
+                            ImGui::Text("Phase Invoker ID: %u", phaseInvoker->phaseTypeId());
+                        }
+
+                        ImGui::NextColumn();
+                    }
+                }
+
                 ImGui::Columns(1);
             }
 

@@ -33,4 +33,5 @@ private:
     size_t      m_selectedSystem = std::numeric_limits<size_t>::max();
     std::string m_selectedEntityPrototype;
     std::string m_selectedComponentPrototype;
+    std::string m_selectedActivity;
 };

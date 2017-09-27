@@ -14,7 +14,10 @@
         "Transform3D": {
           "Position": [-600, 200, -1500],
           "Orientation": [0, 0, 4]
-        }
+        },
+        "Activities": [
+          {"Activity": "LaunchDefense"}
+        ]
       }
     }
   ]

@@ -2,6 +2,7 @@
 
 #include <Deliberation/Core/Assert.h>
 
+#include <Deliberation/ECS/ActivityComponentPrototype.h>
 #include <Deliberation/ECS/ComponentPrototypes.h>
 #include <Deliberation/ECS/LevelSystem.h>
 #include <Deliberation/ECS/Phase.h>
@@ -18,7 +19,7 @@
 #include <Deliberation/Resource/PrototypeManager.h>
 #include <Deliberation/Resource/ResourceManager.h>
 
-#include "BehaviourSystem.h"
+#include "LaunchDefenseActivity.h"
 #include "CoriolisSystem.h"
 #include "DebugAttachmentSystem.h"
 #include "EquipmentSystem.h"
@@ -35,7 +36,6 @@
 #include "VoxelPhysicsSystem.h"
 #include "VoxelShredderSandbox.h"
 #include "AllegiancePrototype.h"
-#include "BehaviourPrototype.h"
 #include "CoriolisPrototype.h"
 #include "EquipmentPrototype.h"
 #include "FlightControlConfigPrototype.h"
@@ -48,7 +48,6 @@
 #include "VfxSystem.h"
 #include "VoxelObjectPrototype.h"
 #include "VoxelRigidBodyPrototype.h"
-#include "BehaviourSystem.h"
 #include "VoxelMaterialComponentPrototype.h"
 #include "VoxelMeshLoader.h"
 
@@ -85,6 +84,7 @@ void VerseRuntime::onStartup()
          * Register Buildin Activities
          */
         m_world->activityManager()->addActivityType<VoxelShredderSandbox>("VoxelShredderSandbox");
+        m_world->activityManager()->addActivityType<LaunchDefenseActivity>("LaunchDefense");
 
         /**
          * Register Resource Loaders
@@ -131,7 +131,6 @@ void VerseRuntime::onStartup()
         m_world->addSystem<NpcBehaviourSystem>();
         m_world->addSystem<ImGuiSystem>();
         m_world->addSystem<Hud>();
-        m_world->addSystem<BehaviourSystem>();
         m_world->addSystem<VoxelPhysicsSystem>();
         m_world->addSystem<DebugAttachmentSystem>();
         m_world->addSystem<HullSystem>();
@@ -157,10 +156,10 @@ void VerseRuntime::onStartup()
         {
             auto   voxelWorld = m_world->system<VoxelWorld>();
             auto & vfxManager = m_world->systemRef<VfxSystem>().manager();
-            auto & behaviourManager = m_world->systemRef<BehaviourSystem>().manager();
             
             auto & manager = *m_entityPrototypeManager;
             
+            manager.registerComponentPrototype<ActivityComponentPrototype>("Activities");
             manager.registerComponentPrototype<VoxelObjectPrototype>("VoxelObject", voxelWorld);
             manager.registerComponentPrototype<VoxelRigidBodyPrototype>("VoxelRigidBody");
             manager.registerComponentPrototype<CoriolisPrototype>("Coriolis");
@@ -175,8 +174,6 @@ void VerseRuntime::onStartup()
             manager.registerComponentPrototype<NpcBehaviourPrototype>("NpcBehaviour");
             manager.registerComponentPrototype<HudProxyPrototype>("HudProxy");
             manager.registerComponentPrototype<Transform3DComponentPrototype>("Transform3D");
-            manager.registerComponentPrototype<BehaviourPrototype>(
-            "Behaviour", behaviourManager);
             manager.registerComponentPrototype<VoxelMaterialComponentPrototype>(
             "VoxelMaterial");
             manager.registerComponentPrototype<VfxComponentPrototype>(
