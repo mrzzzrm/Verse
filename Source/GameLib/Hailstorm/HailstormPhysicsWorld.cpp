@@ -24,6 +24,12 @@ HailstormPhysicsWorld::destroyedBullets() const
     return m_destroyedBullets;
 }
 
+const std::vector<HailstormBulletId> &
+HailstormPhysicsWorld::expiredBullets() const
+{
+    return m_expiredBullets;
+}
+
 const std::vector<VoxelObjectBulletHit> &
 HailstormPhysicsWorld::voxelObjectBulletHits() const
 {

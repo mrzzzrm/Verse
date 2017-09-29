@@ -10,11 +10,11 @@
   },
   "WeaponB": {
     "Bullet": "<GameDataPath>/Data/VoxelClusters/bullet0.vox",
-    "Lifetime": 1.0,
-    "Speed": 2000,
+    "Lifetime": 0.6,
+    "Speed": 600,
     "Frequency": 2.5,
-    "Damage": 190,
-    "Scale": 0.7,
+    "Damage": 30,
+    "Scale": 0.2,
     "Explosion": "BulletExplosion000"
   }
 }

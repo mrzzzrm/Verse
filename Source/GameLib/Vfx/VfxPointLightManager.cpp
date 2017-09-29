@@ -9,6 +9,7 @@ VfxPointLightManager::VfxPointLightManager(const std::shared_ptr<PointLightRende
 }
 
 size_t VfxPointLightManager::addParticlePointLight(const VfxParticle & particle,
+                                                   const VfxParticleId & particleId,
                                                    const VfxPointLightDesc & particlePointLightDesc)
 {
     const auto birthRgb = glm::vec3(particle.birthRGBA.r,
@@ -32,20 +33,28 @@ size_t VfxPointLightManager::addParticlePointLight(const VfxParticle & particle,
     particlePointLight.pointLight = pointLightIndex;
     particlePointLight.birthRgb = birthRgb;
     particlePointLight.deathRgb = deathRgb;
+    particlePointLight.particleUID = particleId.uid;
 
     return particlePointLightIndex;
 }
 
-void VfxPointLightManager::removeParticlePointLight(size_t index)
+void VfxPointLightManager::removeParticlePointLight(const VfxParticleId & particleId)
 {
+    const auto index = particleId.particlePointLight;
+
     auto & particlePointLight = m_pointLights[index];
     m_pointLightRenderer->removePointLight(particlePointLight.pointLight);
 
     m_pointLights.erase(index);
 }
 
-void VfxPointLightManager::disengageParticlePointLight(size_t index)
+void VfxPointLightManager::disengageParticlePointLight(const VfxParticleId & particleId)
 {
+    const auto index = particleId.particlePointLight;
+
+    // This could mean the particle expired and was removed in this frame and someone tries to disengage it manually now
+    if (!m_pointLights.contains(index) || m_pointLights[index].particleUID != particleId.uid) return;
+
     auto & particlePointLight = m_pointLights[index];
     auto & pointLight = m_pointLightRenderer->pointLight(particlePointLight.pointLight);
     pointLight.active = false;

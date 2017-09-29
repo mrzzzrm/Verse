@@ -34,8 +34,8 @@ public:
         RenderPhase renderPhase);
 
     size_t addInstance(const VfxParticle & particle);
-    void   removeInstance(size_t index);
-    void   disengageInstance(size_t index);
+    void   removeInstance(const VfxParticleId & particleId);
+    void   disengageInstance(const VfxParticleId & particleId);
 
     void update(const UpdateFrame & updateFrame);
 
@@ -71,5 +71,6 @@ private:
     TypedBlobValueAccessor<float>     m_deathScales;
     TypedBlobValueAccessor<glm::vec4> m_axisRotation;
 
+    std::vector<size_t> m_slotUIDs;
     std::stack<size_t> m_freeInstanceSlots;
 };

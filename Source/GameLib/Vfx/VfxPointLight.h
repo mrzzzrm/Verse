@@ -18,4 +18,5 @@ struct VfxPointLight
     glm::vec3 birthRgb;
     glm::vec3 deathRgb;
     size_t pointLight = INVALID_SIZE_T;
+    size_t particleUID = 0;
 };

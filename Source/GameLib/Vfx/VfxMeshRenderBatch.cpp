@@ -69,7 +69,9 @@ size_t VfxMeshRenderBatch::addInstance(const VfxParticle & particle)
 
             auto oldNumInstances = m_instances.count();
 
-            m_instances.resize(oldNumInstances + NUM_NEW_INSTANCES);
+            const auto newSize = oldNumInstances + NUM_NEW_INSTANCES;
+            m_instances.resize(newSize);
+            m_slotUIDs.resize(newSize, (size_t)VfxParticleId::INVALID_UID);
 
             for (size_t i = oldNumInstances; i < m_instances.count(); i++)
             {
@@ -89,19 +91,26 @@ size_t VfxMeshRenderBatch::addInstance(const VfxParticle & particle)
     return index;
 }
 
-void VfxMeshRenderBatch::removeInstance(size_t index)
+void VfxMeshRenderBatch::removeInstance(const VfxParticleId & particleId)
 {
-    disengageInstance(index);
+    const auto index = particleId.meshRenderBatchSlot;
+    disengageInstance(particleId);
     m_freeInstanceSlots.push(index);
 }
 
-void VfxMeshRenderBatch::disengageInstance(size_t index)
+void VfxMeshRenderBatch::disengageInstance(const VfxParticleId & particleId)
 {
+    const auto index = particleId.meshRenderBatchSlot;
+
+    Assert(index < m_slotUIDs.size());
+    if (m_slotUIDs[index] != particleId.uid) return; // This particle was previously disengaged/removed and is now disengaged again
+
     Assert(index < m_instances.count());
 
     m_lifetimes[index] = 0;
     m_births[index] = 0;
     m_instanceBuffer.upload(m_instances); // TODO does this have to happen every time?
+    m_slotUIDs[index] = VfxParticleId::INVALID_UID;
 }
 
 void VfxMeshRenderBatch::update(const UpdateFrame & updateFrame)

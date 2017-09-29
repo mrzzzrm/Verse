@@ -20,9 +20,9 @@ void HullSystem::onEvent(const VoxelObjectBulletHit & hit)
     auto &     hull = hit.entity.component<HullComponent>();
     const auto prevHealth = hull.health();
 
-    Log->info("Applying Hull damage: {} - {}", hull.health(), hit.damage);
+    Log->info("Applying Hull damage to {}: {} - {}", hit.entity.name(), hull.health(), hit.bullet.intensity);
 
-    hull.setHealth(std::max(0.0f, hull.health() - hit.damage));
+    hull.setHealth(std::max(0.0f, hull.health() - hit.bullet.intensity));
 
     if (prevHealth != 0.0f && hull.health() == 0)
     {

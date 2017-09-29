@@ -101,14 +101,14 @@ void VfxMeshRenderer::removeParticle(const VfxParticleId & particleId)
 {
     AssertM(particleId.meshRenderBatchIndex < m_batches.size(), "Batch index out of range " + std::to_string(particleId.meshRenderBatchIndex));
 
-    m_batches[particleId.meshRenderBatchIndex]->removeInstance(particleId.meshRenderBatchSlot);
+    m_batches[particleId.meshRenderBatchIndex]->removeInstance(particleId);
 }
 
 void VfxMeshRenderer::disengageParticle(const VfxParticleId & particleId)
 {
     AssertM(particleId.meshRenderBatchIndex < m_batches.size(), "Batch index out of range " + std::to_string(particleId.meshRenderBatchIndex));
 
-    m_batches[particleId.meshRenderBatchIndex]->disengageInstance(particleId.meshRenderBatchSlot);
+    m_batches[particleId.meshRenderBatchIndex]->disengageInstance(particleId);
 }
 
 void VfxMeshRenderer::onRegisterRenderNodes()

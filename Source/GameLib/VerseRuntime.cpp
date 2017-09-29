@@ -12,6 +12,7 @@
 #include <Deliberation/ImGui/ImGuiSystem.h>
 #include <Deliberation/ImGui/ImGuiSystem.h>
 
+#include <Deliberation/Scene/Debug/DebugSurfaceOverlayRenderer.h>
 #include <Deliberation/Scene/Debug/DebugPointLightSystem.h>
 #include <Deliberation/Scene/Effects/BloomRenderer.h>
 #include <Deliberation/Scene/SsaoRenderer.h>
@@ -84,6 +85,17 @@ void VerseRuntime::onStartup()
 
     if (m_systemInitMode == VerseApplicationSystemInitMode::AllSystems)
     {
+        /**
+         * Add Renderers
+         */
+        GetGlobal<RenderManager>()->addRenderer<AmbientLightRenderer>();
+        GetGlobal<RenderManager>()->addRenderer<PointLightRenderer>();
+        GetGlobal<RenderManager>()->addRenderer<BloomRenderer>();
+        GetGlobal<RenderManager>()->addRenderer<SsaoRenderer>();
+        GetGlobal<RenderManager>()->addRenderer<HdrRenderer>();
+        GetGlobal<RenderManager>()->addRenderer<DebugGeometryRenderer>();
+        GetGlobal<RenderManager>()->addRenderer<DebugSurfaceOverlayRenderer>();
+
         /**
          * Register Buildin Activities
          */
@@ -201,15 +213,7 @@ void VerseRuntime::onStartup()
 
             manager.reloadList();
         }
-        
-        /**
-         * Add Renderers
-         */
-        GetGlobal<RenderManager>()->addRenderer<AmbientLightRenderer>();
-        GetGlobal<RenderManager>()->addRenderer<PointLightRenderer>();
-        GetGlobal<RenderManager>()->addRenderer<BloomRenderer>();
-        GetGlobal<RenderManager>()->addRenderer<SsaoRenderer>();
-        GetGlobal<RenderManager>()->addRenderer<HdrRenderer>();
+
 
         m_world->addSystem<LevelSystem>(GameDataPath("Data/Levels/level0.json")); // Do this last because it adds entities
     }

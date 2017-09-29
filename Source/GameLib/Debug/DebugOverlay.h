@@ -34,4 +34,5 @@ private:
     std::string m_selectedEntityPrototype;
     std::string m_selectedComponentPrototype;
     std::string m_selectedActivity;
+    std::string m_selectedSurfaceKey;
 };

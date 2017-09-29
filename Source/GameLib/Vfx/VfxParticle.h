@@ -20,6 +20,8 @@
 // TODO compress this
 struct VfxParticleId
 {
+    static constexpr size_t INVALID_UID = std::numeric_limits<size_t>::max();
+
     static size_t uidCounter;
 
     size_t uid = INVALID_SIZE_T;
@@ -44,6 +46,8 @@ struct VfxParticleId
 
 struct VfxParticle
 {
+    static constexpr DurationMillis INFINITE_LIFETIME = std::numeric_limits<u32>::max(); // Shader uses 32 bit uint
+
     VfxParticle(
         const glm::vec3 & origin,
         const glm::vec3 & velocity,

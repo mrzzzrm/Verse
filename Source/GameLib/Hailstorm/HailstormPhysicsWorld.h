@@ -26,6 +26,7 @@ public:
      * @return
      */
     const std::vector<HailstormBulletId> &    destroyedBullets() const;
+    const std::vector<HailstormBulletId> &    expiredBullets() const;
     const std::vector<VoxelObjectBulletHit> & voxelObjectBulletHits() const;
 
     void addBullet(const HailstormBullet & bullet);

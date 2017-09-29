@@ -16,9 +16,9 @@ DebugAttachmentSystem::DebugAttachmentSystem(World & world)
 void DebugAttachmentSystem::onCreated()
 {
     m_visibleNode =
-        world().system<RenderSystem>()->debugGeometryRenderer()->addNode();
+        GetGlobal<RenderManager>()->renderer<DebugGeometryRenderer>()->addNode();
     m_obscuredNode =
-        world().system<RenderSystem>()->debugGeometryRenderer()->addNode();
+        GetGlobal<RenderManager>()->renderer<DebugGeometryRenderer>()->addNode();
 
     DrawState obscuredDrawState;
     obscuredDrawState.setDepthState({DepthTest::Greater, DepthWrite::Enabled});

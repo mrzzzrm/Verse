@@ -53,7 +53,9 @@ VfxParticleId VfxManager::addParticle(const VfxParticle & particle) {
     particleId.meshRenderBatchSlot = m_meshRenderer->addParticle(particle);
 
     if (particle.pointLight) {
-        particleId.particlePointLight = m_pointLightManager->addParticlePointLight(particle, *particle.pointLight);
+        particleId.particlePointLight = m_pointLightManager->addParticlePointLight(particle,
+                                                                                   particleId,
+                                                                                   *particle.pointLight);
     }
 
     m_deathQueue.emplace(particle.birth + particle.lifetime, particleId);
@@ -67,7 +69,7 @@ void VfxManager::disengageParticle(const VfxParticleId &particleId)
 
     if (particleId.particlePointLight != INVALID_SIZE_T)
     {
-        m_pointLightManager->disengageParticlePointLight(particleId.particlePointLight);
+        m_pointLightManager->disengageParticlePointLight(particleId);
     }
 }
 
@@ -131,7 +133,7 @@ void VfxManager::update(const UpdateFrame & updateFrame)
 
             if (particleId.particlePointLight != INVALID_SIZE_T)
             {
-                m_pointLightManager->removeParticlePointLight(particleId.particlePointLight);
+                m_pointLightManager->removeParticlePointLight(particleId);
             }
 
             m_deathQueue.pop(); // Do this AFTER removing the particle, otherwise ref into queue will be invalid

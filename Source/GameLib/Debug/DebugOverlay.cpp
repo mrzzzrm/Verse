@@ -16,6 +16,8 @@
 #include <Deliberation/Platform/App.h>
 #include <Deliberation/Platform/AppRuntime.h>
 
+#include <Deliberation/Scene/Debug/DebugSurfaceOverlayRenderer.h>
+
 #include "HailstormManager.h"
 
 DebugOverlay::DebugOverlay(World & world)
@@ -247,6 +249,55 @@ void DebugOverlay::onFrameUpdate(const UpdateFrame & updateFrame)
             }
 
             ImGui::PopStyleVar();
+        }
+        ImGui::End();
+    }
+
+    /**
+     * Renderers
+     */
+    if (imGuiSystem->showView("Rendering"))
+    {
+        if (ImGui::Begin("Rendering"))
+        {
+            if (ImGui::CollapsingHeader("Surfaces"))
+            {
+                if (ImGui::RadioButton("Default", m_selectedSurfaceKey.empty()))
+                {
+                    GetGlobal<RenderManager>()->renderer<DebugSurfaceOverlayRenderer>()->disable();
+                    m_selectedSurfaceKey.clear();
+                }
+
+                // Renderer specific framebuffers
+                for (auto & framebuffer : GetGlobal<RenderManager>()->framebuffers())
+                {
+                    if (!framebuffer.isInitialized()) return;
+
+                    for (auto & rt : framebuffer.colorTargets())
+                    {
+                        const auto surfaceKey = framebuffer.name() + rt.name;
+
+                        if (ImGui::RadioButton(
+                            (framebuffer.name() + " - " + rt.name).c_str(),
+                            m_selectedSurfaceKey == surfaceKey))
+                        {
+                            GetGlobal<RenderManager>()->renderer<DebugSurfaceOverlayRenderer>()->showSurface(rt.surface);
+                            m_selectedSurfaceKey = surfaceKey;
+                        }
+                    }
+                }
+            }
+
+            if (ImGui::CollapsingHeader("Renderers"))
+            {
+                for (auto & renderer : GetGlobal<RenderManager>()->renderers())
+                {
+                    if (ImGui::CollapsingHeader(renderer->name().c_str()))
+                    {
+                        renderer->renderImGui();
+                    }
+                }
+            }
         }
         ImGui::End();
     }

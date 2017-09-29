@@ -100,6 +100,7 @@ void Weapon::update(
 
             HailstormBullet bullet(particle, 50.0f, 3, context.entity.id());
             bullet.explosionEmitter = m_prototype->explosionEmitter();
+            bullet.intensity = m_prototype->damage();
 
             m_hailstormManager.addBullet(bullet);
 
