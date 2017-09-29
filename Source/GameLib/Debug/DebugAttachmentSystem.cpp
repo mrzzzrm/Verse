@@ -5,8 +5,6 @@
 #include <Deliberation/ECS/RigidBodyComponent.h>
 #include <Deliberation/ECS/Transform3DComponent.h>
 
-#include <Deliberation/Scene/Pipeline/RenderSystem.h>
-
 #include "Equipment.h"
 
 DebugAttachmentSystem::DebugAttachmentSystem(World & world)

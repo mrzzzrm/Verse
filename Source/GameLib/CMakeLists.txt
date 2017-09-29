@@ -208,8 +208,6 @@ add_library(${target}
     LaunchDefenseActivity.h
     VerseRuntime.cpp
     VerseRuntime.h
-    VerseRenderManager.cpp
-    VerseRenderManager.h
     VoxelLight.cpp
     VoxelLight.h
     Weapon.cpp

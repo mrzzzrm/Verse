@@ -12,8 +12,6 @@
 
 #include <Deliberation/ECS/World.h>
 
-#include <Deliberation/Scene/Pipeline/RenderSystem.h>
-
 #include "ColorPalette.h"
 #include "VoxelWorld.h"
 
@@ -157,10 +155,7 @@ void VoxelRenderable::render(const Transform3D & transform) const
         //     m_draw.state().setCullState(CullState::disabled());
 
         m_draw.sampler("Environment").setTexture(m_voxelWorld.envMap());
-        m_draw.setFramebuffer(m_voxelWorld.world()
-                                  .systemRef<RenderSystem>()
-                                  .renderManager()
-                                  .gbuffer());
+        m_draw.setFramebuffer(GetGlobal<RenderManager>()->gbuffer());
         m_draw.setBufferTexture("ColorPalette", m_palette->colorBuffer());
         m_draw.setBufferTexture("BrightnessScalePalette", m_palette->brightnessScaleBuffer());
 
@@ -224,11 +219,7 @@ void VoxelRenderable::render(const Transform3D & transform) const
      */
     if (m_vertexBuffer.count() != 0)
     {
-        const auto & camera = voxelWorld()
-                                  .world()
-                                  .systemRef<RenderSystem>()
-                                  .renderManager()
-                                  .mainCamera();
+        const auto & camera = GetGlobal<RenderManager>()->mainCamera();
 
         m_viewUniform.set(camera.view());
         m_projectionUniform.set(camera.projection());

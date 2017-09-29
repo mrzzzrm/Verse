@@ -31,7 +31,7 @@ class VfxRenderNode;
 class VfxMeshRenderer : public Renderer
 {
 public:
-    explicit VfxMeshRenderer(RenderManager & renderManager);
+    explicit VfxMeshRenderer();
 
     const Program & program();
     const Buffer &  globalsBuffer() const;

@@ -15,7 +15,7 @@ class Texture;
 class VoxelRenderer : public SingleNodeRenderer
 {
 public:
-    VoxelRenderer(RenderManager & renderManager, const Texture & envMap);
+    VoxelRenderer(const Texture & envMap);
 
     void addVoxelObject(std::shared_ptr<VoxelObject> voxelObject);
     void removeVoxelObject(std::shared_ptr<VoxelObject> voxelObject);

@@ -7,7 +7,6 @@
 #include <Deliberation/ECS/World.h>
 
 #include <Deliberation/Scene/Pipeline/RenderManager.h>
-#include <Deliberation/Scene/Pipeline/RenderSystem.h>
 #include <Deliberation/Platform/App.h>
 
 #include "HudButton.h"
@@ -24,13 +23,11 @@ Hud::Hud(World & world)
 
     auto crosshairs = std::make_shared<HudCrosshairs>(*this);
 
-    auto & renderManager = world.systemRef<RenderSystem>().renderManager();
-
-    renderManager.addRenderer<HudRenderer>(*this);
+    GetGlobal<RenderManager>()->addRenderer<HudRenderer>(*this);
 
     m_layers.emplace_back(crosshairs);
     m_layers.emplace_back(std::make_shared<HudEntityMarkers>(
-        *this, physicsWorld, renderManager.mainCamera()));
+        *this, physicsWorld, GetGlobal<RenderManager>()->mainCamera()));
 
     activatePhases<GameUpdatePhase>();
 

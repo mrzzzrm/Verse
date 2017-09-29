@@ -23,7 +23,6 @@
 
 #include <Deliberation/Scene/Camera3D.h>
 #include <Deliberation/Scene/Pipeline/RenderManager.h>
-#include <Deliberation/Scene/Pipeline/RenderSystem.h>
 
 #include "AimHelper.h"
 #include "Equipment.h"
@@ -43,11 +42,11 @@ PlayerSystem::PlayerSystem(World & world)
     , InputLayer(0)
     , m_cameraMode(CameraMode::FreeFlight)
     , m_navigator(
-          world.systemRef<RenderSystem>().renderManager().mainCamera(),
+          GetGlobal<RenderManager>()->mainCamera(),
           150.0f)
     , m_physicsWorld(world.systemRef<PhysicsWorldSystem>().physicsWorld())
     , m_cameraDolly(
-          world.systemRef<RenderSystem>().renderManager().mainCamera())
+        GetGlobal<RenderManager>()->mainCamera())
 {
     activatePhases<GameUpdatePhase, FrameUpdatePhase, FrameCompletePhase>();
 }
@@ -156,9 +155,7 @@ void PlayerSystem::onMouseButtonDown(MouseStateEvent & event)
         }
 
         if (event.button(MouseButton::Right)) {
-            auto &renderManager =
-                world().systemRef<RenderSystem>().renderManager();
-            AimHelper aimHelper(renderManager.mainCamera(), m_physicsWorld);
+            AimHelper aimHelper(GetGlobal<RenderManager>()->mainCamera(), m_physicsWorld);
 
             auto result = aimHelper.getTarget(GetGlobal<InputManager>()->mousePosition());
 
@@ -179,8 +176,7 @@ void PlayerSystem::onMouseButtonDown(MouseStateEvent & event)
 
 void PlayerSystem::onMouseMotion(MouseMotionEvent & event)
 {
-    auto &    renderManager = world().systemRef<RenderSystem>().renderManager();
-    AimHelper aimHelper(renderManager.mainCamera(), m_physicsWorld);
+    AimHelper aimHelper(GetGlobal<RenderManager>()->mainCamera(), m_physicsWorld);
     auto result = aimHelper.getTarget(GetGlobal<InputManager>()->mousePosition());
 
     if (m_cameraMode == CameraMode::FreeFlight)

@@ -5,10 +5,10 @@
 
 #include "VfxManager.h"
 
-VfxDebugRenderer::VfxDebugRenderer(RenderManager & renderManager, const std::shared_ptr<VfxManager> & vfxManager):
+VfxDebugRenderer::VfxDebugRenderer(const std::shared_ptr<VfxManager> & vfxManager):
     m_vfxManager(vfxManager)
 {
-    m_debugGeometryNode = renderManager.renderer<DebugGeometryRenderer>()->addNode();
+    m_debugGeometryNode = GetGlobal<RenderManager>()->renderer<DebugGeometryRenderer>()->addNode();
 }
 
 void VfxDebugRenderer::setVisible(bool visible)

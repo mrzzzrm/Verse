@@ -2,9 +2,8 @@
 
 #include <Deliberation/Scene/Pipeline/RenderPhase.h>
 
-VoxelRenderer::VoxelRenderer(
-    RenderManager & renderManager, const Texture & envMap)
-    : SingleNodeRenderer(renderManager, RenderPhase::GBuffer, "VoxelObjects")
+VoxelRenderer::VoxelRenderer(const Texture & envMap)
+    : SingleNodeRenderer(RenderPhase::GBuffer, "VoxelObjects")
 {
 }
 

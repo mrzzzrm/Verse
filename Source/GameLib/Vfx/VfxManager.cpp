@@ -18,11 +18,10 @@
 
 #include "VoxelWorld.h"
 
-VfxManager::VfxManager(
-    RenderManager & renderManager)
+VfxManager::VfxManager()
 {
-    m_meshRenderer = renderManager.addRenderer<VfxMeshRenderer>();
-    m_pointLightManager = std::make_shared<VfxPointLightManager>(renderManager.renderer<PointLightRenderer>());
+    m_meshRenderer = GetGlobal<RenderManager>()->addRenderer<VfxMeshRenderer>();
+    m_pointLightManager = std::make_shared<VfxPointLightManager>(GetGlobal<RenderManager>()->renderer<PointLightRenderer>());
 }
 
 VfxMeshRenderer & VfxManager::meshRenderer() { return *m_meshRenderer; }

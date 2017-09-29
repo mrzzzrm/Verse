@@ -8,7 +8,7 @@
 class HudRenderer : public SingleNodeRenderer
 {
 public:
-    HudRenderer(RenderManager & renderManager, Hud & hud);
+    HudRenderer(Hud & hud);
 
     void render() override;
 

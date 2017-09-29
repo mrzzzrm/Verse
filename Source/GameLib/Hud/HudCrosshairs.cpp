@@ -15,7 +15,6 @@
 
 #include <Deliberation/Scene/Camera3D.h>
 #include <Deliberation/Scene/Pipeline/RenderManager.h>
-#include <Deliberation/Scene/Pipeline/RenderSystem.h>
 
 #include <Deliberation/Platform/App.h>
 #include <Deliberation/Platform/AppRuntime.h>
@@ -29,7 +28,6 @@
 HudCrosshairs::HudCrosshairs(Hud & hud)
     : HudLayer(hud)
     , m_playerSystem(hud.world().systemRef<PlayerSystem>())
-    , m_renderManager(hud.world().systemRef<RenderSystem>().renderManager())
 {
     auto & resourceManager = *App::get().runtime()->resourceManager();
     auto   mesh = resourceManager.mesh(R::UiCrosshairMesh);
@@ -81,8 +79,8 @@ void HudCrosshairs::update(const UpdateFrame & updateFrame)
 
         if (success) {
             const auto ray =
-                Ray3D(m_renderManager.mainCamera().position(), m_trajectory);
-            const auto nearPlane = m_renderManager.mainCamera().nearPlane();
+                Ray3D(GetGlobal<RenderManager>()->mainCamera().position(), m_trajectory);
+            const auto nearPlane = GetGlobal<RenderManager>()->mainCamera().nearPlane();
 
             bool hit;
             auto nearPlanePosition =

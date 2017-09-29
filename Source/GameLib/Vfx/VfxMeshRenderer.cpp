@@ -12,7 +12,7 @@
 struct VfxRenderNode : public RenderNode
 {
     explicit VfxRenderNode(VfxMeshRenderer & renderer)
-        : RenderNode(renderer.renderManager(), renderer.shared_from_this())
+        : RenderNode(renderer.shared_from_this())
     {
     }
 
@@ -27,8 +27,8 @@ struct VfxRenderNode : public RenderNode
     std::vector<std::shared_ptr<VfxMeshRenderBatch>> m_batches;
 };
 
-VfxMeshRenderer::VfxMeshRenderer(RenderManager & renderManager)
-    : Renderer(renderManager, "VfxMesh")
+VfxMeshRenderer::VfxMeshRenderer()
+    : Renderer("VfxMesh")
 {
     m_program =
         GetGlobal<DrawContext>()->createProgram({GameDataPath("Data/Shaders/Particle.vert"),
@@ -116,16 +116,16 @@ void VfxMeshRenderer::onRegisterRenderNodes()
     for (auto & pair : m_renderNodesByRenderPhase)
     {
         // TODO Remove cast when switching to modern stdlib
-        m_renderManager.registerRenderNode(pair.second, (RenderPhase)pair.first);
+        GetGlobal<RenderManager>()->registerRenderNode(pair.second, (RenderPhase)pair.first);
     }
 }
 
 void VfxMeshRenderer::onBeforeRender()
 {
     m_viewGlobal[0] =
-        m_renderManager.mainCamera().view();
+        GetGlobal<RenderManager>()->mainCamera().view();
     m_projectionGlobal[0] =
-        m_renderManager.mainCamera().projection();
+        GetGlobal<RenderManager>()->mainCamera().projection();
     m_timeGlobal[0] = m_currentMillis;
 
     m_globalsBuffer.upload(m_globals);

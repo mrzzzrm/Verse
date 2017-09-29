@@ -14,6 +14,9 @@
 
 #include <Deliberation/Scene/Debug/DebugPointLightSystem.h>
 #include <Deliberation/Scene/Effects/BloomRenderer.h>
+#include <Deliberation/Scene/SsaoRenderer.h>
+#include <Deliberation/Scene/HdrRenderer.h>
+#include <Deliberation/Scene/Lighting/AmbientLightRenderer.h>
 #include <Deliberation/Scene/Lighting/PointLightRenderer.h>
 #include <Deliberation/Scene/Texture/TextureLoader.h>
 #include <Deliberation/Resource/PrototypeManager.h>
@@ -29,7 +32,6 @@
 #include "HullComponent.h"
 #include "NpcBehaviourSystem.h"
 #include "PlayerSystem.h"
-#include "VerseRenderManager.h"
 #include "VfxSystem.h"
 #include "VoxelClusterSplitSystem.h"
 #include "VoxelMaterialSystem.h"
@@ -61,6 +63,8 @@ VerseApplicationSystemInitMode systemInitMode)
 
 void VerseRuntime::onStartup()
 {
+    InitGlobal<RenderManager>();
+
 
 //    m_physicsWorld.narrowphase()
 //        .contactDispatcher()
@@ -111,7 +115,6 @@ void VerseRuntime::onStartup()
         /**
          * Add Systems
          */
-        m_world->addSystem<RenderSystem>();
         auto pointLightSystem = m_world->addSystem<PointLightSystem>();
 //        m_world->addSystem<DebugPointLightSystem>(
 //            pointLightSystem->pointLightRenderer());
@@ -202,13 +205,11 @@ void VerseRuntime::onStartup()
         /**
          * Add Renderers
          */
-        auto & renderManager =
-            m_world->systemRef<RenderSystem>().renderManager();
-        renderManager.addRenderer<AmbientLightRenderer>();
-        renderManager.addRenderer<PointLightRenderer>();
-        renderManager.addRenderer<BloomRenderer>();
-        renderManager.addRenderer<SsaoRenderer>();
-        renderManager.addRenderer<HdrRenderer>();
+        GetGlobal<RenderManager>()->addRenderer<AmbientLightRenderer>();
+        GetGlobal<RenderManager>()->addRenderer<PointLightRenderer>();
+        GetGlobal<RenderManager>()->addRenderer<BloomRenderer>();
+        GetGlobal<RenderManager>()->addRenderer<SsaoRenderer>();
+        GetGlobal<RenderManager>()->addRenderer<HdrRenderer>();
 
         m_world->addSystem<LevelSystem>(GameDataPath("Data/Levels/level0.json")); // Do this last because it adds entities
     }
@@ -263,7 +264,7 @@ void VerseRuntime::onFrame(DurationMicros micros)
     }
 
     m_world->frameUpdatePhase(m_updateFrame);
-    m_world->systemRef<RenderSystem>().renderManager().render();
+    GetGlobal<RenderManager>()->render();
 
     m_world->frameCompletePhase(m_updateFrame);
 }

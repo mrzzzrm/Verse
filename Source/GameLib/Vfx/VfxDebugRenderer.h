@@ -14,7 +14,7 @@ class VfxManager;
 class VfxDebugRenderer final
 {
 public:
-    VfxDebugRenderer(RenderManager & renderManager, const std::shared_ptr<VfxManager> & vfxManager);
+    VfxDebugRenderer(const std::shared_ptr<VfxManager> & vfxManager);
 
     void setVisible(bool visible);
 

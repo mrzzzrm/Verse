@@ -18,7 +18,6 @@
 #include <Deliberation/Platform/App.h>
 #include <Deliberation/Scene/Camera3D.h>
 #include <Deliberation/Scene/Pipeline/RenderManager.h>
-#include <Deliberation/Scene/Pipeline/RenderSystem.h>
 #include <Deliberation/ECS/Phase.h>
 
 #include "VoxelClusterSplitSystem.h"
@@ -29,9 +28,7 @@ VoxelWorld::VoxelWorld(World & world, const Texture & envMap)
           world, ComponentFilter::requires<Transform3DComponent, VoxelObject>())
     , m_envMap(envMap)
 {
-    m_renderer = world.systemRef<RenderSystem>()
-                     .renderManager()
-                     .addRenderer<VoxelRenderer>(envMap);
+    m_renderer = GetGlobal<RenderManager>()->addRenderer<VoxelRenderer>(envMap);
 
     m_program =
         GetGlobal<DrawContext>()->createProgram({GameDataPath("Data/Shaders/Voxel.vert"),

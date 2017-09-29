@@ -10,7 +10,6 @@
 #include <Deliberation/Platform/App.h>
 
 #include <Deliberation/Scene/Pipeline/RenderManager.h>
-#include <Deliberation/Scene/Pipeline/RenderSystem.h>
 
 #include "Deliberation/Resource/ResourceManager.h"
 #include "VoxelWorld.h"
@@ -19,8 +18,7 @@
 
 HailstormManager::HailstormManager(World & world)
     : Base(world)
-    , m_vfxManager(
-          world.systemRef<RenderSystem>().renderManager())
+    , m_vfxManager()
     , m_hailstormPhysicsWorld(
           world.systemRef<PhysicsWorldSystem>().physicsWorld(),
           world.systemRef<VoxelWorld>())

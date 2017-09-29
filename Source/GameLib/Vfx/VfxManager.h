@@ -15,8 +15,7 @@
 class VfxManager final
 {
 public:
-    VfxManager(
-        RenderManager & renderManager);
+    VfxManager();
 
     VfxMeshRenderer &       meshRenderer();
     const VfxMeshRenderer & meshRenderer() const;

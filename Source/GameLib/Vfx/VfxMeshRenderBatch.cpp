@@ -198,7 +198,7 @@ void VfxMeshRenderBatch::render()
 
         if (m_renderPhase == RenderPhase::Alpha || m_renderPhase == RenderPhase::Forward)
         {
-            auto binding = m_draw.framebufferBinding(m_renderer.renderManager().hdrBuffer());
+            auto binding = m_draw.framebufferBinding(GetGlobal<RenderManager>()->hdrBuffer());
             binding.setMapping({"Color", "Hdr"});
             binding.setMapping({"Normal", FramebufferBinding::DISCARD_FRAGMENT_OUTPUT});
             binding.setMapping({"Position", FramebufferBinding::DISCARD_FRAGMENT_OUTPUT});
@@ -207,9 +207,9 @@ void VfxMeshRenderBatch::render()
         else
         {
             AssertM(m_renderPhase == RenderPhase::GBuffer, "Illegal RenderPhase " + RenderPhaseToString(m_renderPhase));
-            m_draw.setFramebuffer(m_renderer.renderManager().gbuffer());
+            m_draw.setFramebuffer(GetGlobal<RenderManager>()->gbuffer());
 
-            auto binding = m_draw.framebufferBinding(m_renderer.renderManager().gbuffer());
+            auto binding = m_draw.framebufferBinding(GetGlobal<RenderManager>()->gbuffer());
             binding.setMapping({"Color", "Diffuse"});
 
             m_draw.setFramebufferBinding(binding);
@@ -221,7 +221,7 @@ void VfxMeshRenderBatch::render()
     if (m_orientationType == VfxParticleOrientationType::ViewBillboard)
     {
         auto cameraBasis =
-            m_renderer.renderManager().mainCamera().pose().basis();
+            GetGlobal<RenderManager>()->mainCamera().pose().basis();
         m_viewBillboardRotation.set(cameraBasis);
     }
 

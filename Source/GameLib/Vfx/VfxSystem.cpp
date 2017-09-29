@@ -11,7 +11,6 @@
 #include <Deliberation/ImGui/ImGuiSystem.h>
 
 #include <Deliberation/Scene/Pipeline/RenderManager.h>
-#include <Deliberation/Scene/Pipeline/RenderSystem.h>
 
 #include "Emitter.h"
 #include "Deliberation/Resource/ResourceManager.h"
@@ -22,11 +21,9 @@
 
 VfxSystem::VfxSystem(World & world)
     : Base(world)
-    , m_vfxManager(std::make_shared<VfxManager>(
-          world.systemRef<RenderSystem>().renderManager()))
+    , m_vfxManager(std::make_shared<VfxManager>())
 {
-    m_debugRenderer = std::make_shared<VfxDebugRenderer>(world.systemRef<RenderSystem>().renderManager(),
-                                                         m_vfxManager);
+    m_debugRenderer = std::make_shared<VfxDebugRenderer>(m_vfxManager);
 
     activatePhases<GameUpdatePhase>();
 

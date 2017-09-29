@@ -4,8 +4,8 @@
 
 #include "Hud.h"
 
-HudRenderer::HudRenderer(RenderManager & renderManager, Hud & hud)
-    : SingleNodeRenderer(renderManager, RenderPhase::PreOverlay, "HUD"), m_hud(hud)
+HudRenderer::HudRenderer(Hud & hud)
+    : SingleNodeRenderer(RenderPhase::PreOverlay, "HUD"), m_hud(hud)
 {
 }
 
