@@ -15,7 +15,7 @@ void EquipmentPrototype::updateComponent(const Entity & entity, Equipment & equi
     auto world = this->world();
     Assert(world);
 
-    auto prototypeManager = App::get().runtime()->prototypeManager();
+    auto prototypeManager = GetGlobal<PrototypeManager>();
 
     /**
      * Clear Equipment
@@ -69,7 +69,7 @@ void EquipmentPrototype::updateComponent(const Entity & entity, Equipment & equi
             if (desc.compatibleWeapons.size() > 0)
             {
                 auto weaponPrototype =
-                    App::get().runtime()->prototypeManager()->prototype<WeaponPrototype>(desc.compatibleWeapons[0]);
+                    GetGlobal<PrototypeManager>()->prototype<WeaponPrototype>(desc.compatibleWeapons[0]);
                 auto & hailstormManager =
                     world->systemRef<HailstormManager>();
                 Assert(static_cast<bool>(weaponPrototype));

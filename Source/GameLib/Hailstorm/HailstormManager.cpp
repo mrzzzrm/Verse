@@ -68,7 +68,7 @@ void HailstormManager::onGameUpdate(const UpdateFrame & updateFrame)
 
     for (const auto & hit : m_hailstormPhysicsWorld.voxelObjectBulletHits())
     {
-        App::get().runtime()->events()->publishEvent(hit);
+        GetGlobal<EventDomain>()->publishEvent(hit);
     }
 
     for (auto & bullet : m_hailstormPhysicsWorld.destroyedBullets())

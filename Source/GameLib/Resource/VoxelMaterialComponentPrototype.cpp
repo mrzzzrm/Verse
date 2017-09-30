@@ -9,7 +9,7 @@ void VoxelMaterialComponentPrototype::updateComponent(const Entity & entity, Vox
     auto world = this->world();
     Assert(world);
 
-    auto & prototypeManager = App::get().runtime()->prototypeManager();
+    auto prototypeManager = GetGlobal<PrototypeManager>();
 
     auto newVoxelMaterialPalette = prototypeManager->getOrCreatePrototype<VoxelMaterialPalettePrototype>(
         m_newJson["Palette"].get<std::string>());

@@ -13,7 +13,7 @@ void VfxComponentPrototype::updateComponent(const Entity & entity, VfxComponent 
     auto world = this->world();
     Assert(world);
 
-    auto & prototypeManager = App::get().runtime()->prototypeManager();
+    auto prototypeManager = GetGlobal<PrototypeManager>();
     auto & vfxManager = world->systemRef<VfxSystem>().manager();
 
     for (auto & instance : vfxComponent.m_instances)

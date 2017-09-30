@@ -8,7 +8,7 @@
 
 std::shared_ptr<MeshData> VoxelMeshLoader::load(const std::string & path)
 {
-    auto & voxelModels = App::get().runtime()->resourceManager()->resource<VoxReader::VoxelModels>(path);
+    auto & voxelModels = GetGlobal<ResourceManager>()->resource<VoxReader::VoxelModels>(path);
     AssertM(voxelModels.size() == 1, "Wrong number of models in '" + path + "'");
 
     auto & voxelModel = voxelModels[0];
@@ -19,7 +19,7 @@ std::shared_ptr<MeshData> VoxelMeshLoader::load(const std::string & path)
         cluster.set(voxel.cell, voxel.colorIndex);
     }
 
-    VoxelClusterMarchingCubes marchingCubes(App::get().runtime()->world()->systemRef<VoxelWorld>().marchingCubesTriangulation(),
+    VoxelClusterMarchingCubes marchingCubes(GetGlobal<World>()->systemRef<VoxelWorld>().marchingCubesTriangulation(),
         cluster);
     marchingCubes.run();
 

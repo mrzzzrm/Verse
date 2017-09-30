@@ -6,13 +6,13 @@
         "Equipment": {
             "Engines": [
                 {"Voxel": [1, 16, 5], "Orientation": [0, "PI", 0],
-                    "Emitter": "Engine000"},
+                    "Emitter": "Engine001"},
                 {"Voxel": [6, 16, 5], "Orientation": [0, "PI", 0],
-                    "Emitter": "Engine000"},
+                    "Emitter": "Engine001"},
                 {"Voxel": [6, 16, 1], "Orientation": [0, "PI", 0],
-                    "Emitter": "Engine000"},
+                    "Emitter": "Engine001"},
                 {"Voxel": [1, 16, 1], "Orientation": [0, "PI", 0],
-                    "Emitter": "Engine000"}
+                    "Emitter": "Engine001"}
             ],
 
             "Hardpoints": [

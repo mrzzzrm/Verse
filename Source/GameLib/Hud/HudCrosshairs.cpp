@@ -29,7 +29,7 @@ HudCrosshairs::HudCrosshairs(Hud & hud)
     : HudLayer(hud)
     , m_playerSystem(hud.world().systemRef<PlayerSystem>())
 {
-    auto & resourceManager = *App::get().runtime()->resourceManager();
+    auto & resourceManager = *GetGlobal<ResourceManager>();
     auto   mesh = resourceManager.mesh(R::UiCrosshairMesh);
     auto   program = resourceManager.program(R::HudElement);
 

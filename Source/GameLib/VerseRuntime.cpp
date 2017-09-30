@@ -58,7 +58,7 @@ constexpr const char * RELOAD_PROTOTYPES_CONTROL = "Reload Scene";
 
 VerseRuntime::VerseRuntime(
 VerseApplicationSystemInitMode systemInitMode)
-    : AppRuntime("Verse", ".", GameDataPath("Data/EntityPrototypes/list.json")), m_systemInitMode(systemInitMode)
+    : AppRuntime(GameDataPath("Data/EntityPrototypes/list.json")), m_systemInitMode(systemInitMode)
 {
 }
 
@@ -99,14 +99,14 @@ void VerseRuntime::onStartup()
         /**
          * Register Buildin Activities
          */
-        m_world->activityManager()->addActivityType<VoxelShredderSandbox>("VoxelShredderSandbox");
-        m_world->activityManager()->addActivityType<LaunchDefenseActivity>("LaunchDefense");
+        GetGlobal<World>()->activityManager()->addActivityType<VoxelShredderSandbox>("VoxelShredderSandbox");
+        GetGlobal<World>()->activityManager()->addActivityType<LaunchDefenseActivity>("LaunchDefense");
 
         /**
          * Register Resource Loaders
          */
         {
-            auto & manager = App::get().runtime()->resourceManager();
+            auto manager = GetGlobal<ResourceManager>();
 
             manager->setLoader<std::shared_ptr<MeshData>>([&] (const auto & path) {
                 if (StringEndsWith(path, ".vox")) {
@@ -127,35 +127,35 @@ void VerseRuntime::onStartup()
         /**
          * Add Systems
          */
-        auto pointLightSystem = m_world->addSystem<PointLightSystem>();
-//        m_world->addSystem<DebugPointLightSystem>(
+        auto pointLightSystem = GetGlobal<World>()->addSystem<PointLightSystem>();
+//        GetGlobal<World>()->addSystem<DebugPointLightSystem>(
 //            pointLightSystem->pointLightRenderer());
-        m_world->addSystem<SkyboxSystem>(m_skyboxCubemap);
+        GetGlobal<World>()->addSystem<SkyboxSystem>(m_skyboxCubemap);
         m_physicsWorldSystem =
-            m_world->addSystem<PhysicsWorldSystem>();
-        m_world->addSystem<VoxelClusterSplitSystem>();
-        m_world->addSystem<VoxelWorld>(m_skyboxCubemap);
-        m_world->addSystem<NpcControllerSystem>();
-        m_world->addSystem<HailstormManager>();
-        m_world->addSystem<VfxSystem>();
-        m_world->addSystem<DebugOverlay>();
-        m_world->addSystem<CoriolisSystem>();
-        m_world->addSystem<EquipmentSystem>();
-        m_world->addSystem<PlayerSystem>();
-        m_world->addSystem<FactionManager>();
-        m_world->addSystem<NpcBehaviourSystem>();
-        m_world->addSystem<ImGuiSystem>();
-        m_world->addSystem<Hud>();
-        m_world->addSystem<VoxelPhysicsSystem>();
-        m_world->addSystem<DebugAttachmentSystem>();
-        m_world->addSystem<HullSystem>();
-        m_world->addSystem<VoxelMaterialSystem>();
+            GetGlobal<World>()->addSystem<PhysicsWorldSystem>();
+        GetGlobal<World>()->addSystem<VoxelClusterSplitSystem>();
+        GetGlobal<World>()->addSystem<VoxelWorld>(m_skyboxCubemap);
+        GetGlobal<World>()->addSystem<NpcControllerSystem>();
+        GetGlobal<World>()->addSystem<HailstormManager>();
+        GetGlobal<World>()->addSystem<VfxSystem>();
+        GetGlobal<World>()->addSystem<DebugOverlay>();
+        GetGlobal<World>()->addSystem<CoriolisSystem>();
+        GetGlobal<World>()->addSystem<EquipmentSystem>();
+        GetGlobal<World>()->addSystem<PlayerSystem>();
+        GetGlobal<World>()->addSystem<FactionManager>();
+        GetGlobal<World>()->addSystem<NpcBehaviourSystem>();
+        GetGlobal<World>()->addSystem<ImGuiSystem>();
+        GetGlobal<World>()->addSystem<Hud>();
+        GetGlobal<World>()->addSystem<VoxelPhysicsSystem>();
+        GetGlobal<World>()->addSystem<DebugAttachmentSystem>();
+        GetGlobal<World>()->addSystem<HullSystem>();
+        GetGlobal<World>()->addSystem<VoxelMaterialSystem>();
 
         /**
          * Register Prototypes
          */
         {
-            auto & manager = App::get().runtime()->prototypeManager();
+            auto manager = GetGlobal<PrototypeManager>();
 
             manager->addPath<WeaponPrototype>(GameDataPath("Data/Prototypes/Weapons.json"));
             manager->addPath<VoxelMaterialPalettePrototype>(GameDataPath("Data/Prototypes/VoxelMaterialPalettes.json"));
@@ -169,10 +169,10 @@ void VerseRuntime::onStartup()
          * Register ComponentPrototypes
          */
         {
-            auto   voxelWorld = m_world->system<VoxelWorld>();
-            auto & vfxManager = m_world->systemRef<VfxSystem>().manager();
+            auto   voxelWorld = GetGlobal<World>()->system<VoxelWorld>();
+            auto & vfxManager = GetGlobal<World>()->systemRef<VfxSystem>().manager();
             
-            auto & manager = *m_entityPrototypeManager;
+            auto & manager = *GetGlobal<EntityPrototypeManager>();
             
             manager.registerComponentPrototype<ActivityComponentPrototype>("Activities");
             manager.registerComponentPrototype<VoxelObjectPrototype>("VoxelObject", voxelWorld);
@@ -196,12 +196,12 @@ void VerseRuntime::onStartup()
             manager.registerComponentPrototype<HullComponentPrototype>(
                 "Hull");
     
-            auto & imGuiSystem = m_world->systemRef<ImGuiSystem>();
+            auto & imGuiSystem = GetGlobal<World>()->systemRef<ImGuiSystem>();
             imGuiSystem.addControlItem(RELOAD_PROTOTYPES_CONTROL, [&]() {
-                App::get().runtime()->prototypeManager()->reload();
-                App::get().runtime()->events()->publishEvent(PrototypesReloadedEvent());
+                GetGlobal<PrototypeManager>()->reload();
+                GetGlobal<EventDomain>()->publishEvent(PrototypesReloadedEvent());
 
-                auto levelSystem = m_world->system<LevelSystem>();
+                auto levelSystem = GetGlobal<World>()->system<LevelSystem>();
                 if (levelSystem)
                 {
                     if (levelSystem->level()) levelSystem->level()->reload();
@@ -215,10 +215,10 @@ void VerseRuntime::onStartup()
         }
 
 
-        m_world->addSystem<LevelSystem>(GameDataPath("Data/Levels/level0.json")); // Do this last because it adds entities
+        GetGlobal<World>()->addSystem<LevelSystem>(GameDataPath("Data/Levels/VfxSandbox.json")); // Do this last because it adds entities
     }
 
-    m_world->systemRef<PhysicsWorldSystem>().physicsWorld().primitiveTester().registerPrimitiveTest(
+    GetGlobal<World>()->systemRef<PhysicsWorldSystem>().physicsWorld().primitiveTester().registerPrimitiveTest(
         (int)::CollisionShapeType::VoxelCluster,
         std::make_unique<VoxelClusterPrimitiveTest>());
 
@@ -229,12 +229,12 @@ void VerseRuntime::onStartup()
 
 void VerseRuntime::onFrame(DurationMicros micros)
 {
-    m_world->frameBeginPhase();
+    GetGlobal<World>()->frameBeginPhase();
     
     m_updateFrame.setPhysicsSeconds(0.0f);
     m_updateFrame.setBeginMicros(m_updateFrame.beginMicros() + m_updateFrame.gameMicros());
 
-    if (!App::get().gameplayPaused())
+    if (!GetGlobal<App>()->gameplayPaused())
     {
         m_updateFrame.setGameMicros(micros);
 
@@ -247,9 +247,9 @@ void VerseRuntime::onFrame(DurationMicros micros)
          */
         if (m_updateFrame.physicsSeconds() > 0)
         {
-            m_world->prePhysicsUpdatePhase(m_updateFrame);
+            GetGlobal<World>()->prePhysicsUpdatePhase(m_updateFrame);
             m_physicsWorldSystem->updatePhysics(m_updateFrame);
-            m_world->postPhysicsUpdatePhase(m_updateFrame);
+            GetGlobal<World>()->postPhysicsUpdatePhase(m_updateFrame);
 
             onApplicationPhysicsUpdate();
         }
@@ -259,7 +259,7 @@ void VerseRuntime::onFrame(DurationMicros micros)
             m_physicsWorldSystem->updatePhysics(m_updateFrame);
         }
 
-        m_world->gameUpdatePhase(m_updateFrame);
+        GetGlobal<World>()->gameUpdatePhase(m_updateFrame);
         onApplicationUpdate();
     }
     else
@@ -267,8 +267,8 @@ void VerseRuntime::onFrame(DurationMicros micros)
         m_updateFrame.setGameMicros(0);
     }
 
-    m_world->frameUpdatePhase(m_updateFrame);
+    GetGlobal<World>()->frameUpdatePhase(m_updateFrame);
     GetGlobal<RenderManager>()->render();
 
-    m_world->frameCompletePhase(m_updateFrame);
+    GetGlobal<World>()->frameCompletePhase(m_updateFrame);
 }

@@ -11,7 +11,7 @@
 
 HudEntityMarkersRenderer::HudEntityMarkersRenderer()
 {
-    auto & resourceManager = *App::get().runtime()->resourceManager();
+    auto & resourceManager = *GetGlobal<ResourceManager>();
 
     auto mesh = resourceManager.mesh(R::HudEntityMarkerUpperLeft);
     auto program = resourceManager.program(R::HudElement);

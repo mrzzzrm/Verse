@@ -5,5 +5,6 @@
 using namespace deliberation;
 
 int main(int argc, char * argv[]) {
-    App::get().run(std::make_shared<VerseRuntime>(), argc, argv);
+    InitGlobal<App>()->run<VerseRuntime>("Verse", argc, argv);
+    DeleteGlobals();
 }

@@ -1,6 +1,14 @@
-[
 {
-  "LID": "testDrone",
-  "Bases": ["Ship3", "Player"]
+  "Entities": [
+    {
+      "LID": "ship",
+      "Name": "Ship",
+      "Bases": ["Drone"],
+      "Components": {
+        "Transform3D": {
+          "Orientation": [0.0, 1.8, 0.0]
+        }
+      }
+    }
+  ]
 }
-]

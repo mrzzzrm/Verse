@@ -62,6 +62,7 @@ std::vector<Entity> VoxelShredder::explode(Entity & originalEntity)
 
         body->applyCentralImpulse(direction * intensity);
         body->applyTorqueImpulse(0.008f * RandomVec3(1.0f, 2.0f) * intensity);
+        body->setDamping(0.4f, 0.2f);
     }
 
     originalEntity.scheduleRemoval();

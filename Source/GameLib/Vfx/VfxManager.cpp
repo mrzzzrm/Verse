@@ -33,7 +33,7 @@ VfxMeshId VfxManager::getOrCreateMeshId(const ResourceToken & resourceToken)
     auto iter = m_meshIdByResourceId.find((size_t)resourceToken.id());
     if (iter == m_meshIdByResourceId.end())
     {
-        const auto & mesh = App::get().runtime()->resourceManager()->resource<std::shared_ptr<MeshData>>(resourceToken);
+        const auto & mesh = GetGlobal<ResourceManager>()->resource<std::shared_ptr<MeshData>>(resourceToken);
         auto   processedMesh = processMesh(mesh);
         centerMesh(processedMesh);
         const auto   meshId = m_meshRenderer->addMesh(processedMesh);

@@ -23,7 +23,7 @@ public:
             world->entityById(m_entityId), m_faction, faction);
         m_faction = faction;
 
-        App::get().runtime()->events()->publishEvent(event);
+        GetGlobal<EventDomain>()->publishEvent(event);
     }
 
 private:

@@ -35,7 +35,7 @@ void VoxelShredderSandbox::onKeyPressed(KeyEvent & event)
 
         if (m_originalEntity.isValid()) m_originalEntity.scheduleRemoval();
 
-        m_originalEntity = App::get().runtime()->entityPrototypeManager()->createEntity("Ship3");
+        m_originalEntity = GetGlobal<EntityPrototypeManager>()->createEntity("Ship3");
 
         m_originalEntity.component<Transform3DComponent>().setPosition(glm::vec3(100.0f, 50.0f, -200.0f));
         m_originalEntity.component<Transform3DComponent>().setOrientation(glm::quat(glm::vec3(1.0f, 0.5f, 2.0f)));

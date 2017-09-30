@@ -64,7 +64,7 @@ void VoxelObject::destroyVoxels(std::vector<glm::uvec3> voxels)
 
     checkCrucialVoxelForRemoval(modification.destructions);
 
-    App::get().runtime()->events()->publishEvent(modification);
+    GetGlobal<EventDomain>()->publishEvent(modification);
 }
 
 void VoxelObject::checkCrucialVoxelForRemoval(const std::vector<glm::uvec3> & voxels)

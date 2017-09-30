@@ -240,8 +240,8 @@ void Emitter::onReload(const Json & json)
         }
 
         // Mesh
-        auto & world = *App::get().runtime()->world();
-        auto & resourceManager = *App::get().runtime()->resourceManager();
+        auto & world = *GetGlobal<World>();
+        auto & resourceManager = *GetGlobal<ResourceManager>();
         auto & vfxManager = world.systemRef<VfxSystem>().manager();
 
         auto resourceToken = resourceManager.resourceToken<std::shared_ptr<MeshData>>(strategiesJson["Mesh"]);

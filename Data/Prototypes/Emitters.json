@@ -41,6 +41,22 @@
       "Rotation": ["Billboard", [-14.0, 14.0]]
     }
   },
+  "Engine001": {
+    "Children": ["EngineBeam003"]
+  },
+  "EngineBeam003": {
+    "Strategies": {
+      "Mesh": "buildin:OpaqueSquare",
+      "Lifetime": ["RandomLifetime", [0.3, 0.5]],
+      "Placement": ["Fixed", {}],
+      "Velocity": ["Cone", [0.02, 30, 50]],
+      "Intensity": ["Noisy", [225, 2]],
+      "Orientation": ["ViewBillboard", {}],
+      "Color": ["OverLifetime", [[2.0, 3.5, 7.0, 0.8], [1.0, 0.6, 0.5, 0.0]]],
+      "Size": ["OverLifetime", [0.8, 0.7]],
+      "Rotation": ["Billboard", [-3.0, 3.0]]
+    }
+  },
   "MostBasicEmitter": {
     "Strategies": {
       "Mesh": "buildin:OpaqueSquare",

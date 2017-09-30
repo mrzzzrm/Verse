@@ -15,11 +15,9 @@ WeaponPrototype::WeaponPrototype(const std::weak_ptr<PrototypeManager> &prototyp
 
 void WeaponPrototype::onReload(const Json & json)
 {
-    auto & world = *App::get().runtime()->world();
-    auto & resourceManager = *App::get().runtime()->resourceManager();
-    auto & hailstormManager = world.systemRef<HailstormManager>();
+    auto & hailstormManager = GetGlobal<World>()->systemRef<HailstormManager>();
 
-    auto resourceToken = resourceManager.resourceToken<std::shared_ptr<MeshData>>(json["Bullet"]);
+    auto resourceToken = GetGlobal<ResourceManager>()->resourceToken<std::shared_ptr<MeshData>>(json["Bullet"]);
     m_vfxMeshId = hailstormManager.vfxManager().getOrCreateMeshId(resourceToken);
 
     m_vfxMeshRenderBatchIndex = INVALID_VFX_MESH_RENDER_BATCH_INDEX;

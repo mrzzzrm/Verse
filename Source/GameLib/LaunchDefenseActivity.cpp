@@ -25,7 +25,7 @@ void LaunchDefenseActivity::onGameUpdate(const UpdateFrame & updateFrame)
 
     auto launchPose = dockingPoint->worldPose();
 
-    auto & prototypeManager = App::get().runtime()->entityPrototypeManager();
+    auto prototypeManager = GetGlobal<EntityPrototypeManager>();
 
     auto npcEntity = prototypeManager->createEntity(
         {"Drone", "Npc", "Pirate"},
