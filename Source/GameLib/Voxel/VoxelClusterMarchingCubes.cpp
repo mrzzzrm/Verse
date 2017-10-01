@@ -3,7 +3,6 @@
 #include <iostream>
 
 #include <Deliberation/Core/RandomColorGenerator.h>
-#include <Deliberation/Core/ScopeProfiler.h>
 #include <Deliberation/Core/StreamUtils.h>
 
 VoxelClusterMarchingCubes::VoxelClusterMarchingCubes(

@@ -4,7 +4,6 @@
 
 #include <Deliberation/Core/Assert.h>
 #include <Deliberation/Core/Math/Pose3D.h>
-#include <Deliberation/Core/ScopeProfiler.h>
 #include <Deliberation/Core/StreamUtils.h>
 
 #include <Deliberation/Draw/Buffer.h>
@@ -140,8 +139,6 @@ void VoxelRenderable::updateVoxelVisibility(
 
 void VoxelRenderable::render(const Transform3D & transform) const
 {
-    // ScopeProfiler scopeProfiler("VoxelRenderable::schedule()");
-
     /**
      * Init Draw
      */

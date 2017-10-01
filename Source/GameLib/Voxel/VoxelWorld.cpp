@@ -3,7 +3,6 @@
 #include <algorithm>
 
 #include <Deliberation/Core/Log.h>
-#include <Deliberation/Core/ScopeProfiler.h>
 
 #include <Deliberation/Draw/DrawContext.h>
 
