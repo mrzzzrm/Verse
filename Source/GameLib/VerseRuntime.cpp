@@ -1,6 +1,7 @@
 #include "VerseRuntime.h"
 
 #include <Deliberation/Core/Assert.h>
+#include <Deliberation/Core/Scope.h>
 
 #include <Deliberation/ECS/ActivityComponentPrototype.h>
 #include <Deliberation/ECS/ComponentPrototypes.h>
@@ -229,6 +230,8 @@ void VerseRuntime::onStartup()
 
 void VerseRuntime::onFrame(DurationMicros micros)
 {
+    DELIBERATION_SCOPE("VerseRuntime::onFrame()");
+
     GetGlobal<World>()->frameBeginPhase();
     
     m_updateFrame.setPhysicsSeconds(0.0f);

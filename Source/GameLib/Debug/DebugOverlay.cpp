@@ -4,6 +4,10 @@
 
 #include <imgui.h>
 
+#include <bundled/ostream.h>
+
+#include <Deliberation/Core/ScopeStack.h>
+
 #include <Deliberation/Draw/DrawContext.h>
 #include <Deliberation/Draw/Framebuffer.h>
 
@@ -40,20 +44,27 @@ void DebugOverlay::onFrameUpdate(const UpdateFrame & updateFrame)
     //    ImGui::ShowTestWindow(&open);
     m_fps = GetGlobal<App>()->fps();
 
-    const auto & profiler = world().profiler();
-    const auto   numScopes = std::min<size_t>(profiler.scopes().size(), 5u);
-
     if (imGuiSystem->showView("Performance"))
     {
+        const auto scopes = GetGlobal<ScopeStack>();
+
+
         if (ImGui::Begin("Performance"))
         {
-            ImGui::Text("FPS: %s", std::to_string((int)m_fps).c_str());
-            ImGui::Separator();
+            ImGui::Columns(2);
 
-            for (size_t s = 0; s < numScopes; s++)
+            for (const auto & pair : scopes->scopesById())
             {
-                ImGui::Text("%s", profiler.scopes()[s].toString().c_str());
+                ImGui::Text("%s", pair.second->name().c_str());
+                ImGui::NextColumn();
+
+                ImGui::Text("%.2f..%.2f..%.2f ms", pair.second->minDuration() / 1000.0f,
+                            pair.second->medianDuration() / 1000.0f,
+                            pair.second->maxDuration() / 1000.0f);
+                ImGui::NextColumn();
             }
+
+            ImGui::Columns(1);
         }
         ImGui::End();
     }

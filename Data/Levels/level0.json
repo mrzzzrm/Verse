@@ -14,18 +14,10 @@
         "Transform3D": {
           "Position": [-601, 200, -1500],
           "Orientation": [0, 0, 4]
-        }
-      }
-    },
-    {
-      "LID": "station2",
-      "Name": "Station",
-      "Bases": ["Factory2"],
-      "Components": {
-        "Transform3D": {
-          "Position": [-601, 200, -1500],
-          "Orientation": [0, 0, 4]
-        }
+        },
+        "Activities": [
+          {"Activity": "LaunchDefense"}
+        ]
       }
     }
   ]
