@@ -215,7 +215,7 @@ void VerseRuntime::onStartup()
         }
 
 
-        GetGlobal<World>()->addSystem<LevelSystem>(GameDataPath("Data/Levels/VfxSandbox.json")); // Do this last because it adds entities
+        GetGlobal<World>()->addSystem<LevelSystem>(GameDataPath("Data/Levels/level0.json")); // Do this last because it adds entities
     }
 
     GetGlobal<World>()->systemRef<PhysicsWorldSystem>().physicsWorld().primitiveTester().registerPrimitiveTest(
